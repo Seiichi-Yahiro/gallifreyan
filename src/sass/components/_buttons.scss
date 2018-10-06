@@ -1,0 +1,16 @@
+.button {
+    padding: $gap-size;
+
+    border: {
+        style: solid;
+        color: $border-color;
+        width: $border-width;
+    }
+    outline: 0;
+    background-color: transparent;
+    cursor: pointer;
+
+    &--full-width {
+        width: 100%;
+    }
+}

@@ -1,0 +1,10 @@
+.words {
+    display: flex;
+    flex-direction: column;
+    padding: $gap-size;
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+}
