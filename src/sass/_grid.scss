@@ -1,0 +1,35 @@
+.grid {
+    $border-color: #000000;
+    $border-width: 1px;
+    $gap-size: 4px;
+
+    width: 100%;
+    height: 100%;
+    padding: $gap-size;
+    display: grid;
+    grid-gap: $gap-size;
+    grid-template-columns: 20fr 80fr;
+    grid-template-rows: 100%;
+    grid-template-areas:
+        "sidebar svg";
+
+    &__sidebar {
+        grid-area: sidebar;
+        border: {
+            style: solid;
+            color: $border-color;
+            width: $border-width;
+        }
+    }
+
+    &__svg {
+        grid-area: svg;
+        width: 100%;
+        height: 100%;
+        border: {
+            style: solid;
+            color: $border-color;
+            width: $border-width;
+        }
+    }
+}
