@@ -1,0 +1,25 @@
+.list {
+    display: flex;
+
+    &--vertical {
+        flex-direction: column;
+    }
+
+    &--horizontal {
+        flex-direction: row;
+    }
+
+    &__item {
+        &--vertical {
+            &:not(:last-child) {
+                margin-bottom: $gap-size;
+            }
+        }
+
+        &--horizontal {
+            &:not(:last-child) {
+                margin-right: $gap-size;
+            }
+        }
+    }
+}

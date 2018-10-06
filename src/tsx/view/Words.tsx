@@ -1,21 +1,41 @@
 import * as React from 'react';
 import Button from '../component/Button';
 import HorizontalRuler from '../component/HorizontalRuler';
+import List from '../component/List';
 
-const Words: React.SFC = () => {
-    const addWord = () => {
-        console.log('Add Word');
-    };
+interface IWordsState {
+    words: string[];
+}
 
-    return (
-        <div className="grid__sidebar words">
-            <div>
-                <Button text="Add Word" className="button--full-width" onClick={addWord} />
+class Words extends React.Component<{}, IWordsState> {
+
+    constructor (props: {}) {
+        super(props);
+
+        this.state = {
+            words: []
+        };
+    }
+
+    public render() {
+        const {addWord} = this;
+        const {words} = this.state;
+
+        return (
+            <div className="grid__sidebar words">
+                <List isHorizontal={true}>
+                    <input type="text" className="text-input" placeholder="Word..."/>
+                    <Button text="Add Word" onClick={addWord} className="button--full-width" />
+                </List>
+                <HorizontalRuler/>
+                <List items={words}/>
             </div>
-            <HorizontalRuler/>
-            <div className="words__content"/>
-        </div>
-    );
-};
+        );
+    }
+
+    private addWord = () => {
+        console.log('Add Word');
+    }
+}
 
 export default Words;
