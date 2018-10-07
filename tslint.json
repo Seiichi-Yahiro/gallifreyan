@@ -9,7 +9,7 @@
   "rules": {
     "indent": [true, "spaces", 4],
     "quotemark": [true, "single", "jsx-double"],
-    "semicolon": [true, "always"],
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
     "no-console": [false],
     "no-var-requires": [false],
     "object-literal-sort-keys": [false],
