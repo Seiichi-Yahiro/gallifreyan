@@ -21,15 +21,15 @@ const Flex: React.SFC<IListProps> = ({
     const orientation = isHorizontal ? 'horizontal' : 'vertical';
 
     return (
-        <div className={`list list--${orientation} ${className}`}>
+        <div className={`flex flex--${orientation} ${className}`}>
             {items.map((item: any, index: number) => (
                 <div key={generateKey(item, index)}
-                     className={`list__item list__item--${orientation} ${childClassName}`}>{renderItem(item, index)}</div>))}
+                     className={`flex__item flex__item--${orientation} ${childClassName}`}>{renderItem(item, index)}</div>))}
 
             {React.Children.map(children, (child: any, index: number) =>
                 React.cloneElement(child, {
                     key: generateKey(child, index),
-                    className: `list__item list__item--${orientation} ${child.props.className} ${childClassName}`
+                    className: `flex__item flex__item--${orientation} ${child.props.className} ${childClassName}`
                 })
             )}
         </div>
