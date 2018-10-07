@@ -50,7 +50,13 @@ class Words extends React.Component<IWordsProps, IWordsState> {
     };
 
     private onAddWordClick = () => {
-        this.props.addWord(this.state.newWord);
+        const newWord = this.state.newWord;
+
+        if (newWord === '') {
+            return;
+        }
+
+        this.props.addWord(newWord);
         this.setState(() => ({newWord: ''}));
 
         const input = this.inputRef.current;
