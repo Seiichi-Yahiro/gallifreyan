@@ -9,7 +9,7 @@ interface IListProps {
     readonly childClassName?: string;
 }
 
-const List: React.SFC<IListProps> = ({
+const Flex: React.SFC<IListProps> = ({
                                          items = [],
                                          generateKey = (item: any, index: number) => index.toString(),
                                          renderItem = (item: any, index: number) => item,
@@ -36,4 +36,4 @@ const List: React.SFC<IListProps> = ({
     );
 };
 
-export default List;
+export default Flex;

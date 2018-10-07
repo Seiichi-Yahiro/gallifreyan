@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Button from '../component/Button';
 import HorizontalRuler from '../component/HorizontalRuler';
-import List from '../component/List';
+import Flex from '../component/Flex';
 import {IWord} from '../App';
 import {createRef} from 'react';
 
@@ -33,13 +33,13 @@ class Words extends React.Component<IWordsProps, IWordsState> {
 
         return (
             <div className="grid__sidebar words">
-                <List isHorizontal={true}>
+                <Flex isHorizontal={true}>
                     <input ref={inputRef} type="text" className="text-input" placeholder="Word..." value={newWord}
                            onChange={onTextInputChange}/>
                     <Button text="Add Word" onClick={onAddWordClick} className="button--full-width"/>
-                </List>
+                </Flex>
                 <HorizontalRuler/>
-                <List items={words} generateKey={getWordKey} renderItem={renderWord}/>
+                <Flex items={words} generateKey={getWordKey} renderItem={renderWord}/>
             </div>
         );
     }
