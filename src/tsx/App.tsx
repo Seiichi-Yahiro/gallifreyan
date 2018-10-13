@@ -1,12 +1,8 @@
 import * as React from 'react';
-import SVG from './view/SVG';
-import Words from './view/Words';
+import SVG from './view/svg/SVG';
 import {v4} from 'uuid';
-
-export interface IWord {
-    readonly id: string;
-    text: string;
-}
+import Words from './view/sidebar/Words';
+import {IWord} from './view/svg/SVGWord';
 
 interface IAppState {
     words: IWord[];
@@ -29,7 +25,7 @@ class App extends React.Component<{}, IAppState> {
         return (
             <div className="grid">
                 <Words words={words} addWord={addWord}/>
-                <SVG/>
+                <SVG words={words}/>
             </div>
         );
     }

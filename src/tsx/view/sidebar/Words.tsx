@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Button from '../component/Button';
-import HorizontalRuler from '../component/HorizontalRuler';
-import Flex from '../component/Flex';
-import {IWord} from '../App';
+import Button from '../../component/Button';
+import HorizontalRuler from '../../component/HorizontalRuler';
+import Flex from '../../component/Flex';
+import {IWord} from '../svg/SVGWord';
 import {createRef} from 'react';
 
 interface IWordsProps {
