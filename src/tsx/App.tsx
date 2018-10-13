@@ -19,12 +19,12 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render() {
-        const {addWord} = this;
+        const {addWord, updateWord, removeWord} = this;
         const {words} = this.state;
 
         return (
             <div className="grid">
-                <Words words={words} addWord={addWord}/>
+                <Words words={words} addWord={addWord} updateWord={updateWord} removeWord={removeWord}/>
                 <SVG words={words}/>
             </div>
         );
@@ -38,6 +38,14 @@ class App extends React.Component<{}, IAppState> {
 
         this.setState((prevState: IAppState) => ({words: [...prevState.words, newWord]}));
     };
+
+    private updateWord = (updatedWord: IWord) => this.setState((prevState: IAppState) => ({
+        words: prevState.words.map((word: IWord) => word.id === updatedWord.id ? updatedWord : word)
+    }));
+
+    private removeWord = (id: string) => this.setState((prevState: IAppState) => ({
+        words: prevState.words.filter((word: IWord) => word.id !== id)
+    }));
 }
 
 export default App;

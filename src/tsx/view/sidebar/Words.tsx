@@ -4,10 +4,13 @@ import HorizontalRuler from '../../component/HorizontalRuler';
 import Flex from '../../component/Flex';
 import {IWord} from '../svg/SVGWord';
 import {createRef} from 'react';
+import Word from './Word';
 
 interface IWordsProps {
-    readonly words: IWord[];
-    readonly addWord: (text: string) => void;
+    words: IWord[];
+    addWord: (text: string) => void;
+    updateWord: (updatedWord: IWord) => void;
+    removeWord: (id: string) => void;
 }
 
 interface IWordsState {
@@ -68,7 +71,8 @@ class Words extends React.Component<IWordsProps, IWordsState> {
 
     private getWordKey = (word: IWord) => word.id;
 
-    private renderWord = (word: IWord) => word.text;
+    private renderWord = (word: IWord) => (
+        <Word word={word} onWordChange={this.props.updateWord} onWordRemove={this.props.removeWord}/>);
 
 }
 
