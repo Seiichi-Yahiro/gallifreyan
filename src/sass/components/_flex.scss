@@ -5,8 +5,16 @@
         flex-direction: column;
     }
 
+    &--vertical-center {
+        align-items: center;
+    }
+
     &--horizontal {
         flex-direction: row;
+    }
+
+    &--space-between {
+        justify-content: space-between;
     }
 
     &__item {

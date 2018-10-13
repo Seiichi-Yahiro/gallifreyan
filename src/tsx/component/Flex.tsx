@@ -1,12 +1,14 @@
 import * as React from 'react';
 
 interface IListProps {
-    readonly items?: any[];
-    readonly generateKey?: (item: any, index?: number) => string;
-    readonly renderItem?: (item: any, index?: number) => string | JSX.Element;
-    readonly isHorizontal?: boolean;
-    readonly className?: string;
-    readonly childClassName?: string;
+    items?: any[];
+    generateKey?: (item: any, index?: number) => string;
+    renderItem?: (item: any, index?: number) => string | JSX.Element;
+    isHorizontal?: boolean;
+    className?: string;
+    childClassName?: string;
+    spaceBetween?: boolean;
+    verticalCenter?: boolean;
 }
 
 const Flex: React.SFC<IListProps> = ({
@@ -16,20 +18,35 @@ const Flex: React.SFC<IListProps> = ({
                                          isHorizontal = false,
                                          className = '',
                                          childClassName = '',
+                                         spaceBetween = false,
+                                         verticalCenter = false,
                                          children
                                      }) => {
     const orientation = isHorizontal ? 'horizontal' : 'vertical';
+    const wrapperClassNames = [
+        'flex',
+        'flex--' + orientation,
+        spaceBetween ? 'flex--space-between' : '',
+        verticalCenter ? 'flex--vertical-center' : '',
+        className
+    ].filter((clazz: string) => clazz.length > 0).join(' ');
+
+    const childClassNames = [
+        'flex__item',
+        'flex__item--' + orientation,
+        childClassName
+    ].filter((clazz: string) => clazz.length > 0).join(' ');
 
     return (
-        <div className={`flex flex--${orientation} ${className}`}>
+        <div className={wrapperClassNames}>
             {items.map((item: any, index: number) => (
                 <div key={generateKey(item, index)}
-                     className={`flex__item flex__item--${orientation} ${childClassName}`}>{renderItem(item, index)}</div>))}
+                     className={childClassNames}>{renderItem(item, index)}</div>))}
 
             {React.Children.map(children, (child: any, index: number) =>
                 React.cloneElement(child, {
                     key: generateKey(child, index),
-                    className: `flex__item flex__item--${orientation} ${child.props.className} ${childClassName}`
+                    className: `${childClassNames} ${child.props ? child.props.className : ''}`
                 })
             )}
         </div>
