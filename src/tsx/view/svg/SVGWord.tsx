@@ -1,4 +1,7 @@
 import * as React from 'react';
+import {partialCircle} from './SVGUtils';
+import {CSSProperties} from 'react';
+import Group from './Group';
 
 export interface IWord {
     readonly id: string;
@@ -25,12 +28,18 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         };
     }
 
-
     public render() {
         const {x, y} = this.state;
+        const pathStyle: CSSProperties = {
+            fill: 'transparent',
+            strokeWidth: 1,
+            stroke: '#000000'
+        };
 
         return (
-            <circle cx={x} cy={y} r={100}/>
+            <Group x={x} y={y}>
+                <path d={partialCircle(0, 0, 50, 0, 2 * Math.PI)} style={pathStyle}/>
+            </Group>
         );
     }
 }
