@@ -18,6 +18,8 @@
     }
 
     &__item {
+        flex: 1;
+
         &--vertical {
             &:not(:last-child) {
                 margin-bottom: $gap-size;
