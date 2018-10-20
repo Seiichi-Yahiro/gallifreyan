@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {classNames} from './ComponentUtils';
 
 interface IListProps {
     items?: any[];
@@ -23,19 +24,19 @@ const Flex: React.SFC<IListProps> = ({
                                          children
                                      }) => {
     const orientation = isHorizontal ? 'horizontal' : 'vertical';
-    const wrapperClassNames = [
+    const wrapperClassNames = classNames([
         'flex',
         'flex--' + orientation,
         spaceBetween ? 'flex--space-between' : '',
         verticalCenter ? 'flex--vertical-center' : '',
         className
-    ].filter((clazz: string) => clazz.length > 0).join(' ');
+    ]);
 
-    const childClassNames = [
+    const childClassNames = classNames([
         'flex__item',
         'flex__item--' + orientation,
         childClassName
-    ].filter((clazz: string) => clazz.length > 0).join(' ');
+    ]);
 
     return (
         <div className={wrapperClassNames}>

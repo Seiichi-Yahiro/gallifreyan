@@ -1,0 +1,1 @@
+export const classNames = (classes: string[]) => classes.filter((clazz: string) => clazz.length > 0).join(' ');
