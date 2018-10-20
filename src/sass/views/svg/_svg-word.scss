@@ -1,0 +1,11 @@
+.svg-word {
+    stroke: #000000;
+
+    &--is-hovered {
+        stroke: #FF0000;
+    }
+
+    &--is-selected {
+        stroke: #0000FF;
+    }
+}

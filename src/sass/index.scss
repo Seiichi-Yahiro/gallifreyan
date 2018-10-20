@@ -1,8 +1,10 @@
 @import "variables";
 @import "base";
 
-@import "views/grid";
-@import "views/words";
+@import "views/sidebar/grid";
+@import "views/sidebar/words";
+
+@import "views/svg/svg-word";
 
 @import "components/buttons";
 @import "components/horizontal-ruler";
