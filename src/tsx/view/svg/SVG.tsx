@@ -39,9 +39,9 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
                             toolbarPosition={POSITION_LEFT}
                             onChangeValue={onChangeSVGPanZoom}
                         >
-                            <svg width={1000} height={1000}>
+                            <svg width={1010} height={1010}>
                                 <SVGContext.Provider value={{zoomX, zoomY}}>
-                                    <Group x={500} y={500}>
+                                    <Group x={505} y={505}>
                                         <circle r={500} style={{stroke:'black',fill:'transparent'}} />
                                         {
                                             words.map((word: IWord) => (
