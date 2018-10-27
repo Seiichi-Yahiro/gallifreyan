@@ -1,6 +1,8 @@
 import * as React from 'react';
 import SVGWord, {IWord} from './SVGWord';
-import Group, {Unit} from './Group';
+import Group from './Group';
+import {AutoSizer} from 'react-virtualized';
+import {POSITION_LEFT, ReactSVGPanZoom} from 'react-svg-pan-zoom';
 
 interface ISVGProps {
     words: IWord[];
@@ -16,7 +18,7 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
         super(props);
 
         this.state = {
-            selected: ''
+            selected: '',
         };
     }
 
@@ -24,21 +26,29 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
         const {selectWord} = this;
         const {words} = this.props;
         const {selected} = this.state;
-
         return (
-            <svg className="grid__svg" viewBox="0 0 1000 1000">
-                <Group x={50} y={50} unit={Unit.PERCENT}>
-                    {
-                        words.map((word: IWord) => (
-                            <SVGWord key={word.id}
-                                     word={word}
-                                     isSelected={word.id === selected}
-                                     onWordClick={selectWord}
-                            />)
-                        )
-                    }
-                </Group>
-            </svg>
+            <div className="grid__svg">
+                <AutoSizer>
+                    {({width, height}) => (
+                        <ReactSVGPanZoom width={width} height={height} detectAutoPan={false} toolbarPosition={POSITION_LEFT}>
+                            <svg width={1000} height={1000}>
+                                <Group x={500} y={500}>
+                                    <circle r={500} style={{stroke:'black',fill:'transparent'}} />
+                                    {
+                                        words.map((word: IWord) => (
+                                            <SVGWord key={word.id}
+                                                     word={word}
+                                                     isSelected={word.id === selected}
+                                                     onWordClick={selectWord}
+                                            />)
+                                        )
+                                    }
+                                </Group>
+                            </svg>
+                        </ReactSVGPanZoom>
+                    )}
+                </AutoSizer>
+            </div>
         );
     }
 

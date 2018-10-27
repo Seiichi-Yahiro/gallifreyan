@@ -3,9 +3,15 @@
 
     &--is-hovered {
         stroke: #FF0000;
+        cursor: pointer;
     }
 
     &--is-selected {
         stroke: #0000FF;
+        cursor: grab;
+    }
+
+    &--is-dragging {
+        cursor: grabbing;
     }
 }
