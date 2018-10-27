@@ -5,6 +5,7 @@ import Group from './Group';
 import {classNames} from '../../component/ComponentUtils';
 import {DraggableCore, DraggableData} from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
+import SVGContext, {ISVGContext} from './SVGContext';
 
 export interface IWord {
     readonly id: string;
@@ -74,19 +75,24 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         const {onDragStart, onDragEnd, onDrag} = this;
 
         return (
-            <DraggableCore enableUserSelectHack={true} onStart={onDragStart} onStop={onDragEnd} onDrag={onDrag}>
-                {children}
-            </DraggableCore>
+            <SVGContext.Consumer>
+                {(svgContext: ISVGContext) => (
+                    <DraggableCore enableUserSelectHack={true} onStart={onDragStart} onStop={onDragEnd} onDrag={onDrag(svgContext)}>
+                        {children}
+                    </DraggableCore>
+                )}
+            </SVGContext.Consumer>
         );
     };
 
     private onDragStart = () => this.setState({isDragging: true});
     private onDragEnd = () => this.setState({isDragging: false});
-    private onDrag = (event: MouseEvent, data: DraggableData) => {
+    private onDrag = (svgContext: ISVGContext) => (event: MouseEvent, data: DraggableData) => {
         const {x, y} = this.state;
         const {deltaX, deltaY} = data;
+        const {zoomX, zoomY} = svgContext;
 
-        this.setState({x: x + deltaX, y: y + deltaY});
+        this.setState({x: x + deltaX / zoomX, y: y + deltaY / zoomY});
     };
 
     private onMouseEnter = () => this.setState(() => ({isHovered: true}));
