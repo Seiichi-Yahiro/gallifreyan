@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {partialCircle} from './SVGUtils';
-import {CSSProperties} from 'react';
 import Group from './Group';
 import {classNames} from '../../component/ComponentUtils';
 import {DraggableCore, DraggableData} from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
 import SVGContext, {ISVGContext} from './SVGContext';
+import SVGLetter, {ILetter, LetterGroups} from './SVGLetter';
+import {IPoint, rotatePoint} from './SVGUtils';
 
 export interface IWord {
     readonly id: string;
@@ -23,6 +23,7 @@ interface ISVGWordState {
     y: number;
     isHovered: boolean;
     isDragging: boolean;
+    letters: ILetter[];
 }
 
 class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
@@ -35,18 +36,26 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
             y: 0,
             isHovered: false,
             isDragging: false,
+            letters: [],
         };
     }
 
+    public componentDidMount() {
+        this.calculateLetters();
+    }
+
+    public componentDidUpdate(prevProps: ISVGWordProps) {
+        if (prevProps.word.text !== this.props.word.text) {
+            this.calculateLetters();
+        }
+    }
+
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick} = this;
+        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateIntersectingLetters} = this;
         const {isSelected} = this.props;
-        const {x, y, isHovered, isDragging} = this.state;
-        const pathStyle: CSSProperties = {
-            fill: 'transparent',
-            strokeWidth: 1,
-            stroke: 'inherit'
-        };
+        const {x, y, isHovered, isDragging, letters} = this.state;
+
+        const intersectingLetters = calculateIntersectingLetters();
 
         const groupClassNames = classNames([
             'svg-word',
@@ -65,7 +74,10 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     onMouseLeave={onMouseLeave}
                     onClick={onClick}
                 >
-                    <path d={partialCircle(0, 0, 50, 0, 2 * Math.PI)} style={pathStyle}/>
+                    {intersectingLetters.length === 0 ? <circle r={50}/> : undefined}
+                    {letters.map((letter: ILetter, index: number) => (
+                        <SVGLetter letter={letter.letter} x={letter.x} y={letter.y} key={index}/>
+                    ))}
                 </Group>
             </ConditionalWrapper>
         );
@@ -83,6 +95,43 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                 )}
             </SVGContext.Consumer>
         );
+    };
+
+    private calculateLetters = () => {
+        const {word} = this.props;
+        const letters = this.splitWordToLetters(word.text);
+        const calculatedLetters = letters.map((letter: string, index: number) => {
+            const radians = -(Math.PI * 2) / letters.length;
+            const initialPoint: IPoint = {x: 0, y: 50}; // y is radius
+            const point = rotatePoint(initialPoint, radians * index);
+
+            return {
+                ...point,
+                letter,
+            } as ILetter;
+        });
+        this.setState({letters: calculatedLetters});
+    };
+
+    private calculateIntersectingLetters = () => {
+        const {word} = this.props;
+        const letters = this.splitWordToLetters(word.text);
+        const regex = new RegExp(`^(?:${LetterGroups.DEEP_CUT} | ${LetterGroups.SHALLOW_CUT})$`, 'i');
+        return letters.filter((letter: string) => regex.test(letter));
+    };
+
+    private splitWordToLetters = (word: string): string[] => {
+        const index = word.search(new RegExp(LetterGroups.DOUBLE_LETTERS, 'i'));
+
+        if (index === -1) {
+            return word.split('');
+        } else {
+            const firstPart = word.slice(0, index);
+            const found = word.slice(index, index + 2);
+            const lastPart = word.slice(index + 2);
+
+            return firstPart.split('').concat(found).concat(this.splitWordToLetters(lastPart));
+        }
     };
 
     private onDragStart = () => this.setState({isDragging: true});

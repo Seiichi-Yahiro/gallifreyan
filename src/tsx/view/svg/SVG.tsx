@@ -43,15 +43,13 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
                                 <SVGContext.Provider value={{zoomX, zoomY}}>
                                     <Group x={505} y={505}>
                                         <circle r={500} style={{stroke:'black',fill:'transparent'}} />
-                                        {
-                                            words.map((word: IWord) => (
-                                                <SVGWord key={word.id}
-                                                         word={word}
-                                                         isSelected={word.id === selected}
-                                                         onWordClick={selectWord}
-                                                />)
-                                            )
-                                        }
+                                        {words.map((word: IWord) => (
+                                            <SVGWord key={word.id}
+                                                     word={word}
+                                                     isSelected={word.id === selected}
+                                                     onWordClick={selectWord}
+                                            />
+                                        ))}
                                     </Group>
                                 </SVGContext.Provider>
                             </svg>

@@ -1,0 +1,16 @@
+.svg-letter {
+    @extend .svg-word;
+    stroke: inherit;
+
+    &--is-hovered {
+        @extend .svg-word--is-hovered;
+    }
+
+    &--is-selected {
+        @extend .svg-word--is-selected;
+    }
+
+    &--is-dragging {
+        @extend .svg-word--is-dragging;
+    }
+}

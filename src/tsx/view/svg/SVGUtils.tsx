@@ -26,3 +26,18 @@ export const partialCircle = (cx: number, cy: number, r: number, start: number, 
 
     return `M ${fromX} ${fromY} A ${r} ${r} 0 ${large} ${sweep} ${toX} ${toY}`;
 };
+
+export interface IPoint {
+    x: number;
+    y: number;
+}
+
+export const rotatePoint = (point: IPoint, angle: number): IPoint => {
+    const {x, y} = point;
+    const {cos, sin} = Math;
+
+    return {
+        x: x * cos(angle) - y * sin(angle),
+        y: x * sin(angle) + y * cos(angle)
+    };
+};
