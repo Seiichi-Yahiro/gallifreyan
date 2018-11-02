@@ -12,7 +12,8 @@ export enum LetterGroups {
 }
 
 export interface ILetter {
-    letter: string;
+    readonly id: string;
+    text: string;
     x: number;
     y: number;
     r: number;
@@ -20,9 +21,17 @@ export interface ILetter {
     anglesOfWord?: number[];
 }
 
-class SVGLetter extends React.Component<ILetter, {isHovered: boolean}> {
+interface ISVGLetterProps {
+    letter: ILetter;
+}
 
-    constructor(props: ILetter) {
+interface ISVGLetterState {
+    isHovered: boolean;
+}
+
+class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
+
+    constructor(props: ISVGLetterProps) {
         super(props);
 
         this.state = {
@@ -33,7 +42,7 @@ class SVGLetter extends React.Component<ILetter, {isHovered: boolean}> {
     public render() {
 
         const {getPartialCircle, onMouseEnter, onMouseLeave} = this;
-        const {x, y, r, anglesOfLetter} = this.props;
+        const {x, y, r, anglesOfLetter} = this.props.letter;
         const {isHovered} = this.state;
 
         const groupClassNames = classNames([
@@ -59,7 +68,7 @@ class SVGLetter extends React.Component<ILetter, {isHovered: boolean}> {
     }
 
     private getPartialCircle = () => {
-        const {anglesOfLetter, r} = this.props;
+        const {anglesOfLetter, r} = this.props.letter;
 
         if (anglesOfLetter) {
             const [start, end] = anglesOfLetter;

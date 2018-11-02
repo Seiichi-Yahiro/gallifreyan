@@ -6,6 +6,7 @@ import ConditionalWrapper from '../../component/ConditionalWrapper';
 import SVGContext, {ISVGContext} from './SVGContext';
 import SVGLetter, {ILetter, LetterGroups} from './SVGLetter';
 import {calculateCircleIntersectionAngle, calculateCircleIntersectionPoints, partialCircle, Point} from './SVGUtils';
+import {v4} from 'uuid';
 
 export interface IWord {
     readonly id: string;
@@ -86,8 +87,8 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                         onClick={onClick}
                     />
 
-                    {letters.map(({letter, x: lx, y: ly, r: lr, anglesOfLetter}, index: number) => (
-                        <SVGLetter letter={letter} x={lx} y={ly} r={lr} anglesOfLetter={anglesOfLetter} key={index}/>
+                    {letters.map((letter: ILetter) => (
+                        <SVGLetter letter={letter} key={letter.id}/>
                     ))}
                 </Group>
             </ConditionalWrapper>
@@ -100,8 +101,12 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         return (
             <SVGContext.Consumer>
                 {(svgContext: ISVGContext) => (
-                    <DraggableCore enableUserSelectHack={true} onStart={onDragStart} onStop={onDragEnd}
-                                   onDrag={onDrag(svgContext)}>
+                    <DraggableCore
+                        enableUserSelectHack={true}
+                        onStart={onDragStart}
+                        onStop={onDragEnd}
+                        onDrag={onDrag(svgContext)}
+                    >
                         {children}
                     </DraggableCore>
                 )}
@@ -120,8 +125,9 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
 
             return {
                 ...rotatedPoint,
+                id: v4(),
                 r: 25,
-                letter,
+                text: letter,
             } as ILetter;
         });
         this.setState({letters: calculatedLetters});
