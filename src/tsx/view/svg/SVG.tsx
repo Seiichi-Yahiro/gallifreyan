@@ -24,7 +24,7 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
     }
 
     public render() {
-        const {selectWord, onChangeSVGPanZoom} = this;
+        const {select, deselect, onChangeSVGPanZoom} = this;
         const {words} = this.props;
         const {selected, zoomX, zoomY} = this.state;
 
@@ -42,12 +42,12 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
                             <svg width={1010} height={1010}>
                                 <SVGContext.Provider value={{zoomX, zoomY}}>
                                     <Group x={505} y={505}>
-                                        <circle r={500} style={{stroke:'black',fill:'transparent'}} />
+                                        <circle r={500} style={{stroke:'black',fill:'transparent'}} onClick={deselect} />
                                         {words.map((word: IWord) => (
                                             <SVGWord key={word.id}
                                                      word={word}
-                                                     isSelected={word.id === selected}
-                                                     onWordClick={selectWord}
+                                                     selection={selected}
+                                                     select={select}
                                             />
                                         ))}
                                     </Group>
@@ -69,7 +69,8 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
         });
     };
 
-    private selectWord = (id: string) => this.setState(() => ({selected: id}));
+    private select = (id: string) => this.setState(() => ({selected: id}));
+    private deselect = () => this.select('');
 }
 
 export default SVG;

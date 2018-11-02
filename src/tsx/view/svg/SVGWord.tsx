@@ -15,8 +15,8 @@ export interface IWord {
 
 interface ISVGWordProps {
     word: IWord;
-    isSelected: boolean;
-    onWordClick: (id: string) => void;
+    selection: string;
+    select: (id: string) => void;
 }
 
 interface ISVGWordState {
@@ -54,7 +54,8 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
 
     public render() {
         const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs} = this;
-        const {isSelected} = this.props;
+        const {selection, select, word} = this.props;
+        const isSelected = word.id === selection;
         const {x, y, r, isHovered, isDragging, letters} = this.state;
         const wordAngles = calculateWordAnglePairs();
 
@@ -88,7 +89,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     />
 
                     {letters.map((letter: ILetter) => (
-                        <SVGLetter letter={letter} key={letter.id}/>
+                        <SVGLetter letter={letter} key={letter.id} selection={selection} select={select}/>
                     ))}
                 </Group>
             </ConditionalWrapper>
@@ -220,7 +221,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
 
     private onMouseEnter = () => this.setState(() => ({isHovered: true}));
     private onMouseLeave = () => this.setState(() => ({isHovered: false}));
-    private onClick = () => this.props.onWordClick(this.props.word.id);
+    private onClick = () => this.props.select(this.props.word.id);
 }
 
 export default SVGWord;

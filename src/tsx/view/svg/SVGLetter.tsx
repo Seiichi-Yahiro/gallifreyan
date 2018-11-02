@@ -23,6 +23,8 @@ export interface ILetter {
 
 interface ISVGLetterProps {
     letter: ILetter;
+    selection: string;
+    select: (id: string) => void;
 }
 
 interface ISVGLetterState {
@@ -41,12 +43,15 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
 
     public render() {
 
-        const {getPartialCircle, onMouseEnter, onMouseLeave} = this;
-        const {x, y, r, anglesOfLetter} = this.props.letter;
+        const {getPartialCircle, onMouseEnter, onMouseLeave, onClick} = this;
+        const {letter, selection} = this.props;
+        const {x, y, r, anglesOfLetter, id} = letter;
+        const isSelected = id === selection;
         const {isHovered} = this.state;
 
         const groupClassNames = classNames([
             'svg-letter',
+            isSelected ? 'svg-letter--is-selected' : '',
             isHovered ? 'svg-letter--is-hovered' : '',
         ]);
 
@@ -57,6 +62,7 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
                 className={groupClassNames}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
+                onClick={onClick}
             >
                 {anglesOfLetter
                     ? getPartialCircle()
@@ -83,10 +89,13 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
         this.setState(() => ({isHovered: true}));
         event.preventDefault();
     };
+
     private onMouseLeave = (event: React.MouseEvent<SVGGElement>) => {
         this.setState(() => ({isHovered: false}));
         event.preventDefault();
     };
+
+    private onClick = () => this.props.select(this.props.letter.id);
 }
 
 export default SVGLetter;
