@@ -23,13 +23,30 @@ class SVGLetter extends React.Component<ILetter> {
 
     public render() {
 
-        const {x, y, r} = this.props;
+        const {getPartialCircle} = this;
+        const {x, y, r, anglesOfLetter} = this.props;
 
         return (
-            <Group x={x} y={y} r={r} className="svg-letter">
-                <path d={partialCircle(0, 0, 25, 0, 2 * Math.PI)}/>
+            <Group x={x} y={y} className="svg-letter">
+                {anglesOfLetter
+                    ? getPartialCircle()
+                    : <circle r={r}/>
+                }
+
             </Group>
         );
+    }
+
+    private getPartialCircle = () => {
+        const {anglesOfLetter, r} = this.props;
+
+        if (anglesOfLetter) {
+            const [start, end] = anglesOfLetter;
+
+            return <path d={partialCircle(0, 0, r, start < end ? start + 2 * Math.PI : start, end)}/>;
+        }
+
+        return undefined;
     }
 }
 

@@ -81,8 +81,8 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                             <path d={partialCircle(0, 0, r, start, end)} key={index}/>
                         ))
                     }
-                    {letters.map(({letter, x: lx, y: ly, r: lr}, index: number) => (
-                        <SVGLetter letter={letter} x={lx} y={ly} r={lr} key={index}/>
+                    {letters.map(({letter, x: lx, y: ly, r: lr, anglesOfLetter}, index: number) => (
+                        <SVGLetter letter={letter} x={lx} y={ly} r={lr} anglesOfLetter={anglesOfLetter} key={index}/>
                     ))}
                 </Group>
             </ConditionalWrapper>
@@ -124,7 +124,9 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     };
 
     private calculateAngles = () => this.setState((prevState: ISVGWordState) => {
-        const wordRadius = prevState.r;
+        const {r: wordRadius, x, y} = prevState;
+        const wordPoint = new Point(x, y);
+
         const letters = prevState.letters.map(letter => {
             const point = new Point(letter.x, letter.y);
             const letterRadius = letter.r;
@@ -134,18 +136,21 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                 let anglesOfWord = intersections
                     .map(p => calculateCircleIntersectionAngle(p, wordRadius))
                     .sort();
-                
-                // if circle is not on top the 0° point
+
+                // if letter circle is not on top the word 0° point
                 if (new Point(wordRadius, 0).subtract(point).length() > letterRadius) {
                     anglesOfWord = anglesOfWord.reverse();
                 }
 
-                // TODO check for 0° point necessary?
-                const anglesOfLetter = intersections
+                let anglesOfLetter = intersections
                     .map(p => p.subtract(point))
                     .map(p => calculateCircleIntersectionAngle(p, letterRadius))
-                    .sort()
-                    .reverse();
+                    .sort();
+
+                // if letter circle is not on top the word 180° point
+                if (point.add(new Point(letterRadius, 0)).subtract(wordPoint).length() > wordRadius) {
+                    anglesOfLetter = anglesOfLetter.reverse();
+                }
 
                 return {
                     ...letter,
