@@ -54,12 +54,13 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
         const {letter, selection} = this.props;
         const {x, y, r, anglesOfLetter, id} = letter;
         const isSelected = id === selection;
-        const {isHovered} = this.state;
+        const {isHovered, isDragging} = this.state;
 
         const groupClassNames = classNames([
             'svg-letter',
             isSelected ? 'svg-letter--is-selected' : '',
             isHovered ? 'svg-letter--is-hovered' : '',
+            isDragging ? 'svg-letter--is-dragging' : '',
         ]);
 
         return (
