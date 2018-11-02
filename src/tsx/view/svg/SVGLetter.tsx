@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Group from './Group';
 import {partialCircle} from './SVGUtils';
+import {classNames} from '../../component/ComponentUtils';
 
 export enum LetterGroups {
     DEEP_CUT = 'b|ch|d|h|f',
@@ -19,15 +20,35 @@ export interface ILetter {
     anglesOfWord?: number[];
 }
 
-class SVGLetter extends React.Component<ILetter> {
+class SVGLetter extends React.Component<ILetter, {isHovered: boolean}> {
+
+    constructor(props: ILetter) {
+        super(props);
+
+        this.state = {
+            isHovered: false,
+        };
+    }
 
     public render() {
 
-        const {getPartialCircle} = this;
+        const {getPartialCircle, onMouseEnter, onMouseLeave} = this;
         const {x, y, r, anglesOfLetter} = this.props;
+        const {isHovered} = this.state;
+
+        const groupClassNames = classNames([
+            'svg-letter',
+            isHovered ? 'svg-letter--is-hovered' : '',
+        ]);
 
         return (
-            <Group x={x} y={y} className="svg-letter">
+            <Group
+                x={x}
+                y={y}
+                className={groupClassNames}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+            >
                 {anglesOfLetter
                     ? getPartialCircle()
                     : <circle r={r}/>
@@ -47,7 +68,16 @@ class SVGLetter extends React.Component<ILetter> {
         }
 
         return undefined;
-    }
+    };
+
+    private onMouseEnter = (event: React.MouseEvent<SVGGElement>) => {
+        this.setState(() => ({isHovered: true}));
+        event.preventDefault();
+    };
+    private onMouseLeave = (event: React.MouseEvent<SVGGElement>) => {
+        this.setState(() => ({isHovered: false}));
+        event.preventDefault();
+    };
 }
 
 export default SVGLetter;

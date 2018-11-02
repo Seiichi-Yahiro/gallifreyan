@@ -2,15 +2,15 @@
     @extend .svg-word;
     stroke: inherit;
 
-    &--is-hovered {
+    &--is-hovered.svg-letter {
         @extend .svg-word--is-hovered;
     }
 
-    &--is-selected {
+    &--is-selected.svg-letter {
         @extend .svg-word--is-selected;
     }
 
-    &--is-dragging {
+    &--is-dragging.svg-letter {
         @extend .svg-word--is-dragging;
     }
 }

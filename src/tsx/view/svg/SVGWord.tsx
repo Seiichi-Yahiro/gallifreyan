@@ -28,7 +28,6 @@ interface ISVGWordState {
 }
 
 class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
-
     constructor(props: ISVGWordProps) {
         super(props);
 
@@ -71,9 +70,6 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     x={x}
                     y={y}
                     className={groupClassNames}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                    onClick={onClick}
                 >
                     {wordAngles.length === 0
                         ? <circle r={r}/>
@@ -81,6 +77,15 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                             <path d={partialCircle(0, 0, r, start, end)} key={index}/>
                         ))
                     }
+
+                    <circle
+                        r={r}
+                        className="svg-word__selection-area"
+                        onMouseEnter={onMouseEnter}
+                        onMouseLeave={onMouseLeave}
+                        onClick={onClick}
+                    />
+
                     {letters.map(({letter, x: lx, y: ly, r: lr, anglesOfLetter}, index: number) => (
                         <SVGLetter letter={letter} x={lx} y={ly} r={lr} anglesOfLetter={anglesOfLetter} key={index}/>
                     ))}

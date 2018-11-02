@@ -16,4 +16,9 @@
     &--is-dragging {
         cursor: grabbing;
     }
+
+    &__selection-area {
+        stroke: none;
+        fill: transparent;
+    }
 }
