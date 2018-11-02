@@ -14,16 +14,19 @@ export interface ILetter {
     letter: string;
     x: number;
     y: number;
+    r: number;
+    anglesOfLetter?: number[];
+    anglesOfWord?: number[];
 }
 
 class SVGLetter extends React.Component<ILetter> {
 
     public render() {
 
-        const {x, y} = this.props;
+        const {x, y, r} = this.props;
 
         return (
-            <Group x={x} y={y} className="svg-letter">
+            <Group x={x} y={y} r={r} className="svg-letter">
                 <path d={partialCircle(0, 0, 25, 0, 2 * Math.PI)}/>
             </Group>
         );

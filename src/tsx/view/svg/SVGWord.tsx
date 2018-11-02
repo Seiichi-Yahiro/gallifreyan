@@ -5,7 +5,7 @@ import {DraggableCore, DraggableData} from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
 import SVGContext, {ISVGContext} from './SVGContext';
 import SVGLetter, {ILetter, LetterGroups} from './SVGLetter';
-import {IPoint, rotatePoint} from './SVGUtils';
+import {calculateCircleIntersectionAngle, calculateCircleIntersectionPoints, partialCircle, Point} from './SVGUtils';
 
 export interface IWord {
     readonly id: string;
@@ -21,6 +21,7 @@ interface ISVGWordProps {
 interface ISVGWordState {
     x: number;
     y: number;
+    r: number;
     isHovered: boolean;
     isDragging: boolean;
     letters: ILetter[];
@@ -34,6 +35,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         this.state = {
             x: 0,
             y: 0,
+            r: 50,
             isHovered: false,
             isDragging: false,
             letters: [],
@@ -41,21 +43,20 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     }
 
     public componentDidMount() {
-        this.calculateLetters();
+        this.initializeLetters();
     }
 
     public componentDidUpdate(prevProps: ISVGWordProps) {
         if (prevProps.word.text !== this.props.word.text) {
-            this.calculateLetters();
+            this.initializeLetters();
         }
     }
 
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateIntersectingLetters} = this;
+        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs} = this;
         const {isSelected} = this.props;
-        const {x, y, isHovered, isDragging, letters} = this.state;
-
-        const intersectingLetters = calculateIntersectingLetters();
+        const {x, y, r, isHovered, isDragging, letters} = this.state;
+        const wordAngles = calculateWordAnglePairs();
 
         const groupClassNames = classNames([
             'svg-word',
@@ -74,9 +75,14 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     onMouseLeave={onMouseLeave}
                     onClick={onClick}
                 >
-                    {intersectingLetters.length === 0 ? <circle r={50}/> : undefined}
-                    {letters.map((letter: ILetter, index: number) => (
-                        <SVGLetter letter={letter.letter} x={letter.x} y={letter.y} key={index}/>
+                    {wordAngles.length === 0
+                        ? <circle r={r}/>
+                        : wordAngles.map(([start, end], index: number) => (
+                            <path d={partialCircle(0, 0, r, start, end)} key={index}/>
+                        ))
+                    }
+                    {letters.map(({letter, x: lx, y: ly, r: lr}, index: number) => (
+                        <SVGLetter letter={letter} x={lx} y={ly} r={lr} key={index}/>
                     ))}
                 </Group>
             </ConditionalWrapper>
@@ -89,7 +95,8 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         return (
             <SVGContext.Consumer>
                 {(svgContext: ISVGContext) => (
-                    <DraggableCore enableUserSelectHack={true} onStart={onDragStart} onStop={onDragEnd} onDrag={onDrag(svgContext)}>
+                    <DraggableCore enableUserSelectHack={true} onStart={onDragStart} onStop={onDragEnd}
+                                   onDrag={onDrag(svgContext)}>
                         {children}
                     </DraggableCore>
                 )}
@@ -97,27 +104,78 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         );
     };
 
-    private calculateLetters = () => {
+    private initializeLetters = () => {
         const {word} = this.props;
+        const {r} = this.state;
         const letters = this.splitWordToLetters(word.text);
         const calculatedLetters = letters.map((letter: string, index: number) => {
             const radians = -(Math.PI * 2) / letters.length;
-            const initialPoint: IPoint = {x: 0, y: 50}; // y is radius
-            const point = rotatePoint(initialPoint, radians * index);
+            const initialPoint = new Point(0, r);
+            const rotatedPoint = initialPoint.rotate(radians * index);
 
             return {
-                ...point,
+                ...rotatedPoint,
+                r: 25,
                 letter,
             } as ILetter;
         });
         this.setState({letters: calculatedLetters});
+        this.calculateAngles();
     };
 
-    private calculateIntersectingLetters = () => {
-        const {word} = this.props;
-        const letters = this.splitWordToLetters(word.text);
-        const regex = new RegExp(`^(?:${LetterGroups.DEEP_CUT} | ${LetterGroups.SHALLOW_CUT})$`, 'i');
-        return letters.filter((letter: string) => regex.test(letter));
+    private calculateAngles = () => this.setState((prevState: ISVGWordState) => {
+        const wordRadius = prevState.r;
+        const letters = prevState.letters.map(letter => {
+            const point = new Point(letter.x, letter.y);
+            const letterRadius = letter.r;
+
+            const intersections = calculateCircleIntersectionPoints(wordRadius, letterRadius, point);
+            if (intersections.length !== 0) {
+                let anglesOfWord = intersections
+                    .map(p => calculateCircleIntersectionAngle(p, wordRadius))
+                    .sort();
+                
+                // if circle is not on top the 0° point
+                if (new Point(wordRadius, 0).subtract(point).length() > letterRadius) {
+                    anglesOfWord = anglesOfWord.reverse();
+                }
+
+                // TODO check for 0° point necessary?
+                const anglesOfLetter = intersections
+                    .map(p => p.subtract(point))
+                    .map(p => calculateCircleIntersectionAngle(p, letterRadius))
+                    .sort()
+                    .reverse();
+
+                return {
+                    ...letter,
+                    anglesOfWord,
+                    anglesOfLetter
+                } as ILetter;
+            }
+
+            return letter;
+        });
+
+        return {letters};
+    });
+
+    private calculateWordAnglePairs = () => {
+        const wordAngles = this.state.letters
+            .map(letter => letter.anglesOfWord!)
+            .filter(anglesOfWord => !!anglesOfWord)
+            .reduce((a: number[], b: number[]) => a.concat(b), []);
+        return [...wordAngles.slice(1), ...wordAngles.slice(0, 1)]
+            .reduce((acc: number[][], angle: number, index: number) => {
+                if (acc.length === Math.floor(index / 2 + 1)) {
+                    acc[Math.floor(index / 2)].push(angle);
+                } else {
+                    acc.push([angle]);
+                }
+
+                return acc;
+            }, [])
+            .map(([start, end]) => [start < end ? start + 2 * Math.PI : start, end]);
     };
 
     private splitWordToLetters = (word: string): string[] => {
