@@ -53,7 +53,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     }
 
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs} = this;
+        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter} = this;
         const {selection, select, word} = this.props;
         const isSelected = word.id === selection;
         const {x, y, r, isHovered, isDragging, letters} = this.state;
@@ -89,7 +89,13 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     />
 
                     {letters.map((letter: ILetter) => (
-                        <SVGLetter letter={letter} key={letter.id} selection={selection} select={select}/>
+                        <SVGLetter
+                            letter={letter}
+                            key={letter.id}
+                            selection={selection}
+                            select={select}
+                            onDrag={onDragLetter(letter.id)}
+                        />
                     ))}
                 </Group>
             </ConditionalWrapper>
@@ -136,31 +142,30 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     };
 
     private calculateAngles = () => this.setState((prevState: ISVGWordState) => {
-        const {r: wordRadius, x, y} = prevState;
-        const wordPoint = new Point(x, y);
+        const {r: wordRadius} = prevState;
 
         const letters = prevState.letters.map(letter => {
-            const point = new Point(letter.x, letter.y);
+            const letterPoint = new Point(letter.x, letter.y);
             const letterRadius = letter.r;
 
-            const intersections = calculateCircleIntersectionPoints(wordRadius, letterRadius, point);
+            const intersections = calculateCircleIntersectionPoints(wordRadius, letterRadius, letterPoint);
             if (intersections.length !== 0) {
                 let anglesOfWord = intersections
                     .map(p => calculateCircleIntersectionAngle(p, wordRadius))
                     .sort();
 
                 // if letter circle is not on top the word 0° point
-                if (new Point(wordRadius, 0).subtract(point).length() > letterRadius) {
+                if (new Point(wordRadius, 0).subtract(letterPoint).length() > letterRadius) {
                     anglesOfWord = anglesOfWord.reverse();
                 }
 
                 let anglesOfLetter = intersections
-                    .map(p => p.subtract(point))
+                    .map(p => p.subtract(letterPoint))
                     .map(p => calculateCircleIntersectionAngle(p, letterRadius))
                     .sort();
 
                 // if letter circle is not on top the word 180° point
-                if (point.add(new Point(letterRadius, 0)).subtract(wordPoint).length() > wordRadius) {
+                if (letterPoint.add(new Point(letterRadius, 0)).length() > wordRadius) {
                     anglesOfLetter = anglesOfLetter.reverse();
                 }
 
@@ -217,6 +222,20 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         const {zoomX, zoomY} = svgContext;
 
         this.setState({x: x + deltaX / zoomX, y: y + deltaY / zoomY});
+    };
+    private onDragLetter = (id: string) => (x: number, y: number) => {
+        const letters = this.state.letters.map(letter => {
+            if (letter.id === id) {
+                return {
+                    ...letter,
+                    x,
+                    y,
+                };
+            }
+            return letter;
+        });
+        this.setState({letters});
+        this.calculateAngles();
     };
 
     private onMouseEnter = () => this.setState(() => ({isHovered: true}));
