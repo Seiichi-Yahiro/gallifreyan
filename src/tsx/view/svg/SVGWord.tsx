@@ -53,7 +53,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     }
 
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter} = this;
+        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter, onWheel, onLetterWheel} = this;
         const {selection, select, word} = this.props;
         const isSelected = word.id === selection;
         const {x, y, r, isHovered, isDragging, letters} = this.state;
@@ -72,6 +72,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     x={x}
                     y={y}
                     className={groupClassNames}
+                    onWheel={onWheel}
                 >
                     {wordAngles.length === 0
                         ? <circle r={r}/>
@@ -95,6 +96,7 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                             selection={selection}
                             select={select}
                             onDrag={onDragLetter(letter.id)}
+                            onWheel={onLetterWheel}
                         />
                     ))}
                 </Group>
@@ -241,6 +243,41 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     private onMouseEnter = () => this.setState(() => ({isHovered: true}));
     private onMouseLeave = () => this.setState(() => ({isHovered: false}));
     private onClick = () => this.props.select(this.props.word.id);
+    private onWheel = (event: React.WheelEvent<SVGGElement>) => {
+        const {selection, word} = this.props;
+
+        if (selection === word.id && event.ctrlKey) {
+            const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
+            this.setState(prevState => ({r: prevState.r + wheelDirection}));
+            this.calculateAngles();
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    };
+    private onLetterWheel = (id: string, selection: string) => (event: React.WheelEvent<SVGGElement>) => {
+        if (selection === id && event.ctrlKey) {
+            const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
+
+            this.setState(prevState => ({
+                letters: prevState.letters.map(letter => {
+                    if (letter.id === id) {
+                        return {
+                            ...letter,
+                            r: letter.r + wheelDirection
+                        };
+                    }
+
+                    return letter;
+                })
+            }));
+
+            this.calculateAngles();
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    };
 }
 
 export default SVGWord;

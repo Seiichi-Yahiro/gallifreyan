@@ -30,6 +30,7 @@ interface ISVGLetterProps {
     selection: string;
     select: (id: string) => void;
     onDrag: (x: number, y: number) => void;
+    onWheel: (id: string, selection: string) => (event: React.MouseEvent<SVGGElement>) => void;
 }
 
 interface ISVGLetterState {
@@ -51,7 +52,7 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
     public render() {
 
         const {getPartialCircle, onMouseEnter, onMouseLeave, onClick, draggableWrapper} = this;
-        const {letter, selection} = this.props;
+        const {letter, selection, onWheel} = this.props;
         const {x, y, r, anglesOfLetter, id} = letter;
         const isSelected = id === selection;
         const {isHovered, isDragging} = this.state;
@@ -72,6 +73,7 @@ class SVGLetter extends React.Component<ISVGLetterProps, ISVGLetterState> {
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
                     onClick={onClick}
+                    onWheel={onWheel(id, selection)}
                 >
                     {anglesOfLetter
                         ? getPartialCircle()
