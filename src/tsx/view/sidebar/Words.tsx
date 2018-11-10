@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from '../../component/Button';
 import HorizontalRuler from '../../component/HorizontalRuler';
 import Flex from '../../component/Flex';
-import { IWord } from '../svg/SVGWord';
+import { IWord } from '../svg/Word';
 import { createRef } from 'react';
 import Word from './Word';
 

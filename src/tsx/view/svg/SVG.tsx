@@ -1,10 +1,10 @@
 import * as React from 'react';
-import SVGWord, { IWord } from './SVGWord';
+import Word, { IWord } from './Word';
 import Group from './Group';
 import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
-import { ILetter } from './SVGLetter';
+import { ILetter } from './Letter';
 
 interface ISVGProps {
     words: IWord[];
@@ -62,7 +62,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                                             className="svg-sentence"
                                         />
                                         {words.map((word: IWord) => (
-                                            <SVGWord
+                                            <Word
                                                 key={word.id}
                                                 word={word}
                                                 selection={selection}

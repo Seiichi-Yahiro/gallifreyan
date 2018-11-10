@@ -2,13 +2,13 @@ import * as React from 'react';
 import SVG from './view/svg/SVG';
 import { v4 } from 'uuid';
 import Words from './view/sidebar/Words';
-import { IWord } from './view/svg/SVGWord';
-import { ILetter } from './view/svg/SVGLetter';
+import { IWord } from './view/svg/Word';
+import { ILetter } from './view/svg/Letter';
 import {
     calculateCircleIntersectionAngle,
     calculateCircleIntersectionPoints,
     Point
-} from './view/svg/SVGUtils';
+} from './view/svg/Utils';
 
 interface IAppState {
     words: IWord[];

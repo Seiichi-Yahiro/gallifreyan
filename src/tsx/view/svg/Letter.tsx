@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Group from './Group';
-import { partialCircle } from './SVGUtils';
+import { partialCircle } from './Utils';
 import { createClassName } from '../../component/ComponentUtils';
 import { ISVGContext } from './SVGContext';
 import { DraggableCore, DraggableData } from 'react-draggable';
@@ -26,7 +26,7 @@ export interface ILetter {
     isDragging: boolean;
 }
 
-interface ISVGLetterProps {
+interface ILetterProps {
     letter: ILetter;
     selection: string[];
     select: (letterId: string) => void;
@@ -34,7 +34,7 @@ interface ISVGLetterProps {
     updateLetter: (updateState: (prevLetter: ILetter) => ILetter) => void;
 }
 
-class SVGLetter extends React.Component<ISVGLetterProps> {
+class Letter extends React.Component<ILetterProps> {
     public render() {
         const {
             getPartialCircle,
@@ -146,4 +146,4 @@ class SVGLetter extends React.Component<ISVGLetterProps> {
     private onClick = () => this.props.select(this.props.letter.id);
 }
 
-export default SVGLetter;
+export default Letter;

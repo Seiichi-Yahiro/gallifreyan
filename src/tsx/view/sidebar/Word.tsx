@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IWord } from '../svg/SVGWord';
+import { IWord } from '../svg/Word';
 import XIcon from '../../icon/XIcon';
 import Flex from '../../component/Flex';
 

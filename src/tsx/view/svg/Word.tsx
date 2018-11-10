@@ -4,8 +4,8 @@ import { createClassName } from '../../component/ComponentUtils';
 import { DraggableCore, DraggableData } from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
 import SVGContext, { ISVGContext } from './SVGContext';
-import SVGLetter, { ILetter, LetterGroups } from './SVGLetter';
-import { partialCircle, Point } from './SVGUtils';
+import Letter, { ILetter, LetterGroups } from './Letter';
+import { partialCircle, Point } from './Utils';
 import { v4 } from 'uuid';
 
 export interface IWord {
@@ -20,7 +20,7 @@ export interface IWord {
     isDragging: boolean;
 }
 
-interface ISVGWordProps {
+interface IWordProps {
     word: IWord;
     selection: string[];
     select: (wordId: string[]) => void;
@@ -29,12 +29,12 @@ interface ISVGWordProps {
     calculateAngles: () => void;
 }
 
-class SVGWord extends React.Component<ISVGWordProps> {
+class Word extends React.Component<IWordProps> {
     public componentDidMount() {
         this.initializeLetters();
     }
 
-    public componentDidUpdate(prevProps: ISVGWordProps) {
+    public componentDidUpdate(prevProps: IWordProps) {
         if (prevProps.word.text !== this.props.word.text) {
             this.initializeLetters();
         }
@@ -89,7 +89,7 @@ class SVGWord extends React.Component<ISVGWordProps> {
                     />
 
                     {letters.map((letter: ILetter) => (
-                        <SVGLetter
+                        <Letter
                             letter={letter}
                             key={letter.id}
                             selection={selection}
@@ -237,4 +237,4 @@ class SVGWord extends React.Component<ISVGWordProps> {
     private onClick = () => this.props.select([this.props.word.id]);
 }
 
-export default SVGWord;
+export default Word;
