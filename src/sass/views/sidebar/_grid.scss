@@ -6,8 +6,7 @@
     grid-gap: $gap-size;
     grid-template-columns: 20fr 80fr;
     grid-template-rows: 100%;
-    grid-template-areas:
-        "sidebar svg";
+    grid-template-areas: 'sidebar svg';
 
     &__sidebar {
         grid-area: sidebar;

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Group from './Group';
-import {createClassName} from '../../component/ComponentUtils';
-import {DraggableCore, DraggableData} from 'react-draggable';
+import { createClassName } from '../../component/ComponentUtils';
+import { DraggableCore, DraggableData } from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
-import SVGContext, {ISVGContext} from './SVGContext';
-import SVGLetter, {ILetter, LetterGroups} from './SVGLetter';
-import {partialCircle, Point} from './SVGUtils';
-import {v4} from 'uuid';
+import SVGContext, { ISVGContext } from './SVGContext';
+import SVGLetter, { ILetter, LetterGroups } from './SVGLetter';
+import { partialCircle, Point } from './SVGUtils';
+import { v4 } from 'uuid';
 
 export interface IWord {
     readonly id: string;
@@ -30,7 +30,6 @@ interface ISVGWordProps {
 }
 
 class SVGWord extends React.Component<ISVGWordProps> {
-
     public componentDidMount() {
         this.initializeLetters();
     }
@@ -42,35 +41,44 @@ class SVGWord extends React.Component<ISVGWordProps> {
     }
 
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter, updateLetter} = this;
-        const {selection, select, word} = this.props;
-        const selectLetter = (wordId: string) => (letterId: string) => select([wordId, letterId]);
+        const {
+            draggableWrapper,
+            onMouseEnter,
+            onMouseLeave,
+            onClick,
+            calculateWordAnglePairs,
+            onDragLetter,
+            updateLetter
+        } = this;
+        const { selection, select, word } = this.props;
+        const selectLetter = (wordId: string) => (letterId: string) =>
+            select([wordId, letterId]);
         const isSelected = selection.length === 1 && word.id === selection[0];
-        const {id, x, y, r, isHovered, isDragging, letters} = word;
+        const { id, x, y, r, isHovered, isDragging, letters } = word;
         const wordAngles = calculateWordAnglePairs();
 
-        const groupClassNames = createClassName(
-            'svg-word',
-            {
-                'svg-word--is-selected': isSelected,
-                'svg-word--is-hovered': isHovered,
-                'svg-word--is-dragging': isDragging
-            }
-        );
+        const groupClassNames = createClassName('svg-word', {
+            'svg-word--is-selected': isSelected,
+            'svg-word--is-hovered': isHovered,
+            'svg-word--is-dragging': isDragging
+        });
 
         return (
-            <ConditionalWrapper condition={isSelected} wrapper={draggableWrapper}>
-                <Group
-                    x={x}
-                    y={y}
-                    className={groupClassNames}
-                >
-                    {wordAngles.length === 0
-                        ? <circle r={r}/>
-                        : wordAngles.map(([start, end], index: number) => (
-                            <path d={partialCircle(0, 0, r, start, end)} key={index}/>
+            <ConditionalWrapper
+                condition={isSelected}
+                wrapper={draggableWrapper}
+            >
+                <Group x={x} y={y} className={groupClassNames}>
+                    {wordAngles.length === 0 ? (
+                        <circle r={r} />
+                    ) : (
+                        wordAngles.map(([start, end], index: number) => (
+                            <path
+                                d={partialCircle(0, 0, r, start, end)}
+                                key={index}
+                            />
                         ))
-                    }
+                    )}
 
                     <circle
                         r={r}
@@ -96,7 +104,7 @@ class SVGWord extends React.Component<ISVGWordProps> {
     }
 
     private draggableWrapper = (children: React.ReactNode) => {
-        const {onDragStart, onDragEnd, onDrag} = this;
+        const { onDragStart, onDragEnd, onDrag } = this;
 
         return (
             <SVGContext.Consumer>
@@ -115,24 +123,26 @@ class SVGWord extends React.Component<ISVGWordProps> {
     };
 
     private initializeLetters = () => {
-        const {word, updateLetters, calculateAngles} = this.props;
-        const {r, text} = word;
+        const { word, updateLetters, calculateAngles } = this.props;
+        const { r, text } = word;
         const letters = this.splitWordToLetters(text);
-        const calculatedLetters = letters.map((letter: string, index: number) => {
-            const radians = -(Math.PI * 2) / letters.length;
-            const initialPoint = new Point(0, r);
-            const rotatedPoint = initialPoint.rotate(radians * index);
+        const calculatedLetters = letters.map(
+            (letter: string, index: number) => {
+                const radians = -(Math.PI * 2) / letters.length;
+                const initialPoint = new Point(0, r);
+                const rotatedPoint = initialPoint.rotate(radians * index);
 
-            return {
-                ...rotatedPoint,
-                id: v4(),
-                r: 25,
-                text: letter,
-                angles: [],
-                isHovered: false,
-                isDragging: false
-            } as ILetter;
-        });
+                return {
+                    ...rotatedPoint,
+                    id: v4(),
+                    r: 25,
+                    text: letter,
+                    angles: [],
+                    isHovered: false,
+                    isDragging: false
+                } as ILetter;
+            }
+        );
         updateLetters(() => calculatedLetters);
         calculateAngles();
     };
@@ -141,7 +151,8 @@ class SVGWord extends React.Component<ISVGWordProps> {
         const wordAngles = this.props.word.angles;
         if (wordAngles.length >= 2) {
             wordAngles.push(wordAngles.shift()!);
-            return wordAngles.reduce((acc: number[][], angle: number, index: number) => {
+            return wordAngles
+                .reduce((acc: number[][], angle: number, index: number) => {
                     if (acc.length === Math.floor(index / 2 + 1)) {
                         acc[Math.floor(index / 2)].push(angle);
                     } else {
@@ -150,7 +161,10 @@ class SVGWord extends React.Component<ISVGWordProps> {
 
                     return acc;
                 }, [])
-                .map(([start, end]) => [start < end ? start + 2 * Math.PI : start, end]);
+                .map(([start, end]) => [
+                    start < end ? start + 2 * Math.PI : start,
+                    end
+                ]);
         }
         return [];
     };
@@ -165,26 +179,34 @@ class SVGWord extends React.Component<ISVGWordProps> {
             const found = word.slice(index, index + 2);
             const lastPart = word.slice(index + 2);
 
-            return firstPart.split('').concat(found).concat(this.splitWordToLetters(lastPart));
+            return firstPart
+                .split('')
+                .concat(found)
+                .concat(this.splitWordToLetters(lastPart));
         }
     };
 
-    private updateLetter = (letterId: string) => (updateState: (prevLetter: ILetter) => ILetter) =>
+    private updateLetter = (letterId: string) => (
+        updateState: (prevLetter: ILetter) => ILetter
+    ) =>
         this.props.updateLetters(prevLetters =>
             prevLetters.map(letter =>
-                letter.id === letterId
-                    ? updateState(letter)
-                    : letter
+                letter.id === letterId ? updateState(letter) : letter
             )
         );
 
-    private onDragStart = () => this.props.updateWord(prevWord => ({...prevWord, isDragging: true}));
-    private onDragEnd = () => this.props.updateWord(prevWord => ({...prevWord, isDragging: false}));
-    private onDrag = (svgContext: ISVGContext) => (event: MouseEvent, data: DraggableData) => {
-        const {word, updateWord} = this.props;
-        const {x, y} = word;
-        const {deltaX, deltaY} = data;
-        const {zoomX, zoomY} = svgContext;
+    private onDragStart = () =>
+        this.props.updateWord(prevWord => ({ ...prevWord, isDragging: true }));
+    private onDragEnd = () =>
+        this.props.updateWord(prevWord => ({ ...prevWord, isDragging: false }));
+    private onDrag = (svgContext: ISVGContext) => (
+        event: MouseEvent,
+        data: DraggableData
+    ) => {
+        const { word, updateWord } = this.props;
+        const { x, y } = word;
+        const { deltaX, deltaY } = data;
+        const { zoomX, zoomY } = svgContext;
 
         updateWord(prevWord => ({
             ...prevWord,
@@ -199,7 +221,7 @@ class SVGWord extends React.Component<ISVGWordProps> {
                     return {
                         ...letter,
                         x,
-                        y,
+                        y
                     };
                 }
                 return letter;
@@ -208,8 +230,10 @@ class SVGWord extends React.Component<ISVGWordProps> {
         this.props.calculateAngles();
     };
 
-    private onMouseEnter = () => this.props.updateWord(prevWord => ({...prevWord, isHovered: true}));
-    private onMouseLeave = () => this.props.updateWord(prevWord => ({...prevWord, isHovered: false}));
+    private onMouseEnter = () =>
+        this.props.updateWord(prevWord => ({ ...prevWord, isHovered: true }));
+    private onMouseLeave = () =>
+        this.props.updateWord(prevWord => ({ ...prevWord, isHovered: false }));
     private onClick = () => this.props.select([this.props.word.id]);
 }
 

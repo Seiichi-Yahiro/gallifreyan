@@ -11,8 +11,14 @@ export enum Unit {
     PERCENT = '%'
 }
 
-const Group: React.SFC<IGroupProps> = ({x, y, unit = Unit.PIXEL, children, ...props}) => (
-    <g {...props} style={{transform: `translate(${x}${unit}, ${y}${unit})`}}>
+const Group: React.SFC<IGroupProps> = ({
+    x,
+    y,
+    unit = Unit.PIXEL,
+    children,
+    ...props
+}) => (
+    <g {...props} style={{ transform: `translate(${x}${unit}, ${y}${unit})` }}>
         {children}
     </g>
 );

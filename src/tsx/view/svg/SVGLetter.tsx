@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Group from './Group';
-import {partialCircle} from './SVGUtils';
-import {createClassName} from '../../component/ComponentUtils';
-import {ISVGContext} from './SVGContext';
-import {DraggableCore, DraggableData} from 'react-draggable';
+import { partialCircle } from './SVGUtils';
+import { createClassName } from '../../component/ComponentUtils';
+import { ISVGContext } from './SVGContext';
+import { DraggableCore, DraggableData } from 'react-draggable';
 import SVGContext from './SVGContext';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
 
@@ -12,7 +12,7 @@ export enum LetterGroups {
     SHALLOW_CUT = 'j|k|l|n|p|m',
     INSIDE = 't|sh|r|v|w|s',
     ON_LINE = 'th|y|z|qu|x|ng',
-    DOUBLE_LETTERS = 'ch|sh|th|qu|ng',
+    DOUBLE_LETTERS = 'ch|sh|th|qu|ng'
 }
 
 export interface ILetter {
@@ -35,25 +35,29 @@ interface ISVGLetterProps {
 }
 
 class SVGLetter extends React.Component<ISVGLetterProps> {
-
     public render() {
-
-        const {getPartialCircle, onMouseEnter, onMouseLeave, onClick, draggableWrapper} = this;
-        const {letter, selection} = this.props;
-        const {x, y, r, id, angles, isHovered, isDragging} = letter;
+        const {
+            getPartialCircle,
+            onMouseEnter,
+            onMouseLeave,
+            onClick,
+            draggableWrapper
+        } = this;
+        const { letter, selection } = this.props;
+        const { x, y, r, id, angles, isHovered, isDragging } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
 
-        const groupClassNames = createClassName(
-            'svg-letter',
-            {
-                'svg-letter--is-selected': isSelected,
-                'svg-letter--is-hovered': isHovered,
-                'svg-letter--is-dragging': isDragging
-            }
-        );
+        const groupClassNames = createClassName('svg-letter', {
+            'svg-letter--is-selected': isSelected,
+            'svg-letter--is-hovered': isHovered,
+            'svg-letter--is-dragging': isDragging
+        });
 
         return (
-            <ConditionalWrapper condition={isSelected} wrapper={draggableWrapper}>
+            <ConditionalWrapper
+                condition={isSelected}
+                wrapper={draggableWrapper}
+            >
                 <Group
                     x={x}
                     y={y}
@@ -62,24 +66,34 @@ class SVGLetter extends React.Component<ISVGLetterProps> {
                     onMouseLeave={onMouseLeave}
                     onClick={onClick}
                 >
-                    {angles.length === 0
-                        ? <circle r={r}/>
-                        : getPartialCircle()
-                    }
-
+                    {angles.length === 0 ? (
+                        <circle r={r} />
+                    ) : (
+                        getPartialCircle()
+                    )}
                 </Group>
             </ConditionalWrapper>
         );
     }
 
     private getPartialCircle = () => {
-        const {angles, r} = this.props.letter;
+        const { angles, r } = this.props.letter;
         const [start, end] = angles;
-        return <path d={partialCircle(0, 0, r, start < end ? start + 2 * Math.PI : start, end)}/>;
+        return (
+            <path
+                d={partialCircle(
+                    0,
+                    0,
+                    r,
+                    start < end ? start + 2 * Math.PI : start,
+                    end
+                )}
+            />
+        );
     };
 
     private draggableWrapper = (children: React.ReactNode) => {
-        const {onDragStart, onDragEnd, onDrag} = this;
+        const { onDragStart, onDragEnd, onDrag } = this;
 
         return (
             <SVGContext.Consumer>
@@ -97,24 +111,37 @@ class SVGLetter extends React.Component<ISVGLetterProps> {
         );
     };
 
-    private onDragStart = () => this.props.updateLetter(prevLetter => ({...prevLetter, isDragging: true}));
-    private onDragEnd = () => this.props.updateLetter(prevLetter => ({...prevLetter, isDragging: false}));
-    private onDrag = (svgContext: ISVGContext) => (event: MouseEvent, data: DraggableData) => {
-        const {x, y} = this.props.letter;
-        const {deltaX, deltaY} = data;
-        const {zoomX, zoomY} = svgContext;
+    private onDragStart = () =>
+        this.props.updateLetter(prevLetter => ({
+            ...prevLetter,
+            isDragging: true
+        }));
+    private onDragEnd = () =>
+        this.props.updateLetter(prevLetter => ({
+            ...prevLetter,
+            isDragging: false
+        }));
+    private onDrag = (svgContext: ISVGContext) => (
+        event: MouseEvent,
+        data: DraggableData
+    ) => {
+        const { x, y } = this.props.letter;
+        const { deltaX, deltaY } = data;
+        const { zoomX, zoomY } = svgContext;
         this.props.onDrag(x + deltaX / zoomX, y + deltaY / zoomY);
     };
 
-    private onMouseEnter = (event: React.MouseEvent<SVGGElement>) => this.props.updateLetter(prevLetter => ({
-        ...prevLetter,
-        isHovered: true
-    }));
+    private onMouseEnter = (event: React.MouseEvent<SVGGElement>) =>
+        this.props.updateLetter(prevLetter => ({
+            ...prevLetter,
+            isHovered: true
+        }));
 
-    private onMouseLeave = (event: React.MouseEvent<SVGGElement>) => this.props.updateLetter(prevLetter => ({
-        ...prevLetter,
-        isHovered: false
-    }));
+    private onMouseLeave = (event: React.MouseEvent<SVGGElement>) =>
+        this.props.updateLetter(prevLetter => ({
+            ...prevLetter,
+            isHovered: false
+        }));
 
     private onClick = () => this.props.select(this.props.letter.id);
 }

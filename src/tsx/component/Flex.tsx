@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {createClassName} from './ComponentUtils';
+import { createClassName } from './ComponentUtils';
 
 interface IListProps {
     items?: any[];
@@ -13,16 +13,16 @@ interface IListProps {
 }
 
 const Flex: React.SFC<IListProps> = ({
-                                         items = [],
-                                         generateKey = (item: any, index: number) => index.toString(),
-                                         renderItem = (item: any, index: number) => item,
-                                         isHorizontal = false,
-                                         className = '',
-                                         childClassName = '',
-                                         spaceBetween = false,
-                                         verticalCenter = false,
-                                         children
-                                     }) => {
+    items = [],
+    generateKey = (item: any, index: number) => index.toString(),
+    renderItem = (item: any, index: number) => item,
+    isHorizontal = false,
+    className = '',
+    childClassName = '',
+    spaceBetween = false,
+    verticalCenter = false,
+    children
+}) => {
     const orientation = isHorizontal ? 'horizontal' : 'vertical';
     const wrapperClassNames = createClassName(
         'flex',
@@ -43,13 +43,17 @@ const Flex: React.SFC<IListProps> = ({
     return (
         <div className={wrapperClassNames}>
             {items.map((item: any, index: number) => (
-                <div key={generateKey(item, index)}
-                     className={childClassNames}>{renderItem(item, index)}</div>))}
+                <div key={generateKey(item, index)} className={childClassNames}>
+                    {renderItem(item, index)}
+                </div>
+            ))}
 
             {React.Children.map(children, (child: any, index: number) =>
                 React.cloneElement(child, {
                     key: generateKey(child, index),
-                    className: `${childClassNames} ${child.props ? child.props.className : ''}`
+                    className: `${childClassNames} ${
+                        child.props ? child.props.className : ''
+                    }`
                 })
             )}
         </div>

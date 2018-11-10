@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IWord} from '../svg/SVGWord';
+import { IWord } from '../svg/SVGWord';
 import XIcon from '../../icon/XIcon';
 import Flex from '../../component/Flex';
 
@@ -14,7 +14,6 @@ interface ISidebarWordState {
 }
 
 class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
-
     constructor(props: ISidebarWordProps) {
         super(props);
 
@@ -24,15 +23,27 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
     }
 
     public render() {
-        const {onTextChange, onXIconClick} = this;
-        const {text} = this.state;
+        const { onTextChange, onXIconClick } = this;
+        const { text } = this.state;
 
         return (
             <div>
-                <Flex isHorizontal={true} spaceBetween={true} verticalCenter={true}>
-                    <input type="text" className="text-input" value={text} onChange={onTextChange}/>
-                    <span style={{display: 'contents'}} onClick={onXIconClick}>
-                        <XIcon/>
+                <Flex
+                    isHorizontal={true}
+                    spaceBetween={true}
+                    verticalCenter={true}
+                >
+                    <input
+                        type="text"
+                        className="text-input"
+                        value={text}
+                        onChange={onTextChange}
+                    />
+                    <span
+                        style={{ display: 'contents' }}
+                        onClick={onXIconClick}
+                    >
+                        <XIcon />
                     </span>
                 </Flex>
             </div>
@@ -41,7 +52,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
 
     private onTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const text = event.currentTarget.value;
-        this.setState(() => ({text}));
+        this.setState(() => ({ text }));
 
         this.props.onWordChange(prevWord => ({
             ...prevWord,
@@ -51,6 +62,5 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
 
     private onXIconClick = () => this.props.onWordRemove(this.props.word.id);
 }
-
 
 export default Word;

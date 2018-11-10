@@ -1,13 +1,13 @@
-@import "variables";
-@import "base";
+@import 'variables';
+@import 'base';
 
-@import "views/sidebar/grid";
-@import "views/sidebar/words";
+@import 'views/sidebar/grid';
+@import 'views/sidebar/words';
 
-@import "views/svg/svg-word";
-@import "views/svg/svg-letter";
+@import 'views/svg/svg-word';
+@import 'views/svg/svg-letter';
 
-@import "components/buttons";
-@import "components/horizontal-ruler";
-@import "components/flex";
-@import "components/input";
+@import 'components/buttons';
+@import 'components/horizontal-ruler';
+@import 'components/flex';
+@import 'components/input';

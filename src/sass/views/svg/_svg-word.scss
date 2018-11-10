@@ -4,12 +4,12 @@
     stroke: #000000;
 
     &--is-hovered {
-        stroke: #FF0000;
+        stroke: #ff0000;
         cursor: pointer;
     }
 
     &--is-selected {
-        stroke: #0000FF;
+        stroke: #0000ff;
         cursor: grab;
     }
 

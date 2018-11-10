@@ -9,7 +9,9 @@ export interface IClassNameDictionary {
  * the boolean-value defines if the className should be included e.g. ({'myClass': true})
  * @return {string} - the className
  */
-export const createClassName = (...classNames: Array<string | IClassNameDictionary>) =>
+export const createClassName = (
+    ...classNames: Array<string | IClassNameDictionary>
+) =>
     classNames
         .map(className => {
             if (typeof className === 'object') {
