@@ -5,6 +5,7 @@ import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { ILetter } from './Letter';
+import { createRef } from 'react';
 
 interface ISVGProps {
     words: IWord[];
@@ -22,6 +23,8 @@ interface ISVGProps {
 }
 
 class SVG extends React.Component<ISVGProps, ISVGContext> {
+    private reactSVGPanZoom = createRef<ReactSVGPanZoom>();
+
     constructor(props: ISVGProps) {
         super(props);
 
@@ -30,8 +33,12 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
         };
     }
 
+    public componentDidMount() {
+        setTimeout(() => this.reactSVGPanZoom.current!.fitToViewer());
+    }
+
     public render() {
-        const { onChangeSVGPanZoom, onWheel, deSelect } = this;
+        const { onChangeSVGPanZoom, onWheel, deSelect, reactSVGPanZoom } = this;
         const { zoomX, zoomY } = this.state;
         const {
             words,
@@ -52,6 +59,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                             detectAutoPan={false}
                             toolbarPosition={POSITION_LEFT}
                             onChangeValue={onChangeSVGPanZoom}
+                            ref={reactSVGPanZoom}
                         >
                             <svg width={1010} height={1010}>
                                 <SVGContext.Provider value={{ zoomX, zoomY }}>
