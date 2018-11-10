@@ -58,11 +58,8 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                                     <Group x={505} y={505} onWheel={onWheel}>
                                         <circle
                                             r={500}
-                                            style={{
-                                                stroke: 'black',
-                                                fill: 'transparent'
-                                            }}
                                             onClick={deSelect}
+                                            className="svg-sentence"
                                         />
                                         {words.map((word: IWord) => (
                                             <SVGWord

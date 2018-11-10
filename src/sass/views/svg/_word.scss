@@ -1,7 +1,5 @@
 .svg-word {
-    fill: transparent;
-    stroke-width: 1;
-    stroke: #000000;
+    @extend .svg-sentence;
 
     &--is-hovered {
         stroke: #ff0000;
