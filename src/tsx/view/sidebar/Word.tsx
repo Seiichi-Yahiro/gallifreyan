@@ -5,7 +5,7 @@ import Flex from '../../component/Flex';
 
 interface ISidebarWordProps {
     word: IWord;
-    onWordChange: (updatedWord: IWord) => void;
+    onWordChange: (updateState: (prevWord: IWord) => IWord) => void;
     onWordRemove: (id: string) => void;
 }
 
@@ -43,8 +43,10 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         const text = event.currentTarget.value;
         this.setState(() => ({text}));
 
-        const {id} = this.props.word;
-        this.props.onWordChange({id, text});
+        this.props.onWordChange(prevWord => ({
+            ...prevWord,
+            text
+        }));
     };
 
     private onXIconClick = () => this.props.onWordRemove(this.props.word.id);

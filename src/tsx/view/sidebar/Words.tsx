@@ -9,7 +9,7 @@ import Word from './Word';
 interface IWordsProps {
     words: IWord[];
     addWord: (text: string) => void;
-    updateWord: (updatedWord: IWord) => void;
+    updateWord: (wordId: string) => (updateState: (prevWord: IWord) => IWord) => void;
     removeWord: (id: string) => void;
 }
 
@@ -72,7 +72,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
     private getWordKey = (word: IWord) => word.id;
 
     private renderWord = (word: IWord) => (
-        <Word word={word} onWordChange={this.props.updateWord} onWordRemove={this.props.removeWord}/>);
+        <Word word={word} onWordChange={this.props.updateWord(word.id)} onWordRemove={this.props.removeWord}/>);
 
 }
 

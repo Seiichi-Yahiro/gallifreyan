@@ -4,29 +4,32 @@ import Group from './Group';
 import {AutoSizer} from 'react-virtualized';
 import {POSITION_LEFT, ReactSVGPanZoom, Value} from 'react-svg-pan-zoom';
 import SVGContext, {defaultSVGContext, ISVGContext} from './SVGContext';
+import {ILetter} from './SVGLetter';
 
 interface ISVGProps {
     words: IWord[];
+    selection: string[];
+    addWord: (text: string) => void;
+    updateWord: (wordId: string) => (updateState: (prevWord: IWord) => IWord) => void;
+    removeWord: (wordId: string) => void;
+    select: (path: string[]) => void;
+    updateLetters: (wordId: string) => (updateState: (prevLetters: ILetter[]) => ILetter[]) => void;
+    calculateAngles: (wordId: string) => () => void;
 }
 
-interface ISVGState extends ISVGContext {
-    selected: string;
-}
-
-class SVG extends React.Component<ISVGProps, ISVGState> {
+class SVG extends React.Component<ISVGProps, ISVGContext> {
     constructor(props: ISVGProps) {
         super(props);
 
         this.state = {
             ...defaultSVGContext,
-            selected: '',
         };
     }
 
     public render() {
-        const {select, deselect, onChangeSVGPanZoom} = this;
-        const {words} = this.props;
-        const {selected, zoomX, zoomY} = this.state;
+        const {onChangeSVGPanZoom, onWheel, deSelect} = this;
+        const {zoomX, zoomY} = this.state;
+        const {words, selection, select, updateWord, updateLetters, calculateAngles} = this.props;
 
         return (
             <div className="grid__svg">
@@ -41,13 +44,16 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
                         >
                             <svg width={1010} height={1010}>
                                 <SVGContext.Provider value={{zoomX, zoomY}}>
-                                    <Group x={505} y={505}>
-                                        <circle r={500} style={{stroke:'black',fill:'transparent'}} onClick={deselect} />
+                                    <Group x={505} y={505} onWheel={onWheel}>
+                                        <circle r={500} style={{stroke:'black',fill:'transparent'}} onClick={deSelect} />
                                         {words.map((word: IWord) => (
                                             <SVGWord key={word.id}
                                                      word={word}
-                                                     selection={selected}
+                                                     selection={selection}
                                                      select={select}
+                                                     updateWord={updateWord(word.id)}
+                                                     updateLetters={updateLetters(word.id)}
+                                                     calculateAngles={calculateAngles(word.id)}
                                             />
                                         ))}
                                     </Group>
@@ -60,6 +66,41 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
         );
     }
 
+    private deSelect = () => this.props.select([]);
+
+    private onWheel = (event: React.WheelEvent<SVGGElement>) => {
+        const {words, selection, updateWord, updateLetters, calculateAngles} = this.props;
+
+        if (event.ctrlKey && selection.length > 0) {
+            const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
+            const selectedWord = words.find(word => word.id === selection[0]);
+
+            if (selectedWord) {
+               if (selection.length > 1) {
+                   updateLetters(selectedWord.id)(prevLetters => prevLetters.map(letter => {
+                       if (letter.id === selection[1]) {
+                           return {
+                               ...letter,
+                               r: letter.r + wheelDirection
+                           };
+                       }
+                       return letter;
+                   }));
+
+               } else {
+                   updateWord(selectedWord.id)(prevWord => ({
+                       ...prevWord,
+                       r: prevWord.r + wheelDirection
+                   }));
+               }
+                calculateAngles(selectedWord.id)();
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    };
+
     private onChangeSVGPanZoom = (value: Value) => {
         const {a, b, c, d} = value;
 
@@ -68,9 +109,6 @@ class SVG extends React.Component<ISVGProps, ISVGState> {
             zoomY: Math.sqrt(b * b + d * d)
         });
     };
-
-    private select = (id: string) => this.setState(() => ({selected: id}));
-    private deselect = () => this.select('');
 }
 
 export default SVG;

@@ -1,46 +1,35 @@
 import * as React from 'react';
 import Group from './Group';
-import {classNames} from '../../component/ComponentUtils';
+import {createClassName} from '../../component/ComponentUtils';
 import {DraggableCore, DraggableData} from 'react-draggable';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
 import SVGContext, {ISVGContext} from './SVGContext';
 import SVGLetter, {ILetter, LetterGroups} from './SVGLetter';
-import {calculateCircleIntersectionAngle, calculateCircleIntersectionPoints, partialCircle, Point} from './SVGUtils';
+import {partialCircle, Point} from './SVGUtils';
 import {v4} from 'uuid';
 
 export interface IWord {
     readonly id: string;
     text: string;
+    x: number;
+    y: number;
+    r: number;
+    letters: ILetter[];
+    angles: number[];
+    isHovered: boolean;
+    isDragging: boolean;
 }
 
 interface ISVGWordProps {
     word: IWord;
-    selection: string;
-    select: (id: string) => void;
+    selection: string[];
+    select: (wordId: string[]) => void;
+    updateWord: (updateState: (prevWord: IWord) => IWord) => void;
+    updateLetters: (updateState: (prevLetters: ILetter[]) => ILetter[]) => void;
+    calculateAngles: () => void;
 }
 
-interface ISVGWordState {
-    x: number;
-    y: number;
-    r: number;
-    isHovered: boolean;
-    isDragging: boolean;
-    letters: ILetter[];
-}
-
-class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
-    constructor(props: ISVGWordProps) {
-        super(props);
-
-        this.state = {
-            x: 0,
-            y: 0,
-            r: 50,
-            isHovered: false,
-            isDragging: false,
-            letters: [],
-        };
-    }
+class SVGWord extends React.Component<ISVGWordProps> {
 
     public componentDidMount() {
         this.initializeLetters();
@@ -53,18 +42,21 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     }
 
     public render() {
-        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter, onWheel, onLetterWheel} = this;
+        const {draggableWrapper, onMouseEnter, onMouseLeave, onClick, calculateWordAnglePairs, onDragLetter, updateLetter} = this;
         const {selection, select, word} = this.props;
-        const isSelected = word.id === selection;
-        const {x, y, r, isHovered, isDragging, letters} = this.state;
+        const selectLetter = (wordId: string) => (letterId: string) => select([wordId, letterId]);
+        const isSelected = selection.length === 1 && word.id === selection[0];
+        const {id, x, y, r, isHovered, isDragging, letters} = word;
         const wordAngles = calculateWordAnglePairs();
 
-        const groupClassNames = classNames([
+        const groupClassNames = createClassName(
             'svg-word',
-            isSelected ? 'svg-word--is-selected' : '',
-            isHovered ? 'svg-word--is-hovered' : '',
-            isDragging ? 'svg-word--is-dragging' : '',
-        ]);
+            {
+                'svg-word--is-selected': isSelected,
+                'svg-word--is-hovered': isHovered,
+                'svg-word--is-dragging': isDragging
+            }
+        );
 
         return (
             <ConditionalWrapper condition={isSelected} wrapper={draggableWrapper}>
@@ -72,7 +64,6 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                     x={x}
                     y={y}
                     className={groupClassNames}
-                    onWheel={onWheel}
                 >
                     {wordAngles.length === 0
                         ? <circle r={r}/>
@@ -94,9 +85,9 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                             letter={letter}
                             key={letter.id}
                             selection={selection}
-                            select={select}
+                            select={selectLetter(id)}
                             onDrag={onDragLetter(letter.id)}
-                            onWheel={onLetterWheel}
+                            updateLetter={updateLetter(letter.id)}
                         />
                     ))}
                 </Group>
@@ -124,9 +115,9 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
     };
 
     private initializeLetters = () => {
-        const {word} = this.props;
-        const {r} = this.state;
-        const letters = this.splitWordToLetters(word.text);
+        const {word, updateLetters, calculateAngles} = this.props;
+        const {r, text} = word;
+        const letters = this.splitWordToLetters(text);
         const calculatedLetters = letters.map((letter: string, index: number) => {
             const radians = -(Math.PI * 2) / letters.length;
             const initialPoint = new Point(0, r);
@@ -137,69 +128,31 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
                 id: v4(),
                 r: 25,
                 text: letter,
+                angles: [],
+                isHovered: false,
+                isDragging: false
             } as ILetter;
         });
-        this.setState({letters: calculatedLetters});
-        this.calculateAngles();
+        updateLetters(() => calculatedLetters);
+        calculateAngles();
     };
 
-    private calculateAngles = () => this.setState((prevState: ISVGWordState) => {
-        const {r: wordRadius} = prevState;
-
-        const letters = prevState.letters.map(letter => {
-            const letterPoint = new Point(letter.x, letter.y);
-            const letterRadius = letter.r;
-
-            const intersections = calculateCircleIntersectionPoints(wordRadius, letterRadius, letterPoint);
-            if (intersections.length !== 0) {
-                let anglesOfWord = intersections
-                    .map(p => calculateCircleIntersectionAngle(p, wordRadius))
-                    .sort();
-
-                // if letter circle is not on top the word 0° point
-                if (new Point(wordRadius, 0).subtract(letterPoint).length() > letterRadius) {
-                    anglesOfWord = anglesOfWord.reverse();
-                }
-
-                let anglesOfLetter = intersections
-                    .map(p => p.subtract(letterPoint))
-                    .map(p => calculateCircleIntersectionAngle(p, letterRadius))
-                    .sort();
-
-                // if letter circle is not on top the word 180° point
-                if (letterPoint.add(new Point(letterRadius, 0)).length() > wordRadius) {
-                    anglesOfLetter = anglesOfLetter.reverse();
-                }
-
-                return {
-                    ...letter,
-                    anglesOfWord,
-                    anglesOfLetter
-                } as ILetter;
-            }
-
-            return letter;
-        });
-
-        return {letters};
-    });
-
     private calculateWordAnglePairs = () => {
-        const wordAngles = this.state.letters
-            .map(letter => letter.anglesOfWord!)
-            .filter(anglesOfWord => !!anglesOfWord)
-            .reduce((a: number[], b: number[]) => a.concat(b), []);
-        return [...wordAngles.slice(1), ...wordAngles.slice(0, 1)]
-            .reduce((acc: number[][], angle: number, index: number) => {
-                if (acc.length === Math.floor(index / 2 + 1)) {
-                    acc[Math.floor(index / 2)].push(angle);
-                } else {
-                    acc.push([angle]);
-                }
+        const wordAngles = this.props.word.angles;
+        if (wordAngles.length >= 2) {
+            wordAngles.push(wordAngles.shift()!);
+            return wordAngles.reduce((acc: number[][], angle: number, index: number) => {
+                    if (acc.length === Math.floor(index / 2 + 1)) {
+                        acc[Math.floor(index / 2)].push(angle);
+                    } else {
+                        acc.push([angle]);
+                    }
 
-                return acc;
-            }, [])
-            .map(([start, end]) => [start < end ? start + 2 * Math.PI : start, end]);
+                    return acc;
+                }, [])
+                .map(([start, end]) => [start < end ? start + 2 * Math.PI : start, end]);
+        }
+        return [];
     };
 
     private splitWordToLetters = (word: string): string[] => {
@@ -216,68 +169,48 @@ class SVGWord extends React.Component<ISVGWordProps, ISVGWordState> {
         }
     };
 
-    private onDragStart = () => this.setState({isDragging: true});
-    private onDragEnd = () => this.setState({isDragging: false});
+    private updateLetter = (letterId: string) => (updateState: (prevLetter: ILetter) => ILetter) =>
+        this.props.updateLetters(prevLetters =>
+            prevLetters.map(letter =>
+                letter.id === letterId
+                    ? updateState(letter)
+                    : letter
+            )
+        );
+
+    private onDragStart = () => this.props.updateWord(prevWord => ({...prevWord, isDragging: true}));
+    private onDragEnd = () => this.props.updateWord(prevWord => ({...prevWord, isDragging: false}));
     private onDrag = (svgContext: ISVGContext) => (event: MouseEvent, data: DraggableData) => {
-        const {x, y} = this.state;
+        const {word, updateWord} = this.props;
+        const {x, y} = word;
         const {deltaX, deltaY} = data;
         const {zoomX, zoomY} = svgContext;
 
-        this.setState({x: x + deltaX / zoomX, y: y + deltaY / zoomY});
+        updateWord(prevWord => ({
+            ...prevWord,
+            x: x + deltaX / zoomX,
+            y: y + deltaY / zoomY
+        }));
     };
     private onDragLetter = (id: string) => (x: number, y: number) => {
-        const letters = this.state.letters.map(letter => {
-            if (letter.id === id) {
-                return {
-                    ...letter,
-                    x,
-                    y,
-                };
-            }
-            return letter;
-        });
-        this.setState({letters});
-        this.calculateAngles();
+        this.props.updateLetters(prevLetters =>
+            prevLetters.map(letter => {
+                if (letter.id === id) {
+                    return {
+                        ...letter,
+                        x,
+                        y,
+                    };
+                }
+                return letter;
+            })
+        );
+        this.props.calculateAngles();
     };
 
-    private onMouseEnter = () => this.setState(() => ({isHovered: true}));
-    private onMouseLeave = () => this.setState(() => ({isHovered: false}));
-    private onClick = () => this.props.select(this.props.word.id);
-    private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const {selection, word} = this.props;
-
-        if (selection === word.id && event.ctrlKey) {
-            const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
-            this.setState(prevState => ({r: prevState.r + wheelDirection}));
-            this.calculateAngles();
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    };
-    private onLetterWheel = (id: string, selection: string) => (event: React.WheelEvent<SVGGElement>) => {
-        if (selection === id && event.ctrlKey) {
-            const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
-
-            this.setState(prevState => ({
-                letters: prevState.letters.map(letter => {
-                    if (letter.id === id) {
-                        return {
-                            ...letter,
-                            r: letter.r + wheelDirection
-                        };
-                    }
-
-                    return letter;
-                })
-            }));
-
-            this.calculateAngles();
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    };
+    private onMouseEnter = () => this.props.updateWord(prevWord => ({...prevWord, isHovered: true}));
+    private onMouseLeave = () => this.props.updateWord(prevWord => ({...prevWord, isHovered: false}));
+    private onClick = () => this.props.select([this.props.word.id]);
 }
 
 export default SVGWord;
