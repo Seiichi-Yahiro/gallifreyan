@@ -135,53 +135,46 @@ class App extends React.Component<{}, IAppState> {
                             letterPoint
                         );
 
-                        if (intersections.length !== 0) {
-                            let anglesOfWord = intersections
-                                .map(p =>
-                                    calculateCircleIntersectionAngle(
-                                        p,
-                                        wordRadius
-                                    )
-                                )
-                                .sort();
+                        let anglesOfWord = intersections
+                            .map(p =>
+                                calculateCircleIntersectionAngle(p, wordRadius)
+                            )
+                            .sort();
 
-                            // if letter circle is not on top the word 0° point
-                            if (
-                                new Point(wordRadius, 0)
-                                    .subtract(letterPoint)
-                                    .length() > letterRadius
-                            ) {
-                                anglesOfWord = anglesOfWord.reverse();
-                            }
-
-                            wordAngles.push(...anglesOfWord);
-
-                            let anglesOfLetter = intersections
-                                .map(p => p.subtract(letterPoint))
-                                .map(p =>
-                                    calculateCircleIntersectionAngle(
-                                        p,
-                                        letterRadius
-                                    )
-                                )
-                                .sort();
-
-                            // if letter circle is not on top the word 180° point
-                            if (
-                                letterPoint
-                                    .add(new Point(letterRadius, 0))
-                                    .length() > wordRadius
-                            ) {
-                                anglesOfLetter = anglesOfLetter.reverse();
-                            }
-
-                            return {
-                                ...letter,
-                                angles: anglesOfLetter
-                            };
+                        // if letter circle is not on top the word 0° point
+                        if (
+                            new Point(wordRadius, 0)
+                                .subtract(letterPoint)
+                                .length() > letterRadius
+                        ) {
+                            anglesOfWord = anglesOfWord.reverse();
                         }
 
-                        return letter;
+                        wordAngles.push(...anglesOfWord);
+
+                        let anglesOfLetter = intersections
+                            .map(p => p.subtract(letterPoint))
+                            .map(p =>
+                                calculateCircleIntersectionAngle(
+                                    p,
+                                    letterRadius
+                                )
+                            )
+                            .sort();
+
+                        // if letter circle is not on top the word 180° point
+                        if (
+                            letterPoint
+                                .add(new Point(letterRadius, 0))
+                                .length() > wordRadius
+                        ) {
+                            anglesOfLetter = anglesOfLetter.reverse();
+                        }
+
+                        return {
+                            ...letter,
+                            angles: anglesOfLetter
+                        };
                     });
 
                     return {
