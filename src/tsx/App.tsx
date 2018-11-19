@@ -1,17 +1,18 @@
 import * as React from 'react';
-import SVG from './view/svg/SVG';
+import SVG, { SVGItem } from './view/svg/SVG';
 import { v4 } from 'uuid';
 import Words from './view/sidebar/Words';
 import { IWord } from './view/svg/Word';
-import { ILetter } from './view/svg/Letter';
 import {
     calculateCircleIntersectionAngle,
     calculateCircleIntersectionPoints,
-    Point
+    getSVGItem,
+    Point,
+    updateSVGItem
 } from './view/svg/Utils';
 
-interface IAppState {
-    words: IWord[];
+export interface IAppState {
+    children: IWord[];
     selection: string[];
 }
 
@@ -20,7 +21,7 @@ class App extends React.Component<{}, IAppState> {
         super(props);
 
         this.state = {
-            words: [],
+            children: [],
             selection: []
         };
     }
@@ -28,30 +29,28 @@ class App extends React.Component<{}, IAppState> {
     public render() {
         const {
             addWord,
-            updateWord,
             removeWord,
             select,
-            updateLetters,
-            calculateAngles
+            calculateAngles,
+            updateSVGItems
         } = this;
-        const { words, selection } = this.state;
+        const { children: words, selection } = this.state;
 
         return (
             <div className="grid">
                 <Words
                     words={words}
                     addWord={addWord}
-                    updateWord={updateWord}
+                    updateSVGItems={updateSVGItems}
                     removeWord={removeWord}
                 />
                 <SVG
                     words={words}
                     selection={selection}
+                    updateSVGItems={updateSVGItems}
                     addWord={addWord}
-                    updateWord={updateWord}
                     removeWord={removeWord}
                     select={select}
-                    updateLetters={updateLetters}
                     calculateAngles={calculateAngles}
                 />
             </div>
@@ -67,66 +66,46 @@ class App extends React.Component<{}, IAppState> {
             r: 50,
             isHovered: false,
             isDragging: false,
-            letters: [],
+            children: [],
             angles: []
         };
 
         this.setState((prevState: IAppState) => ({
-            words: [...prevState.words, newWord]
+            children: [...prevState.children, newWord]
         }));
     };
 
-    public updateWord = (wordId: string) => (
-        updateState: (prevWord: IWord) => IWord
+    public updateSVGItems = (
+        path: string[],
+        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
     ) =>
-        this.setState((prevState: IAppState) => {
-            const foundWord = prevState.words.filter(
-                word => word.id === wordId
-            );
-            if (foundWord.length !== 0) {
-                const prevWord = foundWord[0];
-                const updatedWord = updateState(prevWord);
-                return {
-                    words: prevState.words.map(word =>
-                        word.id === updatedWord.id ? updatedWord : word
-                    )
-                };
-            }
-            return { words: prevState.words };
+        this.setState(prevState => {
+            const prevItem = getSVGItem(path, prevState.children);
+            const updatedItem = update(prevItem, prevState);
+
+            return {
+                children: updateSVGItem(path, updatedItem, prevState.children)
+            };
         });
 
     public removeWord = (wordId: string) =>
         this.setState((prevState: IAppState) => ({
-            words: prevState.words.filter((word: IWord) => word.id !== wordId)
+            children: prevState.children.filter(
+                (word: IWord) => word.id !== wordId
+            )
         }));
 
     public select = (path: string[]) =>
         this.setState(() => ({ selection: path }));
 
-    public updateLetters = (wordId: string) => (
-        updateState: (prevLetters: ILetter[]) => ILetter[]
-    ) =>
-        this.setState(prevState => ({
-            words: prevState.words.map(word => {
-                if (word.id === wordId) {
-                    return {
-                        ...word,
-                        letters: updateState(word.letters)
-                    };
-                }
-
-                return word;
-            })
-        }));
-
     public calculateAngles = (wordId: string) => () =>
         this.setState(prevState => ({
-            words: prevState.words.map(word => {
+            children: prevState.children.map(word => {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
                     const wordAngles: number[] = [];
 
-                    const letters = word.letters.map(letter => {
+                    const letters = word.children.map(letter => {
                         const letterPoint = new Point(letter.x, letter.y);
                         const letterRadius = letter.r;
                         const intersections = calculateCircleIntersectionPoints(
@@ -179,7 +158,7 @@ class App extends React.Component<{}, IAppState> {
 
                     return {
                         ...word,
-                        letters,
+                        children: letters,
                         angles: wordAngles
                     };
                 }

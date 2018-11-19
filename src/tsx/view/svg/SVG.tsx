@@ -6,19 +6,31 @@ import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { ILetter } from './Letter';
 import { createRef } from 'react';
+import { IAppState } from '../../App';
+
+export interface ISVGBaseItem {
+    readonly id: string;
+    text: string;
+    x: number;
+    y: number;
+    r: number;
+    isHovered: boolean;
+    isDragging: boolean;
+    children: Array<IWord | ILetter>;
+}
+
+export type SVGItem = IWord | ILetter;
 
 interface ISVGProps {
     words: IWord[];
     selection: string[];
     addWord: (text: string) => void;
-    updateWord: (
-        wordId: string
-    ) => (updateState: (prevWord: IWord) => IWord) => void;
+    updateSVGItems: (
+        path: string[],
+        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
+    ) => void;
     removeWord: (wordId: string) => void;
     select: (path: string[]) => void;
-    updateLetters: (
-        wordId: string
-    ) => (updateState: (prevLetters: ILetter[]) => ILetter[]) => void;
     calculateAngles: (wordId: string) => () => void;
 }
 
@@ -44,9 +56,8 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
             words,
             selection,
             select,
-            updateWord,
-            updateLetters,
-            calculateAngles
+            calculateAngles,
+            updateSVGItems
         } = this.props;
 
         return (
@@ -75,10 +86,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                                                 word={word}
                                                 selection={selection}
                                                 select={select}
-                                                updateWord={updateWord(word.id)}
-                                                updateLetters={updateLetters(
-                                                    word.id
-                                                )}
+                                                updateSVGItems={updateSVGItems}
                                                 calculateAngles={calculateAngles(
                                                     word.id
                                                 )}
@@ -97,39 +105,17 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
     private deSelect = () => this.props.select([]);
 
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const {
-            words,
-            selection,
-            updateWord,
-            updateLetters,
-            calculateAngles
-        } = this.props;
+        const { selection, calculateAngles, updateSVGItems } = this.props;
 
         if (event.ctrlKey && selection.length > 0) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
-            const selectedWord = words.find(word => word.id === selection[0]);
 
-            if (selectedWord) {
-                if (selection.length > 1) {
-                    updateLetters(selectedWord.id)(prevLetters =>
-                        prevLetters.map(letter => {
-                            if (letter.id === selection[1]) {
-                                return {
-                                    ...letter,
-                                    r: letter.r + wheelDirection
-                                };
-                            }
-                            return letter;
-                        })
-                    );
-                } else {
-                    updateWord(selectedWord.id)(prevWord => ({
-                        ...prevWord,
-                        r: prevWord.r + wheelDirection
-                    }));
-                }
-                calculateAngles(selectedWord.id)();
-            }
+            updateSVGItems(selection, prevItem => ({
+                ...prevItem,
+                r: prevItem.r + wheelDirection
+            }));
+
+            calculateAngles(selection[0])();
 
             event.preventDefault();
             event.stopPropagation();

@@ -2,10 +2,15 @@ import * as React from 'react';
 import { IWord } from '../svg/Word';
 import XIcon from '../../icon/XIcon';
 import Flex from '../../component/Flex';
+import { IAppState } from '../../App';
+import { SVGItem } from '../svg/SVG';
 
 interface ISidebarWordProps {
     word: IWord;
-    onWordChange: (updateState: (prevWord: IWord) => IWord) => void;
+    updateSVGItems: (
+        path: string[],
+        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
+    ) => void;
     onWordRemove: (id: string) => void;
 }
 
@@ -54,8 +59,10 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         const text = event.currentTarget.value;
         this.setState(() => ({ text }));
 
-        this.props.onWordChange(prevWord => ({
-            ...prevWord,
+        const { word, updateSVGItems } = this.props;
+
+        updateSVGItems([word.id], prevItem => ({
+            ...prevItem,
             text
         }));
     };

@@ -1,3 +1,5 @@
+import { SVGItem } from './SVG';
+
 /**
  * Get svg path of a partial circle
  * 0 Radians is on the right
@@ -146,4 +148,48 @@ export const calculateCircleIntersectionAngle = (
     }
 
     return angle;
+};
+
+export const getSVGItem = (path: string[], children: SVGItem[]): SVGItem => {
+    if (path.length === 0) {
+        throw new Error('Path cannot be empty');
+    } else if (path.length === 1) {
+        return children.find(child => child.id === path[0])!;
+    } else {
+        const svgItem = children.find(child => child.id === path[0])!;
+        return getSVGItem(path.slice(1), svgItem.children);
+    }
+};
+
+export const updateSVGItem = (
+    path: string[],
+    newSvgItem: SVGItem,
+    children: SVGItem[]
+): SVGItem[] => {
+    if (path.length === 0) {
+        return children;
+    } else if (path.length === 1) {
+        return children.map(child => {
+            if (child.id === path[0]) {
+                return newSvgItem;
+            }
+
+            return child;
+        });
+    } else {
+        return children.map(child => {
+            if (child.id === path[0]) {
+                return {
+                    ...child,
+                    children: updateSVGItem(
+                        path.slice(1),
+                        newSvgItem,
+                        child.children
+                    )
+                };
+            }
+
+            return child;
+        });
+    }
 };

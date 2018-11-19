@@ -5,13 +5,16 @@ import Flex from '../../component/Flex';
 import { IWord } from '../svg/Word';
 import { createRef } from 'react';
 import Word from './Word';
+import { IAppState } from '../../App';
+import { SVGItem } from '../svg/SVG';
 
 interface IWordsProps {
     words: IWord[];
     addWord: (text: string) => void;
-    updateWord: (
-        wordId: string
-    ) => (updateState: (prevWord: IWord) => IWord) => void;
+    updateSVGItems: (
+        path: string[],
+        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
+    ) => void;
     removeWord: (id: string) => void;
 }
 
@@ -97,7 +100,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
     private renderWord = (word: IWord) => (
         <Word
             word={word}
-            onWordChange={this.props.updateWord(word.id)}
+            updateSVGItems={this.props.updateSVGItems}
             onWordRemove={this.props.removeWord}
         />
     );

@@ -7,25 +7,22 @@ import SVGContext, { ISVGContext } from './SVGContext';
 import Letter, { ILetter, LetterGroups } from './Letter';
 import { partialCircle, Point } from './Utils';
 import { v4 } from 'uuid';
+import { ISVGBaseItem, SVGItem } from './SVG';
+import { IAppState } from '../../App';
 
-export interface IWord {
-    readonly id: string;
-    text: string;
-    x: number;
-    y: number;
-    r: number;
-    letters: ILetter[];
+export interface IWord extends ISVGBaseItem {
+    children: ILetter[];
     angles: number[];
-    isHovered: boolean;
-    isDragging: boolean;
 }
 
 interface IWordProps {
     word: IWord;
     selection: string[];
-    select: (wordId: string[]) => void;
-    updateWord: (updateState: (prevWord: IWord) => IWord) => void;
-    updateLetters: (updateState: (prevLetters: ILetter[]) => ILetter[]) => void;
+    select: (path: string[]) => void;
+    updateSVGItems: (
+        path: string[],
+        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
+    ) => void;
     calculateAngles: () => void;
 }
 
@@ -46,15 +43,17 @@ class Word extends React.Component<IWordProps> {
             onMouseEnter,
             onMouseLeave,
             onClick,
-            calculateWordAnglePairs,
-            onDragLetter,
-            updateLetter
+            calculateWordAnglePairs
         } = this;
-        const { selection, select, word } = this.props;
-        const selectLetter = (wordId: string) => (letterId: string) =>
-            select([wordId, letterId]);
+        const {
+            selection,
+            select,
+            word,
+            updateSVGItems,
+            calculateAngles
+        } = this.props;
         const isSelected = selection.length === 1 && word.id === selection[0];
-        const { id, x, y, r, isHovered, isDragging, letters } = word;
+        const { id, x, y, r, isHovered, isDragging, children: letters } = word;
         const wordAngles = calculateWordAnglePairs();
 
         const groupClassNames = createClassName('svg-word', {
@@ -90,12 +89,13 @@ class Word extends React.Component<IWordProps> {
 
                     {letters.map((letter: ILetter) => (
                         <Letter
+                            parent={id}
                             letter={letter}
+                            updateSVGItems={updateSVGItems}
+                            calculateAngles={calculateAngles}
                             key={letter.id}
                             selection={selection}
-                            select={selectLetter(id)}
-                            onDrag={onDragLetter(letter.id)}
-                            updateLetter={updateLetter(letter.id)}
+                            select={select}
                         />
                     ))}
                 </Group>
@@ -123,8 +123,8 @@ class Word extends React.Component<IWordProps> {
     };
 
     private initializeLetters = () => {
-        const { word, updateLetters, calculateAngles } = this.props;
-        const { r, text } = word;
+        const { word, calculateAngles, updateSVGItems } = this.props;
+        const { r, text, id } = word;
         const letters = this.splitWordToLetters(text);
         const calculatedLetters = letters.map(
             (letter: string, index: number) => {
@@ -139,11 +139,17 @@ class Word extends React.Component<IWordProps> {
                     text: letter,
                     angles: [],
                     isHovered: false,
-                    isDragging: false
+                    isDragging: false,
+                    children: []
                 } as ILetter;
             }
         );
-        updateLetters(() => calculatedLetters);
+
+        updateSVGItems([id], prevItem => ({
+            ...prevItem,
+            children: calculatedLetters
+        }));
+
         calculateAngles();
     };
 
@@ -186,54 +192,46 @@ class Word extends React.Component<IWordProps> {
         }
     };
 
-    private updateLetter = (letterId: string) => (
-        updateState: (prevLetter: ILetter) => ILetter
-    ) =>
-        this.props.updateLetters(prevLetters =>
-            prevLetters.map(letter =>
-                letter.id === letterId ? updateState(letter) : letter
-            )
-        );
-
     private onDragStart = () =>
-        this.props.updateWord(prevWord => ({ ...prevWord, isDragging: true }));
+        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+            ...prevItem,
+            isDragging: true
+        }));
+
     private onDragEnd = () =>
-        this.props.updateWord(prevWord => ({ ...prevWord, isDragging: false }));
+        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+            ...prevItem,
+            isDragging: false
+        }));
+
     private onDrag = (svgContext: ISVGContext) => (
         event: MouseEvent,
         data: DraggableData
     ) => {
-        const { word, updateWord } = this.props;
-        const { x, y } = word;
+        const { word, updateSVGItems } = this.props;
+        const { x, y, id } = word;
         const { deltaX, deltaY } = data;
         const { zoomX, zoomY } = svgContext;
 
-        updateWord(prevWord => ({
-            ...prevWord,
+        updateSVGItems([id], prevItem => ({
+            ...prevItem,
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
     };
-    private onDragLetter = (id: string) => (x: number, y: number) => {
-        this.props.updateLetters(prevLetters =>
-            prevLetters.map(letter => {
-                if (letter.id === id) {
-                    return {
-                        ...letter,
-                        x,
-                        y
-                    };
-                }
-                return letter;
-            })
-        );
-        this.props.calculateAngles();
-    };
 
     private onMouseEnter = () =>
-        this.props.updateWord(prevWord => ({ ...prevWord, isHovered: true }));
+        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+            ...prevItem,
+            isHovered: true
+        }));
+
     private onMouseLeave = () =>
-        this.props.updateWord(prevWord => ({ ...prevWord, isHovered: false }));
+        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+            ...prevItem,
+            isHovered: false
+        }));
+
     private onClick = () => this.props.select([this.props.word.id]);
 }
 
