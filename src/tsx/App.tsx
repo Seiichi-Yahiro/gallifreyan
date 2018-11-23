@@ -12,6 +12,11 @@ import {
 } from './view/svg/Utils';
 import { ILetter } from './view/svg/Letter';
 
+export type UpdateSVGItems = <T extends SVGItem>(
+    path: string[],
+    update: (prevItem: T, prevState: IAppState) => T
+) => void;
+
 export interface IAppState {
     children: IWord[];
     selection: string[];
@@ -76,16 +81,20 @@ class App extends React.Component<{}, IAppState> {
         }));
     };
 
-    public updateSVGItems = (
+    public updateSVGItems: UpdateSVGItems = <T extends SVGItem>(
         path: string[],
-        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
+        update: (prevItem: T, prevState: IAppState) => T
     ) =>
         this.setState(prevState => {
-            const prevItem = getSVGItem(path, prevState.children);
+            const prevItem = getSVGItem(path, prevState.children) as T;
             const updatedItem = update(prevItem, prevState);
 
             return {
-                children: updateSVGItem(path, updatedItem, prevState.children)
+                children: updateSVGItem(
+                    path,
+                    updatedItem,
+                    prevState.children
+                ) as IWord[]
             };
         });
 

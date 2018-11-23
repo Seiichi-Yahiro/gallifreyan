@@ -7,10 +7,11 @@ import SVGContext, { ISVGContext } from './SVGContext';
 import Letter, { ILetter, LetterGroups } from './Letter';
 import { partialCircle, Point } from './Utils';
 import { v4 } from 'uuid';
-import { ISVGBaseItem, SVGItem } from './SVG';
-import { IAppState } from '../../App';
+import { ISVGCircleItem } from './SVG';
+import { UpdateSVGItems } from '../../App';
 
-export interface IWord extends ISVGBaseItem {
+export interface IWord extends ISVGCircleItem {
+    text: string;
     children: ILetter[];
     angles: number[];
 }
@@ -19,10 +20,7 @@ interface IWordProps {
     word: IWord;
     selection: string[];
     select: (path: string[]) => void;
-    updateSVGItems: (
-        path: string[],
-        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
-    ) => void;
+    updateSVGItems: UpdateSVGItems;
     calculateAngles: () => void;
 }
 
@@ -145,7 +143,7 @@ class Word extends React.Component<IWordProps> {
             }
         );
 
-        updateSVGItems([id], prevItem => ({
+        updateSVGItems<IWord>([id], prevItem => ({
             ...prevItem,
             children: calculatedLetters
         }));
@@ -193,13 +191,13 @@ class Word extends React.Component<IWordProps> {
     };
 
     private onDragStart = () =>
-        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
             isDragging: true
         }));
 
     private onDragEnd = () =>
-        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
             isDragging: false
         }));
@@ -213,7 +211,7 @@ class Word extends React.Component<IWordProps> {
         const { deltaX, deltaY } = data;
         const { zoomX, zoomY } = svgContext;
 
-        updateSVGItems([id], prevItem => ({
+        updateSVGItems<IWord>([id], prevItem => ({
             ...prevItem,
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
@@ -221,13 +219,13 @@ class Word extends React.Component<IWordProps> {
     };
 
     private onMouseEnter = () =>
-        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
             isHovered: true
         }));
 
     private onMouseLeave = () =>
-        this.props.updateSVGItems([this.props.word.id], prevItem => ({
+        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
             isHovered: false
         }));

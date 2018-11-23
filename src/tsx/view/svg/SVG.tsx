@@ -6,29 +6,29 @@ import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { ILetter } from './Letter';
 import { createRef } from 'react';
-import { IAppState } from '../../App';
+import { UpdateSVGItems } from '../../App';
+import { IDot } from './Dot';
 
 export interface ISVGBaseItem {
     readonly id: string;
-    text: string;
+    isHovered: boolean;
+    isDragging: boolean;
+    children?: SVGItem[];
+}
+
+export interface ISVGCircleItem extends ISVGBaseItem {
     x: number;
     y: number;
     r: number;
-    isHovered: boolean;
-    isDragging: boolean;
-    children: Array<IWord | ILetter>;
 }
 
-export type SVGItem = IWord | ILetter;
+export type SVGItem = IWord | ILetter | IDot;
 
 interface ISVGProps {
     words: IWord[];
     selection: string[];
     addWord: (text: string) => void;
-    updateSVGItems: (
-        path: string[],
-        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
-    ) => void;
+    updateSVGItems: UpdateSVGItems;
     removeWord: (wordId: string) => void;
     select: (path: string[]) => void;
     calculateAngles: (wordId: string) => () => void;
@@ -110,7 +110,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
         if (event.ctrlKey && selection.length > 0) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
 
-            updateSVGItems(selection, prevItem => ({
+            updateSVGItems<IWord | ILetter>(selection, prevItem => ({
                 ...prevItem,
                 r: prevItem.r + wheelDirection
             }));

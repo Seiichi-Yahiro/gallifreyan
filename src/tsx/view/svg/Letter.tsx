@@ -6,8 +6,9 @@ import { ISVGContext } from './SVGContext';
 import { DraggableCore, DraggableData } from 'react-draggable';
 import SVGContext from './SVGContext';
 import ConditionalWrapper from '../../component/ConditionalWrapper';
-import { ISVGBaseItem, SVGItem } from './SVG';
-import { IAppState } from '../../App';
+import { ISVGCircleItem } from './SVG';
+import { UpdateSVGItems } from '../../App';
+import { IDot } from './Dot';
 
 export enum LetterGroups {
     DEEP_CUT = 'b|ch|d|h|f',
@@ -17,8 +18,10 @@ export enum LetterGroups {
     DOUBLE_LETTERS = 'ch|sh|th|qu|ng'
 }
 
-export interface ILetter extends ISVGBaseItem {
+export interface ILetter extends ISVGCircleItem {
+    text: string;
     angles: number[];
+    children: IDot[];
 }
 
 interface ILetterProps {
@@ -26,10 +29,7 @@ interface ILetterProps {
     letter: ILetter;
     selection: string[];
     select: (path: string[]) => void;
-    updateSVGItems: (
-        path: string[],
-        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
-    ) => void;
+    updateSVGItems: UpdateSVGItems;
     calculateAngles: () => void;
 }
 
@@ -112,7 +112,7 @@ class Letter extends React.Component<ILetterProps> {
     };
 
     private onDragStart = () =>
-        this.props.updateSVGItems(
+        this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,
@@ -121,7 +121,7 @@ class Letter extends React.Component<ILetterProps> {
         );
 
     private onDragEnd = () =>
-        this.props.updateSVGItems(
+        this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,
@@ -138,7 +138,7 @@ class Letter extends React.Component<ILetterProps> {
         const { deltaX, deltaY } = data;
         const { zoomX, zoomY } = svgContext;
 
-        this.props.updateSVGItems([parent, id], prevItem => ({
+        this.props.updateSVGItems<ILetter>([parent, id], prevItem => ({
             ...prevItem,
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
@@ -147,7 +147,7 @@ class Letter extends React.Component<ILetterProps> {
     };
 
     private onMouseEnter = (event: React.MouseEvent<SVGGElement>) =>
-        this.props.updateSVGItems(
+        this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,
@@ -156,7 +156,7 @@ class Letter extends React.Component<ILetterProps> {
         );
 
     private onMouseLeave = (event: React.MouseEvent<SVGGElement>) =>
-        this.props.updateSVGItems(
+        this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,

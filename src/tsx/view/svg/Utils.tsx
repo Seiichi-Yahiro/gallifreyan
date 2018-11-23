@@ -156,8 +156,8 @@ export const getSVGItem = (path: string[], children: SVGItem[]): SVGItem => {
     } else if (path.length === 1) {
         return children.find(child => child.id === path[0])!;
     } else {
-        const svgItem = children.find(child => child.id === path[0])!;
-        return getSVGItem(path.slice(1), svgItem.children);
+        const svgItem: SVGItem = children.find(child => child.id === path[0])!;
+        return getSVGItem(path.slice(1), svgItem.children!);
     }
 };
 
@@ -184,7 +184,7 @@ export const updateSVGItem = (
                     children: updateSVGItem(
                         path.slice(1),
                         newSvgItem,
-                        child.children
+                        child.children!
                     )
                 };
             }
