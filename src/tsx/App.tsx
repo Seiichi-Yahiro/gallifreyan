@@ -10,6 +10,7 @@ import {
     Point,
     updateSVGItem
 } from './view/svg/Utils';
+import { ILetter } from './view/svg/Letter';
 
 export interface IAppState {
     children: IWord[];
@@ -103,62 +104,67 @@ class App extends React.Component<{}, IAppState> {
             children: prevState.children.map(word => {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
-                    const wordAngles: number[] = [];
+                    const wordAngles = word.children
+                        .map(({ x, y, r }) => {
+                            const letterPosition = new Point(x, y);
 
-                    const letters = word.children.map(letter => {
-                        const letterPoint = new Point(letter.x, letter.y);
-                        const letterRadius = letter.r;
-                        const intersections = calculateCircleIntersectionPoints(
-                            wordRadius,
-                            letterRadius,
-                            letterPoint
-                        );
-
-                        let anglesOfWord = intersections
-                            .map(p =>
-                                calculateCircleIntersectionAngle(p, wordRadius)
+                            const angles = calculateCircleIntersectionPoints(
+                                wordRadius,
+                                r,
+                                letterPosition
                             )
-                            .sort();
-
-                        // if letter circle is not on top the word 0° point
-                        if (
-                            new Point(wordRadius, 0)
-                                .subtract(letterPoint)
-                                .length() > letterRadius
-                        ) {
-                            anglesOfWord = anglesOfWord.reverse();
-                        }
-
-                        wordAngles.push(...anglesOfWord);
-
-                        let anglesOfLetter = intersections
-                            .map(p => p.subtract(letterPoint))
-                            .map(p =>
-                                calculateCircleIntersectionAngle(
-                                    p,
-                                    letterRadius
+                                .map(point =>
+                                    calculateCircleIntersectionAngle(
+                                        point,
+                                        wordRadius
+                                    )
                                 )
+                                .sort();
+
+                            // if letter circle is not on top the word 0° point
+                            if (
+                                new Point(wordRadius, 0)
+                                    .subtract(letterPosition)
+                                    .length() > r
+                            ) {
+                                return angles.reverse();
+                            }
+
+                            return angles;
+                        })
+                        .reduce((a: number[], b: number[]) => a.concat(b), []);
+
+                    const children = word.children.map(letter => {
+                        const { x, y, r } = letter;
+                        const letterPosition = new Point(x, y);
+                        let angles = calculateCircleIntersectionPoints(
+                            wordRadius,
+                            r,
+                            letterPosition
+                        )
+                            .map(point => point.subtract(letterPosition))
+                            .map(point =>
+                                calculateCircleIntersectionAngle(point, r)
                             )
                             .sort();
 
                         // if letter circle is not on top the word 180° point
                         if (
-                            letterPoint
-                                .add(new Point(letterRadius, 0))
-                                .length() > wordRadius
+                            letterPosition.add(new Point(r, 0)).length() >
+                            wordRadius
                         ) {
-                            anglesOfLetter = anglesOfLetter.reverse();
+                            angles = angles.reverse();
                         }
 
                         return {
                             ...letter,
-                            angles: anglesOfLetter
-                        };
+                            angles
+                        } as ILetter;
                     });
 
                     return {
                         ...word,
-                        children: letters,
+                        children,
                         angles: wordAngles
                     };
                 }
