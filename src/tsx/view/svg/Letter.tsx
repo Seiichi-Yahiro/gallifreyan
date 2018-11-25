@@ -3,12 +3,11 @@ import Group from './Group';
 import { partialCircle } from './Utils';
 import { createClassName } from '../../component/ComponentUtils';
 import { ISVGContext } from './SVGContext';
-import { DraggableCore, DraggableData } from 'react-draggable';
-import SVGContext from './SVGContext';
-import ConditionalWrapper from '../../component/ConditionalWrapper';
+import { DraggableData } from 'react-draggable';
 import { ISVGCircleItem } from './SVG';
 import { UpdateSVGItems } from '../../App';
 import { IDot } from './Dot';
+import Draggable from '../../component/Draggable';
 
 export enum LetterGroups {
     DEEP_CUT = 'b|ch|d|h|f',
@@ -37,10 +36,10 @@ class Letter extends React.Component<ILetterProps> {
     public render() {
         const {
             getPartialCircle,
-            onMouseEnter,
-            onMouseLeave,
             onClick,
-            draggableWrapper
+            onDrag,
+            toggleDragging,
+            toggleHover
         } = this;
         const { letter, selection } = this.props;
         const { x, y, r, id, angles, isHovered, isDragging } = letter;
@@ -53,16 +52,18 @@ class Letter extends React.Component<ILetterProps> {
         });
 
         return (
-            <ConditionalWrapper
-                condition={isSelected}
-                wrapper={draggableWrapper}
+            <Draggable
+                isSelected={isSelected}
+                onDragStart={toggleDragging(true)}
+                onDragStop={toggleDragging(false)}
+                onDrag={onDrag}
             >
                 <Group
                     x={x}
                     y={y}
                     className={groupClassNames}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
+                    onMouseEnter={toggleHover(true)}
+                    onMouseLeave={toggleHover(false)}
                     onClick={onClick}
                 >
                     {angles.length === 0 ? (
@@ -71,7 +72,7 @@ class Letter extends React.Component<ILetterProps> {
                         getPartialCircle()
                     )}
                 </Group>
-            </ConditionalWrapper>
+            </Draggable>
         );
     }
 
@@ -92,40 +93,12 @@ class Letter extends React.Component<ILetterProps> {
         );
     };
 
-    private draggableWrapper = (children: React.ReactNode) => {
-        const { onDragStart, onDragEnd, onDrag } = this;
-
-        return (
-            <SVGContext.Consumer>
-                {(svgContext: ISVGContext) => (
-                    <DraggableCore
-                        enableUserSelectHack={true}
-                        onStart={onDragStart}
-                        onStop={onDragEnd}
-                        onDrag={onDrag(svgContext)}
-                    >
-                        {children}
-                    </DraggableCore>
-                )}
-            </SVGContext.Consumer>
-        );
-    };
-
-    private onDragStart = () =>
+    private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,
-                isDragging: true
-            })
-        );
-
-    private onDragEnd = () =>
-        this.props.updateSVGItems<ILetter>(
-            [this.props.parent, this.props.letter.id],
-            prevItem => ({
-                ...prevItem,
-                isDragging: false
+                isDragging
             })
         );
 
@@ -146,21 +119,12 @@ class Letter extends React.Component<ILetterProps> {
         this.props.calculateAngles();
     };
 
-    private onMouseEnter = (event: React.MouseEvent<SVGGElement>) =>
+    private toggleHover = (isHovered: boolean) => () =>
         this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
             prevItem => ({
                 ...prevItem,
-                isHovered: true
-            })
-        );
-
-    private onMouseLeave = (event: React.MouseEvent<SVGGElement>) =>
-        this.props.updateSVGItems<ILetter>(
-            [this.props.parent, this.props.letter.id],
-            prevItem => ({
-                ...prevItem,
-                isHovered: false
+                isHovered
             })
         );
 

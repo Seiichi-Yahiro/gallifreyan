@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Group from './Group';
 import { createClassName } from '../../component/ComponentUtils';
-import { DraggableCore, DraggableData } from 'react-draggable';
-import ConditionalWrapper from '../../component/ConditionalWrapper';
-import SVGContext, { ISVGContext } from './SVGContext';
+import { DraggableData } from 'react-draggable';
+import { ISVGContext } from './SVGContext';
 import Letter, { ILetter, LetterGroups } from './Letter';
 import { partialCircle, Point } from './Utils';
 import { v4 } from 'uuid';
 import { ISVGCircleItem } from './SVG';
 import { UpdateSVGItems } from '../../App';
+import Draggable from '../../component/Draggable';
 
 export interface IWord extends ISVGCircleItem {
     text: string;
@@ -37,11 +37,11 @@ class Word extends React.Component<IWordProps> {
 
     public render() {
         const {
-            draggableWrapper,
-            onMouseEnter,
-            onMouseLeave,
             onClick,
-            calculateWordAnglePairs
+            calculateWordAnglePairs,
+            onDrag,
+            toggleDragging,
+            toggleHover
         } = this;
         const {
             selection,
@@ -61,9 +61,11 @@ class Word extends React.Component<IWordProps> {
         });
 
         return (
-            <ConditionalWrapper
-                condition={isSelected}
-                wrapper={draggableWrapper}
+            <Draggable
+                isSelected={isSelected}
+                onDragStart={toggleDragging(true)}
+                onDragStop={toggleDragging(false)}
+                onDrag={onDrag}
             >
                 <Group x={x} y={y} className={groupClassNames}>
                     {wordAngles.length === 0 ? (
@@ -80,8 +82,8 @@ class Word extends React.Component<IWordProps> {
                     <circle
                         r={r}
                         className="svg-word__selection-area"
-                        onMouseEnter={onMouseEnter}
-                        onMouseLeave={onMouseLeave}
+                        onMouseEnter={toggleHover(true)}
+                        onMouseLeave={toggleHover(false)}
                         onClick={onClick}
                     />
 
@@ -97,28 +99,9 @@ class Word extends React.Component<IWordProps> {
                         />
                     ))}
                 </Group>
-            </ConditionalWrapper>
+            </Draggable>
         );
     }
-
-    private draggableWrapper = (children: React.ReactNode) => {
-        const { onDragStart, onDragEnd, onDrag } = this;
-
-        return (
-            <SVGContext.Consumer>
-                {(svgContext: ISVGContext) => (
-                    <DraggableCore
-                        enableUserSelectHack={true}
-                        onStart={onDragStart}
-                        onStop={onDragEnd}
-                        onDrag={onDrag(svgContext)}
-                    >
-                        {children}
-                    </DraggableCore>
-                )}
-            </SVGContext.Consumer>
-        );
-    };
 
     private initializeLetters = () => {
         const { word, calculateAngles, updateSVGItems } = this.props;
@@ -190,16 +173,10 @@ class Word extends React.Component<IWordProps> {
         }
     };
 
-    private onDragStart = () =>
+    private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
-            isDragging: true
-        }));
-
-    private onDragEnd = () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
-            ...prevItem,
-            isDragging: false
+            isDragging
         }));
 
     private onDrag = (svgContext: ISVGContext) => (
@@ -218,16 +195,10 @@ class Word extends React.Component<IWordProps> {
         }));
     };
 
-    private onMouseEnter = () =>
+    private toggleHover = (isHovered: boolean) => () =>
         this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
             ...prevItem,
-            isHovered: true
-        }));
-
-    private onMouseLeave = () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
-            ...prevItem,
-            isHovered: false
+            isHovered
         }));
 
     private onClick = () => this.props.select([this.props.word.id]);
