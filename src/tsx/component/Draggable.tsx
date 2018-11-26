@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ISVGContext } from '../view/svg/SVGContext';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 import SVGContext from '../view/svg/SVGContext';
-import ConditionalWrapper from './ConditionalWrapper';
 
 interface IDraggableProps {
     isSelected: boolean;
@@ -11,38 +10,26 @@ interface IDraggableProps {
     onDrag: (svgContext: ISVGContext) => DraggableEventHandler;
 }
 
-class Draggable extends React.Component<IDraggableProps> {
-    public render() {
-        const { isSelected, children } = this.props;
-        const { draggableWrapper } = this;
-
-        return (
-            <ConditionalWrapper
-                condition={isSelected}
-                wrapper={draggableWrapper}
+const Draggable: React.SFC<IDraggableProps> = ({
+    onDragStart,
+    onDragStop,
+    onDrag,
+    isSelected,
+    children
+}) => (
+    <SVGContext.Consumer>
+        {(svgContext: ISVGContext) => (
+            <DraggableCore
+                enableUserSelectHack={true}
+                onStart={onDragStart}
+                onStop={onDragStop}
+                onDrag={onDrag(svgContext)}
+                disabled={!isSelected}
             >
                 {children}
-            </ConditionalWrapper>
-        );
-    }
+            </DraggableCore>
+        )}
+    </SVGContext.Consumer>
+);
 
-    private draggableWrapper = (children: React.ReactNode) => {
-        const { onDragStart, onDragStop, onDrag } = this.props;
-
-        return (
-            <SVGContext.Consumer>
-                {(svgContext: ISVGContext) => (
-                    <DraggableCore
-                        enableUserSelectHack={true}
-                        onStart={onDragStart}
-                        onStop={onDragStop}
-                        onDrag={onDrag(svgContext)}
-                    >
-                        {children}
-                    </DraggableCore>
-                )}
-            </SVGContext.Consumer>
-        );
-    };
-}
 export default Draggable;
