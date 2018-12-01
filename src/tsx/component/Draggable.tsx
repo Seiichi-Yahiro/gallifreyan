@@ -20,7 +20,7 @@ const Draggable: React.SFC<IDraggableProps> = ({
     <SVGContext.Consumer>
         {(svgContext: ISVGContext) => (
             <DraggableCore
-                enableUserSelectHack={true}
+                enableUserSelectHack={isSelected}
                 onStart={onDragStart}
                 onStop={onDragStop}
                 onDrag={onDrag(svgContext)}
