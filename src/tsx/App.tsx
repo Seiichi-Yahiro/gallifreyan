@@ -156,7 +156,7 @@ class App extends React.Component<{}, IAppState> {
                             )
                             .sort();
 
-                        // if letter circle is not on top the word 180° point
+                        // if letter 0° point is not inside word circle
                         if (
                             letterPosition.add(new Point(r, 0)).length() >
                             wordRadius

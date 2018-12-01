@@ -133,7 +133,9 @@ class Letter extends React.Component<ILetterProps> {
         const { letter, updateSVGItems, parent } = this.props;
         const { text, id, r, angles } = letter;
         const [startAngle, endAngle] = angles;
-        const angleDifference = endAngle - startAngle;
+        const angleDifference =
+            endAngle -
+            (startAngle < endAngle ? startAngle + Math.PI * 2 : startAngle);
         const moveAngle = angleDifference / 4;
         const defaultPosition = new Point(r - 5, 0).rotate(startAngle);
 
@@ -148,28 +150,28 @@ class Letter extends React.Component<ILetterProps> {
         if (new RegExp(LetterGroups.DOUBLE_DOT, 'i').test(text)) {
             children = [
                 {
-                    ...defaultPosition.rotate(moveAngle)
+                    ...defaultPosition.rotate(3 * moveAngle)
                 },
                 {
-                    ...defaultPosition.rotate(3 * moveAngle)
+                    ...defaultPosition.rotate(moveAngle)
                 }
             ];
         } else if (new RegExp(LetterGroups.TRIPLE_DOT, 'i').test(text)) {
             children = [
                 {
-                    ...defaultPosition.rotate(moveAngle)
+                    ...defaultPosition.rotate(3 * moveAngle)
                 },
                 {
                     ...defaultPosition.rotate(2 * moveAngle)
                 },
                 {
-                    ...defaultPosition.rotate(3 * moveAngle)
+                    ...defaultPosition.rotate(moveAngle)
                 }
             ];
         }
 
-        updateSVGItems<ILetter>([parent, id], prevItem => ({
-            ...prevItem,
+        updateSVGItems<ILetter>([parent, id], prevLetter => ({
+            ...prevLetter,
             children: children.map(
                 dot =>
                     ({
