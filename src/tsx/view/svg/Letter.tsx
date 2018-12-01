@@ -1,20 +1,27 @@
 import * as React from 'react';
 import Group from './Group';
-import { partialCircle } from './Utils';
+import { partialCircle, Point } from './Utils';
 import { createClassName } from '../../component/ComponentUtils';
 import { ISVGContext } from './SVGContext';
 import { DraggableData } from 'react-draggable';
 import { ISVGCircleItem } from './SVG';
 import { UpdateSVGItems } from '../../App';
-import { IDot } from './Dot';
+import Dot, { IDot } from './Dot';
 import Draggable from '../../component/Draggable';
+import { v4 } from 'uuid';
 
 export enum LetterGroups {
     DEEP_CUT = 'b|ch|d|h|f',
     SHALLOW_CUT = 'j|k|l|n|p|m',
     INSIDE = 't|sh|r|v|w|s',
     ON_LINE = 'th|y|z|qu|x|ng',
-    DOUBLE_LETTERS = 'ch|sh|th|qu|ng'
+    DOUBLE_LETTERS = 'ch|sh|th|qu|ng',
+    VOCAL = 'a|e|i|o|u',
+    DOUBLE_DOT = 'ch|k|sh|y',
+    TRIPLE_DOT = 'd|l|r|z',
+    SINGLE_LINE = 'g|n|v|qu',
+    DOUBLE_LINE = 'h|p|w|x',
+    TRIPLE_LINE = 'f|m|s|ng'
 }
 
 export interface ILetter extends ISVGCircleItem {
@@ -33,6 +40,16 @@ interface ILetterProps {
 }
 
 class Letter extends React.Component<ILetterProps> {
+    public componentDidMount() {
+        this.initializeDots();
+    }
+
+    public componentDidUpdate(prevProps: ILetterProps) {
+        if (prevProps.letter.text !== this.props.letter.text) {
+            this.initializeDots();
+        }
+    }
+
     public render() {
         const {
             getPartialCircle,
@@ -41,8 +58,14 @@ class Letter extends React.Component<ILetterProps> {
             toggleDragging,
             toggleHover
         } = this;
-        const { letter, selection } = this.props;
-        const { x, y, r, id, angles, isHovered, isDragging } = letter;
+        const {
+            letter,
+            selection,
+            select,
+            updateSVGItems,
+            parent
+        } = this.props;
+        const { x, y, r, id, angles, isHovered, isDragging, children } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
 
         const groupClassNames = createClassName('svg-letter', {
@@ -58,19 +81,28 @@ class Letter extends React.Component<ILetterProps> {
                 onDragStop={toggleDragging(false)}
                 onDrag={onDrag}
             >
-                <Group
-                    x={x}
-                    y={y}
-                    className={groupClassNames}
-                    onMouseEnter={toggleHover(true)}
-                    onMouseLeave={toggleHover(false)}
-                    onClick={onClick}
-                >
+                <Group x={x} y={y} className={groupClassNames}>
                     {angles.length === 0 ? (
-                        <circle r={r} />
+                        <circle
+                            r={r}
+                            onMouseEnter={toggleHover(true)}
+                            onMouseLeave={toggleHover(false)}
+                            onClick={onClick}
+                        />
                     ) : (
                         getPartialCircle()
                     )}
+
+                    {children.map(dot => (
+                        <Dot
+                            parent={[parent, id]}
+                            dot={dot}
+                            updateSVGItems={updateSVGItems}
+                            key={dot.id}
+                            selection={selection}
+                            select={select}
+                        />
+                    ))}
                 </Group>
             </Draggable>
         );
@@ -79,9 +111,13 @@ class Letter extends React.Component<ILetterProps> {
     private getPartialCircle = () => {
         const { angles, r } = this.props.letter;
         const [start, end] = angles;
+        const { toggleHover, onClick } = this;
 
         return (
             <path
+                onMouseEnter={toggleHover(true)}
+                onMouseLeave={toggleHover(false)}
+                onClick={onClick}
                 d={partialCircle(
                     0,
                     0,
@@ -91,6 +127,58 @@ class Letter extends React.Component<ILetterProps> {
                 )}
             />
         );
+    };
+
+    private initializeDots = () => {
+        const { letter, updateSVGItems, parent } = this.props;
+        const { text, id, r, angles } = letter;
+        const [startAngle, endAngle] = angles;
+        const angleDifference = endAngle - startAngle;
+        const moveAngle = angleDifference / 4;
+        const defaultPosition = new Point(r - 5, 0).rotate(startAngle);
+
+        const defaultDot = {
+            r: 2.5,
+            isHovered: false,
+            isDragging: false
+        };
+
+        let children: Point[] = [];
+
+        if (new RegExp(LetterGroups.DOUBLE_DOT, 'i').test(text)) {
+            children = [
+                {
+                    ...defaultPosition.rotate(moveAngle)
+                },
+                {
+                    ...defaultPosition.rotate(3 * moveAngle)
+                }
+            ];
+        } else if (new RegExp(LetterGroups.TRIPLE_DOT, 'i').test(text)) {
+            children = [
+                {
+                    ...defaultPosition.rotate(moveAngle)
+                },
+                {
+                    ...defaultPosition.rotate(2 * moveAngle)
+                },
+                {
+                    ...defaultPosition.rotate(3 * moveAngle)
+                }
+            ];
+        }
+
+        updateSVGItems<ILetter>([parent, id], prevItem => ({
+            ...prevItem,
+            children: children.map(
+                dot =>
+                    ({
+                        id: v4(),
+                        ...defaultDot,
+                        ...dot
+                    } as IDot)
+            )
+        }));
     };
 
     private toggleDragging = (isDragging: boolean) => () =>

@@ -2,12 +2,12 @@
     @extend .svg-sentence;
 
     &--is-hovered {
-        stroke: #ff0000;
+        stroke: $svg-color--hovered;
         cursor: pointer;
     }
 
     &--is-selected {
-        stroke: #0000ff;
+        stroke: $svg-color--selected;
         cursor: grab;
     }
 
