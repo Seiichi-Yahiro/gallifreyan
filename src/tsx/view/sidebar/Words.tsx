@@ -5,16 +5,12 @@ import Flex from '../../component/Flex';
 import { IWord } from '../svg/Word';
 import { createRef } from 'react';
 import Word from './Word';
-import { IAppState } from '../../App';
-import { SVGItem } from '../svg/SVG';
+import { UpdateSVGItems } from '../../App';
 
 interface IWordsProps {
     words: IWord[];
     addWord: (text: string) => void;
-    updateSVGItems: (
-        path: string[],
-        update: (prevItem: SVGItem, prevState: IAppState) => SVGItem
-    ) => void;
+    updateSVGItems: UpdateSVGItems;
     removeWord: (id: string) => void;
 }
 
@@ -39,7 +35,8 @@ class Words extends React.Component<IWordsProps, IWordsState> {
             onTextInputChange,
             onAddWordClick,
             getWordKey,
-            renderWord
+            renderWord,
+            onKeyPress
         } = this;
         const { words } = this.props;
         const { newWord } = this.state;
@@ -54,6 +51,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
                         placeholder="Word..."
                         value={newWord}
                         onChange={onTextInputChange}
+                        onKeyPress={onKeyPress}
                     />
                     <Button
                         text="Add Word"
@@ -75,7 +73,13 @@ class Words extends React.Component<IWordsProps, IWordsState> {
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         const newWord = event.currentTarget.value;
-        this.setState(() => ({ newWord }));
+        this.setState({ newWord });
+    };
+
+    private onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            this.onAddWordClick();
+        }
     };
 
     private onAddWordClick = () => {
@@ -86,7 +90,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
         }
 
         this.props.addWord(newWord);
-        this.setState(() => ({ newWord: '' }));
+        this.setState({ newWord: '' });
 
         const input = this.inputRef.current;
 

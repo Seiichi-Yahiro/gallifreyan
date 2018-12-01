@@ -105,8 +105,7 @@ class App extends React.Component<{}, IAppState> {
             )
         }));
 
-    public select = (path: string[]) =>
-        this.setState(() => ({ selection: path }));
+    public select = (path: string[]) => this.setState({ selection: path });
 
     public calculateAngles = (wordId: string) => () =>
         this.setState(prevState => ({
