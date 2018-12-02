@@ -40,6 +40,13 @@ interface ILetterProps {
 }
 
 class Letter extends React.Component<ILetterProps> {
+    private isFullCircleRegex = new RegExp(
+        [LetterGroups.ON_LINE, LetterGroups.INSIDE, LetterGroups.VOCAL].join(
+            '|'
+        ),
+        'i'
+    );
+
     public componentDidMount() {
         this.initializeDots();
     }
@@ -56,7 +63,8 @@ class Letter extends React.Component<ILetterProps> {
             onClick,
             onDrag,
             toggleDragging,
-            toggleHover
+            toggleHover,
+            isFullCircleRegex
         } = this;
         const {
             letter,
@@ -65,7 +73,7 @@ class Letter extends React.Component<ILetterProps> {
             updateSVGItems,
             parent
         } = this.props;
-        const { x, y, r, id, angles, isHovered, isDragging, children } = letter;
+        const { x, y, r, id, text, isHovered, isDragging, children } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
 
         const groupClassNames = createClassName('svg-letter', {
@@ -82,7 +90,7 @@ class Letter extends React.Component<ILetterProps> {
                 onDrag={onDrag}
             >
                 <Group x={x} y={y} className={groupClassNames}>
-                    {angles.length === 0 ? (
+                    {isFullCircleRegex.test(text) ? (
                         <circle
                             r={r}
                             onMouseEnter={toggleHover(true)}
@@ -168,6 +176,11 @@ class Letter extends React.Component<ILetterProps> {
                     ...defaultPosition.rotate(moveAngle)
                 }
             ];
+        }
+
+        // Move dots outside for on line circles this is an aesthetic change
+        if (new RegExp(LetterGroups.ON_LINE, 'i').test(text)) {
+            children = children.map(point => point.rotate(Math.PI));
         }
 
         updateSVGItems<ILetter>([parent, id], prevLetter => ({

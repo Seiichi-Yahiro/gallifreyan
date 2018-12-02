@@ -110,7 +110,7 @@ class Word extends React.Component<IWordProps> {
         const calculatedLetters = letters.map(
             (letter: string, index: number) => {
                 const radians = -(Math.PI * 2) / letters.length;
-                const initialPoint = new Point(0, r);
+                const initialPoint = this.initializeLetterPosition(letter, r);
                 const rotatedPoint = initialPoint.rotate(radians * index);
 
                 return {
@@ -132,6 +132,27 @@ class Word extends React.Component<IWordProps> {
         }));
 
         calculateAngles();
+    };
+
+    private initializeLetterPosition = (
+        letter: string,
+        wordRadius: number
+    ): Point => {
+        switch (true) {
+            case new RegExp(LetterGroups.DEEP_CUT, 'i').test(letter): {
+                return new Point(0, wordRadius - 25 * 0.75);
+            }
+
+            case new RegExp(LetterGroups.INSIDE, 'i').test(letter): {
+                return new Point(0, wordRadius - 25 - 5);
+            }
+
+            case new RegExp(LetterGroups.SHALLOW_CUT, 'i').test(letter):
+            case new RegExp(LetterGroups.ON_LINE, 'i').test(letter):
+            default: {
+                return new Point(0, wordRadius);
+            }
+        }
     };
 
     private calculateWordAnglePairs = () => {

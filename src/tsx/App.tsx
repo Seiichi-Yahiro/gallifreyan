@@ -10,7 +10,7 @@ import {
     Point,
     updateSVGItem
 } from './view/svg/Utils';
-import { ILetter } from './view/svg/Letter';
+import { ILetter, LetterGroups } from './view/svg/Letter';
 
 export type UpdateSVGItems = <T extends SVGItem>(
     path: string[],
@@ -23,6 +23,13 @@ export interface IAppState {
 }
 
 class App extends React.Component<{}, IAppState> {
+    private isFullCircleLetterRegex = new RegExp(
+        [LetterGroups.ON_LINE, LetterGroups.INSIDE, LetterGroups.VOCAL].join(
+            '|'
+        ),
+        'i'
+    );
+
     constructor(props: {}) {
         super(props);
 
@@ -113,6 +120,10 @@ class App extends React.Component<{}, IAppState> {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
                     const wordAngles = word.children
+                        .filter(
+                            ({ text }) =>
+                                !this.isFullCircleLetterRegex.test(text)
+                        )
                         .map(({ x, y, r }) => {
                             const letterPosition = new Point(x, y);
 
