@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Group from './Group';
-import { partialCircle, Point } from './Utils';
+import { partialCircle } from './utils/Utils';
 import { createClassName } from '../../component/ComponentUtils';
 import { ISVGContext } from './SVGContext';
 import { DraggableData } from 'react-draggable';
@@ -9,20 +9,13 @@ import { UpdateSVGItems } from '../../App';
 import Dot, { IDot } from './Dot';
 import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
-
-export enum LetterGroups {
-    DEEP_CUT = 'b|ch|d|h|f',
-    SHALLOW_CUT = 'j|k|l|n|p|m',
-    INSIDE = 't|sh|r|v|w|s',
-    ON_LINE = 'th|y|z|qu|x|ng',
-    DOUBLE_LETTERS = 'ch|sh|th|qu|ng',
-    VOCAL = 'a|e|i|o|u',
-    DOUBLE_DOT = 'ch|k|sh|y',
-    TRIPLE_DOT = 'd|l|r|z',
-    SINGLE_LINE = 'g|n|v|qu',
-    DOUBLE_LINE = 'h|p|w|x',
-    TRIPLE_LINE = 'f|m|s|ng'
-}
+import {
+    isDoubleDot,
+    isFullCircle,
+    isOnLine,
+    isTripleDot
+} from './utils/LetterGroups';
+import Point from './utils/Point';
 
 export interface ILetter extends ISVGCircleItem {
     text: string;
@@ -40,13 +33,6 @@ interface ILetterProps {
 }
 
 class Letter extends React.Component<ILetterProps> {
-    private isFullCircleRegex = new RegExp(
-        [LetterGroups.ON_LINE, LetterGroups.INSIDE, LetterGroups.VOCAL].join(
-            '|'
-        ),
-        'i'
-    );
-
     public componentDidMount() {
         this.initializeDots();
     }
@@ -63,8 +49,7 @@ class Letter extends React.Component<ILetterProps> {
             onClick,
             onDrag,
             toggleDragging,
-            toggleHover,
-            isFullCircleRegex
+            toggleHover
         } = this;
         const {
             letter,
@@ -90,7 +75,7 @@ class Letter extends React.Component<ILetterProps> {
                 onDrag={onDrag}
             >
                 <Group x={x} y={y} className={groupClassNames}>
-                    {isFullCircleRegex.test(text) ? (
+                    {isFullCircle(text) ? (
                         <circle
                             r={r}
                             onMouseEnter={toggleHover(true)}
@@ -155,7 +140,7 @@ class Letter extends React.Component<ILetterProps> {
 
         let children: Point[] = [];
 
-        if (new RegExp(LetterGroups.DOUBLE_DOT, 'i').test(text)) {
+        if (isDoubleDot(text)) {
             children = [
                 {
                     ...defaultPosition.rotate(3 * moveAngle)
@@ -164,7 +149,7 @@ class Letter extends React.Component<ILetterProps> {
                     ...defaultPosition.rotate(moveAngle)
                 }
             ];
-        } else if (new RegExp(LetterGroups.TRIPLE_DOT, 'i').test(text)) {
+        } else if (isTripleDot(text)) {
             children = [
                 {
                     ...defaultPosition.rotate(3 * moveAngle)
@@ -179,7 +164,7 @@ class Letter extends React.Component<ILetterProps> {
         }
 
         // Move dots outside for on line circles this is an aesthetic change
-        if (new RegExp(LetterGroups.ON_LINE, 'i').test(text)) {
+        if (isOnLine(text)) {
             children = children.map(point => point.rotate(Math.PI));
         }
 

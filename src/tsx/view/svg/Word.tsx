@@ -3,12 +3,20 @@ import Group from './Group';
 import { createClassName } from '../../component/ComponentUtils';
 import { DraggableData } from 'react-draggable';
 import { ISVGContext } from './SVGContext';
-import Letter, { ILetter, LetterGroups } from './Letter';
-import { partialCircle, Point } from './Utils';
+import Letter, { ILetter } from './Letter';
+import { partialCircle } from './utils/Utils';
 import { v4 } from 'uuid';
 import { ISVGCircleItem } from './SVG';
 import { UpdateSVGItems } from '../../App';
 import Draggable from '../../component/Draggable';
+import Point from './utils/Point';
+import {
+    DOUBLE_LETTER,
+    isDeepCut,
+    isInside,
+    isOnLine,
+    isShallowCut
+} from './utils/LetterGroups';
 
 export interface IWord extends ISVGCircleItem {
     text: string;
@@ -139,16 +147,16 @@ class Word extends React.Component<IWordProps> {
         wordRadius: number
     ): Point => {
         switch (true) {
-            case new RegExp(LetterGroups.DEEP_CUT, 'i').test(letter): {
+            case isDeepCut(letter): {
                 return new Point(0, wordRadius - 25 * 0.75);
             }
 
-            case new RegExp(LetterGroups.INSIDE, 'i').test(letter): {
+            case isInside(letter): {
                 return new Point(0, wordRadius - 25 - 5);
             }
 
-            case new RegExp(LetterGroups.SHALLOW_CUT, 'i').test(letter):
-            case new RegExp(LetterGroups.ON_LINE, 'i').test(letter):
+            case isShallowCut(letter):
+            case isOnLine(letter):
             default: {
                 return new Point(0, wordRadius);
             }
@@ -178,7 +186,7 @@ class Word extends React.Component<IWordProps> {
     };
 
     private splitWordToLetters = (word: string): string[] => {
-        const index = word.search(new RegExp(LetterGroups.DOUBLE_LETTERS, 'i'));
+        const index = word.search(DOUBLE_LETTER);
 
         if (index === -1) {
             return word.split('');

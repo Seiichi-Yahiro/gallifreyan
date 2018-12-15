@@ -7,10 +7,11 @@ import {
     calculateCircleIntersectionAngle,
     calculateCircleIntersectionPoints,
     getSVGItem,
-    Point,
     updateSVGItem
-} from './view/svg/Utils';
-import { ILetter, LetterGroups } from './view/svg/Letter';
+} from './view/svg/utils/Utils';
+import { ILetter } from './view/svg/Letter';
+import { isFullCircle } from './view/svg/utils/LetterGroups';
+import Point from './view/svg/utils/Point';
 
 export type UpdateSVGItems = <T extends SVGItem>(
     path: string[],
@@ -23,13 +24,6 @@ export interface IAppState {
 }
 
 class App extends React.Component<{}, IAppState> {
-    private isFullCircleLetterRegex = new RegExp(
-        [LetterGroups.ON_LINE, LetterGroups.INSIDE, LetterGroups.VOCAL].join(
-            '|'
-        ),
-        'i'
-    );
-
     constructor(props: {}) {
         super(props);
 
@@ -120,10 +114,7 @@ class App extends React.Component<{}, IAppState> {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
                     const wordAngles = word.children
-                        .filter(
-                            ({ text }) =>
-                                !this.isFullCircleLetterRegex.test(text)
-                        )
+                        .filter(({ text }) => !isFullCircle(text))
                         .map(({ x, y, r }) => {
                             const letterPosition = new Point(x, y);
 
