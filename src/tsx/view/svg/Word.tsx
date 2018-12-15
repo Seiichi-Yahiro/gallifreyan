@@ -13,10 +13,14 @@ import Point from './utils/Point';
 import {
     DOUBLE_LETTER,
     isDeepCut,
+    isEmpty,
     isInside,
     isOnLine,
-    isShallowCut
+    isShallowCut,
+    isVocal,
+    letterGroupsCombination
 } from './utils/LetterGroups';
+import * as _ from 'lodash';
 
 export interface IWord extends ISVGCircleItem {
     text: string;
@@ -113,40 +117,96 @@ class Word extends React.Component<IWordProps> {
 
     private initializeLetters = () => {
         const { word, calculateAngles, updateSVGItems } = this.props;
-        const { r, text, id } = word;
-        const letters = this.splitWordToLetters(text);
-        const calculatedLetters = letters.map(
-            (letter: string, index: number) => {
-                const radians = -(Math.PI * 2) / letters.length;
-                const initialPoint = this.initializeLetterPosition(letter, r);
-                const rotatedPoint = initialPoint.rotate(radians * index);
+        const { text, id, r } = word;
 
-                return {
-                    ...rotatedPoint,
-                    id: v4(),
-                    r: 25,
-                    text: letter,
-                    angles: [],
-                    isHovered: false,
-                    isDragging: false,
-                    children: []
-                } as ILetter;
-            }
+        const initialize = _.flow(
+            this.splitWordToLetters,
+            _.partial(this.initializeLettersPosition, _, r),
+            this.initializeLettersRotation
         );
 
         updateSVGItems<IWord>([id], prevItem => ({
             ...prevItem,
-            children: calculatedLetters
+            children: initialize(text)
         }));
 
         calculateAngles();
     };
 
+    private initializeLettersRotation = (letters: ILetter[]): ILetter[] => {
+        const newLetters = [...letters];
+        const radians =
+            -(Math.PI * 2) /
+            newLetters
+                .map(l => l.text)
+                .map(isVocal)
+                .filter(
+                    (vocal, index, array) =>
+                        !(index !== 0 && vocal && !array[index - 1])
+                ).length;
+
+        let rotationIndex = 0;
+
+        for (let i = 0; i < newLetters.length; i++) {
+            const { text: letter, x, y } = newLetters[i];
+            const previousLetter = i !== 0 ? newLetters[i - 1].text : '';
+
+            if (
+                isVocal(letter) &&
+                !letterGroupsCombination(isVocal, isEmpty)(previousLetter)
+            ) {
+                rotationIndex = rotationIndex > 0 ? rotationIndex - 1 : 0;
+            }
+
+            newLetters[i] = {
+                ...newLetters[i],
+                ...new Point(x, y).rotate(radians * rotationIndex)
+            };
+
+            rotationIndex++;
+        }
+
+        return newLetters;
+    };
+
+    private initializeLettersPosition = (
+        letters: string[],
+        wordRadius: number
+    ): ILetter[] =>
+        letters.map((letter: string, index: number) => {
+            const previousLetter = index !== 0 ? letters[index - 1] : '';
+            const initialPoint = this.initializeLetterPosition(
+                letter,
+                previousLetter,
+                wordRadius
+            );
+
+            return {
+                ...initialPoint,
+                id: v4(),
+                r: isVocal(letter) ? 10 : 25,
+                text: letter,
+                angles: [],
+                isHovered: false,
+                isDragging: false,
+                children: []
+            } as ILetter;
+        });
+
     private initializeLetterPosition = (
         letter: string,
+        previousLetter: string,
         wordRadius: number
     ): Point => {
         switch (true) {
+            case isVocal(letter): {
+                return this.initializeVocalPosition(
+                    letter,
+                    previousLetter,
+                    wordRadius
+                );
+            }
+
             case isDeepCut(letter): {
                 return new Point(0, wordRadius - 25 * 0.75);
             }
@@ -159,6 +219,44 @@ class Word extends React.Component<IWordProps> {
             case isOnLine(letter):
             default: {
                 return new Point(0, wordRadius);
+            }
+        }
+    };
+
+    private initializeVocalPosition = (
+        vocal: string,
+        previousLetter: string,
+        wordRadius: number
+    ): Point => {
+        switch (true) {
+            case RegExp('a', 'i').test(vocal): {
+                return new Point(0, wordRadius + 10 + 5); // TODO is on line ?
+            }
+
+            case RegExp('o', 'i').test(vocal): {
+                if (letterGroupsCombination(isEmpty, isVocal)(previousLetter)) {
+                    return new Point(0, wordRadius - 10 - 5);
+                } else {
+                    const previousLetterPosition = this.initializeLetterPosition(
+                        previousLetter,
+                        '',
+                        wordRadius
+                    );
+                    return previousLetterPosition.subtract(new Point(0, 25));
+                }
+            }
+
+            case RegExp(/[eiu]/, 'i').test(vocal):
+            default: {
+                if (letterGroupsCombination(isEmpty, isVocal)(previousLetter)) {
+                    return new Point(0, wordRadius);
+                } else {
+                    return this.initializeLetterPosition(
+                        previousLetter,
+                        '',
+                        wordRadius
+                    );
+                }
             }
         }
     };

@@ -28,6 +28,8 @@ export const isTripleLine = (text: string) => TRIPLE_LINE.test(text);
 
 export const isVocal = (text: string) => VOCAL.test(text);
 
+export const isEmpty = (text: string) => text.length === 0;
+
 export const letterGroupsCombination = (
     ...fns: Array<(text: string) => boolean>
 ) => (text: string) => fns.some(fn => fn(text));
