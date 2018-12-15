@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import {
     isDoubleDot,
     isFullCircle,
+    isInside,
     isOnLine,
     isTripleDot
 } from './utils/LetterGroups';
@@ -129,8 +130,20 @@ class Letter extends React.Component<ILetterProps> {
         const angleDifference =
             endAngle -
             (startAngle < endAngle ? startAngle + Math.PI * 2 : startAngle);
-        const moveAngle = angleDifference / 4;
-        const defaultPosition = new Point(r - 5, 0).rotate(startAngle);
+        const moveAngle = (isInside(text) ? Math.PI : angleDifference) / 4;
+
+        let defaultPosition: Point;
+        if (isInside(text)) {
+            const letterPos = new Point(letter.x, letter.y);
+            const distance =
+                letterPos.length() - (letterPos.length() - letter.r + 5);
+            defaultPosition = letterPos
+                .unit()
+                .multiply(distance)
+                .rotate(-Math.PI / 2);
+        } else {
+            defaultPosition = new Point(r - 5, 0).rotate(startAngle);
+        }
 
         const defaultDot = {
             r: 2.5,
