@@ -12,6 +12,7 @@ import {
 import { ILetter } from './view/svg/Letter';
 import { isFullCircle } from './view/svg/utils/LetterGroups';
 import Point from './view/svg/utils/Point';
+import * as _ from 'lodash';
 
 export type UpdateSVGItems = <T extends SVGItem>(
     path: string[],
@@ -113,9 +114,9 @@ class App extends React.Component<{}, IAppState> {
             children: prevState.children.map(word => {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
-                    const wordAngles = word.children
+                    const wordAngles = _.chain(word.children)
                         .filter(({ text }) => !isFullCircle(text))
-                        .map(({ x, y, r }) => {
+                        .flatMap(({ x, y, r }) => {
                             const letterPosition = new Point(x, y);
 
                             const angles = calculateCircleIntersectionPoints(
@@ -142,7 +143,7 @@ class App extends React.Component<{}, IAppState> {
 
                             return angles;
                         })
-                        .reduce((a: number[], b: number[]) => a.concat(b), []);
+                        .value();
 
                     const children = word.children.map(letter => {
                         const { x, y, r } = letter;
