@@ -265,20 +265,13 @@ class Word extends React.Component<IWordProps> {
         const wordAngles = this.props.word.angles;
         if (wordAngles.length >= 2) {
             wordAngles.push(wordAngles.shift()!);
-            return wordAngles
-                .reduce((acc: number[][], angle: number, index: number) => {
-                    if (acc.length === Math.floor(index / 2 + 1)) {
-                        acc[Math.floor(index / 2)].push(angle);
-                    } else {
-                        acc.push([angle]);
-                    }
-
-                    return acc;
-                }, [])
+            return _.chain(wordAngles)
+                .chunk(2)
                 .map(([start, end]) => [
                     start < end ? start + 2 * Math.PI : start,
                     end
-                ]);
+                ])
+                .value();
         }
         return [];
     };
