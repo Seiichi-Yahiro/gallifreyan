@@ -28,6 +28,8 @@ export const isTripleLine = (text: string) => TRIPLE_LINE.test(text);
 
 export const isVocal = (text: string) => VOCAL.test(text);
 
+export const isDoubleLetter = (text: string) => DOUBLE_LETTER.test(text);
+
 export const isEmpty = (text: string) => text.length === 0;
 
 export const letterGroupsCombination = (
@@ -38,4 +40,13 @@ export const isFullCircle = letterGroupsCombination(
     isOnLine,
     isInside,
     isVocal
+);
+
+export const isValidLetter = letterGroupsCombination(
+    isDeepCut,
+    isShallowCut,
+    isInside,
+    isOnLine,
+    isVocal,
+    isDoubleLetter
 );

@@ -17,6 +17,7 @@ import {
     isInside,
     isOnLine,
     isShallowCut,
+    isValidLetter,
     isVocal,
     letterGroupsCombination
 } from './utils/LetterGroups';
@@ -121,6 +122,7 @@ class Word extends React.Component<IWordProps> {
 
         const initialize = _.flow(
             this.splitWordToLetters,
+            this.filterValidLetters,
             _.partial(this.initializeLettersPosition, _, r),
             this.initializeLettersRotation
         );
@@ -292,6 +294,9 @@ class Word extends React.Component<IWordProps> {
                 .concat(this.splitWordToLetters(lastPart));
         }
     };
+
+    private filterValidLetters = (letters: string[]) =>
+        letters.filter(isValidLetter);
 
     private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
