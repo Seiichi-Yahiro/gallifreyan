@@ -204,7 +204,7 @@ class Letter extends React.Component<ILetterProps> {
         );
 
     private onDrag = (svgContext: ISVGContext) => (
-        event: MouseEvent,
+        event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
         const { letter, parent } = this.props;

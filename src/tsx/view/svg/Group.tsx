@@ -11,7 +11,7 @@ export enum Unit {
     PERCENT = '%'
 }
 
-const Group: React.SFC<IGroupProps> = ({
+const Group: React.FunctionComponent<IGroupProps> = ({
     x,
     y,
     unit = Unit.PIXEL,

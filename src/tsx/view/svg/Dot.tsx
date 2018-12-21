@@ -61,7 +61,7 @@ class Dot extends React.Component<IDotProps> {
         );
 
     private onDrag = (svgContext: ISVGContext) => (
-        event: MouseEvent,
+        event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
         const { dot, parent } = this.props;

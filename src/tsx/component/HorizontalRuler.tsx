@@ -1,5 +1,5 @@
 import * as React from 'react';
 
-const HorizontalRuler: React.SFC = () => <hr className="hr" />;
+const HorizontalRuler: React.FunctionComponent = () => <hr className="hr" />;
 
 export default HorizontalRuler;

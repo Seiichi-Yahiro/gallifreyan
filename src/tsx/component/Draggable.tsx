@@ -10,7 +10,7 @@ interface IDraggableProps {
     onDrag: (svgContext: ISVGContext) => DraggableEventHandler;
 }
 
-const Draggable: React.SFC<IDraggableProps> = ({
+const Draggable: React.FunctionComponent<IDraggableProps> = ({
     onDragStart,
     onDragStop,
     onDrag,

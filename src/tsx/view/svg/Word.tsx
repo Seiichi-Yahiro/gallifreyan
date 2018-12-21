@@ -305,7 +305,7 @@ class Word extends React.Component<IWordProps> {
         }));
 
     private onDrag = (svgContext: ISVGContext) => (
-        event: MouseEvent,
+        event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
         const { word, updateSVGItems } = this.props;

@@ -12,7 +12,7 @@ interface IListProps {
     verticalCenter?: boolean;
 }
 
-const Flex: React.SFC<IListProps> = ({
+const Flex: React.FunctionComponent<IListProps> = ({
     items = [],
     generateKey = (item: any, index: number) => index.toString(),
     renderItem = (item: any, index: number) => item,
