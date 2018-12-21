@@ -1,0 +1,11 @@
+.hr {
+    width: 100%;
+    border: {
+        color: $border-color;
+        width: $border-width / 2;
+    }
+    margin: {
+        top: $gap-size;
+        bottom: $gap-size;
+    }
+}

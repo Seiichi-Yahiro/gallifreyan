@@ -1,0 +1,35 @@
+.flex {
+    display: flex;
+
+    &--vertical {
+        flex-direction: column;
+    }
+
+    &--vertical-center {
+        align-items: center;
+    }
+
+    &--horizontal {
+        flex-direction: row;
+    }
+
+    &--space-between {
+        justify-content: space-between;
+    }
+
+    &__item {
+        flex: 1;
+
+        &--vertical {
+            &:not(:last-child) {
+                margin-bottom: $gap-size;
+            }
+        }
+
+        &--horizontal {
+            &:not(:last-child) {
+                margin-right: $gap-size;
+            }
+        }
+    }
+}
