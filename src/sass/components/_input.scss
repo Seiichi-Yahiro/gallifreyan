@@ -1,10 +1,19 @@
-.text-input {
+%input {
     padding: $gap-size;
+    outline: 0;
+    border-width: 0;
     border: {
         style: solid;
         color: $border-color;
         width: $border-width;
     }
-    outline: 0;
+}
+
+.text-input {
+    @extend %input;
     cursor: text;
+}
+
+.number-input {
+    @extend %input;
 }

@@ -1,5 +1,5 @@
 export interface IClassNameDictionary {
-    [key: string]: boolean;
+    [key: string]: boolean | undefined;
 }
 
 /**
@@ -10,7 +10,7 @@ export interface IClassNameDictionary {
  * @return {string} - the className
  */
 export const createClassName = (
-    ...classNames: Array<string | IClassNameDictionary>
+    ...classNames: Array<string | undefined | IClassNameDictionary>
 ) =>
     classNames
         .map(className => {
@@ -21,5 +21,5 @@ export const createClassName = (
             }
             return className;
         })
-        .filter(className => className.length)
+        .filter(className => className && className.length)
         .join(' ');

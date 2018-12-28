@@ -51,6 +51,8 @@ class App extends React.Component<{}, IAppState> {
                     addWord={addWord}
                     updateSVGItems={updateSVGItems}
                     removeWord={removeWord}
+                    selection={selection}
+                    select={select}
                 />
                 <SVG
                     words={words}

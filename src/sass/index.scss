@@ -1,9 +1,12 @@
-@import 'variables';
-@import 'base';
+@import 'base/colors.scss';
+@import 'base/variables';
+@import 'base/base';
 
-@import 'views/sidebar/grid';
+@import 'helpers/helpers';
+
+@import 'layout/grid';
+
 @import 'views/sidebar/words';
-
 @import 'views/svg/sentence';
 @import 'views/svg/word';
 @import 'views/svg/letter';
@@ -11,5 +14,4 @@
 
 @import 'components/buttons';
 @import 'components/horizontal-ruler';
-@import 'components/flex';
 @import 'components/input';

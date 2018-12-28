@@ -11,12 +11,3 @@ body,
     padding: 0;
     font-family: Arial, sans-serif;
 }
-
-::-webkit-scrollbar {
-    background-color: transparent;
-    width: 1px;
-
-    &-thumb {
-        background-color: $border-color;
-    }
-}
