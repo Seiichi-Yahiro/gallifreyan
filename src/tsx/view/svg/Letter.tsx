@@ -2,10 +2,8 @@ import * as React from 'react';
 import Group from './Group';
 import { partialCircle } from './utils/Utils';
 import { createClassName } from '../../component/ComponentUtils';
-import { ISVGContext } from './SVGContext';
 import { DraggableData } from 'react-draggable';
 import { ISVGCircleItem } from './SVG';
-import { UpdateSVGItems } from '../../App';
 import Dot, { IDot } from './Dot';
 import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
@@ -17,6 +15,8 @@ import {
     isTripleDot
 } from './utils/LetterGroups';
 import Point from './utils/Point';
+import withContext from '../../hocs/WithContext';
+import AppContext, { IAppContext } from '../AppContext';
 
 export interface ILetter extends ISVGCircleItem {
     text: string;
@@ -24,14 +24,12 @@ export interface ILetter extends ISVGCircleItem {
     children: IDot[];
 }
 
-interface ILetterProps {
+interface IOwnProps {
     parent: string;
     letter: ILetter;
-    selection: string[];
-    select: (path: string[]) => void;
-    updateSVGItems: UpdateSVGItems;
-    calculateAngles: () => void;
 }
+
+type ILetterProps = IOwnProps & IAppContext;
 
 class Letter extends React.Component<ILetterProps> {
     public componentDidMount() {
@@ -52,13 +50,7 @@ class Letter extends React.Component<ILetterProps> {
             toggleDragging,
             toggleHover
         } = this;
-        const {
-            letter,
-            selection,
-            select,
-            updateSVGItems,
-            parent
-        } = this.props;
+        const { letter, selection, parent } = this.props;
         const { x, y, r, id, text, isHovered, isDragging, children } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
 
@@ -88,14 +80,7 @@ class Letter extends React.Component<ILetterProps> {
                     )}
 
                     {children.map(dot => (
-                        <Dot
-                            parent={[parent, id]}
-                            dot={dot}
-                            updateSVGItems={updateSVGItems}
-                            key={dot.id}
-                            selection={selection}
-                            select={select}
-                        />
+                        <Dot parent={[parent, id]} dot={dot} key={dot.id} />
                     ))}
                 </Group>
             </Draggable>
@@ -203,21 +188,20 @@ class Letter extends React.Component<ILetterProps> {
             })
         );
 
-    private onDrag = (svgContext: ISVGContext) => (
+    private onDrag = (zoomX: number, zoomY: number) => (
         event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
         const { letter, parent } = this.props;
         const { x, y, id } = letter;
         const { deltaX, deltaY } = data;
-        const { zoomX, zoomY } = svgContext;
 
         this.props.updateSVGItems<ILetter>([parent, id], prevItem => ({
             ...prevItem,
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
-        this.props.calculateAngles();
+        this.props.calculateAngles(parent);
     };
 
     private toggleHover = (isHovered: boolean) => () =>
@@ -233,4 +217,4 @@ class Letter extends React.Component<ILetterProps> {
         this.props.select([this.props.parent, this.props.letter.id]);
 }
 
-export default Letter;
+export default withContext(AppContext)(Letter);

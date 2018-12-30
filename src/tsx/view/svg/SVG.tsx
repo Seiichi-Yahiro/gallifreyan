@@ -6,8 +6,9 @@ import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { ILetter } from './Letter';
 import { createRef } from 'react';
-import { UpdateSVGItems } from '../../App';
 import { IDot } from './Dot';
+import AppContext, { IAppContext } from '../AppContext';
+import withContext from '../../hocs/WithContext';
 
 export interface ISVGBaseItem {
     readonly id: string;
@@ -24,20 +25,10 @@ export interface ISVGCircleItem extends ISVGBaseItem {
 
 export type SVGItem = IWord | ILetter | IDot;
 
-interface ISVGProps {
-    words: IWord[];
-    selection: string[];
-    addWord: (text: string) => void;
-    updateSVGItems: UpdateSVGItems;
-    removeWord: (wordId: string) => void;
-    select: (path: string[]) => void;
-    calculateAngles: (wordId: string) => () => void;
-}
-
-class SVG extends React.Component<ISVGProps, ISVGContext> {
+class SVG extends React.Component<IAppContext, ISVGContext> {
     private reactSVGPanZoom = createRef<ReactSVGPanZoom>();
 
-    constructor(props: ISVGProps) {
+    constructor(props: IAppContext) {
         super(props);
 
         this.state = {
@@ -52,13 +43,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
     public render() {
         const { onChangeSVGPanZoom, onWheel, deSelect, reactSVGPanZoom } = this;
         const { zoomX, zoomY } = this.state;
-        const {
-            words,
-            selection,
-            select,
-            calculateAngles,
-            updateSVGItems
-        } = this.props;
+        const { children: words } = this.props;
 
         return (
             <div className="grid__svg">
@@ -81,16 +66,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                                             className="svg-sentence"
                                         />
                                         {words.map((word: IWord) => (
-                                            <Word
-                                                key={word.id}
-                                                word={word}
-                                                selection={selection}
-                                                select={select}
-                                                updateSVGItems={updateSVGItems}
-                                                calculateAngles={calculateAngles(
-                                                    word.id
-                                                )}
-                                            />
+                                            <Word key={word.id} word={word} />
                                         ))}
                                     </Group>
                                 </SVGContext.Provider>
@@ -115,7 +91,7 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
                 r: prevItem.r + wheelDirection
             }));
 
-            calculateAngles(selection[0])();
+            calculateAngles(selection[0]);
 
             event.preventDefault();
             event.stopPropagation();
@@ -132,4 +108,4 @@ class SVG extends React.Component<ISVGProps, ISVGContext> {
     };
 }
 
-export default SVG;
+export default withContext(AppContext)(SVG);

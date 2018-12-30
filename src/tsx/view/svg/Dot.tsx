@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { ISVGCircleItem } from './SVG';
 import Group from './Group';
-import { UpdateSVGItems } from '../../App';
 import Draggable from '../../component/Draggable';
-import { ISVGContext } from './SVGContext';
 import { DraggableData } from 'react-draggable';
 import { createClassName } from '../../component/ComponentUtils';
+import AppContext, { IAppContext } from '../AppContext';
+import withContext from '../../hocs/WithContext';
 
 export interface IDot extends ISVGCircleItem {}
 
-interface IDotProps {
+interface IOwnProps {
     parent: string[];
     dot: IDot;
-    selection: string[];
-    select: (path: string[]) => void;
-    updateSVGItems: UpdateSVGItems;
 }
+
+type IDotProps = IOwnProps & IAppContext;
 
 class Dot extends React.Component<IDotProps> {
     public render() {
@@ -60,14 +59,13 @@ class Dot extends React.Component<IDotProps> {
             })
         );
 
-    private onDrag = (svgContext: ISVGContext) => (
+    private onDrag = (zoomX: number, zoomY: number) => (
         event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
         const { dot, parent } = this.props;
         const { x, y, id } = dot;
         const { deltaX, deltaY } = data;
-        const { zoomX, zoomY } = svgContext;
 
         this.props.updateSVGItems<IDot>([...parent, id], prevItem => ({
             ...prevItem,
@@ -89,4 +87,4 @@ class Dot extends React.Component<IDotProps> {
         this.props.select([...this.props.parent, this.props.dot.id]);
 }
 
-export default Dot;
+export default withContext(AppContext)(Dot);

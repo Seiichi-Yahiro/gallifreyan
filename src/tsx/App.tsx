@@ -13,24 +13,19 @@ import { ILetter } from './view/svg/Letter';
 import { isFullCircle } from './view/svg/utils/LetterGroups';
 import Point from './view/svg/utils/Point';
 import * as _ from 'lodash';
+import AppContext, {
+    defaultAppContextState,
+    IAppContextFunctions,
+    IAppContextState
+} from './view/AppContext';
 
-export type UpdateSVGItems = <T extends SVGItem>(
-    path: string[],
-    update: (prevItem: T, prevState: IAppState) => T
-) => void;
-
-export interface IAppState {
-    children: IWord[];
-    selection: string[];
-}
-
-class App extends React.Component<{}, IAppState> {
+class App extends React.Component<{}, IAppContextState>
+    implements IAppContextFunctions {
     constructor(props: {}) {
         super(props);
 
         this.state = {
-            children: [],
-            selection: []
+            ...defaultAppContextState
         };
     }
 
@@ -42,27 +37,22 @@ class App extends React.Component<{}, IAppState> {
             calculateAngles,
             updateSVGItems
         } = this;
-        const { children: words, selection } = this.state;
 
         return (
             <div className="grid">
-                <Words
-                    words={words}
-                    addWord={addWord}
-                    updateSVGItems={updateSVGItems}
-                    removeWord={removeWord}
-                    selection={selection}
-                    select={select}
-                />
-                <SVG
-                    words={words}
-                    selection={selection}
-                    updateSVGItems={updateSVGItems}
-                    addWord={addWord}
-                    removeWord={removeWord}
-                    select={select}
-                    calculateAngles={calculateAngles}
-                />
+                <AppContext.Provider
+                    value={{
+                        ...this.state,
+                        addWord,
+                        removeWord,
+                        select,
+                        calculateAngles,
+                        updateSVGItems
+                    }}
+                >
+                    <Words />
+                    <SVG />
+                </AppContext.Provider>
             </div>
         );
     }
@@ -80,14 +70,14 @@ class App extends React.Component<{}, IAppState> {
             angles: []
         };
 
-        this.setState((prevState: IAppState) => ({
+        this.setState((prevState: IAppContextState) => ({
             children: [...prevState.children, newWord]
         }));
     };
 
-    public updateSVGItems: UpdateSVGItems = <T extends SVGItem>(
+    public updateSVGItems = <T extends SVGItem>(
         path: string[],
-        update: (prevItem: T, prevState: IAppState) => T
+        update: (prevItem: T, prevState: IAppContextState) => T
     ) =>
         this.setState(prevState => {
             const prevItem = getSVGItem(path, prevState.children) as T;
@@ -103,7 +93,7 @@ class App extends React.Component<{}, IAppState> {
         });
 
     public removeWord = (wordId: string) =>
-        this.setState((prevState: IAppState) => ({
+        this.setState((prevState: IAppContextState) => ({
             children: prevState.children.filter(
                 (word: IWord) => word.id !== wordId
             )
@@ -111,7 +101,7 @@ class App extends React.Component<{}, IAppState> {
 
     public select = (path: string[]) => this.setState({ selection: path });
 
-    public calculateAngles = (wordId: string) => () =>
+    public calculateAngles = (wordId: string) =>
         this.setState(prevState => ({
             children: prevState.children.map(word => {
                 if (word.id === wordId) {

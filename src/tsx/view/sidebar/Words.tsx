@@ -1,28 +1,19 @@
 import * as React from 'react';
 import Button from '../../component/Button';
 import HorizontalRuler from '../../component/HorizontalRuler';
-import { IWord } from '../svg/Word';
 import { createRef } from 'react';
 import Word from './Word';
-import { UpdateSVGItems } from '../../App';
-
-interface IWordsProps {
-    words: IWord[];
-    addWord: (text: string) => void;
-    updateSVGItems: UpdateSVGItems;
-    removeWord: (id: string) => void;
-    selection: string[];
-    select: (path: string[]) => void;
-}
+import withContext from '../../hocs/WithContext';
+import AppContext, { IAppContext } from '../AppContext';
 
 interface IWordsState {
     newWord: string;
 }
 
-class Words extends React.Component<IWordsProps, IWordsState> {
+class Words extends React.Component<IAppContext, IWordsState> {
     private inputRef = createRef<HTMLInputElement>();
 
-    constructor(props: IWordsProps) {
+    constructor(props: IAppContext) {
         super(props);
 
         this.state = {
@@ -37,13 +28,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
             onAddWordClick,
             onKeyPress
         } = this;
-        const {
-            words,
-            updateSVGItems,
-            removeWord,
-            selection,
-            select
-        } = this.props;
+        const { children: words } = this.props;
         const { newWord } = this.state;
 
         return (
@@ -65,14 +50,7 @@ class Words extends React.Component<IWordsProps, IWordsState> {
                 <HorizontalRuler className="sidebar-words__splitter" />
                 <div className="sidebar-words__list">
                     {words.map(word => (
-                        <Word
-                            key={word.id}
-                            word={word}
-                            updateSVGItems={updateSVGItems}
-                            onWordRemove={removeWord}
-                            selection={selection}
-                            select={select}
-                        />
+                        <Word key={word.id} word={word} />
                     ))}
                 </div>
             </div>
@@ -110,4 +88,4 @@ class Words extends React.Component<IWordsProps, IWordsState> {
     };
 }
 
-export default Words;
+export default withContext(AppContext)(Words);

@@ -11,5 +11,6 @@ export const defaultSVGContext: ISVGContext = {
 };
 
 const SVGContext = React.createContext(defaultSVGContext);
+SVGContext.displayName = 'SVGContext';
 
 export default SVGContext;

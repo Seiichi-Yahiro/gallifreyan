@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { IWord } from '../svg/Word';
 import XIcon from '../../icon/XIcon';
-import { UpdateSVGItems } from '../../App';
 import { createClassName } from '../../component/ComponentUtils';
+import withContext from '../../hocs/WithContext';
+import AppContext, { IAppContext } from '../AppContext';
 
-interface ISidebarWordProps {
+interface IOwnProps {
     word: IWord;
-    updateSVGItems: UpdateSVGItems;
-    onWordRemove: (id: string) => void;
-    selection: string[];
-    select: (path: string[]) => void;
 }
+
+type ISidebarWordProps = IOwnProps & IAppContext;
 
 interface ISidebarWordState {
     text: string;
@@ -130,7 +129,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         });
     };
 
-    private onXIconClick = () => this.props.onWordRemove(this.props.word.id);
+    private onXIconClick = () => this.props.removeWord(this.props.word.id);
 }
 
-export default Word;
+export default withContext(AppContext)(Word);
