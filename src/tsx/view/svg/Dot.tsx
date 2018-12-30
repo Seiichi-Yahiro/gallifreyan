@@ -53,8 +53,7 @@ class Dot extends React.Component<IDotProps> {
     private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems<IDot>(
             [...this.props.parent, this.props.dot.id],
-            prevItem => ({
-                ...prevItem,
+            () => ({
                 isDragging
             })
         );
@@ -67,8 +66,7 @@ class Dot extends React.Component<IDotProps> {
         const { x, y, id } = dot;
         const { deltaX, deltaY } = data;
 
-        this.props.updateSVGItems<IDot>([...parent, id], prevItem => ({
-            ...prevItem,
+        this.props.updateSVGItems<IDot>([...parent, id], () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
@@ -77,8 +75,7 @@ class Dot extends React.Component<IDotProps> {
     private toggleHover = (isHovered: boolean) => () =>
         this.props.updateSVGItems<IDot>(
             [...this.props.parent, this.props.dot.id],
-            prevItem => ({
-                ...prevItem,
+            () => ({
                 isHovered
             })
         );

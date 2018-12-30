@@ -166,8 +166,7 @@ class Letter extends React.Component<ILetterProps> {
             children = children.map(point => point.rotate(Math.PI));
         }
 
-        updateSVGItems<ILetter>([parent, id], prevLetter => ({
-            ...prevLetter,
+        updateSVGItems<ILetter>([parent, id], () => ({
             children: children.map(
                 dot =>
                     ({
@@ -182,8 +181,7 @@ class Letter extends React.Component<ILetterProps> {
     private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
-            prevItem => ({
-                ...prevItem,
+            () => ({
                 isDragging
             })
         );
@@ -196,8 +194,7 @@ class Letter extends React.Component<ILetterProps> {
         const { x, y, id } = letter;
         const { deltaX, deltaY } = data;
 
-        this.props.updateSVGItems<ILetter>([parent, id], prevItem => ({
-            ...prevItem,
+        this.props.updateSVGItems<ILetter>([parent, id], () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
@@ -207,8 +204,7 @@ class Letter extends React.Component<ILetterProps> {
     private toggleHover = (isHovered: boolean) => () =>
         this.props.updateSVGItems<ILetter>(
             [this.props.parent, this.props.letter.id],
-            prevItem => ({
-                ...prevItem,
+            () => ({
                 isHovered
             })
         );

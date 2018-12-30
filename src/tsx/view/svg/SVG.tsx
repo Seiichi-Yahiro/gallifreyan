@@ -87,7 +87,6 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
 
             updateSVGItems<IWord | ILetter>(selection, prevItem => ({
-                ...prevItem,
                 r: prevItem.r + wheelDirection
             }));
 

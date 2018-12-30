@@ -111,8 +111,7 @@ class Word extends React.Component<IWordProps> {
             this.initializeLettersRotation
         );
 
-        updateSVGItems<IWord>([id], prevItem => ({
-            ...prevItem,
+        updateSVGItems<IWord>([id], () => ({
             children: initialize(text)
         }));
 
@@ -283,8 +282,7 @@ class Word extends React.Component<IWordProps> {
         letters.filter(isValidLetter);
 
     private toggleDragging = (isDragging: boolean) => () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
-            ...prevItem,
+        this.props.updateSVGItems<IWord>([this.props.word.id], () => ({
             isDragging
         }));
 
@@ -296,16 +294,14 @@ class Word extends React.Component<IWordProps> {
         const { x, y, id } = word;
         const { deltaX, deltaY } = data;
 
-        updateSVGItems<IWord>([id], prevItem => ({
-            ...prevItem,
+        updateSVGItems<IWord>([id], () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
     };
 
     private toggleHover = (isHovered: boolean) => () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], prevItem => ({
-            ...prevItem,
+        this.props.updateSVGItems<IWord>([this.props.word.id], () => ({
             isHovered
         }));
 

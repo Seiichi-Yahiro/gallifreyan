@@ -123,7 +123,6 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
             this.setState({ [key]: newValue } as Pick<ISidebarWordState, K>);
 
             return {
-                ...prevWord,
                 [key]: newValue
             };
         });

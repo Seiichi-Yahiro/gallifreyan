@@ -77,7 +77,7 @@ class App extends React.Component<{}, IAppContextState>
 
     public updateSVGItems = <T extends SVGItem>(
         path: string[],
-        update: (prevItem: T, prevState: IAppContextState) => T
+        update: (prevItem: T, prevState: IAppContextState) => Partial<T>
     ) =>
         this.setState(prevState => {
             const prevItem = getSVGItem(path, prevState.children) as T;
@@ -86,7 +86,7 @@ class App extends React.Component<{}, IAppContextState>
             return {
                 children: updateSVGItem(
                     path,
-                    updatedItem,
+                    { ...prevItem, ...updatedItem },
                     prevState.children
                 ) as IWord[]
             };

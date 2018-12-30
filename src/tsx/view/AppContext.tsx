@@ -14,7 +14,7 @@ export const defaultAppContextState: IAppContextState = {
 
 type UpdateSVGItems = <T extends SVGItem>(
     path: string[],
-    update: (prevItem: T, prevState: IAppContextState) => T
+    update: (prevItem: T, prevState: IAppContextState) => Partial<T>
 ) => void;
 
 export interface IAppContextFunctions {
