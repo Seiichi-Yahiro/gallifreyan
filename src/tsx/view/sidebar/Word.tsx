@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { IWord } from '../svg/Word';
 import XIcon from '../../icon/XIcon';
 import { createClassName } from '../../component/ComponentUtils';
 import withContext from '../../hocs/WithContext';
 import AppContext, { IAppContext } from '../AppContext';
+import { IWord } from '../../types/SVG';
 
 interface IOwnProps {
     word: IWord;
@@ -113,7 +113,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         const { word, updateSVGItems } = this.props;
         let newValue: string | number = event.currentTarget.value;
 
-        updateSVGItems<IWord>([word.id], prevWord => {
+        updateSVGItems(word, prevWord => {
             const oldValue = prevWord[key];
 
             if (typeof oldValue === 'number') {

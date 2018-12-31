@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { IWord } from './svg/Word';
-import { SVGItem } from './svg/SVG';
+import { ISVGBaseItem, IWord } from '../types/SVG';
 
 export interface IAppContextState {
     children: IWord[];
@@ -12,8 +11,8 @@ export const defaultAppContextState: IAppContextState = {
     selection: []
 };
 
-type UpdateSVGItems = <T extends SVGItem>(
-    path: string[],
+type UpdateSVGItems = <T extends ISVGBaseItem>(
+    svgItem: T,
     update: (prevItem: T, prevState: IAppContextState) => Partial<T>
 ) => void;
 

@@ -2,10 +2,9 @@ import * as React from 'react';
 import Group from './Group';
 import { createClassName } from '../../component/ComponentUtils';
 import { DraggableData } from 'react-draggable';
-import Letter, { ILetter } from './Letter';
+import Letter from './Letter';
 import { partialCircle } from './utils/Utils';
 import { v4 } from 'uuid';
-import { ISVGCircleItem } from './SVG';
 import Draggable from '../../component/Draggable';
 import Point from './utils/Point';
 import {
@@ -22,12 +21,7 @@ import {
 import * as _ from 'lodash';
 import withContext from '../../hocs/WithContext';
 import AppContext, { IAppContext } from '../AppContext';
-
-export interface IWord extends ISVGCircleItem {
-    text: string;
-    children: ILetter[];
-    angles: number[];
-}
+import { ILetter, IWord } from '../../types/SVG';
 
 interface IOwnProps {
     word: IWord;
@@ -56,7 +50,7 @@ class Word extends React.Component<IWordProps> {
         } = this;
         const { selection, word } = this.props;
         const isSelected = selection.length === 1 && word.id === selection[0];
-        const { id, x, y, r, isHovered, isDragging, children: letters } = word;
+        const { x, y, r, isHovered, isDragging, children: letters } = word;
         const wordAngles = calculateWordAnglePairs();
 
         const groupClassNames = createClassName('svg-word', {
@@ -92,8 +86,8 @@ class Word extends React.Component<IWordProps> {
                         onClick={onClick}
                     />
 
-                    {letters.map((letter: ILetter) => (
-                        <Letter parent={id} letter={letter} key={letter.id} />
+                    {letters.map(letter => (
+                        <Letter letter={letter} key={letter.id} />
                     ))}
                 </Group>
             </Draggable>
@@ -102,7 +96,7 @@ class Word extends React.Component<IWordProps> {
 
     private initializeLetters = () => {
         const { word, calculateAngles, updateSVGItems } = this.props;
-        const { text, id, r } = word;
+        const { text, r } = word;
 
         const initialize = _.flow(
             this.splitWordToLetters,
@@ -111,7 +105,7 @@ class Word extends React.Component<IWordProps> {
             this.initializeLettersRotation
         );
 
-        updateSVGItems<IWord>([id], () => ({
+        updateSVGItems(word, () => ({
             children: initialize(text)
         }));
 
@@ -169,6 +163,7 @@ class Word extends React.Component<IWordProps> {
             return {
                 ...initialPoint,
                 id: v4(),
+                parent: this.props.word,
                 r: isVocal(letter) ? 10 : 25,
                 text: letter,
                 angles: [],
@@ -282,7 +277,7 @@ class Word extends React.Component<IWordProps> {
         letters.filter(isValidLetter);
 
     private toggleDragging = (isDragging: boolean) => () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], () => ({
+        this.props.updateSVGItems(this.props.word, () => ({
             isDragging
         }));
 
@@ -291,17 +286,17 @@ class Word extends React.Component<IWordProps> {
         data: DraggableData
     ) => {
         const { word, updateSVGItems } = this.props;
-        const { x, y, id } = word;
+        const { x, y } = word;
         const { deltaX, deltaY } = data;
 
-        updateSVGItems<IWord>([id], () => ({
+        updateSVGItems(word, () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
     };
 
     private toggleHover = (isHovered: boolean) => () =>
-        this.props.updateSVGItems<IWord>([this.props.word.id], () => ({
+        this.props.updateSVGItems(this.props.word, () => ({
             isHovered
         }));
 

@@ -1,15 +1,14 @@
 import * as React from 'react';
-import SVG, { SVGItem } from './view/svg/SVG';
+import SVG from './view/svg/SVG';
 import { v4 } from 'uuid';
 import Words from './view/sidebar/Words';
-import { IWord } from './view/svg/Word';
 import {
     calculateCircleIntersectionAngle,
     calculateCircleIntersectionPoints,
+    getPath,
     getSVGItem,
     updateSVGItem
 } from './view/svg/utils/Utils';
-import { ILetter } from './view/svg/Letter';
 import { isFullCircle } from './view/svg/utils/LetterGroups';
 import Point from './view/svg/utils/Point';
 import * as _ from 'lodash';
@@ -18,6 +17,7 @@ import AppContext, {
     IAppContextFunctions,
     IAppContextState
 } from './view/AppContext';
+import { ILetter, ISVGBaseItem, IWord } from './types/SVG';
 
 class App extends React.Component<{}, IAppContextState>
     implements IAppContextFunctions {
@@ -75,11 +75,12 @@ class App extends React.Component<{}, IAppContextState>
         }));
     };
 
-    public updateSVGItems = <T extends SVGItem>(
-        path: string[],
+    public updateSVGItems = <T extends ISVGBaseItem>(
+        svgBaseItem: T,
         update: (prevItem: T, prevState: IAppContextState) => Partial<T>
     ) =>
         this.setState(prevState => {
+            const path = getPath(svgBaseItem);
             const prevItem = getSVGItem(path, prevState.children) as T;
             const updatedItem = update(prevItem, prevState);
 

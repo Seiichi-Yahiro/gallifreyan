@@ -1,29 +1,14 @@
 import * as React from 'react';
-import Word, { IWord } from './Word';
+import Word from './Word';
 import Group from './Group';
 import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
-import { ILetter } from './Letter';
 import { createRef } from 'react';
-import { IDot } from './Dot';
 import AppContext, { IAppContext } from '../AppContext';
 import withContext from '../../hocs/WithContext';
-
-export interface ISVGBaseItem {
-    readonly id: string;
-    isHovered: boolean;
-    isDragging: boolean;
-    children?: SVGItem[];
-}
-
-export interface ISVGCircleItem extends ISVGBaseItem {
-    x: number;
-    y: number;
-    r: number;
-}
-
-export type SVGItem = IWord | ILetter | IDot;
+import { getSVGItem } from './utils/Utils';
+import { ISVGBaseItem, ISVGCircleItem, IWord } from '../../types/SVG';
 
 class SVG extends React.Component<IAppContext, ISVGContext> {
     private reactSVGPanZoom = createRef<ReactSVGPanZoom>();
@@ -80,20 +65,33 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
 
     private deSelect = () => this.props.select([]);
 
+    private isSVGCircleItem = (
+        svgBaseItem: ISVGBaseItem
+    ): svgBaseItem is ISVGCircleItem =>
+        (svgBaseItem as ISVGCircleItem).r !== undefined;
+
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const { selection, calculateAngles, updateSVGItems } = this.props;
+        const {
+            selection,
+            calculateAngles,
+            updateSVGItems,
+            children: words
+        } = this.props;
 
         if (event.ctrlKey && selection.length > 0) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
+            const svgItem = getSVGItem(selection, words);
 
-            updateSVGItems<IWord | ILetter>(selection, prevItem => ({
-                r: prevItem.r + wheelDirection
-            }));
+            if (this.isSVGCircleItem(svgItem)) {
+                updateSVGItems(svgItem, prevItem => ({
+                    r: prevItem.r + wheelDirection
+                }));
 
-            calculateAngles(selection[0]);
+                calculateAngles(selection[0]);
 
-            event.preventDefault();
-            event.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
+            }
         }
     };
 

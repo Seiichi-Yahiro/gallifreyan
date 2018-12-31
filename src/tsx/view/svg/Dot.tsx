@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { ISVGCircleItem } from './SVG';
 import Group from './Group';
 import Draggable from '../../component/Draggable';
 import { DraggableData } from 'react-draggable';
 import { createClassName } from '../../component/ComponentUtils';
 import AppContext, { IAppContext } from '../AppContext';
 import withContext from '../../hocs/WithContext';
-
-export interface IDot extends ISVGCircleItem {}
+import { IDot } from '../../types/SVG';
 
 interface IOwnProps {
-    parent: string[];
     dot: IDot;
 }
 
@@ -51,37 +48,33 @@ class Dot extends React.Component<IDotProps> {
     }
 
     private toggleDragging = (isDragging: boolean) => () =>
-        this.props.updateSVGItems<IDot>(
-            [...this.props.parent, this.props.dot.id],
-            () => ({
-                isDragging
-            })
-        );
+        this.props.updateSVGItems(this.props.dot, () => ({
+            isDragging
+        }));
 
     private onDrag = (zoomX: number, zoomY: number) => (
         event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
-        const { dot, parent } = this.props;
-        const { x, y, id } = dot;
+        const { dot, updateSVGItems } = this.props;
+        const { x, y } = dot;
         const { deltaX, deltaY } = data;
 
-        this.props.updateSVGItems<IDot>([...parent, id], () => ({
+        updateSVGItems(dot, () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
     };
 
     private toggleHover = (isHovered: boolean) => () =>
-        this.props.updateSVGItems<IDot>(
-            [...this.props.parent, this.props.dot.id],
-            () => ({
-                isHovered
-            })
-        );
+        this.props.updateSVGItems(this.props.dot, () => ({
+            isHovered
+        }));
 
-    private onClick = () =>
-        this.props.select([...this.props.parent, this.props.dot.id]);
+    private onClick = () => {
+        const { select, dot } = this.props;
+        select([dot.parent.parent.id, dot.parent.id, dot.id]);
+    };
 }
 
 export default withContext(AppContext)(Dot);

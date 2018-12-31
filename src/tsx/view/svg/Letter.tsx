@@ -3,8 +3,7 @@ import Group from './Group';
 import { partialCircle } from './utils/Utils';
 import { createClassName } from '../../component/ComponentUtils';
 import { DraggableData } from 'react-draggable';
-import { ISVGCircleItem } from './SVG';
-import Dot, { IDot } from './Dot';
+import Dot from './Dot';
 import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
 import {
@@ -17,15 +16,9 @@ import {
 import Point from './utils/Point';
 import withContext from '../../hocs/WithContext';
 import AppContext, { IAppContext } from '../AppContext';
-
-export interface ILetter extends ISVGCircleItem {
-    text: string;
-    angles: number[];
-    children: IDot[];
-}
+import { IDot, ILetter } from '../../types/SVG';
 
 interface IOwnProps {
-    parent: string;
     letter: ILetter;
 }
 
@@ -50,7 +43,7 @@ class Letter extends React.Component<ILetterProps> {
             toggleDragging,
             toggleHover
         } = this;
-        const { letter, selection, parent } = this.props;
+        const { letter, selection } = this.props;
         const { x, y, r, id, text, isHovered, isDragging, children } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
 
@@ -80,7 +73,7 @@ class Letter extends React.Component<ILetterProps> {
                     )}
 
                     {children.map(dot => (
-                        <Dot parent={[parent, id]} dot={dot} key={dot.id} />
+                        <Dot dot={dot} key={dot.id} />
                     ))}
                 </Group>
             </Draggable>
@@ -109,8 +102,8 @@ class Letter extends React.Component<ILetterProps> {
     };
 
     private initializeDots = () => {
-        const { letter, updateSVGItems, parent } = this.props;
-        const { text, id, r, angles } = letter;
+        const { letter, updateSVGItems } = this.props;
+        const { text, r, angles } = letter;
         const [startAngle, endAngle] = angles;
         const angleDifference =
             endAngle -
@@ -139,26 +132,13 @@ class Letter extends React.Component<ILetterProps> {
         let children: Point[] = [];
 
         if (isDoubleDot(text)) {
-            children = [
-                {
-                    ...defaultPosition.rotate(3 * moveAngle)
-                },
-                {
-                    ...defaultPosition.rotate(moveAngle)
-                }
-            ];
+            children = [3 * moveAngle, moveAngle].map(angle =>
+                defaultPosition.rotate(angle)
+            );
         } else if (isTripleDot(text)) {
-            children = [
-                {
-                    ...defaultPosition.rotate(3 * moveAngle)
-                },
-                {
-                    ...defaultPosition.rotate(2 * moveAngle)
-                },
-                {
-                    ...defaultPosition.rotate(moveAngle)
-                }
-            ];
+            children = [3 * moveAngle, 2 * moveAngle, moveAngle].map(angle =>
+                defaultPosition.rotate(angle)
+            );
         }
 
         // Move dots outside for on line circles this is an aesthetic change
@@ -166,11 +146,12 @@ class Letter extends React.Component<ILetterProps> {
             children = children.map(point => point.rotate(Math.PI));
         }
 
-        updateSVGItems<ILetter>([parent, id], () => ({
+        updateSVGItems(letter, () => ({
             children: children.map(
                 dot =>
                     ({
                         id: v4(),
+                        parent: letter,
                         ...defaultDot,
                         ...dot
                     } as IDot)
@@ -178,39 +159,40 @@ class Letter extends React.Component<ILetterProps> {
         }));
     };
 
-    private toggleDragging = (isDragging: boolean) => () =>
-        this.props.updateSVGItems<ILetter>(
-            [this.props.parent, this.props.letter.id],
-            () => ({
-                isDragging
-            })
-        );
+    private toggleDragging = (isDragging: boolean) => () => {
+        const { updateSVGItems, letter } = this.props;
+        updateSVGItems(letter, () => ({
+            isDragging
+        }));
+    };
 
     private onDrag = (zoomX: number, zoomY: number) => (
         event: React.MouseEvent<HTMLElement>,
         data: DraggableData
     ) => {
-        const { letter, parent } = this.props;
-        const { x, y, id } = letter;
+        const { letter, updateSVGItems, calculateAngles } = this.props;
+        const { x, y, parent } = letter;
         const { deltaX, deltaY } = data;
 
-        this.props.updateSVGItems<ILetter>([parent, id], () => ({
+        updateSVGItems(letter, () => ({
             x: x + deltaX / zoomX,
             y: y + deltaY / zoomY
         }));
-        this.props.calculateAngles(parent);
+        calculateAngles(parent.id);
     };
 
-    private toggleHover = (isHovered: boolean) => () =>
-        this.props.updateSVGItems<ILetter>(
-            [this.props.parent, this.props.letter.id],
-            () => ({
-                isHovered
-            })
-        );
+    private toggleHover = (isHovered: boolean) => () => {
+        const { updateSVGItems, letter } = this.props;
 
-    private onClick = () =>
-        this.props.select([this.props.parent, this.props.letter.id]);
+        updateSVGItems(letter, () => ({
+            isHovered
+        }));
+    };
+
+    private onClick = () => {
+        const { select, letter } = this.props;
+        select([letter.parent.id, letter.id]);
+    };
 }
 
 export default withContext(AppContext)(Letter);
