@@ -99,7 +99,8 @@ class App extends React.Component<{}, IAppContextState>
             words: removeSVGItem(getPath(svgItem), prevState.words) as IWord[]
         }));
 
-    public select = (path: string[]) => this.setState({ selection: path });
+    public select = (svgItem?: ISVGBaseItem) =>
+        this.setState({ selection: svgItem ? getPath(svgItem) : [] });
 
     public calculateAngles = (wordId: string) =>
         this.setState(prevState => ({

@@ -300,7 +300,7 @@ class Word extends React.Component<IWordProps> {
             isHovered
         }));
 
-    private onClick = () => this.props.select([this.props.word.id]);
+    private onClick = () => this.props.select(this.props.word);
 }
 
 export default withContext(AppContext)(Word);

@@ -101,9 +101,9 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         const { selection, select, word } = this.props;
 
         if (selection.length === 1 && selection[0] === word.id) {
-            select([]);
+            select();
         } else {
-            select([word.id]);
+            select(word);
         }
     };
 

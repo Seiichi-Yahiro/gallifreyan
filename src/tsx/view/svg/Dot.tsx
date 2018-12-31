@@ -71,10 +71,7 @@ class Dot extends React.Component<IDotProps> {
             isHovered
         }));
 
-    private onClick = () => {
-        const { select, dot } = this.props;
-        select([dot.parent.parent.id, dot.parent.id, dot.id]);
-    };
+    private onClick = () => this.props.select(this.props.dot);
 }
 
 export default withContext(AppContext)(Dot);

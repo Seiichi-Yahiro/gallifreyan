@@ -63,7 +63,7 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
         );
     }
 
-    private deSelect = () => this.props.select([]);
+    private deSelect = () => this.props.select();
 
     private isSVGCircleItem = (
         svgBaseItem: ISVGBaseItem

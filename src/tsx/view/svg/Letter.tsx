@@ -189,10 +189,7 @@ class Letter extends React.Component<ILetterProps> {
         }));
     };
 
-    private onClick = () => {
-        const { select, letter } = this.props;
-        select([letter.parent.id, letter.id]);
-    };
+    private onClick = () => this.props.select(this.props.letter);
 }
 
 export default withContext(AppContext)(Letter);

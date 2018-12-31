@@ -20,7 +20,7 @@ export interface IAppContextFunctions {
     addWord: (text: string) => void;
     updateSVGItems: UpdateSVGItems;
     removeSVGItems: (svgItem: ISVGBaseItem) => void;
-    select: (path: string[]) => void;
+    select: (svgItem?: ISVGBaseItem) => void;
     calculateAngles: (wordId: string) => void;
 }
 
