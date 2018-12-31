@@ -3,7 +3,7 @@ export interface ISVGBaseItem {
     readonly parent?: ISVGBaseItem;
     isHovered: boolean;
     isDragging: boolean;
-    children?: ISVGBaseItem[]; // TODO rename children as it interferes with react children
+    children?: ISVGBaseItem[];
 }
 
 export interface ISVGCircleItem extends ISVGBaseItem {
@@ -29,5 +29,3 @@ export interface ILetter extends ISVGCircleItem {
 export interface IDot extends ISVGCircleItem {
     readonly parent: ILetter;
 }
-
-export type SVGItem = IWord | ILetter | IDot;

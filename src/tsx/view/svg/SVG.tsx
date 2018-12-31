@@ -28,7 +28,7 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
     public render() {
         const { onChangeSVGPanZoom, onWheel, deSelect, reactSVGPanZoom } = this;
         const { zoomX, zoomY } = this.state;
-        const { children: words } = this.props;
+        const { words } = this.props;
 
         return (
             <div className="grid__svg">
@@ -75,7 +75,7 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
             selection,
             calculateAngles,
             updateSVGItems,
-            children: words
+            words
         } = this.props;
 
         if (event.ctrlKey && selection.length > 0) {

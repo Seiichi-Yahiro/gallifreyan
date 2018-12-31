@@ -71,7 +71,7 @@ class App extends React.Component<{}, IAppContextState>
         };
 
         this.setState((prevState: IAppContextState) => ({
-            children: [...prevState.children, newWord]
+            words: [...prevState.words, newWord]
         }));
     };
 
@@ -81,30 +81,28 @@ class App extends React.Component<{}, IAppContextState>
     ) =>
         this.setState(prevState => {
             const path = getPath(svgBaseItem);
-            const prevItem = getSVGItem(path, prevState.children) as T;
+            const prevItem = getSVGItem(path, prevState.words) as T;
             const updatedItem = update(prevItem, prevState);
 
             return {
-                children: updateSVGItem(
+                words: updateSVGItem(
                     path,
                     { ...prevItem, ...updatedItem },
-                    prevState.children
+                    prevState.words
                 ) as IWord[]
             };
         });
 
     public removeWord = (wordId: string) =>
         this.setState((prevState: IAppContextState) => ({
-            children: prevState.children.filter(
-                (word: IWord) => word.id !== wordId
-            )
+            words: prevState.words.filter((word: IWord) => word.id !== wordId)
         }));
 
     public select = (path: string[]) => this.setState({ selection: path });
 
     public calculateAngles = (wordId: string) =>
         this.setState(prevState => ({
-            children: prevState.children.map(word => {
+            words: prevState.words.map(word => {
                 if (word.id === wordId) {
                     const wordRadius = word.r;
                     const wordAngles = _.chain(word.children)

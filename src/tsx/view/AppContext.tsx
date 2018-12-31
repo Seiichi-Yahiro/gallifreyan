@@ -2,12 +2,12 @@ import * as React from 'react';
 import { ISVGBaseItem, IWord } from '../types/SVG';
 
 export interface IAppContextState {
-    children: IWord[];
+    words: IWord[];
     selection: string[];
 }
 
 export const defaultAppContextState: IAppContextState = {
-    children: [],
+    words: [],
     selection: []
 };
 

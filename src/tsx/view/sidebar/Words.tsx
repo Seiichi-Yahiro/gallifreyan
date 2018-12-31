@@ -28,7 +28,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
             onAddWordClick,
             onKeyPress
         } = this;
-        const { children: words } = this.props;
+        const { words } = this.props;
         const { newWord } = this.state;
 
         return (
