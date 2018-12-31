@@ -150,3 +150,31 @@ export const updateSVGItem = (
         });
     }
 };
+
+export const removeSVGItem = (
+    path: string[],
+    children: ISVGBaseItem[]
+): ISVGBaseItem[] => {
+    if (path.length === 0) {
+        return children;
+    } else if (path.length === 1) {
+        return children.filter(child => child.id !== path[0]);
+    } else {
+        return children.map(child => {
+            if (child.id === path[0]) {
+                if (!child.children) {
+                    throw new Error(
+                        `Path length is ${path.length - 1} too long!`
+                    );
+                }
+
+                return {
+                    ...child,
+                    children: removeSVGItem(path.slice(1), child.children)
+                };
+            }
+
+            return child;
+        });
+    }
+};

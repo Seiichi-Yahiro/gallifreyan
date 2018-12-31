@@ -19,7 +19,7 @@ type UpdateSVGItems = <T extends ISVGBaseItem>(
 export interface IAppContextFunctions {
     addWord: (text: string) => void;
     updateSVGItems: UpdateSVGItems;
-    removeWord: (id: string) => void;
+    removeSVGItems: (svgItem: ISVGBaseItem) => void;
     select: (path: string[]) => void;
     calculateAngles: (wordId: string) => void;
 }
@@ -28,7 +28,7 @@ export interface IAppContextFunctions {
 const defaultAppContextFunctions: IAppContextFunctions = {
     addWord: () => {},
     updateSVGItems: () => {},
-    removeWord: () => {},
+    removeSVGItems: () => {},
     select: () => {},
     calculateAngles: () => {}
 };

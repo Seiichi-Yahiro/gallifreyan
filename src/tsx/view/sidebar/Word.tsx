@@ -128,7 +128,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         });
     };
 
-    private onXIconClick = () => this.props.removeWord(this.props.word.id);
+    private onXIconClick = () => this.props.removeSVGItems(this.props.word);
 }
 
 export default withContext(AppContext)(Word);

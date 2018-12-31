@@ -7,6 +7,7 @@ import {
     calculateCircleIntersectionPoints,
     getPath,
     getSVGItem,
+    removeSVGItem,
     updateSVGItem
 } from './view/svg/utils/Utils';
 import { isFullCircle } from './view/svg/utils/LetterGroups';
@@ -32,7 +33,7 @@ class App extends React.Component<{}, IAppContextState>
     public render() {
         const {
             addWord,
-            removeWord,
+            removeSVGItems,
             select,
             calculateAngles,
             updateSVGItems
@@ -44,7 +45,7 @@ class App extends React.Component<{}, IAppContextState>
                     value={{
                         ...this.state,
                         addWord,
-                        removeWord,
+                        removeSVGItems,
                         select,
                         calculateAngles,
                         updateSVGItems
@@ -93,9 +94,9 @@ class App extends React.Component<{}, IAppContextState>
             };
         });
 
-    public removeWord = (wordId: string) =>
+    public removeSVGItems = (svgItem: ISVGBaseItem) =>
         this.setState((prevState: IAppContextState) => ({
-            words: prevState.words.filter((word: IWord) => word.id !== wordId)
+            words: removeSVGItem(getPath(svgItem), prevState.words) as IWord[]
         }));
 
     public select = (path: string[]) => this.setState({ selection: path });
