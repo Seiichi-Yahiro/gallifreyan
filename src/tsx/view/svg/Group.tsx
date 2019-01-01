@@ -11,13 +11,7 @@ export enum Unit {
     PERCENT = '%'
 }
 
-const Group: React.FunctionComponent<IGroupProps> = ({
-    x,
-    y,
-    unit = Unit.PIXEL,
-    children,
-    ...props
-}) => (
+const Group: React.FunctionComponent<IGroupProps> = ({ x, y, unit = Unit.PIXEL, children, ...props }) => (
     <g {...props} style={{ transform: `translate(${x}${unit}, ${y}${unit})` }}>
         {children}
     </g>

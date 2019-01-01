@@ -52,10 +52,7 @@ class Dot extends React.Component<IDotProps> {
             isDragging
         }));
 
-    private onDrag = (zoomX: number, zoomY: number) => (
-        event: React.MouseEvent<HTMLElement>,
-        data: DraggableData
-    ) => {
+    private onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
         const { dot, updateSVGItems } = this.props;
         const { x, y } = dot;
         const { deltaX, deltaY } = data;

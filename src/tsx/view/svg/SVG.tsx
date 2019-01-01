@@ -45,11 +45,7 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
                             <svg width={1010} height={1010}>
                                 <SVGContext.Provider value={{ zoomX, zoomY }}>
                                     <Group x={505} y={505} onWheel={onWheel}>
-                                        <circle
-                                            r={500}
-                                            onClick={deSelect}
-                                            className="svg-sentence"
-                                        />
+                                        <circle r={500} onClick={deSelect} className="svg-sentence" />
                                         {words.map((word: IWord) => (
                                             <Word key={word.id} word={word} />
                                         ))}
@@ -65,18 +61,11 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
 
     private deSelect = () => this.props.select();
 
-    private isSVGCircleItem = (
-        svgBaseItem: ISVGBaseItem
-    ): svgBaseItem is ISVGCircleItem =>
+    private isSVGCircleItem = (svgBaseItem: ISVGBaseItem): svgBaseItem is ISVGCircleItem =>
         (svgBaseItem as ISVGCircleItem).r !== undefined;
 
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const {
-            selection,
-            calculateAngles,
-            updateSVGItems,
-            words
-        } = this.props;
+        const { selection, calculateAngles, updateSVGItems, words } = this.props;
 
         if (event.ctrlKey && selection.length > 0) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);

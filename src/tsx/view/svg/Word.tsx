@@ -41,13 +41,7 @@ class Word extends React.Component<IWordProps> {
     }
 
     public render() {
-        const {
-            onClick,
-            calculateWordAnglePairs,
-            onDrag,
-            toggleDragging,
-            toggleHover
-        } = this;
+        const { onClick, calculateWordAnglePairs, onDrag, toggleDragging, toggleHover } = this;
         const { selection, word } = this.props;
         const isSelected = selection.length === 1 && word.id === selection[0];
         const { x, y, r, isHovered, isDragging, children: letters } = word;
@@ -71,10 +65,7 @@ class Word extends React.Component<IWordProps> {
                         <circle r={r} />
                     ) : (
                         wordAngles.map(([start, end], index: number) => (
-                            <path
-                                d={partialCircle(0, 0, r, start, end)}
-                                key={index}
-                            />
+                            <path d={partialCircle(0, 0, r, start, end)} key={index} />
                         ))
                     )}
 
@@ -119,10 +110,7 @@ class Word extends React.Component<IWordProps> {
             newLetters
                 .map(l => l.text)
                 .map(isVocal)
-                .filter(
-                    (vocal, index, array) =>
-                        !(index !== 0 && vocal && !array[index - 1])
-                ).length;
+                .filter((vocal, index, array) => !(index !== 0 && vocal && !array[index - 1])).length;
 
         let rotationIndex = 0;
 
@@ -130,10 +118,7 @@ class Word extends React.Component<IWordProps> {
             const { text: letter, x, y } = newLetters[i];
             const previousLetter = i !== 0 ? newLetters[i - 1].text : '';
 
-            if (
-                isVocal(letter) &&
-                !letterGroupsCombination(isVocal, isEmpty)(previousLetter)
-            ) {
+            if (isVocal(letter) && !letterGroupsCombination(isVocal, isEmpty)(previousLetter)) {
                 rotationIndex = rotationIndex > 0 ? rotationIndex - 1 : 0;
             }
 
@@ -148,17 +133,10 @@ class Word extends React.Component<IWordProps> {
         return newLetters;
     };
 
-    private initializeLettersPosition = (
-        letters: string[],
-        wordRadius: number
-    ): ILetter[] =>
+    private initializeLettersPosition = (letters: string[], wordRadius: number): ILetter[] =>
         letters.map((letter: string, index: number) => {
             const previousLetter = index !== 0 ? letters[index - 1] : '';
-            const initialPoint = this.initializeLetterPosition(
-                letter,
-                previousLetter,
-                wordRadius
-            );
+            const initialPoint = this.initializeLetterPosition(letter, previousLetter, wordRadius);
 
             return {
                 ...initialPoint,
@@ -173,18 +151,10 @@ class Word extends React.Component<IWordProps> {
             } as ILetter;
         });
 
-    private initializeLetterPosition = (
-        letter: string,
-        previousLetter: string,
-        wordRadius: number
-    ): Point => {
+    private initializeLetterPosition = (letter: string, previousLetter: string, wordRadius: number): Point => {
         switch (true) {
             case isVocal(letter): {
-                return this.initializeVocalPosition(
-                    letter,
-                    previousLetter,
-                    wordRadius
-                );
+                return this.initializeVocalPosition(letter, previousLetter, wordRadius);
             }
 
             case isDeepCut(letter): {
@@ -203,11 +173,7 @@ class Word extends React.Component<IWordProps> {
         }
     };
 
-    private initializeVocalPosition = (
-        vocal: string,
-        previousLetter: string,
-        wordRadius: number
-    ): Point => {
+    private initializeVocalPosition = (vocal: string, previousLetter: string, wordRadius: number): Point => {
         switch (true) {
             case RegExp('a', 'i').test(vocal): {
                 return new Point(0, wordRadius + 10 + 5); // TODO is on line ?
@@ -217,11 +183,7 @@ class Word extends React.Component<IWordProps> {
                 if (letterGroupsCombination(isEmpty, isVocal)(previousLetter)) {
                     return new Point(0, wordRadius - 10 - 5);
                 } else {
-                    const previousLetterPosition = this.initializeLetterPosition(
-                        previousLetter,
-                        '',
-                        wordRadius
-                    );
+                    const previousLetterPosition = this.initializeLetterPosition(previousLetter, '', wordRadius);
                     return previousLetterPosition.subtract(new Point(0, 25));
                 }
             }
@@ -231,11 +193,7 @@ class Word extends React.Component<IWordProps> {
                 if (letterGroupsCombination(isEmpty, isVocal)(previousLetter)) {
                     return new Point(0, wordRadius);
                 } else {
-                    return this.initializeLetterPosition(
-                        previousLetter,
-                        '',
-                        wordRadius
-                    );
+                    return this.initializeLetterPosition(previousLetter, '', wordRadius);
                 }
             }
         }
@@ -247,10 +205,7 @@ class Word extends React.Component<IWordProps> {
             wordAngles.push(wordAngles.shift()!);
             return _.chain(wordAngles)
                 .chunk(2)
-                .map(([start, end]) => [
-                    start < end ? start + 2 * Math.PI : start,
-                    end
-                ])
+                .map(([start, end]) => [start < end ? start + 2 * Math.PI : start, end])
                 .value();
         }
         return [];
@@ -273,18 +228,14 @@ class Word extends React.Component<IWordProps> {
         }
     };
 
-    private filterValidLetters = (letters: string[]) =>
-        letters.filter(isValidLetter);
+    private filterValidLetters = (letters: string[]) => letters.filter(isValidLetter);
 
     private toggleDragging = (isDragging: boolean) => () =>
         this.props.updateSVGItems(this.props.word, () => ({
             isDragging
         }));
 
-    private onDrag = (zoomX: number, zoomY: number) => (
-        event: React.MouseEvent<HTMLElement>,
-        data: DraggableData
-    ) => {
+    private onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
         const { word, updateSVGItems } = this.props;
         const { x, y } = word;
         const { deltaX, deltaY } = data;

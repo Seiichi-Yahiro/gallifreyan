@@ -32,15 +32,10 @@ export const isDoubleLetter = (text: string) => DOUBLE_LETTER.test(text);
 
 export const isEmpty = (text: string) => text.length === 0;
 
-export const letterGroupsCombination = (
-    ...fns: Array<(text: string) => boolean>
-) => (text: string) => fns.some(fn => fn(text));
+export const letterGroupsCombination = (...fns: Array<(text: string) => boolean>) => (text: string) =>
+    fns.some(fn => fn(text));
 
-export const isFullCircle = letterGroupsCombination(
-    isOnLine,
-    isInside,
-    isVocal
-);
+export const isFullCircle = letterGroupsCombination(isOnLine, isInside, isVocal);
 
 export const isValidLetter = letterGroupsCombination(
     isDeepCut,

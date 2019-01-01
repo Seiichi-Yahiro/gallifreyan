@@ -5,10 +5,8 @@ interface IConditionalWrapperProps {
     wrapper: (children: React.ReactNode) => React.ReactNode;
 }
 
-const ConditionalWrapper: React.FunctionComponent<IConditionalWrapperProps> = ({
-    condition,
-    wrapper,
-    children
-}) => <>{condition ? wrapper(children) : children}</>;
+const ConditionalWrapper: React.FunctionComponent<IConditionalWrapperProps> = ({ condition, wrapper, children }) => (
+    <>{condition ? wrapper(children) : children}</>
+);
 
 export default ConditionalWrapper;

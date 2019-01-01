@@ -13,15 +13,10 @@ import {
 import { isFullCircle } from './view/svg/utils/LetterGroups';
 import Point from './view/svg/utils/Point';
 import * as _ from 'lodash';
-import AppContext, {
-    defaultAppContextState,
-    IAppContextFunctions,
-    IAppContextState
-} from './view/AppContext';
+import AppContext, { defaultAppContextState, IAppContextFunctions, IAppContextState } from './view/AppContext';
 import { ILetter, ISVGBaseItem, IWord } from './types/SVG';
 
-class App extends React.Component<{}, IAppContextState>
-    implements IAppContextFunctions {
+class App extends React.Component<{}, IAppContextState> implements IAppContextFunctions {
     constructor(props: {}) {
         super(props);
 
@@ -31,13 +26,7 @@ class App extends React.Component<{}, IAppContextState>
     }
 
     public render() {
-        const {
-            addWord,
-            removeSVGItems,
-            select,
-            calculateAngles,
-            updateSVGItems
-        } = this;
+        const { addWord, removeSVGItems, select, calculateAngles, updateSVGItems } = this;
 
         return (
             <div className="grid">
@@ -86,11 +75,7 @@ class App extends React.Component<{}, IAppContextState>
             const updatedItem = update(prevItem, prevState);
 
             return {
-                words: updateSVGItem(
-                    path,
-                    { ...prevItem, ...updatedItem },
-                    prevState.words
-                ) as IWord[]
+                words: updateSVGItem(path, { ...prevItem, ...updatedItem }, prevState.words) as IWord[]
             };
         });
 
@@ -99,8 +84,7 @@ class App extends React.Component<{}, IAppContextState>
             words: removeSVGItem(getPath(svgItem), prevState.words) as IWord[]
         }));
 
-    public select = (svgItem?: ISVGBaseItem) =>
-        this.setState({ selection: svgItem ? getPath(svgItem) : [] });
+    public select = (svgItem?: ISVGBaseItem) => this.setState({ selection: svgItem ? getPath(svgItem) : [] });
 
     public calculateAngles = (wordId: string) =>
         this.setState(prevState => ({
@@ -112,25 +96,12 @@ class App extends React.Component<{}, IAppContextState>
                         .flatMap(({ x, y, r }) => {
                             const letterPosition = new Point(x, y);
 
-                            const angles = calculateCircleIntersectionPoints(
-                                wordRadius,
-                                r,
-                                letterPosition
-                            )
-                                .map(point =>
-                                    calculateCircleIntersectionAngle(
-                                        point,
-                                        wordRadius
-                                    )
-                                )
+                            const angles = calculateCircleIntersectionPoints(wordRadius, r, letterPosition)
+                                .map(point => calculateCircleIntersectionAngle(point, wordRadius))
                                 .sort();
 
                             // if letter circle is not on top the word 0° point
-                            if (
-                                new Point(wordRadius, 0)
-                                    .subtract(letterPosition)
-                                    .length() > r
-                            ) {
+                            if (new Point(wordRadius, 0).subtract(letterPosition).length() > r) {
                                 return angles.reverse();
                             }
 
@@ -141,22 +112,13 @@ class App extends React.Component<{}, IAppContextState>
                     const children = word.children.map(letter => {
                         const { x, y, r } = letter;
                         const letterPosition = new Point(x, y);
-                        let angles = calculateCircleIntersectionPoints(
-                            wordRadius,
-                            r,
-                            letterPosition
-                        )
+                        let angles = calculateCircleIntersectionPoints(wordRadius, r, letterPosition)
                             .map(point => point.subtract(letterPosition))
-                            .map(point =>
-                                calculateCircleIntersectionAngle(point, r)
-                            )
+                            .map(point => calculateCircleIntersectionAngle(point, r))
                             .sort();
 
                         // if letter 0° point is not inside word circle
-                        if (
-                            letterPosition.add(new Point(r, 0)).length() >
-                            wordRadius
-                        ) {
+                        if (letterPosition.add(new Point(r, 0)).length() > wordRadius) {
                             angles = angles.reverse();
                         }
 

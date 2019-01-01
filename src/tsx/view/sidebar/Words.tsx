@@ -22,12 +22,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
     }
 
     public render() {
-        const {
-            inputRef,
-            onTextInputChange,
-            onAddWordClick,
-            onKeyPress
-        } = this;
+        const { inputRef, onTextInputChange, onAddWordClick, onKeyPress } = this;
         const { words } = this.props;
         const { newWord } = this.state;
 
@@ -42,11 +37,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
                     onChange={onTextInputChange}
                     onKeyPress={onKeyPress}
                 />
-                <Button
-                    text="Add Word"
-                    onClick={onAddWordClick}
-                    className="sidebar-words__button button--full-width"
-                />
+                <Button text="Add Word" onClick={onAddWordClick} className="sidebar-words__button button--full-width" />
                 <HorizontalRuler className="sidebar-words__splitter" />
                 <div className="sidebar-words__list">
                     {words.map(word => (
@@ -57,9 +48,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
         );
     }
 
-    private onTextInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    private onTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newWord = event.currentTarget.value;
         this.setState({ newWord });
     };

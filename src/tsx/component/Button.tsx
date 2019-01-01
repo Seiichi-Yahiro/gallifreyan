@@ -6,11 +6,7 @@ interface IButtonProps {
     readonly className?: string;
 }
 
-const Button: React.FunctionComponent<IButtonProps> = ({
-    text,
-    onClick,
-    className = ''
-}) => (
+const Button: React.FunctionComponent<IButtonProps> = ({ text, onClick, className = '' }) => (
     <button className={`button ${className}`} type="button" onClick={onClick}>
         {text}
     </button>

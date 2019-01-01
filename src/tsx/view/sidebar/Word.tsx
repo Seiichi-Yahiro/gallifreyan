@@ -56,10 +56,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
                 </div>
 
                 <div className="display-contents">
-                    <label
-                        htmlFor="word-radius"
-                        className="sidebar-word__label"
-                    >
+                    <label htmlFor="word-radius" className="sidebar-word__label">
                         Radius
                     </label>
                     <input
@@ -107,9 +104,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         }
     };
 
-    private onChange = <K extends keyof ISidebarWordState>(key: K) => (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    private onChange = <K extends keyof ISidebarWordState>(key: K) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const { word, updateSVGItems } = this.props;
         let newValue: string | number = event.currentTarget.value;
 

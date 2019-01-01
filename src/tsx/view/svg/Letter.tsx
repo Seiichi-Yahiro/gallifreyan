@@ -6,13 +6,7 @@ import { DraggableData } from 'react-draggable';
 import Dot from './Dot';
 import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
-import {
-    isDoubleDot,
-    isFullCircle,
-    isInside,
-    isOnLine,
-    isTripleDot
-} from './utils/LetterGroups';
+import { isDoubleDot, isFullCircle, isInside, isOnLine, isTripleDot } from './utils/LetterGroups';
 import Point from './utils/Point';
 import withContext from '../../hocs/WithContext';
 import AppContext, { IAppContext } from '../AppContext';
@@ -36,13 +30,7 @@ class Letter extends React.Component<ILetterProps> {
     }
 
     public render() {
-        const {
-            getPartialCircle,
-            onClick,
-            onDrag,
-            toggleDragging,
-            toggleHover
-        } = this;
+        const { getPartialCircle, onClick, onDrag, toggleDragging, toggleHover } = this;
         const { letter, selection } = this.props;
         const { x, y, r, id, text, isHovered, isDragging, children } = letter;
         const isSelected = selection.length === 2 && id === selection[1];
@@ -90,13 +78,7 @@ class Letter extends React.Component<ILetterProps> {
                 onMouseEnter={toggleHover(true)}
                 onMouseLeave={toggleHover(false)}
                 onClick={onClick}
-                d={partialCircle(
-                    0,
-                    0,
-                    r,
-                    start < end ? start + 2 * Math.PI : start,
-                    end
-                )}
+                d={partialCircle(0, 0, r, start < end ? start + 2 * Math.PI : start, end)}
             />
         );
     };
@@ -105,16 +87,13 @@ class Letter extends React.Component<ILetterProps> {
         const { letter, updateSVGItems } = this.props;
         const { text, r, angles } = letter;
         const [startAngle, endAngle] = angles;
-        const angleDifference =
-            endAngle -
-            (startAngle < endAngle ? startAngle + Math.PI * 2 : startAngle);
+        const angleDifference = endAngle - (startAngle < endAngle ? startAngle + Math.PI * 2 : startAngle);
         const moveAngle = (isInside(text) ? Math.PI : angleDifference) / 4;
 
         let defaultPosition: Point;
         if (isInside(text)) {
             const letterPos = new Point(letter.x, letter.y);
-            const distance =
-                letterPos.length() - (letterPos.length() - letter.r + 5);
+            const distance = letterPos.length() - (letterPos.length() - letter.r + 5);
             defaultPosition = letterPos
                 .unit()
                 .multiply(distance)
@@ -132,13 +111,9 @@ class Letter extends React.Component<ILetterProps> {
         let children: Point[] = [];
 
         if (isDoubleDot(text)) {
-            children = [3 * moveAngle, moveAngle].map(angle =>
-                defaultPosition.rotate(angle)
-            );
+            children = [3 * moveAngle, moveAngle].map(angle => defaultPosition.rotate(angle));
         } else if (isTripleDot(text)) {
-            children = [3 * moveAngle, 2 * moveAngle, moveAngle].map(angle =>
-                defaultPosition.rotate(angle)
-            );
+            children = [3 * moveAngle, 2 * moveAngle, moveAngle].map(angle => defaultPosition.rotate(angle));
         }
 
         // Move dots outside for on line circles this is an aesthetic change
@@ -166,10 +141,7 @@ class Letter extends React.Component<ILetterProps> {
         }));
     };
 
-    private onDrag = (zoomX: number, zoomY: number) => (
-        event: React.MouseEvent<HTMLElement>,
-        data: DraggableData
-    ) => {
+    private onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
         const { letter, updateSVGItems, calculateAngles } = this.props;
         const { x, y, parent } = letter;
         const { deltaX, deltaY } = data;

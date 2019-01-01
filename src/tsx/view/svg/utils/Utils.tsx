@@ -13,13 +13,7 @@ import { ISVGBaseItem } from '../../../types/SVG';
  * @param {number} end - end angle in radians
  * @returns {string} svg path
  */
-export const partialCircle = (
-    cx: number,
-    cy: number,
-    r: number,
-    start: number,
-    end: number
-): string => {
+export const partialCircle = (cx: number, cy: number, r: number, start: number, end: number): string => {
     const length = end - start;
 
     if (length === 0) {
@@ -43,11 +37,7 @@ export const partialCircle = (
  * @param rb - radius of circle b
  * @param posB - the position of circle b
  */
-export const calculateCircleIntersectionPoints = (
-    ra: number,
-    rb: number,
-    posB: Point
-): Point[] => {
+export const calculateCircleIntersectionPoints = (ra: number, rb: number, posB: Point): Point[] => {
     const distance = posB.length();
     if (distance === 0) {
         return [];
@@ -75,15 +65,10 @@ export const calculateCircleIntersectionPoints = (
     return [q1, q2];
 };
 
-export const calculateCircleIntersectionAngle = (
-    point: Point,
-    r: number
-): number => {
+export const calculateCircleIntersectionAngle = (point: Point, r: number): number => {
     const zeroAngleVector = new Point(r, 0);
 
-    let angle = Math.acos(
-        point.dot(zeroAngleVector) / (point.length() * zeroAngleVector.length())
-    );
+    let angle = Math.acos(point.dot(zeroAngleVector) / (point.length() * zeroAngleVector.length()));
 
     if (point.cross(zeroAngleVector) > 0) {
         angle = Math.PI * 2 - angle;
@@ -93,22 +78,15 @@ export const calculateCircleIntersectionAngle = (
 };
 
 export const getPath = (svgBaseItem: ISVGBaseItem): string[] =>
-    svgBaseItem.parent === undefined
-        ? [svgBaseItem.id]
-        : getPath(svgBaseItem.parent).concat(svgBaseItem.id);
+    svgBaseItem.parent === undefined ? [svgBaseItem.id] : getPath(svgBaseItem.parent).concat(svgBaseItem.id);
 
-export const getSVGItem = (
-    path: string[],
-    children: ISVGBaseItem[]
-): ISVGBaseItem => {
+export const getSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBaseItem => {
     if (path.length === 0) {
         throw new Error('Path cannot be empty!');
     } else if (path.length === 1) {
         return children.find(child => child.id === path[0])!;
     } else {
-        const svgItem: ISVGBaseItem = children.find(
-            child => child.id === path[0]
-        )!;
+        const svgItem: ISVGBaseItem = children.find(child => child.id === path[0])!;
         if (!svgItem.children) {
             throw new Error(`Path length is ${path.length - 1} too long!`);
         }
@@ -116,33 +94,21 @@ export const getSVGItem = (
     }
 };
 
-export const updateSVGItem = (
-    path: string[],
-    newSvgItem: ISVGBaseItem,
-    children: ISVGBaseItem[]
-): ISVGBaseItem[] => {
+export const updateSVGItem = (path: string[], newSvgItem: ISVGBaseItem, children: ISVGBaseItem[]): ISVGBaseItem[] => {
     if (path.length === 0) {
         return children;
     } else if (path.length === 1) {
-        return children.map(child =>
-            child.id === path[0] ? newSvgItem : child
-        );
+        return children.map(child => (child.id === path[0] ? newSvgItem : child));
     } else {
         return children.map(child => {
             if (child.id === path[0]) {
                 if (!child.children) {
-                    throw new Error(
-                        `Path length is ${path.length - 1} too long!`
-                    );
+                    throw new Error(`Path length is ${path.length - 1} too long!`);
                 }
 
                 return {
                     ...child,
-                    children: updateSVGItem(
-                        path.slice(1),
-                        newSvgItem,
-                        child.children
-                    )
+                    children: updateSVGItem(path.slice(1), newSvgItem, child.children)
                 };
             }
 
@@ -151,10 +117,7 @@ export const updateSVGItem = (
     }
 };
 
-export const removeSVGItem = (
-    path: string[],
-    children: ISVGBaseItem[]
-): ISVGBaseItem[] => {
+export const removeSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBaseItem[] => {
     if (path.length === 0) {
         return children;
     } else if (path.length === 1) {
@@ -163,9 +126,7 @@ export const removeSVGItem = (
         return children.map(child => {
             if (child.id === path[0]) {
                 if (!child.children) {
-                    throw new Error(
-                        `Path length is ${path.length - 1} too long!`
-                    );
+                    throw new Error(`Path length is ${path.length - 1} too long!`);
                 }
 
                 return {
