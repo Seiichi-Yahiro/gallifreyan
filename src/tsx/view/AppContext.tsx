@@ -3,12 +3,12 @@ import { ISVGBaseItem, IWord } from '../types/SVG';
 
 export interface IAppContextState {
     words: IWord[];
-    selection: string[];
+    selection: ISVGBaseItem | undefined;
 }
 
 export const defaultAppContextState: IAppContextState = {
     words: [],
-    selection: []
+    selection: undefined
 };
 
 type UpdateSVGItems = <T extends ISVGBaseItem>(

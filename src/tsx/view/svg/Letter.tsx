@@ -33,7 +33,7 @@ class Letter extends React.Component<ILetterProps> {
         const { getPartialCircle, onClick, onDrag, toggleDragging, toggleHover } = this;
         const { letter, selection } = this.props;
         const { x, y, r, id, text, isHovered, isDragging, children } = letter;
-        const isSelected = selection.length === 2 && id === selection[1];
+        const isSelected = selection !== undefined && selection.id === id;
 
         const groupClassNames = createClassName('svg-letter', {
             'svg-letter--is-selected': isSelected,

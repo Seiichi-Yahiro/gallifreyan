@@ -84,7 +84,7 @@ class App extends React.Component<{}, IAppContextState> implements IAppContextFu
             words: removeSVGItem(getPath(svgItem), prevState.words) as IWord[]
         }));
 
-    public select = (svgItem?: ISVGBaseItem) => this.setState({ selection: svgItem ? getPath(svgItem) : [] });
+    public select = (svgItem?: ISVGBaseItem) => this.setState({ selection: svgItem });
 
     public calculateAngles = (wordId: string) =>
         this.setState(prevState => ({

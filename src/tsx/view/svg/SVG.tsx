@@ -7,7 +7,6 @@ import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { createRef } from 'react';
 import AppContext, { IAppContext } from '../AppContext';
 import withContext from '../../hocs/WithContext';
-import { getSVGItem } from './utils/Utils';
 import { ISVGBaseItem, ISVGCircleItem, IWord } from '../../types/SVG';
 
 class SVG extends React.Component<IAppContext, ISVGContext> {
@@ -65,14 +64,13 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
         (svgBaseItem as ISVGCircleItem).r !== undefined;
 
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const { selection, calculateAngles, updateSVGItems, words } = this.props;
+        const { selection, calculateAngles, updateSVGItems } = this.props;
 
-        if (event.ctrlKey && selection.length > 0) {
+        if (event.ctrlKey && selection) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
-            const svgItem = getSVGItem(selection, words);
 
-            if (this.isSVGCircleItem(svgItem)) {
-                updateSVGItems(svgItem, prevItem => ({
+            if (this.isSVGCircleItem(selection)) {
+                updateSVGItems(selection, prevItem => ({
                     r: prevItem.r + wheelDirection
                 }));
 
