@@ -70,18 +70,27 @@ class App extends React.Component<{}, IAppContextState> implements IAppContextFu
         update: (prevItem: T, prevState: IAppContextState) => Partial<T>
     ) =>
         this.setState(prevState => {
+            const { words, selection } = prevState;
             const path = getPath(svgBaseItem);
-            const prevItem = getSVGItem(path, prevState.words) as T;
-            const updatedItem = update(prevItem, prevState);
+            const prevItem = getSVGItem(path, words) as T;
+            const itemUpdate = update(prevItem, prevState);
+            const newSVGItem = { ...prevItem, ...itemUpdate };
+            const newWords = updateSVGItem(path, newSVGItem, words) as IWord[];
+            const newSelection =
+                selection && path.some(id => id === selection.id)
+                    ? getSVGItem(getPath(selection), newWords)
+                    : selection;
 
             return {
-                words: updateSVGItem(path, { ...prevItem, ...updatedItem }, prevState.words) as IWord[]
+                words: newWords,
+                selection: newSelection
             };
         });
 
     public removeSVGItems = (svgItem: ISVGBaseItem) =>
-        this.setState((prevState: IAppContextState) => ({
-            words: removeSVGItem(getPath(svgItem), prevState.words) as IWord[]
+        this.setState(({ words, selection }) => ({
+            words: removeSVGItem(getPath(svgItem), words) as IWord[],
+            selection: selection && selection.id === svgItem.id ? undefined : selection
         }));
 
     public select = (svgItem?: ISVGBaseItem) => this.setState({ selection: svgItem });

@@ -18,8 +18,8 @@ class Dot extends React.Component<IDotProps> {
         const { toggleDragging, toggleHover, onDrag, onClick } = this;
         const { dot } = this.props;
         const { selection } = this.context;
-        const { id, x, y, r, isDragging, isHovered } = dot;
-        const isSelected = selection !== undefined && selection.id === id;
+        const { x, y, r, isDragging, isHovered } = dot;
+        const isSelected = selection === dot;
 
         const groupClassNames = createClassName('svg-dot', {
             'svg-dot--is-selected': isSelected,

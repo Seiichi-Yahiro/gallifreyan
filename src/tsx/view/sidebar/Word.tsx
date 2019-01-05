@@ -37,7 +37,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         const { text } = this.state;
         const { word } = this.props;
         const { selection } = this.context;
-        const isSelected = selection !== undefined && selection.id === word.id;
+        const isSelected = selection === word;
         const className = createClassName('sidebar-word', {
             'sidebar-word--selected': isSelected
         });

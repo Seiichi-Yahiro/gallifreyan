@@ -44,7 +44,7 @@ class Word extends React.Component<IWordProps> {
         const { onClick, calculateWordAnglePairs, onDrag, toggleDragging, toggleHover } = this;
         const { word } = this.props;
         const { selection } = this.context;
-        const isSelected = selection !== undefined && selection.id === word.id;
+        const isSelected = selection === word;
         const { x, y, r, isHovered, isDragging, children: letters } = word;
         const wordAngles = calculateWordAnglePairs();
 
