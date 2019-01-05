@@ -5,14 +5,16 @@ import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { createRef } from 'react';
-import AppContext, { IAppContext } from '../AppContext';
-import withContext from '../../hocs/WithContext';
 import { ISVGBaseItem, ISVGCircleItem, IWord } from '../../types/SVG';
+import AppContext from '../AppContext';
 
-class SVG extends React.Component<IAppContext, ISVGContext> {
+class SVG extends React.Component<{}, ISVGContext> {
+    public static contextType = AppContext;
+    public context!: React.ContextType<typeof AppContext>;
+
     private reactSVGPanZoom = createRef<ReactSVGPanZoom>();
 
-    constructor(props: IAppContext) {
+    constructor(props: {}) {
         super(props);
 
         this.state = {
@@ -27,7 +29,7 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
     public render() {
         const { onChangeSVGPanZoom, onWheel, deSelect, reactSVGPanZoom } = this;
         const { zoomX, zoomY } = this.state;
-        const { words } = this.props;
+        const { words } = this.context;
 
         return (
             <div className="grid__svg">
@@ -58,13 +60,13 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
         );
     }
 
-    private deSelect = () => this.props.select();
+    private deSelect = () => this.context.select();
 
     private isSVGCircleItem = (svgBaseItem: ISVGBaseItem): svgBaseItem is ISVGCircleItem =>
         (svgBaseItem as ISVGCircleItem).r !== undefined;
 
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
-        const { selection, calculateAngles, updateSVGItems } = this.props;
+        const { selection, calculateAngles, updateSVGItems } = this.context;
 
         if (event.ctrlKey && selection) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
@@ -92,4 +94,4 @@ class SVG extends React.Component<IAppContext, ISVGContext> {
     };
 }
 
-export default withContext(AppContext)(SVG);
+export default SVG;

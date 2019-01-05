@@ -1,15 +1,12 @@
 import * as React from 'react';
 import XIcon from '../../icon/XIcon';
 import { createClassName } from '../../component/ComponentUtils';
-import withContext from '../../hocs/WithContext';
-import AppContext, { IAppContext } from '../AppContext';
 import { IWord } from '../../types/SVG';
+import AppContext from '../AppContext';
 
-interface IOwnProps {
+interface ISidebarWordProps {
     word: IWord;
 }
-
-type ISidebarWordProps = IOwnProps & IAppContext;
 
 interface ISidebarWordState {
     text: string;
@@ -19,6 +16,9 @@ interface ISidebarWordState {
 }
 
 class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
+    public static contextType = AppContext;
+    public context!: React.ContextType<typeof AppContext>;
+
     constructor(props: ISidebarWordProps) {
         super(props);
 
@@ -35,7 +35,8 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
     public render() {
         const { select, onChange, onXIconClick } = this;
         const { text } = this.state;
-        const { selection, word } = this.props;
+        const { word } = this.props;
+        const { selection } = this.context;
         const isSelected = selection !== undefined && selection.id === word.id;
         const className = createClassName('sidebar-word', {
             'sidebar-word--selected': isSelected
@@ -95,7 +96,8 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
     }
 
     private select = () => {
-        const { selection, select, word } = this.props;
+        const { word } = this.props;
+        const { selection, select } = this.context;
 
         if (selection && selection.id === word.id) {
             select();
@@ -105,7 +107,8 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
     };
 
     private onChange = <K extends keyof ISidebarWordState>(key: K) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { word, updateSVGItems } = this.props;
+        const { word } = this.props;
+        const { updateSVGItems } = this.context;
         let newValue: string | number = event.currentTarget.value;
 
         updateSVGItems(word, prevWord => {
@@ -123,7 +126,7 @@ class Word extends React.Component<ISidebarWordProps, ISidebarWordState> {
         });
     };
 
-    private onXIconClick = () => this.props.removeSVGItems(this.props.word);
+    private onXIconClick = () => this.context.removeSVGItems(this.props.word);
 }
 
-export default withContext(AppContext)(Word);
+export default Word;

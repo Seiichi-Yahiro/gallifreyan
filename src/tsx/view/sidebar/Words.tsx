@@ -3,17 +3,19 @@ import Button from '../../component/Button';
 import HorizontalRuler from '../../component/HorizontalRuler';
 import { createRef } from 'react';
 import Word from './Word';
-import withContext from '../../hocs/WithContext';
-import AppContext, { IAppContext } from '../AppContext';
+import AppContext from '../AppContext';
 
 interface IWordsState {
     newWord: string;
 }
 
-class Words extends React.Component<IAppContext, IWordsState> {
+class Words extends React.Component<{}, IWordsState> {
+    public static contextType = AppContext;
+    public context!: React.ContextType<typeof AppContext>;
+
     private inputRef = createRef<HTMLInputElement>();
 
-    constructor(props: IAppContext) {
+    constructor(props: {}) {
         super(props);
 
         this.state = {
@@ -23,7 +25,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
 
     public render() {
         const { inputRef, onTextInputChange, onAddWordClick, onKeyPress } = this;
-        const { words } = this.props;
+        const { words } = this.context;
         const { newWord } = this.state;
 
         return (
@@ -66,7 +68,7 @@ class Words extends React.Component<IAppContext, IWordsState> {
             return;
         }
 
-        this.props.addWord(newWord);
+        this.context.addWord(newWord);
         this.setState({ newWord: '' });
 
         const input = this.inputRef.current;
@@ -77,4 +79,4 @@ class Words extends React.Component<IAppContext, IWordsState> {
     };
 }
 
-export default withContext(AppContext)(Words);
+export default Words;

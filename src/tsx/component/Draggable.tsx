@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { ISVGContext } from '../view/svg/SVGContext';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 import SVGContext from '../view/svg/SVGContext';
-import withContext from '../hocs/WithContext';
 
 interface IDraggableProps {
     isSelected: boolean;
@@ -11,24 +9,26 @@ interface IDraggableProps {
     onDrag: (zoomX: number, zoomY: number) => DraggableEventHandler;
 }
 
-const Draggable: React.FunctionComponent<IDraggableProps & ISVGContext> = ({
+const Draggable: React.FunctionComponent<IDraggableProps> = ({
     onDragStart,
     onDragStop,
     onDrag,
     isSelected,
-    children,
-    zoomX,
-    zoomY
+    children
 }) => (
-    <DraggableCore
-        enableUserSelectHack={isSelected}
-        onStart={onDragStart}
-        onStop={onDragStop}
-        onDrag={onDrag(zoomX, zoomY)}
-        disabled={!isSelected}
-    >
-        {children}
-    </DraggableCore>
+    <SVGContext.Consumer>
+        {({ zoomX, zoomY }) => (
+            <DraggableCore
+                enableUserSelectHack={isSelected}
+                onStart={onDragStart}
+                onStop={onDragStop}
+                onDrag={onDrag(zoomX, zoomY)}
+                disabled={!isSelected}
+            >
+                {children}
+            </DraggableCore>
+        )}
+    </SVGContext.Consumer>
 );
 
-export default withContext(SVGContext)<IDraggableProps>(Draggable);
+export default Draggable;

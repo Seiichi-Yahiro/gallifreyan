@@ -19,17 +19,17 @@ import {
     letterGroupsCombination
 } from './utils/LetterGroups';
 import * as _ from 'lodash';
-import withContext from '../../hocs/WithContext';
-import AppContext, { IAppContext } from '../AppContext';
 import { ILetter, IWord } from '../../types/SVG';
+import AppContext from '../AppContext';
 
-interface IOwnProps {
+interface IWordProps {
     word: IWord;
 }
 
-type IWordProps = IOwnProps & IAppContext;
-
 class Word extends React.Component<IWordProps> {
+    public static contextType = AppContext;
+    public context!: React.ContextType<typeof AppContext>;
+
     public componentDidMount() {
         this.initializeLetters();
     }
@@ -42,7 +42,8 @@ class Word extends React.Component<IWordProps> {
 
     public render() {
         const { onClick, calculateWordAnglePairs, onDrag, toggleDragging, toggleHover } = this;
-        const { selection, word } = this.props;
+        const { word } = this.props;
+        const { selection } = this.context;
         const isSelected = selection !== undefined && selection.id === word.id;
         const { x, y, r, isHovered, isDragging, children: letters } = word;
         const wordAngles = calculateWordAnglePairs();
@@ -86,7 +87,8 @@ class Word extends React.Component<IWordProps> {
     }
 
     private initializeLetters = () => {
-        const { word, calculateAngles, updateSVGItems } = this.props;
+        const { word } = this.props;
+        const { calculateAngles, updateSVGItems } = this.context;
         const { text, r } = word;
 
         const initialize = _.flow(
@@ -231,12 +233,13 @@ class Word extends React.Component<IWordProps> {
     private filterValidLetters = (letters: string[]) => letters.filter(isValidLetter);
 
     private toggleDragging = (isDragging: boolean) => () =>
-        this.props.updateSVGItems(this.props.word, () => ({
+        this.context.updateSVGItems(this.props.word, () => ({
             isDragging
         }));
 
     private onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
-        const { word, updateSVGItems } = this.props;
+        const { word } = this.props;
+        const { updateSVGItems } = this.context;
         const { x, y } = word;
         const { deltaX, deltaY } = data;
 
@@ -247,11 +250,11 @@ class Word extends React.Component<IWordProps> {
     };
 
     private toggleHover = (isHovered: boolean) => () =>
-        this.props.updateSVGItems(this.props.word, () => ({
+        this.context.updateSVGItems(this.props.word, () => ({
             isHovered
         }));
 
-    private onClick = () => this.props.select(this.props.word);
+    private onClick = () => this.context.select(this.props.word);
 }
 
-export default withContext(AppContext)(Word);
+export default Word;

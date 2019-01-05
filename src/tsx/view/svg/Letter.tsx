@@ -8,17 +8,17 @@ import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
 import { isDoubleDot, isFullCircle, isInside, isOnLine, isTripleDot } from './utils/LetterGroups';
 import Point from './utils/Point';
-import withContext from '../../hocs/WithContext';
-import AppContext, { IAppContext } from '../AppContext';
 import { IDot, ILetter } from '../../types/SVG';
+import AppContext from '../AppContext';
 
-interface IOwnProps {
+interface ILetterProps {
     letter: ILetter;
 }
 
-type ILetterProps = IOwnProps & IAppContext;
-
 class Letter extends React.Component<ILetterProps> {
+    public static contextType = AppContext;
+    public context!: React.ContextType<typeof AppContext>;
+
     public componentDidMount() {
         this.initializeDots();
     }
@@ -31,7 +31,8 @@ class Letter extends React.Component<ILetterProps> {
 
     public render() {
         const { getPartialCircle, onClick, onDrag, toggleDragging, toggleHover } = this;
-        const { letter, selection } = this.props;
+        const { letter } = this.props;
+        const { selection } = this.context;
         const { x, y, r, id, text, isHovered, isDragging, children } = letter;
         const isSelected = selection !== undefined && selection.id === id;
 
@@ -84,7 +85,8 @@ class Letter extends React.Component<ILetterProps> {
     };
 
     private initializeDots = () => {
-        const { letter, updateSVGItems } = this.props;
+        const { letter } = this.props;
+        const { updateSVGItems } = this.context;
         const { text, r, angles } = letter;
         const [startAngle, endAngle] = angles;
         const angleDifference = endAngle - (startAngle < endAngle ? startAngle + Math.PI * 2 : startAngle);
@@ -134,15 +136,14 @@ class Letter extends React.Component<ILetterProps> {
         }));
     };
 
-    private toggleDragging = (isDragging: boolean) => () => {
-        const { updateSVGItems, letter } = this.props;
-        updateSVGItems(letter, () => ({
+    private toggleDragging = (isDragging: boolean) => () =>
+        this.context.updateSVGItems(this.props.letter, () => ({
             isDragging
         }));
-    };
 
     private onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
-        const { letter, updateSVGItems, calculateAngles } = this.props;
+        const { letter } = this.props;
+        const { updateSVGItems, calculateAngles } = this.context;
         const { x, y, parent } = letter;
         const { deltaX, deltaY } = data;
 
@@ -153,15 +154,12 @@ class Letter extends React.Component<ILetterProps> {
         calculateAngles(parent.id);
     };
 
-    private toggleHover = (isHovered: boolean) => () => {
-        const { updateSVGItems, letter } = this.props;
-
-        updateSVGItems(letter, () => ({
+    private toggleHover = (isHovered: boolean) => () =>
+        this.context.updateSVGItems(this.props.letter, () => ({
             isHovered
         }));
-    };
 
-    private onClick = () => this.props.select(this.props.letter);
+    private onClick = () => this.context.select(this.props.letter);
 }
 
-export default withContext(AppContext)(Letter);
+export default Letter;
