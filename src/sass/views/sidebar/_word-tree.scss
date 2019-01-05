@@ -1,0 +1,64 @@
+.sidebar-word-tree {
+    display: grid;
+    grid: {
+        template-columns: $icon-size $icon-size $icon-size auto $icon-size;
+        auto-rows: $row-height;
+        gap: $gap-size;
+    }
+
+    &__item {
+        border: {
+            style: solid;
+            color: $border-color;
+            width: $border-width;
+        }
+        padding: $gap-size;
+        cursor: pointer;
+
+        &--selected {
+            background-color: $word-tree-background-color--selected;
+        }
+    }
+
+    &__icon {
+        cursor: pointer;
+        place-self: center;
+    }
+
+    &__toggle-icon {
+        @extend .sidebar-word-tree__icon;
+        transform: rotate(180deg) scale(0.7);
+
+        &--collapsed {
+            transform: rotate(90deg) scale(0.7);
+        }
+    }
+
+    &__WORD {
+        &-item {
+            grid-column: 2 / span 3;
+        }
+
+        &-toggle-icon {
+            grid-column: 1;
+        }
+    }
+
+    &__LETTER {
+        &-item {
+            grid-column: 3 / span 2;
+        }
+
+        &-toggle-icon {
+            grid-column: 2;
+        }
+    }
+
+    &__DOT-item {
+        grid-column: 4;
+    }
+
+    &__delete-icon {
+        grid-column: 5;
+    }
+}

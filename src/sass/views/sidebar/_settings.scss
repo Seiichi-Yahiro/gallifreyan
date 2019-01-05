@@ -1,0 +1,35 @@
+.sidebar-settings {
+    display: grid;
+    grid: {
+        template: {
+            columns: 50fr 50fr $icon-size;
+        }
+        auto-rows: $row-height;
+        gap: $gap-size;
+    }
+
+    &__label,
+    &__text-input,
+    &__number-input,
+    &__icon {
+        min-width: $icon-size;
+    }
+
+    &__label {
+        grid-column: 1;
+        align-self: center;
+    }
+
+    &__number-input {
+        grid-column: 2;
+    }
+
+    &__text-input {
+        grid-column: 1 / span 2;
+    }
+
+    &__icon {
+        grid-column: 3;
+        align-self: center;
+    }
+}

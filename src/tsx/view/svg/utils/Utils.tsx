@@ -1,5 +1,5 @@
 import Point from './Point';
-import { ISVGBaseItem } from '../../../types/SVG';
+import { ISVGBaseItem, ISVGCircleItem, ISVGLineItem, SVGItemType } from '../../../types/SVG';
 
 /**
  * Get svg path of a partial circle
@@ -139,3 +139,6 @@ export const removeSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBas
         });
     }
 };
+
+export const isSVGCircleItem = (svgItem: ISVGCircleItem | ISVGLineItem): svgItem is ISVGCircleItem =>
+    svgItem.type !== SVGItemType.LINE;

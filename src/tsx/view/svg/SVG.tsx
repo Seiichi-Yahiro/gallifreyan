@@ -5,8 +5,9 @@ import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext, ISVGContext } from './SVGContext';
 import { createRef } from 'react';
-import { ISVGBaseItem, ISVGCircleItem, IWord } from '../../types/SVG';
+import { IWord } from '../../types/SVG';
 import AppContext from '../AppContext';
+import { isSVGCircleItem } from './utils/Utils';
 
 class SVG extends React.Component<{}, ISVGContext> {
     public static contextType = AppContext;
@@ -62,16 +63,13 @@ class SVG extends React.Component<{}, ISVGContext> {
 
     private deSelect = () => this.context.select();
 
-    private isSVGCircleItem = (svgBaseItem: ISVGBaseItem): svgBaseItem is ISVGCircleItem =>
-        (svgBaseItem as ISVGCircleItem).r !== undefined;
-
     private onWheel = (event: React.WheelEvent<SVGGElement>) => {
         const { selection, calculateAngles, updateSVGItems } = this.context;
 
         if (event.ctrlKey && selection) {
             const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
 
-            if (this.isSVGCircleItem(selection)) {
+            if (isSVGCircleItem(selection)) {
                 updateSVGItems(selection, prevItem => ({
                     r: prevItem.r + wheelDirection
                 }));

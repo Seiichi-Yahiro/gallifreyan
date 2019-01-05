@@ -2,8 +2,10 @@ import * as React from 'react';
 import Button from '../../component/Button';
 import HorizontalRuler from '../../component/HorizontalRuler';
 import { createRef } from 'react';
-import Word from './Word';
 import AppContext from '../AppContext';
+import { createClassName } from '../../component/ComponentUtils';
+import WordTree from './WordTree';
+import Settings from './Settings';
 
 interface IWordsState {
     newWord: string;
@@ -25,27 +27,37 @@ class Words extends React.Component<{}, IWordsState> {
 
     public render() {
         const { inputRef, onTextInputChange, onAddWordClick, onKeyPress } = this;
-        const { words } = this.context;
         const { newWord } = this.state;
+        const { selection } = this.context;
+        const hasSelection = selection !== undefined;
+        const className = createClassName('grid__sidebar', 'sidebar', {
+            'sidebar--with-selection': hasSelection
+        });
 
         return (
-            <div className="grid__sidebar sidebar-words">
+            <div className={className}>
                 <input
                     ref={inputRef}
                     type="text"
-                    className="sidebar-words__input text-input"
+                    className="sidebar__new-word-input text-input"
                     placeholder="Word..."
                     value={newWord}
                     onChange={onTextInputChange}
                     onKeyPress={onKeyPress}
                 />
-                <Button text="Add Word" onClick={onAddWordClick} className="sidebar-words__button button--full-width" />
-                <HorizontalRuler className="sidebar-words__splitter" />
-                <div className="sidebar-words__list">
-                    {words.map(word => (
-                        <Word key={word.id} word={word} />
-                    ))}
-                </div>
+                <Button
+                    text="Add Word"
+                    onClick={onAddWordClick}
+                    className="sidebar__new-word-button button--full-width"
+                />
+                <HorizontalRuler className="sidebar__splitter" />
+                <WordTree />
+                {hasSelection && (
+                    <>
+                        <HorizontalRuler className="sidebar__splitter" />
+                        <Settings />
+                    </>
+                )}
             </div>
         );
     }

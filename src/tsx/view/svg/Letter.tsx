@@ -8,7 +8,7 @@ import Draggable from '../../component/Draggable';
 import { v4 } from 'uuid';
 import { isDoubleDot, isFullCircle, isInside, isOnLine, isTripleDot } from './utils/LetterGroups';
 import Point from './utils/Point';
-import { IDot, ILetter } from '../../types/SVG';
+import { IDot, ILetter, SVGItemType } from '../../types/SVG';
 import AppContext from '../AppContext';
 
 interface ILetterProps {
@@ -128,6 +128,7 @@ class Letter extends React.Component<ILetterProps> {
                 dot =>
                     ({
                         id: v4(),
+                        type: SVGItemType.DOT,
                         parent: letter,
                         ...defaultDot,
                         ...dot

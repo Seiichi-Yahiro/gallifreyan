@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SVG from './view/svg/SVG';
 import { v4 } from 'uuid';
-import Words from './view/sidebar/Words';
+import Sidebar from './view/sidebar/Sidebar';
 import {
     calculateCircleIntersectionAngle,
     calculateCircleIntersectionPoints,
@@ -14,7 +14,7 @@ import { isFullCircle } from './view/svg/utils/LetterGroups';
 import Point from './view/svg/utils/Point';
 import * as _ from 'lodash';
 import AppContext, { defaultAppContextState, IAppContextFunctions, IAppContextState } from './view/AppContext';
-import { ILetter, ISVGBaseItem, IWord } from './types/SVG';
+import { ILetter, ISVGBaseItem, IWord, SVGItemType } from './types/SVG';
 
 class App extends React.Component<{}, IAppContextState> implements IAppContextFunctions {
     constructor(props: {}) {
@@ -40,7 +40,7 @@ class App extends React.Component<{}, IAppContextState> implements IAppContextFu
                         updateSVGItems
                     }}
                 >
-                    <Words />
+                    <Sidebar />
                     <SVG />
                 </AppContext.Provider>
             </div>
@@ -50,6 +50,7 @@ class App extends React.Component<{}, IAppContextState> implements IAppContextFu
     public addWord = (text: string) => {
         const newWord: IWord = {
             id: v4(),
+            type: SVGItemType.WORD,
             text,
             x: 0,
             y: 0,
@@ -88,10 +89,29 @@ class App extends React.Component<{}, IAppContextState> implements IAppContextFu
         });
 
     public removeSVGItems = (svgItem: ISVGBaseItem) =>
-        this.setState(({ words, selection }) => ({
-            words: removeSVGItem(getPath(svgItem), words) as IWord[],
-            selection: selection && selection.id === svgItem.id ? undefined : selection
-        }));
+        this.setState(({ words, selection }) => {
+            const pathOfToDelete = getPath(svgItem);
+            const pathOfSelected = selection ? getPath(selection) : [];
+            const newWords = removeSVGItem(pathOfToDelete, words) as IWord[];
+            const newSelection = (() => {
+                if (selection) {
+                    if (pathOfToDelete.some(id => id === selection.id)) {
+                        // parent selected and child removed
+                        return getSVGItem(pathOfSelected, newWords);
+                    } else if (pathOfSelected.some(id => id === svgItem.id)) {
+                        // child selected and parent removed
+                        return undefined;
+                    }
+                }
+
+                return selection;
+            })();
+
+            return {
+                words: newWords,
+                selection: newSelection
+            };
+        });
 
     public select = (svgItem?: ISVGBaseItem) => this.setState({ selection: svgItem });
 

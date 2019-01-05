@@ -1,4 +1,4 @@
-@import 'base/colors.scss';
+@import 'base/colors';
 @import 'base/variables';
 @import 'base/base';
 
@@ -6,7 +6,10 @@
 
 @import 'layout/grid';
 
-@import 'views/sidebar/words';
+@import 'views/icon/svg';
+@import 'views/sidebar/sidebar';
+@import 'views/sidebar/word-tree';
+@import 'views/sidebar/settings';
 @import 'views/svg/sentence';
 @import 'views/svg/word';
 @import 'views/svg/letter';

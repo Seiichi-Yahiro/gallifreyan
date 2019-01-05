@@ -19,7 +19,7 @@ import {
     letterGroupsCombination
 } from './utils/LetterGroups';
 import * as _ from 'lodash';
-import { ILetter, IWord } from '../../types/SVG';
+import { ILetter, IWord, SVGItemType } from '../../types/SVG';
 import AppContext from '../AppContext';
 
 interface IWordProps {
@@ -143,6 +143,7 @@ class Word extends React.Component<IWordProps> {
             return {
                 ...initialPoint,
                 id: v4(),
+                type: SVGItemType.LETTER,
                 parent: this.props.word,
                 r: isVocal(letter) ? 10 : 25,
                 text: letter,
