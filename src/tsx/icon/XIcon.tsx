@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IIconProps } from './BaseIcon';
-import { createClassName } from '../component/ComponentUtils';
+import { createClassName } from '../utils/ComponentUtils';
 
 const XIcon: React.FunctionComponent<IIconProps> = ({ className }) => (
     <svg className={createClassName('svg', className)}>

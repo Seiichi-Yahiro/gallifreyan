@@ -1,26 +1,36 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import XIcon from '../../icon/XIcon';
 import { ILetter, ISVGCircleItem, IWord } from '../../types/SVG';
-import { isSVGCircleItem } from '../svg/utils/Utils';
-import AppContext from '../AppContext';
+import { isSVGCircleItem } from '../../utils/Utils';
+import { AppContextState, AppContextStateDispatch } from '../AppContext';
+import { removeSVGItemsAction, updateSVGItemsAction } from '../../store/AppStore';
 
-class Settings extends React.Component {
-    public static contextType = AppContext;
-    public context!: React.ContextType<typeof AppContext>;
+const Settings: React.FunctionComponent = () => {
+    const dispatch = useContext(AppContextStateDispatch);
+    const { selection } = useContext(AppContextState);
 
-    public render() {
-        const { getSVGCircleItemSettings } = this;
-        const { selection } = this.context;
+    const onChange = (key: 'r' | 'x' | 'y' | 'text') => (event: React.ChangeEvent<HTMLInputElement>) => {
+        let newValue: string | number = event.currentTarget.value;
 
-        return (
-            <div className="sidebar__settings sidebar-settings">
-                {isSVGCircleItem(selection!) ? getSVGCircleItemSettings(selection! as ISVGCircleItem) : undefined}
-            </div>
+        dispatch(
+            updateSVGItemsAction(selection!, prevWord => {
+                const oldValue = prevWord[key];
+
+                if (typeof oldValue === 'number') {
+                    newValue = Number(newValue);
+                }
+
+                return {
+                    [key]: newValue
+                };
+            })
         );
-    }
+    };
 
-    private getSVGCircleItemSettings = (svgItem: ISVGCircleItem) => {
-        const { onChange, onXIconClick } = this;
+    const onXIconClick = () => dispatch(removeSVGItemsAction(selection!));
+
+    const getSVGCircleItemSettings = (svgItem: ISVGCircleItem) => {
         const { r, x, y } = svgItem;
         const hasText = (svgItem as IWord | ILetter).text !== undefined;
 
@@ -74,24 +84,11 @@ class Settings extends React.Component {
         );
     };
 
-    private onChange = (key: 'r' | 'x' | 'y' | 'text') => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { selection, updateSVGItems } = this.context;
-        let newValue: string | number = event.currentTarget.value;
-
-        updateSVGItems(selection!, prevWord => {
-            const oldValue = prevWord[key];
-
-            if (typeof oldValue === 'number') {
-                newValue = Number(newValue);
-            }
-
-            return {
-                [key]: newValue
-            };
-        });
-    };
-
-    private onXIconClick = () => this.context.removeSVGItems(this.context.selection!);
-}
+    return (
+        <div className="sidebar__settings sidebar-settings">
+            {isSVGCircleItem(selection!) ? getSVGCircleItemSettings(selection! as ISVGCircleItem) : undefined}
+        </div>
+    );
+};
 
 export default Settings;
