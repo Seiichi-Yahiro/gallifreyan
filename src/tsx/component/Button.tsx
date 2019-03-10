@@ -12,4 +12,4 @@ const Button: React.FunctionComponent<IButtonProps> = ({ text, onClick, classNam
     </button>
 );
 
-export default Button;
+export default React.memo(Button);
