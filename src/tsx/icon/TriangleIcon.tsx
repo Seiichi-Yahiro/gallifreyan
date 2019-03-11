@@ -9,4 +9,4 @@ const TriangleIcon: React.FunctionComponent<IIconProps> = ({ className }) => (
     </svg>
 );
 
-export default TriangleIcon;
+export default React.memo(TriangleIcon);

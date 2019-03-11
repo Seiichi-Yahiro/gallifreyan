@@ -9,4 +9,4 @@ const HorizontalRuler: React.FunctionComponent<IHorizontalRulerProps> = ({ class
     <hr className={createClassName('hr', className)} />
 );
 
-export default HorizontalRuler;
+export default React.memo(HorizontalRuler);

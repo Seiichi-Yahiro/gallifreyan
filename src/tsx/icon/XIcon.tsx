@@ -11,4 +11,4 @@ const XIcon: React.FunctionComponent<IIconProps> = ({ className }) => (
     </svg>
 );
 
-export default XIcon;
+export default React.memo(XIcon);
