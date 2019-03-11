@@ -7,8 +7,13 @@ const useSelect = (svgItem: ISVGBaseItem) => {
     const dispatch = useContext(AppContextStateDispatch);
     const { selection } = useContext(AppContextState);
 
-    const select = () => dispatch(selectAction(svgItem));
     const isSelected = selection === svgItem;
+
+    const select = () => {
+        if (!isSelected) {
+            dispatch(selectAction(svgItem));
+        }
+    };
 
     return { select, isSelected };
 };
