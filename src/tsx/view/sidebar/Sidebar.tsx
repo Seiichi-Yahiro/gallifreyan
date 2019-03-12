@@ -7,7 +7,7 @@ import WordTree from './WordTree';
 import Settings from './Settings';
 import NewWord from './NewWord';
 
-const Words: React.FunctionComponent = () => {
+const Sidebar: React.FunctionComponent = () => {
     const selection = useContext(AppContextStateSelection);
     const hasSelection = selection !== undefined;
 
@@ -30,4 +30,4 @@ const Words: React.FunctionComponent = () => {
     );
 };
 
-export default Words;
+export default Sidebar;
