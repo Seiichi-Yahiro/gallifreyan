@@ -13,10 +13,10 @@ interface IDotProps {
 }
 
 const Dot: React.FunctionComponent<IDotProps> = ({ dot }) => {
-    const { x, y, r, isDragging, isHovered } = dot;
+    const { x, y, r } = dot;
 
-    const { toggleDragging, onDrag } = useDrag(dot);
-    const { toggleHover } = useHover(dot);
+    const { toggleDragging, isDragging, onDrag } = useDrag(dot);
+    const { toggleHover, isHovered } = useHover();
     const { select, isSelected } = useSelect(dot);
 
     const groupClassNames = useMemo(

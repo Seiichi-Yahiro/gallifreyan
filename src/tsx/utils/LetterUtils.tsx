@@ -46,8 +46,6 @@ const initializeLettersPosition = (letters: string[], parent: IWord): ILetter[] 
             r: isVocal(letter) ? 10 : 25,
             text: letter,
             angles: [],
-            isHovered: false,
-            isDragging: false,
             children: []
         } as ILetter;
     });

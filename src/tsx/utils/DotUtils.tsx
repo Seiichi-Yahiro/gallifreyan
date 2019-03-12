@@ -22,9 +22,7 @@ export const initializeDots = (letter: ILetter): IDot[] => {
     }
 
     const defaultDot = {
-        r: 2.5,
-        isHovered: false,
-        isDragging: false
+        r: 2.5
     };
 
     let children: Point[] = [];

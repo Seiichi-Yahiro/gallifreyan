@@ -9,8 +9,6 @@ export interface ISVGBaseItem {
     readonly id: string;
     readonly type: SVGItemType;
     readonly parent?: ISVGBaseItem;
-    isHovered: boolean;
-    isDragging: boolean;
     children?: ISVGBaseItem[];
 }
 

@@ -19,12 +19,12 @@ interface ILetterProps {
 }
 
 const Letter: React.FunctionComponent<ILetterProps> = ({ letter }) => {
-    const { x, y, r, text, isHovered, isDragging, children, angles } = letter;
+    const { x, y, r, text, children, angles } = letter;
     const [start, end] = angles;
 
     const dispatch = useContext(AppContextStateDispatch);
-    const { toggleDragging, onDrag } = useDrag(letter);
-    const { toggleHover } = useHover(letter);
+    const { toggleDragging, isDragging, onDrag } = useDrag(letter);
+    const { toggleHover, isHovered } = useHover();
     const { select, isSelected } = useSelect(letter);
 
     useEffect(() => {

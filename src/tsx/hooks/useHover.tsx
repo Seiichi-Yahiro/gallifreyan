@@ -1,19 +1,9 @@
-import { updateSVGItemsAction } from '../store/AppStore';
-import { ISVGBaseItem } from '../types/SVG';
-import { useContext } from 'react';
-import { AppContextStateDispatch } from '../view/AppContext';
+import { useState } from 'react';
 
-const useHover = (svgItem: ISVGBaseItem) => {
-    const dispatch = useContext(AppContextStateDispatch);
-
-    const toggleHover = (hoverState: boolean) => () =>
-        dispatch(
-            updateSVGItemsAction(svgItem, () => ({
-                isHovered: hoverState
-            }))
-        );
-
-    return { toggleHover };
+const useHover = () => {
+    const [isHovered, setIsHovered] = useState(false);
+    const toggleHover = (hoverState: boolean) => () => setIsHovered(hoverState);
+    return { toggleHover, isHovered };
 };
 
 export default useHover;

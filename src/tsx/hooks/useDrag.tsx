@@ -1,19 +1,15 @@
 import { updateSVGItemsAction } from '../store/AppStore';
 import * as React from 'react';
 import { DraggableData } from 'react-draggable';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AppContextStateDispatch } from '../view/AppContext';
 import { ISVGCircleItem } from '../types/SVG';
 
 const useDrag = (svgItem: ISVGCircleItem) => {
     const dispatch = useContext(AppContextStateDispatch);
+    const [isDragging, setIsDragging] = useState(false);
 
-    const toggleDragging = (dragState: boolean) => () =>
-        dispatch(
-            updateSVGItemsAction(svgItem, () => ({
-                isDragging: dragState
-            }))
-        );
+    const toggleDragging = (dragState: boolean) => () => setIsDragging(dragState);
 
     const onDrag = (zoomX: number, zoomY: number) => (event: React.MouseEvent<HTMLElement>, data: DraggableData) => {
         const { deltaX, deltaY } = data;
@@ -26,7 +22,7 @@ const useDrag = (svgItem: ISVGCircleItem) => {
         );
     };
 
-    return { toggleDragging, onDrag };
+    return { toggleDragging, isDragging, onDrag };
 };
 
 export default useDrag;

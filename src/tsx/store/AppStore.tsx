@@ -65,8 +65,6 @@ export const addWordAction = (text: string): IAppAction<IWord> => {
         x: 0,
         y: 0,
         r: 50,
-        isHovered: false,
-        isDragging: false,
         children: [],
         angles: []
     };

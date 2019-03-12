@@ -19,11 +19,11 @@ interface IWordProps {
 }
 
 const Word: React.FunctionComponent<IWordProps> = ({ word }) => {
-    const { x, y, r, isHovered, isDragging, children: letters } = word;
+    const { x, y, r, children: letters } = word;
 
     const dispatch = useContext(AppContextStateDispatch);
-    const { toggleDragging, onDrag } = useDrag(word);
-    const { toggleHover } = useHover(word);
+    const { toggleDragging, isDragging, onDrag } = useDrag(word);
+    const { toggleHover, isHovered } = useHover();
     const { select, isSelected } = useSelect(word);
 
     useEffect(() => {
