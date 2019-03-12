@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ILetter, ISVGBaseItem, IWord, SVGItemType } from '../../types/SVG';
 import { createClassName } from '../../utils/ComponentUtils';
 import TriangleIcon from '../../icon/TriangleIcon';
@@ -17,7 +17,7 @@ const WordTreeItem: React.FunctionComponent<IWordTreeItemProps> = ({ svgItem }) 
     const dispatch = useContext(AppContextStateDispatch);
     const { select, isSelected } = useSelect(svgItem);
 
-    const deleteIcon = useMemo(() => {
+    const deleteIcon = () => {
         const onXIconClick = () => dispatch(removeSVGItemsAction(svgItem));
 
         return (
@@ -25,9 +25,9 @@ const WordTreeItem: React.FunctionComponent<IWordTreeItemProps> = ({ svgItem }) 
                 <XIcon className="sidebar-word-tree__icon sidebar-word-tree__delete-icon" />
             </div>
         );
-    }, [svgItem]);
+    };
 
-    const toggleIcon = useMemo(() => {
+    const toggleIcon = () => {
         const onToggleIconClick = () => setIsCollapsed(!isCollapsed);
 
         return (
@@ -43,25 +43,21 @@ const WordTreeItem: React.FunctionComponent<IWordTreeItemProps> = ({ svgItem }) 
                 />
             </div>
         );
-    }, [isCollapsed, svgItem.type]);
+    };
 
-    const itemClassName = useMemo(
-        () =>
-            createClassName('sidebar-word-tree__item', `sidebar-word-tree__${svgItem.type}-item`, {
-                'sidebar-word-tree__item--selected': isSelected
-            }),
-        [svgItem.type, isSelected]
-    );
+    const itemClassName = createClassName('sidebar-word-tree__item', `sidebar-word-tree__${svgItem.type}-item`, {
+        'sidebar-word-tree__item--selected': isSelected
+    });
 
     const hasChildren = svgItem.children && svgItem.children.length > 0;
 
     return (
         <div className="display-contents">
-            {hasChildren && toggleIcon}
+            {hasChildren && toggleIcon()}
             <div className={itemClassName} onClick={select}>
                 {(svgItem as IWord | ILetter).text || svgItem.type}
             </div>
-            {svgItem.type !== SVGItemType.DOT && deleteIcon}
+            {svgItem.type !== SVGItemType.DOT && deleteIcon()}
             {hasChildren && !isCollapsed && (
                 <div className="display-contents">
                     {svgItem.children!.map(child => (
@@ -73,4 +69,4 @@ const WordTreeItem: React.FunctionComponent<IWordTreeItemProps> = ({ svgItem }) 
     );
 };
 
-export default WordTreeItem;
+export default React.memo(WordTreeItem);
