@@ -3,12 +3,12 @@ import { useContext } from 'react';
 import XIcon from '../../icon/XIcon';
 import { ILetter, ISVGCircleItem, IWord } from '../../types/SVG';
 import { isSVGCircleItem } from '../../utils/Utils';
-import { AppContextState, AppContextStateDispatch } from '../AppContext';
+import { AppContextStateDispatch, AppContextStateSelection } from '../AppContext';
 import { removeSVGItemsAction, updateSVGItemsAction } from '../../store/AppStore';
 
 const Settings: React.FunctionComponent = () => {
     const dispatch = useContext(AppContextStateDispatch);
-    const { selection } = useContext(AppContextState);
+    const selection = useContext(AppContextStateSelection);
 
     const onChange = (key: 'r' | 'x' | 'y' | 'text') => (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue: string | number = event.currentTarget.value;

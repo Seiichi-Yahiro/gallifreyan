@@ -1,22 +1,15 @@
 import * as React from 'react';
-import { useReducer } from 'react';
 import SVG from './view/svg/SVG';
 import Sidebar from './view/sidebar/Sidebar';
-import { AppContextState, AppContextStateDispatch } from './view/AppContext';
-import { appReducer, defaultAppState } from './store/AppStore';
+import AppContextProvider from './view/AppContext';
 
-const App: React.FunctionComponent = () => {
-    const [state, dispatch] = useReducer(appReducer, defaultAppState);
-    return (
-        <div className="grid">
-            <AppContextStateDispatch.Provider value={dispatch}>
-                <AppContextState.Provider value={state}>
-                    <Sidebar />
-                    <SVG />
-                </AppContextState.Provider>
-            </AppContextStateDispatch.Provider>
-        </div>
-    );
-};
+const App: React.FunctionComponent = () => (
+    <div className="grid">
+        <AppContextProvider>
+            <Sidebar />
+            <SVG />
+        </AppContextProvider>
+    </div>
+);
 
 export default App;

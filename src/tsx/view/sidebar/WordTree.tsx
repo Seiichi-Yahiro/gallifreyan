@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import WordTreeItem from './WordTreeItem';
-import { AppContextState } from '../AppContext';
+import { AppContextStateWords } from '../AppContext';
 
 const WordTree: React.FunctionComponent = () => {
-    const { words } = useContext(AppContextState);
+    const words = useContext(AppContextStateWords);
 
     return (
         <div className="sidebar__word-tree sidebar-word-tree">

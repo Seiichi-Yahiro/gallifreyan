@@ -6,14 +6,15 @@ import { AutoSizer } from 'react-virtualized';
 import { POSITION_LEFT, ReactSVGPanZoom, Value } from 'react-svg-pan-zoom';
 import SVGContext, { defaultSVGContext } from './SVGContext';
 import { IWord } from '../../types/SVG';
-import { AppContextState, AppContextStateDispatch } from '../AppContext';
+import { AppContextStateDispatch, AppContextStateSelection, AppContextStateWords } from '../AppContext';
 import { isSVGCircleItem } from '../../utils/Utils';
 import { selectAction, updateSVGItemsAction } from '../../store/AppStore';
 
 const SVG: React.FunctionComponent = () => {
     const [svgContext, setSVGContext] = useState(defaultSVGContext);
     const dispatch = useContext(AppContextStateDispatch);
-    const { selection, words } = useContext(AppContextState);
+    const selection = useContext(AppContextStateSelection);
+    const words = useContext(AppContextStateWords);
     const reactSVGPanZoom = useRef<ReactSVGPanZoom>(null);
 
     useEffect(() => {
