@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { useContext } from 'react';
 import WordTreeItem from './WordTreeItem';
-import { AppContextStateWords } from '../AppContext';
+import { IWord } from '../../types/SVG';
 
-const WordTree: React.FunctionComponent = () => {
-    const words = useContext(AppContextStateWords);
+interface IWordTreeProps {
+    words: IWord[];
+}
 
-    return (
-        <div className="sidebar__word-tree sidebar-word-tree">
-            {words.map(word => (
-                <WordTreeItem svgItem={word} key={word.id} />
-            ))}
-        </div>
-    );
-};
+const WordTree: React.FunctionComponent<IWordTreeProps> = ({ words }) => (
+    <div className="sidebar__word-tree sidebar-word-tree">
+        {words.map(word => (
+            <WordTreeItem svgItem={word} key={word.id} />
+        ))}
+    </div>
+);
 
-export default WordTree;
+export default React.memo(WordTree);

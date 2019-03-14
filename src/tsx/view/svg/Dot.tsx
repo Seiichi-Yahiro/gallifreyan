@@ -50,4 +50,4 @@ const Dot: React.FunctionComponent<IDotProps> = ({ dot }) => {
     );
 };
 
-export default Dot;
+export default React.memo(Dot);

@@ -4,32 +4,14 @@ import { v4 } from 'uuid';
 import * as _ from 'lodash';
 import { getPath, getSVGItem, removeSVGItem, updateSVGItem } from './StateUtils';
 import { calculateAngles } from '../utils/WordUtils';
-
-enum AppActionType {
-    ADD_WORD,
-    UPDATE_SVG_ITEM,
-    REMOVE_SVG_ITEM,
-    SELECT_SVG_ITEM
-}
-
-export interface IAppAction<T> {
-    type: AppActionType;
-    payload: T;
-}
-
-export interface IAppState {
-    words: IWord[];
-    selection: ISVGBaseItem | undefined;
-}
-
-export type AppAction = IAppAction<any> | ((state: IAppState) => IAppAction<any>);
+import { AppAction, AppActionType, IAppAction, IAppState, Path } from './AppStoreTypes';
 
 export const defaultAppState: IAppState = {
     words: [],
-    selection: undefined
+    selectedPath: []
 };
 
-export const appReducer: React.Reducer<IAppState, AppAction> = (state, getAction) => {
+export const appReducer: React.Reducer<IAppState, AppAction> = (state, getAction): IAppState => {
     let action: IAppAction<any>;
 
     if (typeof getAction === 'function') {
@@ -43,13 +25,16 @@ export const appReducer: React.Reducer<IAppState, AppAction> = (state, getAction
             return { ...state, words: [...state.words, action.payload] };
         }
 
-        case AppActionType.UPDATE_SVG_ITEM:
+        case AppActionType.UPDATE_SVG_ITEM: {
+            return { ...state, words: action.payload };
+        }
+
         case AppActionType.REMOVE_SVG_ITEM: {
             return { ...action.payload };
         }
 
         case AppActionType.SELECT_SVG_ITEM: {
-            return { ...state, selection: action.payload };
+            return { ...state, selectedPath: action.payload };
         }
 
         default:
@@ -76,9 +61,8 @@ export const addWordAction = (text: string): IAppAction<IWord> => {
 };
 
 export const updateSVGItemsAction = <T extends ISVGBaseItem>(svgBaseItem: T, update: (prevItem: T) => Partial<T>) => ({
-    words: prevWords,
-    selection: prevSelection
-}: IAppState): IAppAction<IAppState> => {
+    words: prevWords
+}: IAppState): IAppAction<IWord[]> => {
     const path = getPath(svgBaseItem);
     const prevItem = getSVGItem(path, prevWords) as T;
     const itemUpdate = update(prevItem);
@@ -96,53 +80,30 @@ export const updateSVGItemsAction = <T extends ISVGBaseItem>(svgBaseItem: T, upd
         newWords = updateAngles(newWords) as IWord[];
     }
 
-    const newSelection =
-        prevSelection && path.some(id => id === prevSelection.id)
-            ? getSVGItem(getPath(prevSelection), newWords)
-            : prevSelection;
-
     return {
         type: AppActionType.UPDATE_SVG_ITEM,
-        payload: {
-            words: newWords,
-            selection: newSelection
-        }
+        payload: newWords
     };
 };
 
 export const removeSVGItemsAction = (svgItem: ISVGBaseItem) => ({
     words: prevWords,
-    selection: prevSelection
+    selectedPath: prevSelectedPath
 }: IAppState): IAppAction<IAppState> => {
     const pathOfToDelete = getPath(svgItem);
-    const pathOfSelected = prevSelection ? getPath(prevSelection) : [];
-
     const newWords = removeSVGItem(pathOfToDelete, prevWords) as IWord[];
-
-    const newSelection = (() => {
-        if (prevSelection) {
-            if (pathOfToDelete.some(id => id === prevSelection.id)) {
-                // parent selected and child removed
-                return getSVGItem(pathOfSelected, newWords);
-            } else if (pathOfSelected.some(id => id === svgItem.id)) {
-                // child selected and parent removed
-                return undefined;
-            }
-        }
-
-        return prevSelection;
-    })();
+    const newSelection = prevSelectedPath.some(id => id === svgItem.id) ? [] : prevSelectedPath;
 
     return {
         type: AppActionType.REMOVE_SVG_ITEM,
         payload: {
             words: newWords,
-            selection: newSelection
+            selectedPath: newSelection
         }
     };
 };
 
-export const selectAction = (svgItem?: ISVGBaseItem): IAppAction<ISVGBaseItem | undefined> => ({
+export const selectAction = (svgItem?: ISVGBaseItem): IAppAction<Path> => ({
     type: AppActionType.SELECT_SVG_ITEM,
-    payload: svgItem
+    payload: svgItem ? getPath(svgItem) : []
 });

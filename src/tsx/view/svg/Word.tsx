@@ -88,4 +88,4 @@ const Word: React.FunctionComponent<IWordProps> = ({ word }) => {
     );
 };
 
-export default Word;
+export default React.memo(Word);

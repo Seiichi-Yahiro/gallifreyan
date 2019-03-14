@@ -31,3 +31,6 @@ export const partialCircle = (cx: number, cy: number, r: number, start: number, 
 
 export const isSVGCircleItem = (svgItem: ISVGCircleItem | ISVGLineItem): svgItem is ISVGCircleItem =>
     svgItem.type !== SVGItemType.LINE;
+
+export const areListsEqual = (list1: any[], list2: any[]) =>
+    list1.length === list2.length && list1.every((item, index) => item === list2[index]);

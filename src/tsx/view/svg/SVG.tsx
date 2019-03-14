@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Word from './Word';
 import Group from './Group';
 import { AutoSizer } from 'react-virtualized';
@@ -9,6 +9,7 @@ import { IWord } from '../../types/SVG';
 import { AppContextStateDispatch, AppContextStateSelection, AppContextStateWords } from '../AppContext';
 import { isSVGCircleItem } from '../../utils/Utils';
 import { selectAction, updateSVGItemsAction } from '../../store/AppStore';
+import { getSVGItem } from '../../store/StateUtils';
 
 const SVG: React.FunctionComponent = () => {
     const [svgContext, setSVGContext] = useState(defaultSVGContext);
@@ -23,14 +24,19 @@ const SVG: React.FunctionComponent = () => {
 
     const deSelect = useCallback(() => dispatch(selectAction()), []);
 
+    // it doesn't matter if the words change
+    const selectedItem = useMemo(() => (selection.length !== 0 ? getSVGItem(selection, words) : undefined), [
+        selection
+    ]);
+
     const onWheel = useCallback(
         (event: React.WheelEvent<SVGGElement>) => {
-            if (event.ctrlKey && selection) {
+            if (event.ctrlKey && selectedItem) {
                 const wheelDirection = -event.deltaY / Math.abs(event.deltaY);
 
-                if (isSVGCircleItem(selection)) {
+                if (isSVGCircleItem(selectedItem)) {
                     dispatch(
-                        updateSVGItemsAction(selection, prevItem => ({
+                        updateSVGItemsAction(selectedItem, prevItem => ({
                             r: prevItem.r + wheelDirection
                         }))
                     );

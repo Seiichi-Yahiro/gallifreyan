@@ -1,20 +1,23 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import XIcon from '../../icon/XIcon';
-import { ILetter, ISVGCircleItem, IWord } from '../../types/SVG';
+import { ILetter, ISVGBaseItem, ISVGCircleItem, IWord } from '../../types/SVG';
 import { isSVGCircleItem } from '../../utils/Utils';
-import { AppContextStateDispatch, AppContextStateSelection } from '../AppContext';
+import { AppContextStateDispatch } from '../AppContext';
 import { removeSVGItemsAction, updateSVGItemsAction } from '../../store/AppStore';
 
-const Settings: React.FunctionComponent = () => {
+interface ISettingsProps {
+    selectedItem: ISVGBaseItem;
+}
+
+const Settings: React.FunctionComponent<ISettingsProps> = ({ selectedItem }) => {
     const dispatch = useContext(AppContextStateDispatch);
-    const selection = useContext(AppContextStateSelection);
 
     const onChange = (key: 'r' | 'x' | 'y' | 'text') => (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue: string | number = event.currentTarget.value;
 
         dispatch(
-            updateSVGItemsAction(selection!, prevWord => {
+            updateSVGItemsAction(selectedItem, prevWord => {
                 const oldValue = prevWord[key];
 
                 if (typeof oldValue === 'number') {
@@ -28,7 +31,7 @@ const Settings: React.FunctionComponent = () => {
         );
     };
 
-    const onXIconClick = () => dispatch(removeSVGItemsAction(selection!));
+    const onXIconClick = () => dispatch(removeSVGItemsAction(selectedItem));
 
     const getSVGCircleItemSettings = (svgItem: ISVGCircleItem) => {
         const { r, x, y } = svgItem;
@@ -86,9 +89,9 @@ const Settings: React.FunctionComponent = () => {
 
     return (
         <div className="sidebar__settings sidebar-settings">
-            {isSVGCircleItem(selection!) ? getSVGCircleItemSettings(selection! as ISVGCircleItem) : undefined}
+            {isSVGCircleItem(selectedItem) ? getSVGCircleItemSettings(selectedItem) : undefined}
         </div>
     );
 };
 
-export default Settings;
+export default React.memo(Settings);

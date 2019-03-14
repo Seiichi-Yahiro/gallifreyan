@@ -1,9 +1,10 @@
 import { ISVGBaseItem } from '../types/SVG';
+import { Path } from './AppStoreTypes';
 
-export const getPath = (svgBaseItem: ISVGBaseItem): string[] =>
+export const getPath = (svgBaseItem: ISVGBaseItem): Path =>
     svgBaseItem.parent === undefined ? [svgBaseItem.id] : getPath(svgBaseItem.parent).concat(svgBaseItem.id);
 
-export const getSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBaseItem => {
+export const getSVGItem = (path: Path, children: ISVGBaseItem[]): ISVGBaseItem => {
     if (path.length === 0) {
         throw new Error('Path cannot be empty!');
     } else if (path.length === 1) {
@@ -17,7 +18,7 @@ export const getSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBaseIt
     }
 };
 
-export const updateSVGItem = (path: string[], newSvgItem: ISVGBaseItem, children: ISVGBaseItem[]): ISVGBaseItem[] => {
+export const updateSVGItem = (path: Path, newSvgItem: ISVGBaseItem, children: ISVGBaseItem[]): ISVGBaseItem[] => {
     if (path.length === 0) {
         return children;
     } else if (path.length === 1) {
@@ -40,7 +41,7 @@ export const updateSVGItem = (path: string[], newSvgItem: ISVGBaseItem, children
     }
 };
 
-export const removeSVGItem = (path: string[], children: ISVGBaseItem[]): ISVGBaseItem[] => {
+export const removeSVGItem = (path: Path, children: ISVGBaseItem[]): ISVGBaseItem[] => {
     if (path.length === 0) {
         return children;
     } else if (path.length === 1) {

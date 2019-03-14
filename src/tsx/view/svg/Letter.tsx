@@ -72,4 +72,4 @@ const Letter: React.FunctionComponent<ILetterProps> = ({ letter }) => {
     );
 };
 
-export default Letter;
+export default React.memo(Letter);
