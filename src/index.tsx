@@ -1,7 +1,9 @@
+import '@style/index.scss';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './tsx/App';
-import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
-registerServiceWorker();
+window.addEventListener('load', function load() {
+    window.removeEventListener('load', load);
+    ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
+});

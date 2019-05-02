@@ -16,6 +16,7 @@ const SVG: React.FunctionComponent = () => {
     const dispatch = useContext(AppContextStateDispatch);
     const selection = useContext(AppContextStateSelection);
     const words = useContext(AppContextStateWords);
+
     const reactSVGPanZoom = useRef<ReactSVGPanZoom>(null);
 
     useEffect(() => {
