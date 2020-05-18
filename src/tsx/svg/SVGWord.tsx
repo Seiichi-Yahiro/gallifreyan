@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useRedux } from '../state/AppStore';
+import { useLineSlotSelector } from '../state/Selectors';
 import { AppStoreState, Letter, Word } from '../state/StateTypes';
 import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
 import Group from './Group';
@@ -46,17 +47,18 @@ interface WordProps extends Word {}
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
     const wordCircle = useRedux((state) => state.circles[circleId]);
-    const maskId = `cut_${wordCircle.id}`;
+    const wordLineSlots = useLineSlotSelector(wordCircle.lineSlots);
 
     const letterPartitionSelector = useMemo(createLetterPartitionSelector, []);
-
     const [clippingLetters, normalLetters] = useRedux((state) => letterPartitionSelector(state, letters));
+
+    const maskId = `cut_${wordCircle.id}`;
 
     return (
         <Group x={wordCircle.x} y={wordCircle.y}>
             {clippingLetters.length === 0 ? (
                 <>
-                    <SVGCircle r={wordCircle.r} filled={wordCircle.filled} />
+                    <SVGCircle r={wordCircle.r} filled={wordCircle.filled} lineSlots={wordLineSlots} />
                     {normalLetters}
                 </>
             ) : (

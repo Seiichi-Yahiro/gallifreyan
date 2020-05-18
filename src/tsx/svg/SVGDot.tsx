@@ -13,7 +13,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
 
     return (
         <Group x={dotCircle.x} y={dotCircle.y}>
-            <SVGCircle r={dotCircle.r} filled={dotCircle.filled} />
+            <SVGCircle r={dotCircle.r} filled={dotCircle.filled} lineSlots={[]} />
         </Group>
     );
 };

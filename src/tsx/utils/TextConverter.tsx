@@ -175,6 +175,15 @@ export const resetLetters = (state: AppStoreState) => {
                 letterCircle.y = y;
 
                 const dotAngle = -360 / letter.dots.length;
+                const slotAngle = -360 / letterCircle.lineSlots.length;
+
+                letterCircle.lineSlots
+                    .map((slot) => state.lineSlots[slot])
+                    .forEach((slot, index) => {
+                        const { x, y } = rotate(0, letterCircle.r, slotAngle * index);
+                        slot.x = x;
+                        slot.y = y;
+                    });
 
                 letter.dots.forEach((dot, index) => {
                     const dotCircle = state.circles[dot];
