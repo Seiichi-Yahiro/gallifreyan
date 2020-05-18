@@ -1,9 +1,16 @@
-import '@style/index.scss';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import App from './tsx/App';
+import { configureStore } from './tsx/state/AppStore';
 
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load);
-    ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
+    const store = configureStore();
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>,
+        document.getElementById('root')
+    );
 });

@@ -1,15 +1,15 @@
-import * as React from 'react';
-import SVG from './view/svg/SVG';
-import Sidebar from './view/sidebar/Sidebar';
-import AppContextProvider from './view/AppContext';
+import React from 'react';
+import './App.scss';
+import SVGView from './svg/SVGView';
+import Sidebar from './Sidebar';
 
-const App: React.FunctionComponent = () => (
-    <div className="grid">
-        <AppContextProvider>
+const App: React.FunctionComponent = () => {
+    return (
+        <div className="app">
             <Sidebar />
-            <SVG />
-        </AppContextProvider>
-    </div>
-);
+            <SVGView />
+        </div>
+    );
+};
 
 export default App;
