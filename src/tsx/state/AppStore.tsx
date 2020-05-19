@@ -7,6 +7,7 @@ import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter'
 import { resetLetters } from '../utils/TextTransforms';
 import { AppStoreState } from './StateTypes';
 import { createActionCreator, createReducer } from 'deox';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 enableAllPlugins();
 
@@ -41,7 +42,7 @@ const reducer = createReducer(defaultState, (handle) => [
     ),
 ]);
 
-export const configureStore = () => createStore(reducer, applyMiddleware(logger));
+export const configureStore = () => createStore(reducer, composeWithDevTools(applyMiddleware(logger)));
 
 export function useRedux<S>(selector: (state: AppStoreState) => S, equalityFn?: (left: S, right: S) => boolean) {
     return useSelector<AppStoreState, S>(selector, equalityFn);
