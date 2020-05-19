@@ -1,4 +1,5 @@
 import React from 'react';
+import useHover from '../hooks/useHover';
 import { useRedux } from '../state/AppStore';
 import { useLineSlotSelector } from '../state/Selectors';
 import { Sentence } from '../state/StateTypes';
@@ -15,9 +16,17 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words }
 
     const { x, y } = calculateTranslation(sentenceCircle.angle, sentenceCircle.parentDistance);
 
+    const { isHovered, toggleHover } = useHover();
+
     return (
-        <Group x={x} y={y}>
-            <SVGCircle r={sentenceCircle.r} filled={sentenceCircle.filled} lineSlots={lineSlots} />
+        <Group x={x} y={y} isHovered={isHovered}>
+            <SVGCircle
+                r={sentenceCircle.r}
+                filled={sentenceCircle.filled}
+                lineSlots={lineSlots}
+                onMouseEnter={toggleHover(true)}
+                onMouseLeave={toggleHover(false)}
+            />
             {words.map((word) => (
                 <SVGWord key={word.circleId} {...word} />
             ))}
@@ -25,4 +34,4 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words }
     );
 };
 
-export default SVGSentence;
+export default React.memo(SVGSentence);

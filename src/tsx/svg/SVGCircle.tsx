@@ -2,40 +2,33 @@ import React from 'react';
 import { LineSlot } from '../state/StateTypes';
 import SVGLineSlot from './LineSlot';
 
-interface SVGCircleProps {
+interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {
     r: number;
     filled: boolean;
     lineSlots: LineSlot[];
 }
 
-export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({ r, filled, lineSlots }) => (
+export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({
+    r,
+    filled,
+    lineSlots,
+    stroke = 'inherit',
+    fill = 'inherit',
+    ...props
+}) => (
     <>
-        <circle cx={0} cy={0} r={r} stroke="#000000" fill={filled ? '#000000' : 'transparent'} />
+        <circle {...props} cx={0} cy={0} r={r} stroke={stroke} fill={filled ? fill : 'transparent'} />
         {lineSlots.map((slot) => (
             <SVGLineSlot key={slot.id} {...slot} />
         ))}
     </>
 );
 
-interface SVGMaskedCircleProps {
+interface SVGMaskedCircleProps extends React.SVGProps<SVGCircleElement> {
     r: number;
     maskId: string;
 }
 
-export const SVGMaskedCircle: React.FunctionComponent<SVGMaskedCircleProps> = ({ r, maskId }) => (
-    <circle cx={0} cy={0} r={r} stroke="#000000" fill="#000000" mask={`url(#${maskId})`} />
-);
-
-interface SVGCuttingCircleProps {
-    r: number;
-    lineSlots: LineSlot[];
-}
-
-export const SVGCuttingCircle: React.FunctionComponent<SVGCuttingCircleProps> = ({ r, lineSlots }) => (
-    <>
-        <circle cx={0} cy={0} r={r} stroke="none" fill="transparent" />
-        {lineSlots.map((slot) => (
-            <SVGLineSlot key={slot.id} {...slot} />
-        ))}
-    </>
+export const SVGMaskedCircle: React.FunctionComponent<SVGMaskedCircleProps> = ({ r, maskId, ...props }) => (
+    <circle {...props} cx={0} cy={0} r={r} stroke="inherit" fill="inherit" mask={`url(#${maskId})`} />
 );

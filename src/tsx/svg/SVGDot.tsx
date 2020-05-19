@@ -1,4 +1,5 @@
 import React from 'react';
+import useHover from '../hooks/useHover';
 import { useRedux } from '../state/AppStore';
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
@@ -11,14 +12,21 @@ interface DotProps {
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dotCircle = useRedux((state) => state.circles[id]);
+    const { isHovered, toggleHover } = useHover();
 
     const { x, y } = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
 
     return (
-        <Group x={x} y={y}>
-            <SVGCircle r={dotCircle.r} filled={dotCircle.filled} lineSlots={[]} />
+        <Group x={x} y={y} isHovered={isHovered}>
+            <SVGCircle
+                r={dotCircle.r}
+                filled={dotCircle.filled}
+                lineSlots={[]}
+                onMouseEnter={toggleHover(true)}
+                onMouseLeave={toggleHover(false)}
+            />
         </Group>
     );
 };
 
-export default SVGDot;
+export default React.memo(SVGDot);
