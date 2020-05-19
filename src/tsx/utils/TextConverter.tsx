@@ -1,6 +1,14 @@
 import { v4 } from 'uuid';
-import { Letter, Circle, UUID, LineSlot, AppStoreState, Sentence, Word } from '../state/StateTypes';
-import { DOUBLE_LETTER, isDoubleDot, isDoubleLine, isSingleLine, isTripleDot, isTripleLine } from './LetterGroups';
+import { Letter, Circle, UUID, LineSlot, Sentence, Word } from '../state/StateTypes';
+import {
+    DOUBLE_LETTER,
+    isDoubleDot,
+    isDoubleLine,
+    isSingleLine,
+    isTripleDot,
+    isTripleLine,
+    isVocal,
+} from './LetterGroups';
 import Maybe from './Maybe';
 import { range } from 'lodash';
 
@@ -23,8 +31,8 @@ export const convertTextToSentence = (
 ): { sentence: Sentence; circles: Circle[]; lineSlots: LineSlot[] } => {
     const sentenceCircle: Circle = {
         id: v4(),
-        x: 0,
-        y: 0,
+        angle: 0,
+        parentDistance: 0,
         r: 450,
         filled: false,
         lineSlots: [],
@@ -48,8 +56,8 @@ export const convertTextToSentence = (
 const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineSlots: LineSlot[] } => {
     const wordCircle: Circle = {
         id: v4(),
-        x: 0,
-        y: 0,
+        angle: 0,
+        parentDistance: 0,
         r: 100,
         filled: false,
         lineSlots: [],
@@ -73,9 +81,9 @@ const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineS
 const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[]; lineSlots: LineSlot[] } => {
     const letterCircle: Circle = {
         id: v4(),
-        x: 0,
-        y: 0,
-        r: 50,
+        angle: 0,
+        parentDistance: 0,
+        r: isVocal(text) ? 20 : 50,
         filled: false,
         lineSlots: [],
     };
@@ -110,8 +118,8 @@ const createDots = (letterId: UUID, char: string): Circle[] => {
     for (const _ of range(numberOfDots)) {
         dots.push({
             id: v4(),
-            x: 0,
-            y: 0,
+            angle: 0,
+            parentDistance: 0,
             r: 5,
             filled: true,
             lineSlots: [],
@@ -136,62 +144,11 @@ const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
     for (const _ of range(numberOfLineSlots)) {
         lineSlots.push({
             id: v4(),
-            x: 0,
-            y: 0,
+            angle: 0,
+            parentDistance: 0,
             connection: Maybe.none(),
         });
     }
 
     return lineSlots;
-};
-
-const rotate = (x: number, y: number, angle: number): { x: number; y: number } => {
-    const radian = angle * (Math.PI / 180);
-    const cosAngle = Math.cos(radian);
-    const sinAngle = Math.sin(radian);
-
-    const rotatedX = x * cosAngle - y * sinAngle;
-    const rotatedY = x * sinAngle + y * cosAngle;
-
-    return { x: rotatedX, y: rotatedY };
-};
-
-export const resetLetters = (state: AppStoreState) => {
-    state.sentences.forEach((sentence) => {
-        const sentenceCircle = state.circles[sentence.circleId];
-        const wordAngle = -360 / sentence.words.length;
-
-        sentence.words.forEach((word, index) => {
-            const wordCircle = state.circles[word.circleId];
-            const letterAngle = -360 / word.letters.length;
-            const { x, y } = rotate(0, sentenceCircle.r, wordAngle * index);
-            wordCircle.x = x;
-            wordCircle.y = y;
-
-            word.letters.forEach((letter, index) => {
-                const letterCircle = state.circles[letter.circleId];
-                const { x, y } = rotate(0, wordCircle.r, letterAngle * index);
-                letterCircle.x = x;
-                letterCircle.y = y;
-
-                const dotAngle = -360 / letter.dots.length;
-                const slotAngle = -360 / letterCircle.lineSlots.length;
-
-                letterCircle.lineSlots
-                    .map((slot) => state.lineSlots[slot])
-                    .forEach((slot, index) => {
-                        const { x, y } = rotate(0, letterCircle.r, slotAngle * index);
-                        slot.x = x;
-                        slot.y = y;
-                    });
-
-                letter.dots.forEach((dot, index) => {
-                    const dotCircle = state.circles[dot];
-                    const { x, y } = rotate(0, letterCircle.r, dotAngle * index);
-                    dotCircle.x = x;
-                    dotCircle.y = y;
-                });
-            });
-        });
-    });
 };

@@ -3,6 +3,7 @@ import { useRedux } from '../state/AppStore';
 import { useLineSlotSelector } from '../state/Selectors';
 import { AppStoreState, Letter, Word } from '../state/StateTypes';
 import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
+import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle, SVGMaskedCircle } from './SVGCircle';
 import SVGLetter from './SVGLetter';
@@ -21,15 +22,10 @@ const createLetterPartitionSelector = () =>
 
             const cut = cuttingLetters.map((letter) => {
                 const letterCircle = circles[letter.circleId];
+                const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.parentDistance);
+
                 return (
-                    <circle
-                        key={letter.circleId}
-                        cx={letterCircle.x}
-                        cy={letterCircle.y}
-                        r={letterCircle.r}
-                        fill="#000000"
-                        stroke="#ffffff"
-                    />
+                    <circle key={letter.circleId} cx={x} cy={y} r={letterCircle.r} fill="#000000" stroke="#ffffff" />
                 );
             });
 
@@ -52,10 +48,12 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
     const letterPartitionSelector = useMemo(createLetterPartitionSelector, []);
     const [clippingLetters, normalLetters] = useRedux((state) => letterPartitionSelector(state, letters));
 
+    const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
+
     const maskId = `cut_${wordCircle.id}`;
 
     return (
-        <Group x={wordCircle.x} y={wordCircle.y}>
+        <Group x={x} y={y}>
             {clippingLetters.length === 0 ? (
                 <>
                     <SVGCircle r={wordCircle.r} filled={wordCircle.filled} lineSlots={wordLineSlots} />

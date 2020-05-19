@@ -3,7 +3,8 @@ import { createStore, applyMiddleware } from 'redux';
 import { produce, enableAllPlugins } from 'immer';
 import logger from 'redux-logger';
 import { isValidLetter } from '../utils/LetterGroups';
-import { convertTextToSentence, resetLetters, splitWordToChars } from '../utils/TextConverter';
+import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
+import { resetLetters } from '../utils/TextTransforms';
 import { AppStoreState } from './StateTypes';
 import { createActionCreator, createReducer } from 'deox';
 

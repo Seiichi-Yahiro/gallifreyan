@@ -6,9 +6,12 @@ export interface Referencable {
     readonly id: UUID;
 }
 
-export interface Circle extends Referencable {
-    x: number;
-    y: number;
+export interface PositionData {
+    angle: number;
+    parentDistance: number;
+}
+
+export interface Circle extends Referencable, PositionData {
     r: number;
     filled: boolean;
     lineSlots: UUID[];
@@ -19,9 +22,7 @@ export interface LineConnection extends Referencable {
     b: UUID;
 }
 
-export interface LineSlot extends Referencable {
-    x: number;
-    y: number;
+export interface LineSlot extends Referencable, PositionData {
     connection: Maybe<LineConnection>;
 }
 

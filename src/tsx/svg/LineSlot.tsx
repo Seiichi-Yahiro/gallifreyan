@@ -1,9 +1,11 @@
 import React from 'react';
 import { LineSlot } from '../state/StateTypes';
+import { calculateTranslation } from '../utils/TextTransforms';
 
 interface SVGLineSlotProps extends LineSlot {}
 
-const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ x, y }) => {
+const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ angle, parentDistance }) => {
+    const { x, y } = calculateTranslation(angle, parentDistance);
     const length = Math.sqrt(x * x + y * y);
     const lineLength = 10;
     const xDir = (lineLength * x) / length;
