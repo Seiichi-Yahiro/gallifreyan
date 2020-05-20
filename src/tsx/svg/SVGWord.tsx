@@ -1,17 +1,19 @@
 import React from 'react';
 import useHover from '../hooks/useHover';
 import { useRedux } from '../state/AppStore';
+import { useLineSlotSelector } from '../state/Selectors';
 import { Word } from '../state/StateTypes';
 import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
+import { SVGCircle } from './SVGCircle';
 import SVGLetter, { SVGLetterSimple } from './SVGLetter';
 
 interface WordProps extends Word {}
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
     const wordCircle = useRedux((state) => state.circles[circleId]);
-    // const wordLineSlots = useLineSlotSelector(wordCircle.lineSlots);
+    const lineSlots = useLineSlotSelector(wordCircle.lineSlots);
 
     const { isHovered, toggleHover } = useHover();
 
@@ -27,8 +29,9 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
                         <SVGLetterSimple key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
                     ))}
             </mask>
-            <circle
+            <SVGCircle
                 r={wordCircle.r}
+                lineSlots={lineSlots}
                 fill="inherit"
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}

@@ -4,14 +4,14 @@ import SVGLineSlot from './LineSlot';
 
 interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {
     r: number;
-    filled: boolean;
     lineSlots: LineSlot[];
+    filled?: boolean;
 }
 
 export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({
     r,
-    filled,
     lineSlots,
+    filled = false,
     stroke = 'inherit',
     fill = 'inherit',
     ...props
@@ -22,13 +22,4 @@ export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({
             <SVGLineSlot key={slot.id} {...slot} />
         ))}
     </>
-);
-
-interface SVGMaskedCircleProps extends React.SVGProps<SVGCircleElement> {
-    r: number;
-    maskId: string;
-}
-
-export const SVGMaskedCircle: React.FunctionComponent<SVGMaskedCircleProps> = ({ r, maskId, ...props }) => (
-    <circle {...props} cx={0} cy={0} r={r} stroke="inherit" fill="inherit" mask={`url(#${maskId})`} />
 );

@@ -20,8 +20,10 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
         <Group x={x} y={y} isHovered={isHovered}>
             <SVGCircle
                 r={dotCircle.r}
-                filled={dotCircle.filled}
                 lineSlots={[]}
+                fill="inherit"
+                stroke="inherit"
+                filled={dotCircle.filled}
                 onMouseEnter={toggleHover(true)}
                 onMouseLeave={toggleHover(false)}
             />

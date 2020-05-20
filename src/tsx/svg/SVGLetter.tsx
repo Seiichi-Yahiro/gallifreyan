@@ -1,10 +1,11 @@
 import React from 'react';
 import useHover from '../hooks/useHover';
 import { useRedux } from '../state/AppStore';
-// import { useLineSlotSelector } from '../state/Selectors';
+import { useLineSlotSelector } from '../state/Selectors';
 import { Letter } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
+import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
 
 interface LetterProps extends Letter {
@@ -15,7 +16,7 @@ interface LetterProps extends Letter {
 
 const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill, stroke, children }) => {
     const letterCircle = useRedux((state) => state.circles[circleId]);
-    // const lineSlots = useLineSlotSelector(letterCircle.lineSlots);
+    const lineSlots = useLineSlotSelector(letterCircle.lineSlots);
 
     const { isHovered, toggleHover } = useHover();
 
@@ -23,8 +24,9 @@ const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill,
 
     return (
         <Group x={x} y={y} isHovered={isHovered}>
-            <circle
+            <SVGCircle
                 r={letterCircle.r}
+                lineSlots={lineSlots}
                 fill={fill}
                 stroke={stroke}
                 onMouseEnter={toggleHover(true)}
