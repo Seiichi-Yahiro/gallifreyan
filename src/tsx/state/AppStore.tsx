@@ -16,7 +16,7 @@ const defaultState: AppStoreState = {
     lineConnections: {},
     lineSlots: {},
     sentences: [],
-    svgSize: 2000,
+    svgSize: 1000,
 };
 
 export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) => (sentence: string) =>

@@ -50,6 +50,7 @@ export interface AppStoreState {
     lineSlots: { [key: string]: LineSlot };
     sentences: Sentence[];
     svgSize: number;
+    selection: UUID[];
 }
 
 /*export interface DenormCircle extends Referencable {

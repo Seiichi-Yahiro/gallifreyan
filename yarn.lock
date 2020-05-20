@@ -185,6 +185,13 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
+"@types/react-svg-pan-zoom@3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@types/react-svg-pan-zoom/-/react-svg-pan-zoom-3.3.1.tgz#ae210ffd20422515eaf5d54bfa8fe374be585b1e"
+  integrity sha512-N10C2gGqs6apsnTmmddCbAlNwb5VuX1DvosPV7NOmPPrSaKjMIRdgJ4luj9qipGHzafUU/T2JtM87RgvO/V+XA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.2.0":
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.2.4.tgz#c7416225987ccdb719262766c1483da8f826838d"
@@ -4591,6 +4598,14 @@ react-redux@7.2.0:
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
+react-svg-pan-zoom@3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/react-svg-pan-zoom/-/react-svg-pan-zoom-3.8.0.tgz#5724c71d257a07233c9cc511a5c6498d80bb397a"
+  integrity sha512-s92QDFJuRrp784aQZKX8qxukMY/85IpOXO5Bjbn1G/CoNapdHCRVAHynPP6Ea9cyMmycSmu6paPqUIAW3i5s9Q==
+  dependencies:
+    prop-types "^15.7.2"
+    transformation-matrix "^2.2.0"
+
 react-transition-group@^4.4.0:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
@@ -4666,7 +4681,7 @@ redent@^1.0.0:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
 
-redux-devtools-extension@^2.13.8:
+redux-devtools-extension@2.13.8, redux-devtools-extension@^2.13.8:
   version "2.13.8"
   resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.8.tgz#37b982688626e5e4993ff87220c9bbb7cd2d96e1"
   integrity sha512-8qlpooP2QqPtZHQZRhx3x3OP5skEV1py/zUdMY28WNAocbafxdG2tRD1MWE7sp8obGMNYuLWanhhQ7EQvT1FBg==
@@ -5655,6 +5670,11 @@ tough-cookie@~2.5.0:
   dependencies:
     psl "^1.1.28"
     punycode "^2.1.1"
+
+transformation-matrix@^2.2.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/transformation-matrix/-/transformation-matrix-2.3.0.tgz#568a0be8698c204efbfc799516b8714a6e4708de"
+  integrity sha512-iXgfTkswsqHyG3SzL04mfniI4z6/XUDBiWmMv/+YSDFIjoF4Ugy3AwkoL8ed+cCak1uLfb70wQbIkATNS6fgPA==
 
 trim-newlines@^1.0.0:
   version "1.0.0"
