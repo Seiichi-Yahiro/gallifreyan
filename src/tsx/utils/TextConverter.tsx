@@ -35,7 +35,6 @@ export const convertTextToSentence = (
         parentDistance: 0,
         r: 450,
         filled: false,
-        lineSlots: [],
     };
 
     const wordData = text.split(' ').map((word) => convertTextToWord(word));
@@ -44,6 +43,7 @@ export const convertTextToSentence = (
         text,
         circleId: sentenceCircle.id,
         words: wordData.map((it) => it.word),
+        lineSlots: [],
     };
 
     return {
@@ -60,7 +60,6 @@ const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineS
         parentDistance: 0,
         r: 100,
         filled: false,
-        lineSlots: [],
     };
 
     const letterData = splitWordToChars(text).map((char) => convertTextToLetter(char));
@@ -69,6 +68,7 @@ const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineS
         text,
         circleId: wordCircle.id,
         letters: letterData.map((it) => it.letter),
+        lineSlots: [],
     };
 
     return {
@@ -85,17 +85,16 @@ const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[];
         parentDistance: 0,
         r: isVocal(text) ? 20 : 50,
         filled: false,
-        lineSlots: [],
     };
 
     const dots = createDots(letterCircle.id, text);
     const lineSlots = createLineSlots(letterCircle.id, text);
-    letterCircle.lineSlots = lineSlots.map((slot) => slot.id);
 
     const letter: Letter = {
         text,
         circleId: letterCircle.id,
         dots: dots.map((dot) => dot.id),
+        lineSlots: lineSlots.map((slot) => slot.id),
     };
 
     return {
@@ -122,7 +121,6 @@ const createDots = (letterId: UUID, char: string): Circle[] => {
             parentDistance: 0,
             r: 5,
             filled: true,
-            lineSlots: [],
         });
     }
 

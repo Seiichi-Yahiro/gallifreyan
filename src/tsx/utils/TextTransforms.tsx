@@ -99,10 +99,10 @@ export const resetLetters = (state: AppStoreState) => {
                 const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
                     letterCircle.r,
                     letterAngle * index,
-                    letterCircle.lineSlots.length
+                    letter.lineSlots.length
                 );
 
-                letterCircle.lineSlots
+                letter.lineSlots
                     .map((slot) => state.lineSlots[slot])
                     .forEach((slot, index) => {
                         const { angle, parentDistance } = lineSlotPositionDatas[index];

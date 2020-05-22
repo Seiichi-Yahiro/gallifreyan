@@ -14,7 +14,6 @@ export interface PositionData {
 export interface Circle extends Referencable, PositionData {
     r: number;
     filled: boolean;
-    lineSlots: UUID[];
 }
 
 export interface LineConnection extends Referencable {
@@ -30,18 +29,21 @@ export interface Sentence {
     text: string;
     circleId: UUID;
     words: Word[];
+    lineSlots: UUID[];
 }
 
 export interface Word {
     text: string;
     circleId: UUID;
     letters: Letter[];
+    lineSlots: UUID[];
 }
 
 export interface Letter {
     text: string;
     circleId: UUID;
     dots: UUID[];
+    lineSlots: UUID[];
 }
 
 export interface AppStoreState {
@@ -51,27 +53,5 @@ export interface AppStoreState {
     sentences: Sentence[];
     svgSize: number;
     selection: UUID[];
+    hovering: Maybe<UUID>;
 }
-
-/*export interface DenormCircle extends Referencable {
-    x: number;
-    y: number;
-    r: number;
-    filled: boolean;
-    lineSlots: LineSlot[];
-}
-
-export interface DenormSentence extends DenormCircle {
-    text: string;
-    words: DenormWord[];
-}
-
-export interface DenormWord extends DenormCircle {
-    text: string;
-    letters: DenormLetter[];
-}
-
-export interface DenormLetter extends DenormCircle {
-    text: string;
-    dots: DenormCircle[];
-}*/

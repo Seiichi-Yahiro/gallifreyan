@@ -1,12 +1,25 @@
 import React from 'react';
-import useHover from '../hooks/useHover';
-import { LineSlot } from '../state/StateTypes';
+import { setHoveringAction, useRedux } from '../state/AppStore';
+import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
+import Maybe from '../utils/Maybe';
+import { useDispatch } from 'react-redux';
+import useHover from '../hooks/useHover';
 
-interface SVGLineSlotProps extends LineSlot {}
+interface SVGLineSlotProps {
+    id: UUID;
+}
 
-const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ angle, parentDistance }) => {
+const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
+    const { angle, parentDistance } = useRedux((state) => state.lineSlots[id]);
+    const dispatcher = useDispatch();
+    const isHoveredSlot = useRedux((state) => state.hovering)
+        .map((it) => it === id)
+        .unwrapOr(false);
+
+    const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
+
     const { x, y } = calculateTranslation(angle, parentDistance);
     const length = Math.sqrt(x * x + y * y);
     const lineLength = 10;
@@ -14,9 +27,6 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ angle, parentD
     const yDir = (lineLength * y) / length;
     const x2 = x + xDir;
     const y2 = y + yDir;
-
-    const { isHovered: isHoveredSlot, toggleHover: toggleSlotHover } = useHover();
-    const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
     return (
         <Group x={0} y={0} isHovered={isHoveredSlot || isHoveredConnection}>
@@ -27,8 +37,8 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ angle, parentD
                 r={5}
                 fill="transparent"
                 stroke={isHoveredSlot ? 'inherit' : 'none'}
-                onMouseEnter={toggleSlotHover(true)}
-                onMouseLeave={toggleSlotHover(false)}
+                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(id)))}
+                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />
             <circle
                 cx={x2}

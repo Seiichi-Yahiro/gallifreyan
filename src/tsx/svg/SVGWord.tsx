@@ -1,21 +1,22 @@
 import React from 'react';
-import useHover from '../hooks/useHover';
-import { useRedux } from '../state/AppStore';
-import { useLineSlotSelector } from '../state/Selectors';
+import { setHoveringAction, useRedux } from '../state/AppStore';
 import { Word } from '../state/StateTypes';
 import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGLetter, { SVGLetterSimple } from './SVGLetter';
+import { useDispatch } from 'react-redux';
+import Maybe from '../utils/Maybe';
 
 interface WordProps extends Word {}
 
-const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
+const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
     const wordCircle = useRedux((state) => state.circles[circleId]);
-    const lineSlots = useLineSlotSelector(wordCircle.lineSlots);
-
-    const { isHovered, toggleHover } = useHover();
+    const dispatcher = useDispatch();
+    const isHovered = useRedux((state) => state.hovering)
+        .map((it) => it === circleId)
+        .unwrapOr(false);
 
     const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
 
@@ -35,8 +36,8 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters }) => {
                 fill="inherit"
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}
-                onMouseEnter={toggleHover(true)}
-                onMouseLeave={toggleHover(false)}
+                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
+                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />
             {letters.map((letter) =>
                 isShallowCut(letter.text) || isDeepCut(letter.text) ? (

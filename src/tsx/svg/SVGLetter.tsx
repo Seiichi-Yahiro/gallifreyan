@@ -1,12 +1,12 @@
 import React from 'react';
-import useHover from '../hooks/useHover';
-import { useRedux } from '../state/AppStore';
-import { useLineSlotSelector } from '../state/Selectors';
+import { setHoveringAction, useRedux } from '../state/AppStore';
 import { Letter } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
+import { useDispatch } from 'react-redux';
+import Maybe from '../utils/Maybe';
 
 interface LetterProps extends Letter {
     fill: string;
@@ -14,11 +14,12 @@ interface LetterProps extends Letter {
     children?: React.ReactNode;
 }
 
-const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill, stroke, children }) => {
+const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill, stroke, children, lineSlots }) => {
     const letterCircle = useRedux((state) => state.circles[circleId]);
-    const lineSlots = useLineSlotSelector(letterCircle.lineSlots);
-
-    const { isHovered, toggleHover } = useHover();
+    const dispatcher = useDispatch();
+    const isHovered = useRedux((state) => state.hovering)
+        .map((it) => it === circleId)
+        .unwrapOr(false);
 
     const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.parentDistance);
 
@@ -29,8 +30,8 @@ const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill,
                 lineSlots={lineSlots}
                 fill={fill}
                 stroke={stroke}
-                onMouseEnter={toggleHover(true)}
-                onMouseLeave={toggleHover(false)}
+                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
+                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />
             {children && (
                 <Group x={-x} y={-y}>

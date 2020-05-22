@@ -1,10 +1,11 @@
 import React from 'react';
-import useHover from '../hooks/useHover';
-import { useRedux } from '../state/AppStore';
+import { setHoveringAction, useRedux } from '../state/AppStore';
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
+import { useDispatch } from 'react-redux';
+import Maybe from '../utils/Maybe';
 
 interface DotProps {
     id: UUID;
@@ -12,7 +13,10 @@ interface DotProps {
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dotCircle = useRedux((state) => state.circles[id]);
-    const { isHovered, toggleHover } = useHover();
+    const dispatcher = useDispatch();
+    const isHovered = useRedux((state) => state.hovering)
+        .map((it) => it === id)
+        .unwrapOr(false);
 
     const { x, y } = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
 
@@ -24,8 +28,8 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 fill="inherit"
                 stroke="inherit"
                 filled={dotCircle.filled}
-                onMouseEnter={toggleHover(true)}
-                onMouseLeave={toggleHover(false)}
+                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(id)))}
+                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />
         </Group>
     );

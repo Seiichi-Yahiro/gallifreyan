@@ -1,10 +1,10 @@
 import React from 'react';
-import { LineSlot } from '../state/StateTypes';
+import { UUID } from '../state/StateTypes';
 import SVGLineSlot from './LineSlot';
 
 interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {
     r: number;
-    lineSlots: LineSlot[];
+    lineSlots: UUID[];
     filled?: boolean;
 }
 
@@ -19,7 +19,7 @@ export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({
     <>
         <circle {...props} cx={0} cy={0} r={r} stroke={stroke} fill={filled ? fill : 'transparent'} />
         {lineSlots.map((slot) => (
-            <SVGLineSlot key={slot.id} {...slot} />
+            <SVGLineSlot key={slot} id={slot} />
         ))}
     </>
 );

@@ -5,9 +5,10 @@ import logger from 'redux-logger';
 import { isValidLetter } from '../utils/LetterGroups';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
 import { resetLetters } from '../utils/TextTransforms';
-import { AppStoreState } from './StateTypes';
+import { AppStoreState, UUID } from './StateTypes';
 import { createActionCreator, createReducer } from 'deox';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import Maybe from '../utils/Maybe';
 
 enableAllPlugins();
 
@@ -17,11 +18,15 @@ const defaultState: AppStoreState = {
     lineSlots: {},
     sentences: [],
     svgSize: 1000,
+    selection: [],
+    hovering: Maybe.none(),
 };
 
 export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) => (sentence: string) =>
     resolve(sentence)
 );
+
+export const setHoveringAction = createActionCreator('SET_HOVERING', (resolve) => (uuid: Maybe<UUID>) => resolve(uuid));
 
 const reducer = createReducer(defaultState, (handle) => [
     handle(addSentenceAction, (state, { payload: sentenceText }) =>
@@ -38,6 +43,11 @@ const reducer = createReducer(defaultState, (handle) => [
             lineSlots.forEach((slot) => (draft.lineSlots[slot.id] = slot));
 
             resetLetters(draft as AppStoreState);
+        })
+    ),
+    handle(setHoveringAction, (state, { payload }) =>
+        produce(state, (draft) => {
+            draft.hovering = payload;
         })
     ),
 ]);

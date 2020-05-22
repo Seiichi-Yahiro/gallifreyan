@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { TextField, Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { addSentenceAction } from './state/AppStore';
+import { addSentenceAction } from '../state/AppStore';
+import Tree from './Tree';
+import { Box, Button, TextField } from '@material-ui/core';
 
 interface SidebarProps {}
 
@@ -9,7 +10,10 @@ const Sidebar: React.FunctionComponent<SidebarProps> = ({}) => {
     const [state, setState] = useState('');
     const dispatch = useDispatch();
 
-    const addSentence = (sentence: string) => dispatch(addSentenceAction(sentence));
+    const addSentence = (sentence: string) => {
+        dispatch(addSentenceAction(sentence));
+        setState('');
+    };
 
     const onTextChange = (event: React.ChangeEvent<HTMLInputElement>) => setState(event.target.value);
 
@@ -23,18 +27,17 @@ const Sidebar: React.FunctionComponent<SidebarProps> = ({}) => {
 
     return (
         <div className="app__sidebar">
-            <div>
+            <Box display="flex" justifyContent="space-between">
                 <TextField
-                    required={true}
+                    type="text"
                     placeholder="Sentence..."
                     value={state}
                     onChange={onTextChange}
                     onKeyPress={onKeyPress}
                 />
-                <Button variant="outlined" color="primary" onClick={onButtonPress}>
-                    Add
-                </Button>
-            </div>
+                <Button onClick={onButtonPress}>Add</Button>
+            </Box>
+            <Tree />
         </div>
     );
 };

@@ -12,7 +12,7 @@ body,
 
 .app {
     display: grid;
-    grid-template-columns: minmax(10%, 25%) auto;
+    grid-template-columns: 20fr 80fr;
     grid-column-gap: 5px;
     padding: 5px;
     height: 100%;
@@ -26,7 +26,30 @@ body,
         }
     }
 
+    &__sidebar {
+        padding: 5px;
+        overflow-y: auto;
+        display: grid;
+        grid-template-rows: 32px auto;
+        grid-template-columns: 100%;
+        word-break: break-word;
+        grid-row-gap: 5px;
+    }
+
     &__svg-view {
         overflow: hidden;
     }
+}
+
+.text-input {
+    border-width: 0 0 1px 0;
+    border-color: #000000;
+    outline: none;
+}
+
+.button {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    cursor: pointer;
+    outline: none;
 }
