@@ -16,6 +16,9 @@ export const VOCAL = new RegExp('^[aeiou]$', 'i');
 export const VOCAL_ON_LINE = new RegExp('^[eiu]$', 'i');
 export const VOCAL_OUTSIDE = new RegExp('^a$', 'i');
 export const VOCAL_INSIDE = new RegExp('^o$', 'i');
+export const VOCAL_SINGLE_LINE = new RegExp('^[iu]$', 'i');
+export const VOCAL_LINE_INSIDE = new RegExp('^i$', 'i');
+export const VOCAL_LINE_OUTSIDE = new RegExp('^u$', 'i');
 
 export const DOUBLE_LETTER = new RegExp('ch|sh|th|qu|ng', 'i');
 
@@ -35,6 +38,9 @@ export const isVocal = (text: string) => VOCAL.test(text);
 export const isVocalOnLine = (text: string) => VOCAL_ON_LINE.test(text);
 export const isVocalOutside = (text: string) => VOCAL_OUTSIDE.test(text);
 export const isVocalInside = (text: string) => VOCAL_INSIDE.test(text);
+export const isVocalSingleLine = (text: string) => VOCAL_SINGLE_LINE.test(text);
+export const isVocalLineInside = (text: string) => VOCAL_LINE_INSIDE.test(text);
+export const isVocalLineOutside = (text: string) => VOCAL_LINE_OUTSIDE.test(text);
 
 export const isDoubleLetter = (text: string) => DOUBLE_LETTER.test(text);
 

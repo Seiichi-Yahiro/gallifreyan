@@ -8,6 +8,7 @@ import {
     isShallowCut,
     isVocal,
     isVocalInside,
+    isVocalLineOutside,
     isVocalOutside,
 } from './LetterGroups';
 import { DefaultConsonantRadius, DefaultVocalRadius } from './TextDefaultValues';
@@ -111,9 +112,10 @@ export const calculateInitialDotPositionDatas = (
 export const calculateInitialLineSlotPositionDatas = (
     letterRadius: number,
     letterAngle: number,
-    numberOfLines: number
+    numberOfLines: number,
+    pointOutside: boolean
 ): PositionData[] => {
-    const letterSideAngle = letterAngle - 180;
+    const letterSideAngle = letterAngle - (pointOutside ? 0 : 180);
     const lineDistanceAngle = -45;
     const centerLinesOnLetterSideAngle = ((numberOfLines - 1) * lineDistanceAngle) / 2;
 
@@ -151,7 +153,8 @@ export const resetLetters = (state: AppStoreState) => {
                 const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
                     letterCircle.r,
                     letterAngle,
-                    letter.lineSlots.length
+                    letter.lineSlots.length,
+                    isVocalLineOutside(letter.text)
                 );
 
                 letter.lineSlots

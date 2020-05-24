@@ -8,6 +8,7 @@ import {
     isTripleDot,
     isTripleLine,
     isVocal,
+    isVocalSingleLine,
 } from './LetterGroups';
 import Maybe from './Maybe';
 import { range } from 'lodash';
@@ -129,7 +130,6 @@ const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[];
 };
 
 const createDots = (letterId: UUID, char: string): Circle[] => {
-    let dots: Circle[] = [];
     let numberOfDots = 0;
 
     if (isDoubleDot(char)) {
@@ -138,24 +138,19 @@ const createDots = (letterId: UUID, char: string): Circle[] => {
         numberOfDots = 3;
     }
 
-    for (const _ of range(numberOfDots)) {
-        dots.push({
-            id: v4(),
-            angle: 0,
-            parentDistance: 0,
-            r: 5,
-            filled: true,
-        });
-    }
-
-    return dots;
+    return range(numberOfDots).map((_i) => ({
+        id: v4(),
+        angle: 0,
+        parentDistance: 0,
+        r: 5,
+        filled: true,
+    }));
 };
 
 const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
-    let lineSlots: LineSlot[] = [];
     let numberOfLineSlots = 0;
 
-    if (isSingleLine(char)) {
+    if (isSingleLine(char) || isVocalSingleLine(char)) {
         numberOfLineSlots = 1;
     } else if (isDoubleLine(char)) {
         numberOfLineSlots = 2;
@@ -163,14 +158,10 @@ const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
         numberOfLineSlots = 3;
     }
 
-    for (const _ of range(numberOfLineSlots)) {
-        lineSlots.push({
-            id: v4(),
-            angle: 0,
-            parentDistance: 0,
-            connection: Maybe.none(),
-        });
-    }
-
-    return lineSlots;
+    return range(numberOfLineSlots).map((_i) => ({
+        id: v4(),
+        angle: 0,
+        parentDistance: 0,
+        connection: Maybe.none(),
+    }));
 };
