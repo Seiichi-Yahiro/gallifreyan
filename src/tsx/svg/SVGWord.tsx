@@ -5,7 +5,7 @@ import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
-import SVGLetter, { SVGLetterSimple } from './SVGLetter';
+import SVGLetter, { SVGLetterMask } from './SVGLetter';
 import { useDispatch } from 'react-redux';
 import Maybe from '../utils/Maybe';
 
@@ -27,7 +27,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 {letters
                     .filter((letter) => isShallowCut(letter.text) || isDeepCut(letter.text))
                     .map((letter) => (
-                        <SVGLetterSimple key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
+                        <SVGLetterMask key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
                     ))}
             </mask>
             <SVGCircle
@@ -43,7 +43,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 isShallowCut(letter.text) || isDeepCut(letter.text) ? (
                     <React.Fragment key={letter.circleId}>
                         <mask id={`mask_${letter.circleId}`}>
-                            <SVGLetterSimple {...letter} fill="#000000" stroke="#ffffff" />
+                            <SVGLetterMask {...letter} fill="#000000" stroke="#ffffff" />
                         </mask>
                         <SVGLetter {...letter} fill="transparent" stroke="none">
                             <circle

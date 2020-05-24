@@ -1,6 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
-import { Letter } from '../state/StateTypes';
+import { Letter, UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -14,7 +14,14 @@ interface LetterProps extends Letter {
     children?: React.ReactNode;
 }
 
-const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill, stroke, children, lineSlots }) => {
+const SVGLetter: React.FunctionComponent<LetterProps & { dots?: UUID[] }> = ({
+    circleId,
+    dots = [],
+    fill,
+    stroke,
+    children,
+    lineSlots,
+}) => {
     const letterCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useRedux((state) => state.hovering)
@@ -45,7 +52,7 @@ const SVGLetter: React.FunctionComponent<LetterProps> = ({ circleId, dots, fill,
     );
 };
 
-export const SVGLetterSimple: React.FunctionComponent<LetterProps> = React.memo(({ circleId, fill, stroke }) => {
+export const SVGLetterMask: React.FunctionComponent<LetterProps> = React.memo(({ circleId, fill, stroke }) => {
     const letterCircle = useRedux((state) => state.circles[circleId]);
 
     const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.parentDistance);

@@ -4,6 +4,7 @@ import { UUID } from '../state/StateTypes';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import { ExpandMore, ChevronRight } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
+import { isLetterConsonant } from '../utils/LetterGroups';
 import Maybe from '../utils/Maybe';
 
 interface TreeProps {}
@@ -34,9 +35,10 @@ const Tree: React.FunctionComponent<TreeProps> = ({}) => {
                                     circleId={letter.circleId}
                                     lineSlots={letter.lineSlots}
                                 >
-                                    {letter.dots.map((dot) => (
-                                        <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
-                                    ))}
+                                    {isLetterConsonant(letter) &&
+                                        letter.dots.map((dot) => (
+                                            <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
+                                        ))}
                                 </TreeItemWrapper>
                             ))}
                         </TreeItemWrapper>

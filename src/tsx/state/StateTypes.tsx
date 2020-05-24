@@ -42,8 +42,15 @@ export interface Word {
 export interface Letter {
     text: string;
     circleId: UUID;
-    dots: UUID[];
     lineSlots: UUID[];
+}
+
+export interface Vocal extends Letter {
+    isAttachedToConsonant: boolean;
+}
+
+export interface Consonant extends Letter {
+    dots: UUID[];
 }
 
 export interface AppStoreState {

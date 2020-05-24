@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { Letter, Circle, UUID, LineSlot, Sentence, Word } from '../state/StateTypes';
+import { Letter, Circle, UUID, LineSlot, Sentence, Word, Vocal, Consonant } from '../state/StateTypes';
 import {
     DOUBLE_LETTER,
     isDoubleDot,
@@ -11,6 +11,12 @@ import {
 } from './LetterGroups';
 import Maybe from './Maybe';
 import { range } from 'lodash';
+import {
+    DefaultConsonantRadius,
+    DefaultSentenceRadius,
+    DefaultVocalRadius,
+    DefaultWordRadius,
+} from './TextDefaultValues';
 
 export const splitWordToChars = (word: string): string[] => {
     const index = word.search(DOUBLE_LETTER);
@@ -33,7 +39,7 @@ export const convertTextToSentence = (
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 450,
+        r: DefaultSentenceRadius,
         filled: false,
     };
 
@@ -58,7 +64,7 @@ const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineS
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 100,
+        r: DefaultWordRadius,
         filled: false,
     };
 
@@ -83,25 +89,43 @@ const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[];
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: isVocal(text) ? 20 : 50,
+        r: isVocal(text) ? DefaultVocalRadius : DefaultConsonantRadius,
         filled: false,
     };
 
-    const dots = createDots(letterCircle.id, text);
     const lineSlots = createLineSlots(letterCircle.id, text);
 
     const letter: Letter = {
         text,
         circleId: letterCircle.id,
-        dots: dots.map((dot) => dot.id),
         lineSlots: lineSlots.map((slot) => slot.id),
     };
 
-    return {
-        letter,
-        circles: dots.concat(letterCircle),
-        lineSlots,
-    };
+    if (isVocal(text)) {
+        const vocal: Vocal = {
+            ...letter,
+            isAttachedToConsonant: false, // TODO set to true
+        };
+
+        return {
+            letter: vocal,
+            circles: [letterCircle],
+            lineSlots,
+        };
+    } else {
+        const dots = createDots(letterCircle.id, text);
+
+        const consonant: Consonant = {
+            ...letter,
+            dots: dots.map((dot) => dot.id),
+        };
+
+        return {
+            letter: consonant,
+            circles: dots.concat(letterCircle),
+            lineSlots,
+        };
+    }
 };
 
 const createDots = (letterId: UUID, char: string): Circle[] => {
