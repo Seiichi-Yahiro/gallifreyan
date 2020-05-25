@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { Letter, Circle, UUID, LineSlot, Sentence, Word } from '../state/StateTypes';
+import { Letter, Circle, LineSlot, Sentence, Word } from '../state/StateTypes';
 import {
     DOUBLE_LETTER,
     isDoubleDot,
@@ -87,8 +87,8 @@ const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[];
         filled: false,
     };
 
-    const dots = createDots(letterCircle.id, text);
-    const lineSlots = createLineSlots(letterCircle.id, text);
+    const dots = createDots(text);
+    const lineSlots = createLineSlots(text);
 
     const letter: Letter = {
         text,
@@ -104,8 +104,8 @@ const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[];
     };
 };
 
-const createDots = (letterId: UUID, char: string): Circle[] => {
-    let dots: Circle[] = [];
+const createDots = (char: string): Circle[] => {
+    const dots: Circle[] = [];
     let numberOfDots = 0;
 
     if (isDoubleDot(char)) {
@@ -127,8 +127,8 @@ const createDots = (letterId: UUID, char: string): Circle[] => {
     return dots;
 };
 
-const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
-    let lineSlots: LineSlot[] = [];
+const createLineSlots = (char: string): LineSlot[] => {
+    const lineSlots: LineSlot[] = [];
     let numberOfLineSlots = 0;
 
     if (isSingleLine(char)) {
