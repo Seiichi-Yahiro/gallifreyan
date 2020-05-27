@@ -9,7 +9,7 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     entry: {
-        app: path.join(__dirname, 'src/index.tsx'),
+        app: path.join(__dirname, 'lib/es6/src/Index.bs.js'),
     },
     output: {
         path: path.join(__dirname, 'build'),
@@ -23,7 +23,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(ts|tsx)$/,
+                test: /\.bs\.js$/,
                 use: [
                     {
                         loader: 'ts-loader',

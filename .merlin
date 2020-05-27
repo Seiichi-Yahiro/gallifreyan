@@ -1,0 +1,18 @@
+####{BSB GENERATED: NO EDIT
+B lib/bs
+FLG -open YourProjectName
+FLG -ppx '/home/julian/projects/gallifreyan/node_modules/bs-platform/linux/bsc.exe -as-ppx -bs-jsx 3'
+S /home/julian/projects/gallifreyan/node_modules/bs-platform/lib/ocaml
+B /home/julian/projects/gallifreyan/node_modules/bs-platform/lib/ocaml
+FLG -w +a-4-9-20-40-41-42-50-61-102
+S /home/julian/projects/gallifreyan/node_modules/reason-react/lib/ocaml
+B /home/julian/projects/gallifreyan/node_modules/reason-react/lib/ocaml
+S /home/julian/projects/gallifreyan/node_modules/reductive/lib/ocaml
+B /home/julian/projects/gallifreyan/node_modules/reductive/lib/ocaml
+S src
+B lib/bs/src
+S src/tsx
+B lib/bs/src/tsx
+S src/tsx/state
+B lib/bs/src/tsx/state
+####BSB GENERATED: NO EDIT}

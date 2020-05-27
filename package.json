@@ -13,6 +13,8 @@
         "react-dom": "16.13.1",
         "react-redux": "7.2.0",
         "react-svg-pan-zoom": "3.8.0",
+        "reason-react": "0.8.0",
+        "reductive": "2.0.1",
         "redux": "4.0.5",
         "redux-devtools-extension": "2.13.8",
         "redux-logger": "3.0.6",
@@ -32,6 +34,7 @@
         "@types/uuid": "8.0.0",
         "@typescript-eslint/eslint-plugin": "3.0.0",
         "@typescript-eslint/parser": "3.0.0",
+        "bs-platform": "7.3.2",
         "css-loader": "3.5.3",
         "eslint": "7.1.0",
         "eslint-config-prettier": "6.11.0",
@@ -39,7 +42,6 @@
         "eslint-plugin-react-hooks": "4.0.2",
         "fork-ts-checker-webpack-plugin": "4.1.4",
         "html-webpack-plugin": "4.3.0",
-        "husky": "4.2.5",
         "mini-css-extract-plugin": "0.9.0",
         "node-sass": "4.14.1",
         "prettier": "2.0.5",
@@ -55,11 +57,8 @@
     "scripts": {
         "start": "webpack-dev-server --config webpack.config.js",
         "build:dev": "rimraf build && webpack --config webpack.config.js",
-        "pretty-quick": "pretty-quick"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "pretty-quick --staged"
-        }
+        "pretty-quick": "pretty-quick",
+        "re:build": "bsb -make-world -clean-world",
+        "re:watch": "bsb -make-world -clean-world -w"
     }
 }
