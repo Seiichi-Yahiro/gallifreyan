@@ -22,7 +22,7 @@ const SVGView: React.FunctionComponent<SVGViewProps> = () => {
         calculateViewerSize();
     }, []);
 
-    useEventListener('resize', (_event) => calculateViewerSize(), window);
+    useEventListener('resize', (_) => calculateViewerSize(), window);
 
     return (
         <div ref={viewBoxRef} className="app__svg-view">

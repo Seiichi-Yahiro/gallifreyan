@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -23,7 +24,14 @@ module.exports = {
         rules: [
             {
                 test: /\.(ts|tsx)$/,
-                loaders: ['awesome-typescript-loader'],
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            transpileOnly: true,
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(s)?css$/,
@@ -58,6 +66,8 @@ module.exports = {
         },
     },
     plugins: [
+        // async: true = faster builds but builds are always successful
+        new ForkTsCheckerWebpackPlugin({ async: false, eslint: true, eslintOptions: { cache: true } }),
         new HtmlWebpackPlugin({
             inject: 'head',
             filename: 'index.html',
