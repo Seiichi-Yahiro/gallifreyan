@@ -35,10 +35,23 @@ const Tree: React.FunctionComponent<TreeProps> = ({}) => {
                                     circleId={letter.circleId}
                                     lineSlots={letter.lineSlots}
                                 >
-                                    {isLetterConsonant(letter) &&
-                                        letter.dots.map((dot) => (
-                                            <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
-                                        ))}
+                                    {isLetterConsonant(letter) && (
+                                        <>
+                                            {letter.dots.map((dot) => (
+                                                <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
+                                            ))}
+                                            {letter.vocal
+                                                .map((vocal) => (
+                                                    <TreeItemWrapper
+                                                        key={vocal.circleId}
+                                                        text={vocal.text}
+                                                        circleId={vocal.circleId}
+                                                        lineSlots={vocal.lineSlots}
+                                                    />
+                                                ))
+                                                .asNullable()}
+                                        </>
+                                    )}
                                 </TreeItemWrapper>
                             ))}
                         </TreeItemWrapper>

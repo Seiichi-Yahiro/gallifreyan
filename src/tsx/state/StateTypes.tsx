@@ -45,12 +45,11 @@ export interface Letter {
     lineSlots: UUID[];
 }
 
-export interface Vocal extends Letter {
-    isAttachedToConsonant: boolean;
-}
+export interface Vocal extends Letter {}
 
 export interface Consonant extends Letter {
     dots: UUID[];
+    vocal: Maybe<Vocal>;
 }
 
 export interface AppStoreState {

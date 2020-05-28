@@ -1,11 +1,11 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
 import { Word } from '../state/StateTypes';
-import { isDeepCut, isShallowCut } from '../utils/LetterGroups';
+import { isDeepCut, isLetterConsonant, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
-import SVGLetter, { SVGLetterMask } from './SVGLetter';
+import { SVGConsonant, SVGVocal, SVGConsonantCutMask } from './SVGLetter';
 import { useDispatch } from 'react-redux';
 import Maybe from '../utils/Maybe';
 
@@ -27,7 +27,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 {letters
                     .filter((letter) => isShallowCut(letter.text) || isDeepCut(letter.text))
                     .map((letter) => (
-                        <SVGLetterMask key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
+                        <SVGConsonantCutMask key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
                     ))}
             </mask>
             <SVGCircle
@@ -39,26 +39,30 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
                 onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />
-            {letters.map((letter) =>
-                isShallowCut(letter.text) || isDeepCut(letter.text) ? (
-                    <React.Fragment key={letter.circleId}>
-                        <mask id={`mask_${letter.circleId}`}>
-                            <SVGLetterMask {...letter} fill="#000000" stroke="#ffffff" />
-                        </mask>
-                        <SVGLetter {...letter} fill="transparent" stroke="none">
-                            <circle
-                                r={wordCircle.r}
-                                fill="inherit"
-                                stroke="inherit"
-                                mask={`url(#mask_${letter.circleId})`}
-                                style={{ pointerEvents: 'none' }}
-                            />
-                        </SVGLetter>
-                    </React.Fragment>
-                ) : (
-                    <SVGLetter key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />
-                )
-            )}
+            {letters.map((letter) => {
+                if (isLetterConsonant(letter)) {
+                    return isShallowCut(letter.text) || isDeepCut(letter.text) ? (
+                        <React.Fragment key={letter.circleId}>
+                            <mask id={`mask_${letter.circleId}`}>
+                                <SVGConsonantCutMask {...letter} fill="#000000" stroke="#ffffff" />
+                            </mask>
+                            <SVGConsonant {...letter} fill="transparent" stroke="none">
+                                <circle
+                                    r={wordCircle.r}
+                                    fill="inherit"
+                                    stroke="inherit"
+                                    mask={`url(#mask_${letter.circleId})`}
+                                    style={{ pointerEvents: 'none' }}
+                                />
+                            </SVGConsonant>
+                        </React.Fragment>
+                    ) : (
+                        <SVGConsonant key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />
+                    );
+                } else {
+                    return <SVGVocal key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />;
+                }
+            })}
         </Group>
     );
 };

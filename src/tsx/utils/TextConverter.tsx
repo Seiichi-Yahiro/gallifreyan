@@ -4,6 +4,8 @@ import {
     DOUBLE_LETTER,
     isDoubleDot,
     isDoubleLine,
+    isLetterConsonant,
+    isLetterVocal,
     isSingleLine,
     isTripleDot,
     isTripleLine,
@@ -11,13 +13,19 @@ import {
     isVocalSingleLine,
 } from './LetterGroups';
 import Maybe from './Maybe';
-import { range } from 'lodash';
+import { range, last } from 'lodash';
 import {
     DefaultConsonantRadius,
     DefaultSentenceRadius,
     DefaultVocalRadius,
     DefaultWordRadius,
 } from './TextDefaultValues';
+
+interface TextData<T> {
+    textPart: T;
+    circles: Circle[];
+    lineSlots: LineSlot[];
+}
 
 export const splitWordToChars = (word: string): string[] => {
     const index = word.search(DOUBLE_LETTER);
@@ -33,9 +41,7 @@ export const splitWordToChars = (word: string): string[] => {
     }
 };
 
-export const convertTextToSentence = (
-    text: string
-): { sentence: Sentence; circles: Circle[]; lineSlots: LineSlot[] } => {
+export const convertTextToSentence = (text: string): TextData<Sentence> => {
     const sentenceCircle: Circle = {
         id: v4(),
         angle: 0,
@@ -49,18 +55,18 @@ export const convertTextToSentence = (
     const sentence: Sentence = {
         text,
         circleId: sentenceCircle.id,
-        words: wordData.map((it) => it.word),
+        words: wordData.map((it) => it.textPart),
         lineSlots: [],
     };
 
     return {
-        sentence,
+        textPart: sentence,
         circles: wordData.flatMap((it) => it.circles).concat(sentenceCircle),
         lineSlots: wordData.flatMap((it) => it.lineSlots),
     };
 };
 
-const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineSlots: LineSlot[] } => {
+const convertTextToWord = (text: string): TextData<Word> => {
     const wordCircle: Circle = {
         id: v4(),
         angle: 0,
@@ -69,60 +75,81 @@ const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineS
         filled: false,
     };
 
-    const letterData = splitWordToChars(text).map((char) => convertTextToLetter(char));
+    const letterData = splitWordToChars(text)
+        .map(convertTextToLetter)
+        .reduce<TextData<Letter>[]>((acc, textData) => {
+            const prevTextData = Maybe.of(last(acc));
+            const isPrevConsonantWithoutNestedVocal = prevTextData
+                .map((it) => isLetterConsonant(it.textPart) && it.textPart.vocal.isNone())
+                .unwrapOr(false);
+
+            if (isPrevConsonantWithoutNestedVocal && isLetterVocal(textData.textPart)) {
+                const consonant = prevTextData.unwrap() as TextData<Consonant>;
+                consonant.textPart.vocal = Maybe.some(textData.textPart);
+                consonant.circles = consonant.circles.concat(textData.circles);
+                consonant.lineSlots = consonant.lineSlots.concat(textData.lineSlots);
+                return acc.slice(0, acc.length - 1).concat(consonant);
+            } else {
+                return acc.concat(textData);
+            }
+        }, []);
 
     const word: Word = {
         text,
         circleId: wordCircle.id,
-        letters: letterData.map((it) => it.letter),
+        letters: letterData.map((it) => it.textPart),
         lineSlots: [],
     };
 
     return {
-        word,
+        textPart: word,
         circles: letterData.flatMap((it) => it.circles).concat(wordCircle),
         lineSlots: letterData.flatMap((it) => it.lineSlots),
     };
 };
 
-const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[]; lineSlots: LineSlot[] } => {
+const convertTextToLetter = (text: string): TextData<Letter> => {
     const letterCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: isVocal(text) ? DefaultVocalRadius : DefaultConsonantRadius,
+        r: 0,
         filled: false,
     };
 
     const lineSlots = createLineSlots(letterCircle.id, text);
 
     const letter: Letter = {
-        text,
+        text: text,
         circleId: letterCircle.id,
         lineSlots: lineSlots.map((slot) => slot.id),
     };
 
     if (isVocal(text)) {
+        letterCircle.r = DefaultVocalRadius;
+
         const vocal: Vocal = {
             ...letter,
-            isAttachedToConsonant: false, // TODO set to true
         };
 
         return {
-            letter: vocal,
+            textPart: vocal,
             circles: [letterCircle],
             lineSlots,
         };
     } else {
+        letterCircle.r = DefaultConsonantRadius;
+
         const dots = createDots(letterCircle.id, text);
 
         const consonant: Consonant = {
             ...letter,
             dots: dots.map((dot) => dot.id),
+            vocal: Maybe.none(),
         };
 
         return {
-            letter: consonant,
+            textPart: consonant,
             circles: dots.concat(letterCircle),
             lineSlots,
         };

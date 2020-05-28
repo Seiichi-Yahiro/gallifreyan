@@ -36,7 +36,7 @@ const reducer = createReducer(defaultState, (handle) => [
                 .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
                 .filter((word) => word.length > 0)
                 .join(' ');
-            const { sentence, circles, lineSlots } = convertTextToSentence(text);
+            const { textPart: sentence, circles, lineSlots } = convertTextToSentence(text);
 
             draft.sentences.push(sentence);
             circles.forEach((circle) => (draft.circles[circle.id] = circle));
