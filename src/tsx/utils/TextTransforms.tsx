@@ -9,7 +9,7 @@ import {
     isVocalLineOutside,
     isVocalOutside,
 } from './LetterGroups';
-import { DefaultConsonantRadius, DefaultVocalRadius } from './TextDefaultValues';
+import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultValues';
 
 const toRadian = (degree: number) => degree * (Math.PI / 180);
 
@@ -37,15 +37,15 @@ export const calculateInitialLetterPositionDatas = (letters: Letter[], wordRadiu
     return letters
         .map((letter) => {
             if (isDeepCut(letter.text)) {
-                return wordRadius - (DefaultConsonantRadius / 2) * 1.25;
+                return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 1.25;
             } else if (isShallowCut(letter.text)) {
-                return wordRadius + DefaultConsonantRadius / 2;
+                return wordRadius + DEFAULT_CONSONANT_RADIUS / 2;
             } else if (isInside(letter.text)) {
-                return wordRadius - (DefaultConsonantRadius / 2) * 2 - 5;
+                return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 2 - 5;
             } else if (isVocalOutside(letter.text)) {
-                return wordRadius + DefaultVocalRadius + 5;
+                return wordRadius + DEFAULT_VOCAL_RADIUS + 5;
             } else if (isVocalInside(letter.text)) {
-                return wordRadius - DefaultVocalRadius - 5;
+                return wordRadius - DEFAULT_VOCAL_RADIUS - 5;
             } else {
                 return wordRadius;
             }
@@ -61,11 +61,11 @@ export const calculateInitialNestedVocalPositionData = (
 ): PositionData => {
     if (isVocalOutside(vocal)) {
         const angle = consonantPositionData.angle;
-        const parentDistance = wordRadius + DefaultVocalRadius + 5;
+        const parentDistance = wordRadius + DEFAULT_VOCAL_RADIUS + 5;
         return { angle, parentDistance };
     } else if (isVocalInside(vocal)) {
         const data = { ...consonantPositionData };
-        data.parentDistance -= DefaultConsonantRadius;
+        data.parentDistance -= DEFAULT_CONSONANT_RADIUS;
         return data;
     } else if (isShallowCut(parentConsonant)) {
         const angle = consonantPositionData.angle;

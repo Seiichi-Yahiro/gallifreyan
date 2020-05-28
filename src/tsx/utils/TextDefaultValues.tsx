@@ -1,4 +1,4 @@
-export const DefaultSentenceRadius = 450;
-export const DefaultWordRadius = 100;
-export const DefaultConsonantRadius = 50;
-export const DefaultVocalRadius = 20;
+export const DEFAULT_SENTENCE_RADIUS = 450;
+export const DEFAULT_WORD_RADIUS = 100;
+export const DEFAULT_CONSONANT_RADIUS = 50;
+export const DEFAULT_VOCAL_RADIUS = 20;

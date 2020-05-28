@@ -15,10 +15,10 @@ import {
 import Maybe from './Maybe';
 import { range, last } from 'lodash';
 import {
-    DefaultConsonantRadius,
-    DefaultSentenceRadius,
-    DefaultVocalRadius,
-    DefaultWordRadius,
+    DEFAULT_CONSONANT_RADIUS,
+    DEFAULT_SENTENCE_RADIUS,
+    DEFAULT_VOCAL_RADIUS,
+    DEFAULT_WORD_RADIUS,
 } from './TextDefaultValues';
 
 interface TextData<T> {
@@ -46,7 +46,7 @@ export const convertTextToSentence = (text: string): TextData<Sentence> => {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: DefaultSentenceRadius,
+        r: DEFAULT_SENTENCE_RADIUS,
         filled: false,
     };
 
@@ -71,7 +71,7 @@ const convertTextToWord = (text: string): TextData<Word> => {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: DefaultWordRadius,
+        r: DEFAULT_WORD_RADIUS,
         filled: false,
     };
 
@@ -126,7 +126,7 @@ const convertTextToLetter = (text: string): TextData<Letter> => {
     };
 
     if (isVocal(text)) {
-        letterCircle.r = DefaultVocalRadius;
+        letterCircle.r = DEFAULT_VOCAL_RADIUS;
 
         const vocal: Vocal = {
             ...letter,
@@ -138,7 +138,7 @@ const convertTextToLetter = (text: string): TextData<Letter> => {
             lineSlots,
         };
     } else {
-        letterCircle.r = DefaultConsonantRadius;
+        letterCircle.r = DEFAULT_CONSONANT_RADIUS;
 
         const dots = createDots(letterCircle.id, text);
 
