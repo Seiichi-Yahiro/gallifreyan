@@ -1,5 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector } from '../state/Selectors';
 import { Consonant, UUID, Vocal } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -21,9 +22,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     ({ circleId, dots, fill, stroke, children, lineSlots, vocal }) => {
         const consonantCircle = useRedux((state) => state.circles[circleId]);
         const dispatcher = useDispatch();
-        const isHovered = useRedux((state) => state.hovering)
-            .map((it) => it === circleId)
-            .unwrapOr(false);
+        const isHovered = useIsHoveredSelector(circleId);
 
         const { x, y } = calculateTranslation(consonantCircle.angle, consonantCircle.parentDistance);
 
@@ -62,9 +61,7 @@ interface VocalProps extends Vocal, LetterProps {}
 export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, fill, stroke, lineSlots }) => {
     const vocalCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
-    const isHovered = useRedux((state) => state.hovering)
-        .map((it) => it === circleId)
-        .unwrapOr(false);
+    const isHovered = useIsHoveredSelector(circleId);
 
     const { x, y } = calculateTranslation(vocalCircle.angle, vocalCircle.parentDistance);
 

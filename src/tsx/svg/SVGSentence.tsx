@@ -1,5 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector } from '../state/Selectors';
 import { Sentence } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -13,9 +14,7 @@ interface SentenceProps extends Sentence {}
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, lineSlots }) => {
     const sentenceCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
-    const isHovered = useRedux((state) => state.hovering)
-        .map((it) => it === circleId)
-        .unwrapOr(false);
+    const isHovered = useIsHoveredSelector(circleId);
 
     const { x, y } = calculateTranslation(sentenceCircle.angle, sentenceCircle.parentDistance);
 

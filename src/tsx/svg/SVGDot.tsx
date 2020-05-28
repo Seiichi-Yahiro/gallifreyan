@@ -1,5 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector } from '../state/Selectors';
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -14,9 +15,7 @@ interface DotProps {
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dotCircle = useRedux((state) => state.circles[id]);
     const dispatcher = useDispatch();
-    const isHovered = useRedux((state) => state.hovering)
-        .map((it) => it === id)
-        .unwrapOr(false);
+    const isHovered = useIsHoveredSelector(id);
 
     const { x, y } = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
 

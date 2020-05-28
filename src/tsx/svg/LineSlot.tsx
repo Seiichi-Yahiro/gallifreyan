@@ -1,5 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector } from '../state/Selectors';
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -14,9 +15,7 @@ interface SVGLineSlotProps {
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const { angle, parentDistance } = useRedux((state) => state.lineSlots[id]);
     const dispatcher = useDispatch();
-    const isHoveredSlot = useRedux((state) => state.hovering)
-        .map((it) => it === id)
-        .unwrapOr(false);
+    const isHoveredSlot = useIsHoveredSelector(id);
 
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 

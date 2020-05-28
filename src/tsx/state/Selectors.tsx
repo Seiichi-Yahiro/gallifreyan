@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { createSelector } from 'reselect';
 import { useRedux } from './AppStore';
-import { AppStoreState, LineSlot, UUID } from './StateTypes';
+import { AppStoreState, UUID } from './StateTypes';
 
-const createLineSlotSelector = () =>
+const createIsHoveredSelector = () =>
     createSelector(
-        (state: AppStoreState) => state.lineSlots,
-        (_state: AppStoreState, slotIds: UUID[]) => slotIds,
-        (lineSlots, ids) => ids.map((id) => lineSlots[id])
+        (state: AppStoreState) => state.hovering,
+        (_state: AppStoreState, id: UUID) => id,
+        (hovering, id) => hovering.map((it) => it === id).unwrapOr(false)
     );
-export const useLineSlotSelector = (lineSlotIds: UUID[]): LineSlot[] => {
-    const selector = useMemo(createLineSlotSelector, []);
-    return useRedux((state) => selector(state, lineSlotIds));
+export const useIsHoveredSelector = (id: UUID) => {
+    const selector = useMemo(createIsHoveredSelector, []);
+    return useRedux((state) => selector(state, id));
 };

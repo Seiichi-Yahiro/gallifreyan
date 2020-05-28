@@ -1,5 +1,6 @@
 import React from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector } from '../state/Selectors';
 import { Word } from '../state/StateTypes';
 import { isDeepCut, isLetterConsonant, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
@@ -14,9 +15,7 @@ interface WordProps extends Word {}
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
     const wordCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
-    const isHovered = useRedux((state) => state.hovering)
-        .map((it) => it === circleId)
-        .unwrapOr(false);
+    const isHovered = useIsHoveredSelector(circleId);
 
     const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
 
