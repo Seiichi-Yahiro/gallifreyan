@@ -30,7 +30,7 @@ interface TreeItemWrapperProps {
 
 const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, circleId, lineSlots, children }) => {
     const dispatcher = useDispatch();
-    const hasChildren = React.Children.count(children) > 0 || lineSlots.length > 0;
+    const hasChildren = React.Children.toArray(children).length > 0 || lineSlots.length > 0;
 
     return (
         <StyledTreeItem
@@ -43,7 +43,7 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, 
                 <>
                     {children}
                     {lineSlots.map((slot) => (
-                        <TreeItem
+                        <StyledTreeItem
                             key={slot}
                             nodeId={slot}
                             label="LINE"
