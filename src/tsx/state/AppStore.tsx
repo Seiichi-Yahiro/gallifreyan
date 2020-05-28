@@ -4,7 +4,7 @@ import { produce, enableAllPlugins } from 'immer';
 import logger from 'redux-logger';
 import { isValidLetter } from '../utils/LetterGroups';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
-import { resetLetters } from '../utils/TextTransforms';
+import { resetPositionDatas } from '../utils/TextTransforms';
 import { AppStoreState, UUID } from './StateTypes';
 import { createActionCreator, createReducer } from 'deox';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -42,7 +42,7 @@ const reducer = createReducer(defaultState, (handle) => [
             circles.forEach((circle) => (draft.circles[circle.id] = circle));
             lineSlots.forEach((slot) => (draft.lineSlots[slot.id] = slot));
 
-            resetLetters(draft as AppStoreState);
+            resetPositionDatas(draft as AppStoreState);
         })
     ),
     handle(setHoveringAction, (state, { payload }) =>

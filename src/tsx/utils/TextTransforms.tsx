@@ -1,5 +1,5 @@
-import { AppStoreState, Letter, PositionData } from '../state/StateTypes';
-import { range } from 'lodash';
+import { AppStoreState, Consonant, Letter, PositionData, Sentence, Vocal, Word } from '../state/StateTypes';
+import { range, zip } from 'lodash';
 import {
     isDeepCut,
     isInside,
@@ -10,6 +10,8 @@ import {
     isVocalOutside,
 } from './LetterGroups';
 import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultValues';
+
+const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
 
 const toRadian = (degree: number) => degree * (Math.PI / 180);
 
@@ -107,93 +109,115 @@ export const calculateInitialLineSlotPositionDatas = (
     }));
 };
 
-export const resetLetters = (state: AppStoreState) => {
+export const resetPositionDatas = (state: AppStoreState) =>
     state.sentences.forEach((sentence) => {
-        const sentenceCircle = state.circles[sentence.circleId];
+        resetSentencePositionData(state, sentence);
+    });
 
-        const wordPositionDatas = calculateInitialWordPositionDatas(sentenceCircle.r, sentence.words.length);
+export const resetSentencePositionData = (state: AppStoreState, sentence: Sentence) => {
+    const sentenceCircle = state.circles[sentence.circleId];
 
-        sentence.words.forEach((word, index) => {
-            const wordCircle = state.circles[word.circleId];
+    zipEqual(sentence.words, calculateInitialWordPositionDatas(sentenceCircle.r, sentence.words.length)).forEach(
+        ([word, wordPositionData]) => {
+            resetWordPositionData(state, word, wordPositionData);
+        }
+    );
+};
 
-            const { angle: wordAngle, parentDistance: wordParentDistance } = wordPositionDatas[index];
-            wordCircle.angle = wordAngle;
-            wordCircle.parentDistance = wordParentDistance;
+export const resetWordPositionData = (state: AppStoreState, word: Word, wordPositionData: PositionData) => {
+    const wordCircle = state.circles[word.circleId];
 
-            const letterPositionDatas = calculateInitialLetterPositionDatas(word.letters, wordCircle.r);
+    wordCircle.angle = wordPositionData.angle;
+    wordCircle.parentDistance = wordPositionData.parentDistance;
 
-            word.letters.forEach((letter, index) => {
-                const letterCircle = state.circles[letter.circleId];
+    zipEqual(word.letters, calculateInitialLetterPositionDatas(word.letters, wordCircle.r)).forEach(
+        ([letter, letterPositionData]) => {
+            resetLetterPositionData(state, letter, letterPositionData, wordCircle.r);
+        }
+    );
+};
 
-                const { angle: letterAngle, parentDistance: letterParentDistance } = letterPositionDatas[index];
-                letterCircle.angle = letterAngle;
-                letterCircle.parentDistance = letterParentDistance;
+const resetLetterPositionData = (
+    state: AppStoreState,
+    letter: Letter,
+    letterPositionData: PositionData,
+    wordRadius: number
+) => {
+    if (isLetterConsonant(letter)) {
+        resetConsonantPositionData(state, letter, letterPositionData, wordRadius);
+    } else {
+        resetVocalPositionData(state, letter, letterPositionData);
+    }
+};
 
-                if (isLetterConsonant(letter)) {
-                    letter.vocal.ifIsSome((vocal) => {
-                        const vocalCircle = state.circles[vocal.circleId];
-                        const {
-                            angle: vocalAngle,
-                            parentDistance: vocalParentDistance,
-                        } = calculateInitialNestedVocalPositionData(
-                            vocal.text,
-                            letter.text,
-                            letterPositionDatas[index],
-                            wordCircle.r
-                        );
-                        vocalCircle.angle = vocalAngle;
-                        vocalCircle.parentDistance = vocalParentDistance;
+const resetVocalPositionData = (state: AppStoreState, vocal: Vocal, vocalPositionData: PositionData) => {
+    const vocalCircle = state.circles[vocal.circleId];
 
-                        const vocalLineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
-                            vocalCircle.r,
-                            letterAngle,
-                            vocal.lineSlots.length,
-                            isVocalLineOutside(vocal.text)
-                        );
+    vocalCircle.angle = vocalPositionData.angle;
+    vocalCircle.parentDistance = vocalPositionData.parentDistance;
 
-                        vocal.lineSlots
-                            .map((slot) => state.lineSlots[slot])
-                            .forEach((slot, index) => {
-                                const {
-                                    angle: slotAngle,
-                                    parentDistance: slotParentDistance,
-                                } = vocalLineSlotPositionDatas[index];
-                                slot.angle = slotAngle;
-                                slot.parentDistance = slotParentDistance;
-                            });
-                    });
-                }
+    const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
+        vocalCircle.r,
+        vocalPositionData.angle,
+        vocal.lineSlots.length,
+        isVocalLineOutside(vocal.text)
+    );
 
-                const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
-                    letterCircle.r,
-                    letterAngle,
-                    letter.lineSlots.length,
-                    isVocalLineOutside(letter.text)
-                );
+    zipEqual(
+        vocal.lineSlots.map((slot) => state.lineSlots[slot]),
+        lineSlotPositionDatas
+    ).forEach(([slot, lineSlotPositionData]) => {
+        slot.angle = lineSlotPositionData.angle;
+        slot.parentDistance = lineSlotPositionData.parentDistance;
+    });
+};
 
-                letter.lineSlots
-                    .map((slot) => state.lineSlots[slot])
-                    .forEach((slot, index) => {
-                        const { angle: slotAngle, parentDistance: slotParentDistance } = lineSlotPositionDatas[index];
-                        slot.angle = slotAngle;
-                        slot.parentDistance = slotParentDistance;
-                    });
+const resetConsonantPositionData = (
+    state: AppStoreState,
+    consonant: Consonant,
+    consonantPositionData: PositionData,
+    wordRadius: number
+) => {
+    const consonantCircle = state.circles[consonant.circleId];
 
-                if (isLetterConsonant(letter)) {
-                    const dotPositionDatas = calculateInitialDotPositionDatas(
-                        letterCircle.r,
-                        letterAngle,
-                        letter.dots.length
-                    );
+    consonantCircle.angle = consonantPositionData.angle;
+    consonantCircle.parentDistance = consonantPositionData.parentDistance;
 
-                    letter.dots.forEach((dot, index) => {
-                        const dotCircle = state.circles[dot];
-                        const { angle: dotAngle, parentDistance: dotParentDistance } = dotPositionDatas[index];
-                        dotCircle.angle = dotAngle;
-                        dotCircle.parentDistance = dotParentDistance;
-                    });
-                }
-            });
-        });
+    const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
+        consonantCircle.r,
+        consonantPositionData.angle,
+        consonant.lineSlots.length,
+        false
+    );
+
+    zipEqual(
+        consonant.lineSlots.map((slot) => state.lineSlots[slot]),
+        lineSlotPositionDatas
+    ).forEach(([slot, lineSlotPositionData]) => {
+        slot.angle = lineSlotPositionData.angle;
+        slot.parentDistance = lineSlotPositionData.parentDistance;
+    });
+
+    const dotPositionDatas = calculateInitialDotPositionDatas(
+        consonantCircle.r,
+        consonantPositionData.angle,
+        consonant.dots.length
+    );
+
+    consonant.dots.forEach((dot, index) => {
+        const dotCircle = state.circles[dot];
+        const { angle: dotAngle, parentDistance: dotParentDistance } = dotPositionDatas[index];
+        dotCircle.angle = dotAngle;
+        dotCircle.parentDistance = dotParentDistance;
+    });
+
+    consonant.vocal.ifIsSome((vocal) => {
+        const vocalPositionData = calculateInitialNestedVocalPositionData(
+            vocal.text,
+            consonant.text,
+            consonantPositionData,
+            wordRadius
+        );
+        resetVocalPositionData(state, vocal, vocalPositionData);
     });
 };
