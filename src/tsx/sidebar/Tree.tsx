@@ -31,7 +31,11 @@ const Tree: React.FunctionComponent<TreeProps> = ({}) => {
                             {word.letters.map((letter) => (
                                 <TreeItemWrapper
                                     key={letter.circleId}
-                                    text={letter.text}
+                                    text={
+                                        isLetterConsonant(letter) && letter.vocal.isSome()
+                                            ? letter.text + letter.vocal.unwrap().text
+                                            : letter.text
+                                    }
                                     circleId={letter.circleId}
                                     lineSlots={letter.lineSlots}
                                 >
