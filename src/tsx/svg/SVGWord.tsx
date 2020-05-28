@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
 import { useIsHoveredSelector } from '../state/Selectors';
 import { Word } from '../state/StateTypes';
@@ -35,8 +35,8 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 fill="inherit"
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}
-                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
-                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />
             {letters.map((letter) => {
                 if (isLetterConsonant(letter)) {

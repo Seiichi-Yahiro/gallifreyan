@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
 import { useIsHoveredSelector } from '../state/Selectors';
 import { Sentence } from '../state/StateTypes';
@@ -24,8 +24,8 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
                 r={sentenceCircle.r}
                 filled={sentenceCircle.filled}
                 lineSlots={lineSlots}
-                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
-                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />
             {words.map((word) => (
                 <SVGWord key={word.circleId} {...word} />

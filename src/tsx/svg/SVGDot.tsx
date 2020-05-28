@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
 import { useIsHoveredSelector } from '../state/Selectors';
 import { UUID } from '../state/StateTypes';
@@ -12,6 +12,8 @@ interface DotProps {
     id: UUID;
 }
 
+const lineSlots: UUID[] = [];
+
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dotCircle = useRedux((state) => state.circles[id]);
     const dispatcher = useDispatch();
@@ -23,12 +25,12 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
         <Group x={x} y={y} isHovered={isHovered}>
             <SVGCircle
                 r={dotCircle.r}
-                lineSlots={[]}
+                lineSlots={lineSlots}
                 fill="inherit"
                 stroke="inherit"
                 filled={dotCircle.filled}
-                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(id)))}
-                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(id))), [id])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />
         </Group>
     );

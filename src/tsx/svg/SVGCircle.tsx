@@ -8,18 +8,13 @@ interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {
     filled?: boolean;
 }
 
-export const SVGCircle: React.FunctionComponent<SVGCircleProps> = ({
-    r,
-    lineSlots,
-    filled = false,
-    stroke = 'inherit',
-    fill = 'inherit',
-    ...props
-}) => (
-    <>
-        <circle {...props} cx={0} cy={0} r={r} stroke={stroke} fill={filled ? fill : 'transparent'} />
-        {lineSlots.map((slot) => (
-            <SVGLineSlot key={slot} id={slot} />
-        ))}
-    </>
+export const SVGCircle: React.FunctionComponent<SVGCircleProps> = React.memo(
+    ({ r, lineSlots, filled = false, stroke = 'inherit', fill = 'inherit', ...props }) => (
+        <>
+            <circle {...props} cx={0} cy={0} r={r} stroke={stroke} fill={filled ? fill : 'transparent'} />
+            {lineSlots.map((slot) => (
+                <SVGLineSlot key={slot} id={slot} />
+            ))}
+        </>
+    )
 );

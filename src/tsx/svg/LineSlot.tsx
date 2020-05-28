@@ -52,4 +52,4 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     );
 };
 
-export default SVGLineSlot;
+export default React.memo(SVGLineSlot);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { setHoveringAction, useRedux } from '../state/AppStore';
 import { useIsHoveredSelector } from '../state/Selectors';
 import { Consonant, UUID, Vocal } from '../state/StateTypes';
@@ -33,8 +33,8 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     lineSlots={lineSlots}
                     fill={fill}
                     stroke={stroke}
-                    onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
-                    onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                    onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
+                    onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
                 />
                 {children && (
                     <Group x={-x} y={-y}>
@@ -72,8 +72,8 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 lineSlots={lineSlots}
                 fill={fill}
                 stroke={stroke}
-                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
-                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />
         </Group>
     );
