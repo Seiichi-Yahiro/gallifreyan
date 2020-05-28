@@ -1,11 +1,9 @@
 import React from 'react';
-import { setHoveringAction, useRedux } from '../state/AppStore';
-import { UUID } from '../state/StateTypes';
-import { TreeView, TreeItem } from '@material-ui/lab';
+import { useRedux } from '../state/AppStore';
+import { TreeView } from '@material-ui/lab';
 import { ExpandMore, ChevronRight } from '@material-ui/icons';
-import { useDispatch } from 'react-redux';
 import { isLetterConsonant } from '../utils/LetterGroups';
-import Maybe from '../utils/Maybe';
+import TreeItemWrapper from './TreeItemWrapper';
 
 interface TreeProps {}
 
@@ -28,76 +26,44 @@ const Tree: React.FunctionComponent<TreeProps> = ({}) => {
                             circleId={word.circleId}
                             lineSlots={word.lineSlots}
                         >
-                            {word.letters.map((letter) => (
-                                <TreeItemWrapper
-                                    key={letter.circleId}
-                                    text={
-                                        isLetterConsonant(letter) && letter.vocal.isSome()
-                                            ? letter.text + letter.vocal.unwrap().text
-                                            : letter.text
-                                    }
-                                    circleId={letter.circleId}
-                                    lineSlots={letter.lineSlots}
-                                >
-                                    {isLetterConsonant(letter) && (
-                                        <>
-                                            {letter.dots.map((dot) => (
-                                                <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
-                                            ))}
-                                            {letter.vocal
-                                                .map((vocal) => (
-                                                    <TreeItemWrapper
-                                                        key={vocal.circleId}
-                                                        text={vocal.text}
-                                                        circleId={vocal.circleId}
-                                                        lineSlots={vocal.lineSlots}
-                                                    />
-                                                ))
-                                                .asNullable()}
-                                        </>
-                                    )}
-                                </TreeItemWrapper>
-                            ))}
+                            {word.letters.map((letter) =>
+                                isLetterConsonant(letter) ? (
+                                    <TreeItemWrapper
+                                        key={letter.circleId}
+                                        text={letter.vocal
+                                            .map((vocal) => letter.text + vocal.text)
+                                            .unwrapOr(letter.text)}
+                                        circleId={letter.circleId}
+                                        lineSlots={letter.lineSlots}
+                                    >
+                                        {letter.dots.map((dot) => (
+                                            <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
+                                        ))}
+                                        {letter.vocal
+                                            .map((vocal) => (
+                                                <TreeItemWrapper
+                                                    key={vocal.circleId}
+                                                    text={vocal.text}
+                                                    circleId={vocal.circleId}
+                                                    lineSlots={vocal.lineSlots}
+                                                />
+                                            ))
+                                            .asNullable()}
+                                    </TreeItemWrapper>
+                                ) : (
+                                    <TreeItemWrapper
+                                        key={letter.circleId}
+                                        text={letter.text}
+                                        circleId={letter.circleId}
+                                        lineSlots={letter.lineSlots}
+                                    />
+                                )
+                            )}
                         </TreeItemWrapper>
                     ))}
                 </TreeItemWrapper>
             ))}
         </TreeView>
-    );
-};
-
-interface TreeItemProps {
-    text: string;
-    circleId: UUID;
-    lineSlots: UUID[];
-}
-
-const TreeItemWrapper: React.FunctionComponent<TreeItemProps> = ({ text, circleId, lineSlots, children }) => {
-    const dispatcher = useDispatch();
-    const hasChildren = React.Children.count(children) > 0 || lineSlots.length > 0;
-
-    return (
-        <TreeItem
-            nodeId={circleId}
-            label={text}
-            onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
-            onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
-        >
-            {hasChildren && (
-                <>
-                    {children}
-                    {lineSlots.map((slot) => (
-                        <TreeItem
-                            key={slot}
-                            nodeId={slot}
-                            label="LINE"
-                            onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(slot)))}
-                            onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
-                        />
-                    ))}
-                </>
-            )}
-        </TreeItem>
     );
 };
 
