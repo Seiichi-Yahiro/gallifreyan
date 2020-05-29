@@ -58,6 +58,6 @@ export interface AppStoreState {
     lineSlots: { [key: string]: LineSlot };
     sentences: Sentence[];
     svgSize: number;
-    selection: Maybe<UUID>;
-    hovering: Maybe<UUID>;
+    selection?: UUID;
+    hovering?: UUID;
 }

@@ -8,7 +8,6 @@ import { resetPositionDatas } from '../utils/TextTransforms';
 import { AppStoreState, UUID } from './StateTypes';
 import { createActionCreator, createReducer } from 'deox';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import Maybe from '../utils/Maybe';
 
 enableAllPlugins();
 
@@ -18,18 +17,14 @@ const defaultState: AppStoreState = {
     lineSlots: {},
     sentences: [],
     svgSize: 1000,
-    selection: Maybe.none(),
-    hovering: Maybe.none(),
 };
 
 export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) => (sentence: string) =>
     resolve(sentence)
 );
 
-export const setHoveringAction = createActionCreator('SET_HOVERING', (resolve) => (uuid: Maybe<UUID>) => resolve(uuid));
-export const setSelectionAction = createActionCreator('SET_SELECTION', (resolve) => (uuid: Maybe<UUID>) =>
-    resolve(uuid)
-);
+export const setHoveringAction = createActionCreator('SET_HOVERING', (resolve) => (uuid?: UUID) => resolve(uuid));
+export const setSelectionAction = createActionCreator('SET_SELECTION', (resolve) => (uuid?: UUID) => resolve(uuid));
 
 const reducer = createReducer(defaultState, (handle) => [
     handle(addSentenceAction, (state, { payload: sentenceText }) =>

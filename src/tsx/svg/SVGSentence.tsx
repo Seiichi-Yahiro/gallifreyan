@@ -7,7 +7,6 @@ import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';
 import { useDispatch } from 'react-redux';
-import Maybe from '../utils/Maybe';
 
 interface SentenceProps extends Sentence {}
 
@@ -27,11 +26,11 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
                 lineSlots={lineSlots}
                 onClick={useCallback(() => {
                     if (!isSelected) {
-                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                        dispatcher(setSelectionAction(circleId));
                     }
                 }, [circleId, isSelected])}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />
             {words.map((word) => (
                 <SVGWord key={word.circleId} {...word} />

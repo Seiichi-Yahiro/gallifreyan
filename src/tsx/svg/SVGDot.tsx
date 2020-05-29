@@ -6,7 +6,6 @@ import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import { useDispatch } from 'react-redux';
-import Maybe from '../utils/Maybe';
 
 interface DotProps {
     id: UUID;
@@ -32,11 +31,11 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 filled={dotCircle.filled}
                 onClick={useCallback(() => {
                     if (!isSelected) {
-                        dispatcher(setSelectionAction(Maybe.some(id)));
+                        dispatcher(setSelectionAction(id));
                     }
                 }, [id, isSelected])}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(id))), [id])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(id)), [id])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />
         </Group>
     );

@@ -8,7 +8,6 @@ import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import { SVGConsonant, SVGVocal, SVGConsonantCutMask } from './SVGLetter';
 import { useDispatch } from 'react-redux';
-import Maybe from '../utils/Maybe';
 
 interface WordProps extends Word {}
 
@@ -38,11 +37,11 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 mask={`url(#mask_${circleId})`}
                 onClick={useCallback(() => {
                     if (!isSelected) {
-                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                        dispatcher(setSelectionAction(circleId));
                     }
                 }, [circleId, isSelected])}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />
             {letters.map((letter) => {
                 if (isLetterConsonant(letter)) {

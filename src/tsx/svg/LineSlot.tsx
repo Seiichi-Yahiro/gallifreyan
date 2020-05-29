@@ -4,7 +4,6 @@ import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors'
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
-import Maybe from '../utils/Maybe';
 import { useDispatch } from 'react-redux';
 import useHover from '../hooks/useHover';
 
@@ -39,11 +38,11 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
                 onClick={() => {
                     if (!isSelectedSlot) {
-                        dispatcher(setSelectionAction(Maybe.some(id)));
+                        dispatcher(setSelectionAction(id));
                     }
                 }}
-                onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(id)))}
-                onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
+                onMouseEnter={() => dispatcher(setHoveringAction(id))}
+                onMouseLeave={() => dispatcher(setHoveringAction())}
             />
             <circle
                 cx={x2}

@@ -7,7 +7,7 @@ const createIsHoveredSelector = () =>
     createSelector(
         (state: AppStoreState) => state.hovering,
         (_state: AppStoreState, id: UUID) => id,
-        (hovering, id) => hovering.contains(id)
+        (hovering, id) => hovering === id
     );
 export const useIsHoveredSelector = (id: UUID) => {
     const selector = useMemo(createIsHoveredSelector, []);
@@ -18,7 +18,7 @@ const createIsSelectedSelector = () =>
     createSelector(
         (state: AppStoreState) => state.selection,
         (_state: AppStoreState, id: UUID) => id,
-        (selection, id) => selection.contains(id)
+        (selection, id) => selection === id
     );
 export const useIsSelectedSelector = (id: UUID) => {
     const selector = useMemo(createIsSelectedSelector, []);

@@ -7,7 +7,6 @@ import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
 import { useDispatch } from 'react-redux';
-import Maybe from '../utils/Maybe';
 
 interface LetterProps {
     fill: string;
@@ -36,11 +35,11 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     stroke={stroke}
                     onClick={useCallback(() => {
                         if (!isSelected) {
-                            dispatcher(setSelectionAction(Maybe.some(circleId)));
+                            dispatcher(setSelectionAction(circleId));
                         }
                     }, [circleId, isSelected])}
-                    onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
-                    onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
+                    onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
+                    onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
                 />
                 {children && (
                     <Group x={-x} y={-y}>
@@ -81,11 +80,11 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 stroke={stroke}
                 onClick={useCallback(() => {
                     if (!isSelected) {
-                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                        dispatcher(setSelectionAction(circleId));
                     }
                 }, [circleId, isSelected])}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
+                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />
         </Group>
     );
