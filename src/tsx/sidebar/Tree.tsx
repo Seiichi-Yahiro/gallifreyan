@@ -23,9 +23,11 @@ const CloseSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: Sv
     </SvgIcon>
 ));
 
-interface TreeProps {}
+interface TreeProps {
+    className?: string;
+}
 
-const Tree: React.FunctionComponent<TreeProps> = ({}) => {
+const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
     const sentences = useRedux((state) => state.image.sentences);
     const selection = useRedux((state) => state.work.selection);
 
@@ -35,6 +37,7 @@ const Tree: React.FunctionComponent<TreeProps> = ({}) => {
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
             selected={selection ?? ''}
+            className={className}
         >
             {sentences.map((sentence) => (
                 <TreeItemWrapper

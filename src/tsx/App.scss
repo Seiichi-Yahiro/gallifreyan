@@ -32,11 +32,16 @@ body,
         display: grid;
         grid-template-rows: 32px auto;
         grid-template-columns: 100%;
-        word-break: break-word;
         grid-row-gap: 5px;
     }
 
     &__svg-view {
         overflow: hidden;
+    }
+}
+
+.sidebar {
+    &__tree {
+        overflow-y: auto;
     }
 }

@@ -37,7 +37,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = ({}) => {
                 />
                 <Button onClick={onButtonPress}>Add</Button>
             </Box>
-            <Tree />
+            <Tree className="sidebar__tree" />
         </div>
     );
 };
