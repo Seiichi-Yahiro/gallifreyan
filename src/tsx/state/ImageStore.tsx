@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { isValidLetter } from '../utils/LetterGroups';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
 import { resetPositionDatas } from '../utils/TextTransforms';
-import { Circle, LineConnection, LineSlot, Sentence } from './ImageTypes';
+import { Circle, CircleData, LineConnection, LineSlot, LineSlotData, Sentence } from './ImageTypes';
 
 export interface ImageStore {
     circles: { [key: string]: Circle };
@@ -25,6 +25,14 @@ export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) =
     resolve(sentence)
 );
 
+export const updateCircleDataAction = createActionCreator('UPDATE_CIRCLE_DATA', (resolve) => (data: CircleData) =>
+    resolve(data)
+);
+export const updateLineSlotDataAction = createActionCreator(
+    'UPDATE_LINE_SLOT_DATA',
+    (resolve) => (data: LineSlotData) => resolve(data)
+);
+
 export const imageStoreReducer = createReducer(defaultState, (handle) => [
     handle(addSentenceAction, (state, { payload: sentenceText }) =>
         produce(state, (draft) => {
@@ -40,6 +48,22 @@ export const imageStoreReducer = createReducer(defaultState, (handle) => [
             lineSlots.forEach((slot) => (draft.lineSlots[slot.id] = slot));
 
             resetPositionDatas(draft as ImageStore);
+        })
+    ),
+    handle(updateCircleDataAction, (state, { payload }) =>
+        produce(state, (draft) => {
+            draft.circles[payload.id] = {
+                ...draft.circles[payload.id],
+                ...payload,
+            };
+        })
+    ),
+    handle(updateLineSlotDataAction, (state, { payload }) =>
+        produce(state, (draft) => {
+            draft.lineSlots[payload.id] = {
+                ...draft.lineSlots[payload.id],
+                ...payload,
+            };
         })
     ),
 ]);

@@ -51,3 +51,14 @@ export interface Consonant extends Letter {
     dots: UUID[];
     vocal: Maybe<Vocal>;
 }
+
+export interface CircleData extends Referencable {
+    r?: number;
+    angle?: number;
+    parentDistance?: number;
+}
+
+export interface LineSlotData extends Referencable {
+    angle?: number;
+    parentDistance?: number;
+}
