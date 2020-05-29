@@ -18,7 +18,7 @@ const defaultState: AppStoreState = {
     lineSlots: {},
     sentences: [],
     svgSize: 1000,
-    selection: [],
+    selection: Maybe.none(),
     hovering: Maybe.none(),
 };
 
@@ -27,6 +27,9 @@ export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) =
 );
 
 export const setHoveringAction = createActionCreator('SET_HOVERING', (resolve) => (uuid: Maybe<UUID>) => resolve(uuid));
+export const setSelectionAction = createActionCreator('SET_SELECTION', (resolve) => (uuid: Maybe<UUID>) =>
+    resolve(uuid)
+);
 
 const reducer = createReducer(defaultState, (handle) => [
     handle(addSentenceAction, (state, { payload: sentenceText }) =>
@@ -48,6 +51,11 @@ const reducer = createReducer(defaultState, (handle) => [
     handle(setHoveringAction, (state, { payload }) =>
         produce(state, (draft) => {
             draft.hovering = payload;
+        })
+    ),
+    handle(setSelectionAction, (state, { payload }) =>
+        produce(state, (draft) => {
+            draft.selection = payload;
         })
     ),
 ]);

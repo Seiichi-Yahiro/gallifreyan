@@ -27,12 +27,14 @@ interface TreeProps {}
 
 const Tree: React.FunctionComponent<TreeProps> = ({}) => {
     const sentences = useRedux((state) => state.sentences);
+    const selection = useRedux((state) => state.selection.unwrapOr(''));
 
     return (
         <TreeView
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
+            selected={selection}
         >
             {sentences.map((sentence) => (
                 <TreeItemWrapper

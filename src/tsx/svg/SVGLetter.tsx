@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, useRedux } from '../state/AppStore';
-import { useIsHoveredSelector } from '../state/Selectors';
+import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { Consonant, UUID, Vocal } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -23,16 +23,22 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
         const consonantCircle = useRedux((state) => state.circles[circleId]);
         const dispatcher = useDispatch();
         const isHovered = useIsHoveredSelector(circleId);
+        const isSelected = useIsSelectedSelector(circleId);
 
         const { x, y } = calculateTranslation(consonantCircle.angle, consonantCircle.parentDistance);
 
         return (
-            <Group x={x} y={y} isHovered={isHovered}>
+            <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
                 <SVGCircle
                     r={consonantCircle.r}
                     lineSlots={lineSlots}
                     fill={fill}
                     stroke={stroke}
+                    onClick={useCallback(() => {
+                        if (!isSelected) {
+                            dispatcher(setSelectionAction(Maybe.some(circleId)));
+                        }
+                    }, [circleId, isSelected])}
                     onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
                     onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
                 />
@@ -62,16 +68,22 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
     const vocalCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
+    const isSelected = useIsSelectedSelector(circleId);
 
     const { x, y } = calculateTranslation(vocalCircle.angle, vocalCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
             <SVGCircle
                 r={vocalCircle.r}
                 lineSlots={lineSlots}
                 fill={fill}
                 stroke={stroke}
+                onClick={useCallback(() => {
+                    if (!isSelected) {
+                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                    }
+                }, [circleId, isSelected])}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />

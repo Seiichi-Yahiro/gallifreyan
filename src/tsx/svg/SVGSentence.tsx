@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, useRedux } from '../state/AppStore';
-import { useIsHoveredSelector } from '../state/Selectors';
+import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { Sentence } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -15,15 +15,21 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
     const sentenceCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
+    const isSelected = useIsSelectedSelector(circleId);
 
     const { x, y } = calculateTranslation(sentenceCircle.angle, sentenceCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
             <SVGCircle
                 r={sentenceCircle.r}
                 filled={sentenceCircle.filled}
                 lineSlots={lineSlots}
+                onClick={useCallback(() => {
+                    if (!isSelected) {
+                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                    }
+                }, [circleId, isSelected])}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />

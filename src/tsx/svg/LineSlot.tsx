@@ -1,6 +1,6 @@
 import React from 'react';
-import { setHoveringAction, useRedux } from '../state/AppStore';
-import { useIsHoveredSelector } from '../state/Selectors';
+import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/StateTypes';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -16,6 +16,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const { angle, parentDistance } = useRedux((state) => state.lineSlots[id]);
     const dispatcher = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
+    const isSelectedSlot = useIsSelectedSelector(id);
 
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
@@ -28,14 +29,19 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const y2 = y + yDir;
 
     return (
-        <Group x={0} y={0} isHovered={isHoveredSlot || isHoveredConnection}>
+        <Group x={0} y={0} isHovered={isHoveredSlot || isHoveredConnection} isSelected={isSelectedSlot}>
             <line x1={x} y1={y} x2={x2} y2={y2} strokeWidth={1} stroke="inherit" />
             <circle
                 cx={x}
                 cy={y}
                 r={5}
                 fill="transparent"
-                stroke={isHoveredSlot ? 'inherit' : 'none'}
+                stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
+                onClick={() => {
+                    if (!isSelectedSlot) {
+                        dispatcher(setSelectionAction(Maybe.some(id)));
+                    }
+                }}
                 onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(id)))}
                 onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
             />

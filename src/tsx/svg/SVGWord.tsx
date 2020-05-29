@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, useRedux } from '../state/AppStore';
-import { useIsHoveredSelector } from '../state/Selectors';
+import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { Word } from '../state/StateTypes';
 import { isDeepCut, isLetterConsonant, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
@@ -16,11 +16,12 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const wordCircle = useRedux((state) => state.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
+    const isSelected = useIsSelectedSelector(circleId);
 
     const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
             <mask id={`mask_${circleId}`}>
                 <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
                 {letters
@@ -35,6 +36,11 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 fill="inherit"
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}
+                onClick={useCallback(() => {
+                    if (!isSelected) {
+                        dispatcher(setSelectionAction(Maybe.some(circleId)));
+                    }
+                }, [circleId, isSelected])}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(Maybe.some(circleId))), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction(Maybe.none())), [])}
             />

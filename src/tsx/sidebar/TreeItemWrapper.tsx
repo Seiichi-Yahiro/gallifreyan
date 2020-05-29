@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { TreeItem, TreeItemProps } from '@material-ui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { setHoveringAction } from '../state/AppStore';
+import { setHoveringAction, setSelectionAction } from '../state/AppStore';
 import { UUID } from '../state/StateTypes';
 import Maybe from '../utils/Maybe';
 
@@ -36,6 +36,10 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, 
         <StyledTreeItem
             nodeId={circleId}
             label={text}
+            onLabelClick={(event) => {
+                dispatcher(setSelectionAction(Maybe.some(circleId)));
+                event.preventDefault();
+            }}
             onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(circleId)))}
             onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
         >
@@ -47,6 +51,10 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, 
                             key={slot}
                             nodeId={slot}
                             label="LINE"
+                            onLabelClick={(event) => {
+                                dispatcher(setSelectionAction(Maybe.some(slot)));
+                                event.preventDefault();
+                            }}
                             onMouseEnter={() => dispatcher(setHoveringAction(Maybe.some(slot)))}
                             onMouseLeave={() => dispatcher(setHoveringAction(Maybe.none()))}
                         />
