@@ -1,4 +1,5 @@
-import { AppStoreState, Consonant, Letter, PositionData, Sentence, Vocal, Word } from '../state/StateTypes';
+import { ImageStore } from '../state/ImageStore';
+import { Consonant, Letter, PositionData, Sentence, Vocal, Word } from '../state/ImageTypes';
 import { range, zip } from 'lodash';
 import {
     isDeepCut,
@@ -109,12 +110,12 @@ export const calculateInitialLineSlotPositionDatas = (
     }));
 };
 
-export const resetPositionDatas = (state: AppStoreState) =>
+export const resetPositionDatas = (state: ImageStore) =>
     state.sentences.forEach((sentence) => {
         resetSentencePositionData(state, sentence);
     });
 
-export const resetSentencePositionData = (state: AppStoreState, sentence: Sentence) => {
+export const resetSentencePositionData = (state: ImageStore, sentence: Sentence) => {
     const sentenceCircle = state.circles[sentence.circleId];
 
     zipEqual(sentence.words, calculateInitialWordPositionDatas(sentenceCircle.r, sentence.words.length)).forEach(
@@ -124,7 +125,7 @@ export const resetSentencePositionData = (state: AppStoreState, sentence: Senten
     );
 };
 
-export const resetWordPositionData = (state: AppStoreState, word: Word, wordPositionData: PositionData) => {
+export const resetWordPositionData = (state: ImageStore, word: Word, wordPositionData: PositionData) => {
     const wordCircle = state.circles[word.circleId];
 
     wordCircle.angle = wordPositionData.angle;
@@ -138,7 +139,7 @@ export const resetWordPositionData = (state: AppStoreState, word: Word, wordPosi
 };
 
 const resetLetterPositionData = (
-    state: AppStoreState,
+    state: ImageStore,
     letter: Letter,
     letterPositionData: PositionData,
     wordRadius: number
@@ -150,7 +151,7 @@ const resetLetterPositionData = (
     }
 };
 
-const resetVocalPositionData = (state: AppStoreState, vocal: Vocal, vocalPositionData: PositionData) => {
+const resetVocalPositionData = (state: ImageStore, vocal: Vocal, vocalPositionData: PositionData) => {
     const vocalCircle = state.circles[vocal.circleId];
 
     vocalCircle.angle = vocalPositionData.angle;
@@ -173,7 +174,7 @@ const resetVocalPositionData = (state: AppStoreState, vocal: Vocal, vocalPositio
 };
 
 const resetConsonantPositionData = (
-    state: AppStoreState,
+    state: ImageStore,
     consonant: Consonant,
     consonantPositionData: PositionData,
     wordRadius: number

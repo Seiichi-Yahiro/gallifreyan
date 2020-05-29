@@ -51,13 +51,3 @@ export interface Consonant extends Letter {
     dots: UUID[];
     vocal: Maybe<Vocal>;
 }
-
-export interface AppStoreState {
-    circles: { [key: string]: Circle };
-    lineConnections: { [key: string]: LineConnection };
-    lineSlots: { [key: string]: LineSlot };
-    sentences: Sentence[];
-    svgSize: number;
-    selection?: UUID;
-    hovering?: UUID;
-}

@@ -1,7 +1,7 @@
 import { SvgIcon, SvgIconProps } from '@material-ui/core';
 import React from 'react';
-import { useRedux } from '../state/AppStore';
 import { TreeView } from '@material-ui/lab';
+import { useRedux } from '../hooks/useRedux';
 import { isLetterConsonant } from '../utils/LetterGroups';
 import TreeItemWrapper from './TreeItemWrapper';
 
@@ -26,8 +26,8 @@ const CloseSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: Sv
 interface TreeProps {}
 
 const Tree: React.FunctionComponent<TreeProps> = ({}) => {
-    const sentences = useRedux((state) => state.sentences);
-    const selection = useRedux((state) => state.selection);
+    const sentences = useRedux((state) => state.image.sentences);
+    const selection = useRedux((state) => state.work.selection);
 
     return (
         <TreeView

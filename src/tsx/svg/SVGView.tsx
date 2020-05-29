@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
-import { useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import SVGSentence from './SVGSentence';
 import { UncontrolledReactSVGPanZoom, POSITION_LEFT } from 'react-svg-pan-zoom';
 
@@ -39,8 +39,8 @@ interface SVGProps {
 const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
     const viewerRef = useRef<UncontrolledReactSVGPanZoom>(null);
 
-    const size = useRedux((state) => state.svgSize);
-    const sentences = useRedux((state) => state.sentences);
+    const size = useRedux((state) => state.image.svgSize);
+    const sentences = useRedux((state) => state.image.sentences);
 
     useEffect(() => {
         if (viewerRef.current) {

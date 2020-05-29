@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { Letter, Circle, UUID, LineSlot, Sentence, Word, Vocal, Consonant } from '../state/StateTypes';
+import { Letter, Circle, UUID, LineSlot, Sentence, Word, Vocal, Consonant } from '../state/ImageTypes';
 import {
     DOUBLE_LETTER,
     isDoubleDot,

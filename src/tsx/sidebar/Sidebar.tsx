@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addSentenceAction } from '../state/AppStore';
+import { addSentenceAction } from '../state/ImageStore';
 import Tree from './Tree';
 import { Box, Button, TextField } from '@material-ui/core';
 

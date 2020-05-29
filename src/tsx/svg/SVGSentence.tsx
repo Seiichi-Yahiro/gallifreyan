@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { Sentence } from '../state/StateTypes';
+import { Sentence } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -11,7 +12,7 @@ import { useDispatch } from 'react-redux';
 interface SentenceProps extends Sentence {}
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, lineSlots }) => {
-    const sentenceCircle = useRedux((state) => state.circles[circleId]);
+    const sentenceCircle = useRedux((state) => state.image.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);

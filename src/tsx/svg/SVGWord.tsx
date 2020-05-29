@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { Word } from '../state/StateTypes';
+import { Word } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import { isDeepCut, isLetterConsonant, isShallowCut } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -12,7 +13,7 @@ import { useDispatch } from 'react-redux';
 interface WordProps extends Word {}
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
-    const wordCircle = useRedux((state) => state.circles[circleId]);
+    const wordCircle = useRedux((state) => state.image.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);

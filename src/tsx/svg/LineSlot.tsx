@@ -1,7 +1,8 @@
 import React from 'react';
-import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { UUID } from '../state/StateTypes';
+import { UUID } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { useDispatch } from 'react-redux';
@@ -12,7 +13,7 @@ interface SVGLineSlotProps {
 }
 
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
-    const { angle, parentDistance } = useRedux((state) => state.lineSlots[id]);
+    const { angle, parentDistance } = useRedux((state) => state.image.lineSlots[id]);
     const dispatcher = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
@@ -20,7 +21,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
     const { x, y } = calculateTranslation(angle, parentDistance);
-    const length = Math.sqrt(x * x + y * y);
+    const length = Math.sqrt(x * x + y * y); // TODO what if 0
     const lineLength = 10;
     const xDir = (lineLength * x) / length;
     const yDir = (lineLength * y) / length;

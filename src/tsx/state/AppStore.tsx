@@ -1,62 +1,20 @@
-import { useSelector } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import { produce, enableAllPlugins } from 'immer';
-import logger from 'redux-logger';
-import { isValidLetter } from '../utils/LetterGroups';
-import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
-import { resetPositionDatas } from '../utils/TextTransforms';
-import { AppStoreState, UUID } from './StateTypes';
-import { createActionCreator, createReducer } from 'deox';
+import { enableAllPlugins } from 'immer';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import logger from 'redux-logger';
+import { ImageStore, imageStoreReducer } from './ImageStore';
+import { WorkStore, workStoreReducer } from './WorkStore';
 
 enableAllPlugins();
 
-const defaultState: AppStoreState = {
-    circles: {},
-    lineConnections: {},
-    lineSlots: {},
-    sentences: [],
-    svgSize: 1000,
-};
+export interface AppStore {
+    image: ImageStore;
+    work: WorkStore;
+}
 
-export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) => (sentence: string) =>
-    resolve(sentence)
-);
-
-export const setHoveringAction = createActionCreator('SET_HOVERING', (resolve) => (uuid?: UUID) => resolve(uuid));
-export const setSelectionAction = createActionCreator('SET_SELECTION', (resolve) => (uuid?: UUID) => resolve(uuid));
-
-const reducer = createReducer(defaultState, (handle) => [
-    handle(addSentenceAction, (state, { payload: sentenceText }) =>
-        produce(state, (draft) => {
-            const text = sentenceText
-                .split(' ')
-                .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
-                .filter((word) => word.length > 0)
-                .join(' ');
-            const { textPart: sentence, circles, lineSlots } = convertTextToSentence(text);
-
-            draft.sentences.push(sentence);
-            circles.forEach((circle) => (draft.circles[circle.id] = circle));
-            lineSlots.forEach((slot) => (draft.lineSlots[slot.id] = slot));
-
-            resetPositionDatas(draft as AppStoreState);
-        })
-    ),
-    handle(setHoveringAction, (state, { payload }) =>
-        produce(state, (draft) => {
-            draft.hovering = payload;
-        })
-    ),
-    handle(setSelectionAction, (state, { payload }) =>
-        produce(state, (draft) => {
-            draft.selection = payload;
-        })
-    ),
-]);
+const reducer = combineReducers<AppStore>({
+    image: imageStoreReducer,
+    work: workStoreReducer,
+});
 
 export const configureStore = () => createStore(reducer, composeWithDevTools(applyMiddleware(logger)));
-
-export function useRedux<S>(selector: (state: AppStoreState) => S, equalityFn?: (left: S, right: S) => boolean) {
-    return useSelector<AppStoreState, S>(selector, equalityFn);
-}

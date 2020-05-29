@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { UUID } from '../state/StateTypes';
+import { UUID } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -14,7 +15,7 @@ interface DotProps {
 const lineSlots: UUID[] = [];
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
-    const dotCircle = useRedux((state) => state.circles[id]);
+    const dotCircle = useRedux((state) => state.image.circles[id]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);

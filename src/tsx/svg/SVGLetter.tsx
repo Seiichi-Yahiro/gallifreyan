@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { setHoveringAction, setSelectionAction, useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { Consonant, UUID, Vocal } from '../state/StateTypes';
+import { Consonant, UUID, Vocal } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -19,7 +20,7 @@ interface ConsonantProps extends Consonant, LetterProps {
 
 export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     ({ circleId, dots, fill, stroke, children, lineSlots, vocal }) => {
-        const consonantCircle = useRedux((state) => state.circles[circleId]);
+        const consonantCircle = useRedux((state) => state.image.circles[circleId]);
         const dispatcher = useDispatch();
         const isHovered = useIsHoveredSelector(circleId);
         const isSelected = useIsSelectedSelector(circleId);
@@ -64,7 +65,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
 interface VocalProps extends Vocal, LetterProps {}
 
 export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, fill, stroke, lineSlots }) => {
-    const vocalCircle = useRedux((state) => state.circles[circleId]);
+    const vocalCircle = useRedux((state) => state.image.circles[circleId]);
     const dispatcher = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
@@ -96,7 +97,7 @@ interface ConsonantCutMaskProps extends LetterProps {
 
 export const SVGConsonantCutMask: React.FunctionComponent<ConsonantCutMaskProps> = React.memo(
     ({ circleId, fill, stroke }) => {
-        const letterCircle = useRedux((state) => state.circles[circleId]);
+        const letterCircle = useRedux((state) => state.image.circles[circleId]);
 
         const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.parentDistance);
 

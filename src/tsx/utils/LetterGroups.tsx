@@ -1,4 +1,4 @@
-import { Consonant, Letter, Vocal } from '../state/StateTypes';
+import { Consonant, Letter, Vocal } from '../state/ImageTypes';
 
 export const DEEP_CUT = new RegExp('^(?:b|ch|d|g|h|f)$', 'i');
 export const INSIDE = new RegExp('^[jklnpm]$', 'i');

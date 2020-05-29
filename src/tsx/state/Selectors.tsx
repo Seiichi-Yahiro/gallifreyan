@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { createSelector } from 'reselect';
-import { useRedux } from './AppStore';
-import { AppStoreState, UUID } from './StateTypes';
+import { useRedux } from '../hooks/useRedux';
+import { AppStore } from './AppStore';
+import { UUID } from './ImageTypes';
 
 const createIsHoveredSelector = () =>
     createSelector(
-        (state: AppStoreState) => state.hovering,
-        (_state: AppStoreState, id: UUID) => id,
+        (state: AppStore) => state.work.hovering,
+        (_state: AppStore, id: UUID) => id,
         (hovering, id) => hovering === id
     );
 export const useIsHoveredSelector = (id: UUID) => {
@@ -16,8 +17,8 @@ export const useIsHoveredSelector = (id: UUID) => {
 
 const createIsSelectedSelector = () =>
     createSelector(
-        (state: AppStoreState) => state.selection,
-        (_state: AppStoreState, id: UUID) => id,
+        (state: AppStore) => state.work.selection,
+        (_state: AppStore, id: UUID) => id,
         (selection, id) => selection === id
     );
 export const useIsSelectedSelector = (id: UUID) => {

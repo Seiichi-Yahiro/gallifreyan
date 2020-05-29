@@ -3,8 +3,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { TreeItem, TreeItemProps } from '@material-ui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { setHoveringAction, setSelectionAction } from '../state/AppStore';
-import { UUID } from '../state/StateTypes';
+import { UUID } from '../state/ImageTypes';
+import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 
 const StyledTreeItem = withStyles((theme: Theme) =>
     createStyles({
