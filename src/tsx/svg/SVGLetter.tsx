@@ -34,11 +34,15 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     lineSlots={lineSlots}
                     fill={fill}
                     stroke={stroke}
-                    onClick={useCallback(() => {
-                        if (!isSelected) {
-                            dispatcher(setSelectionAction(circleId));
-                        }
-                    }, [circleId, isSelected])}
+                    onClick={useCallback(
+                        (event) => {
+                            if (!isSelected) {
+                                dispatcher(setSelectionAction(circleId));
+                            }
+                            event.stopPropagation();
+                        },
+                        [circleId, isSelected]
+                    )}
                     onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
                     onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
                 />
@@ -79,11 +83,15 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 lineSlots={lineSlots}
                 fill={fill}
                 stroke={stroke}
-                onClick={useCallback(() => {
-                    if (!isSelected) {
-                        dispatcher(setSelectionAction(circleId));
-                    }
-                }, [circleId, isSelected])}
+                onClick={useCallback(
+                    (event) => {
+                        if (!isSelected) {
+                            dispatcher(setSelectionAction(circleId));
+                        }
+                        event.stopPropagation();
+                    },
+                    [circleId, isSelected]
+                )}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />

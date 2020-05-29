@@ -30,11 +30,15 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 fill="inherit"
                 stroke="inherit"
                 filled={dotCircle.filled}
-                onClick={useCallback(() => {
-                    if (!isSelected) {
-                        dispatcher(setSelectionAction(id));
-                    }
-                }, [id, isSelected])}
+                onClick={useCallback(
+                    (event) => {
+                        if (!isSelected) {
+                            dispatcher(setSelectionAction(id));
+                        }
+                        event.stopPropagation();
+                    },
+                    [id, isSelected]
+                )}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(id)), [id])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />

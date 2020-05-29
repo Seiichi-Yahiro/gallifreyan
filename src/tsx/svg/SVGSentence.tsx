@@ -25,11 +25,15 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
                 r={sentenceCircle.r}
                 filled={sentenceCircle.filled}
                 lineSlots={lineSlots}
-                onClick={useCallback(() => {
-                    if (!isSelected) {
-                        dispatcher(setSelectionAction(circleId));
-                    }
-                }, [circleId, isSelected])}
+                onClick={useCallback(
+                    (event) => {
+                        if (!isSelected) {
+                            dispatcher(setSelectionAction(circleId));
+                        }
+                        event.stopPropagation();
+                    },
+                    [circleId, isSelected]
+                )}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />

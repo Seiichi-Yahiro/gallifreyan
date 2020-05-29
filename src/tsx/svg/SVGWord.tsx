@@ -36,11 +36,15 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 fill="inherit"
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}
-                onClick={useCallback(() => {
-                    if (!isSelected) {
-                        dispatcher(setSelectionAction(circleId));
-                    }
-                }, [circleId, isSelected])}
+                onClick={useCallback(
+                    (event) => {
+                        if (!isSelected) {
+                            dispatcher(setSelectionAction(circleId));
+                        }
+                        event.stopPropagation();
+                    },
+                    [circleId, isSelected]
+                )}
                 onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
             />

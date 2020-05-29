@@ -37,10 +37,11 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 r={5}
                 fill="transparent"
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
-                onClick={() => {
+                onClick={(event) => {
                     if (!isSelectedSlot) {
                         dispatcher(setSelectionAction(id));
                     }
+                    event.stopPropagation();
                 }}
                 onMouseEnter={() => dispatcher(setHoveringAction(id))}
                 onMouseLeave={() => dispatcher(setHoveringAction())}
