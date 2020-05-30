@@ -1,15 +1,27 @@
 import { useMemo } from 'react';
 import { createSelector } from 'reselect';
-import { useRedux } from './AppStore';
-import { AppStoreState, LineSlot, UUID } from './StateTypes';
+import { useRedux } from '../hooks/useRedux';
+import { AppStore } from './AppStore';
+import { UUID } from './ImageTypes';
 
-const createLineSlotSelector = () =>
+const createIsHoveredSelector = () =>
     createSelector(
-        (state: AppStoreState) => state.lineSlots,
-        (_state: AppStoreState, slotIds: UUID[]) => slotIds,
-        (lineSlots, ids) => ids.map((id) => lineSlots[id])
+        (state: AppStore) => state.work.hovering,
+        (_state: AppStore, id: UUID) => id,
+        (hovering, id) => hovering === id
     );
-export const useLineSlotSelector = (lineSlotIds: UUID[]): LineSlot[] => {
-    const selector = useMemo(createLineSlotSelector, []);
-    return useRedux((state) => selector(state, lineSlotIds));
+export const useIsHoveredSelector = (id: UUID) => {
+    const selector = useMemo(createIsHoveredSelector, []);
+    return useRedux((state) => selector(state, id));
+};
+
+const createIsSelectedSelector = () =>
+    createSelector(
+        (state: AppStore) => state.work.selection,
+        (_state: AppStore, id: UUID) => id,
+        (selection, id) => selection === id
+    );
+export const useIsSelectedSelector = (id: UUID) => {
+    const selector = useMemo(createIsSelectedSelector, []);
+    return useRedux((state) => selector(state, id));
 };

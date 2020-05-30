@@ -1,16 +1,31 @@
 import { v4 } from 'uuid';
-import { Letter, Circle, LineSlot, Sentence, Word } from '../state/StateTypes';
+import { Letter, Circle, UUID, LineSlot, Sentence, Word, Vocal, Consonant } from '../state/ImageTypes';
 import {
     DOUBLE_LETTER,
     isDoubleDot,
     isDoubleLine,
+    isLetterConsonant,
+    isLetterVocal,
     isSingleLine,
     isTripleDot,
     isTripleLine,
     isVocal,
+    isVocalSingleLine,
 } from './LetterGroups';
 import Maybe from './Maybe';
-import { range } from 'lodash';
+import { range, last } from 'lodash';
+import {
+    DEFAULT_CONSONANT_RADIUS,
+    DEFAULT_SENTENCE_RADIUS,
+    DEFAULT_VOCAL_RADIUS,
+    DEFAULT_WORD_RADIUS,
+} from './TextDefaultValues';
+
+interface TextData<T> {
+    textPart: T;
+    circles: Circle[];
+    lineSlots: LineSlot[];
+}
 
 export const splitWordToChars = (word: string): string[] => {
     const index = word.search(DOUBLE_LETTER);
@@ -26,14 +41,12 @@ export const splitWordToChars = (word: string): string[] => {
     }
 };
 
-export const convertTextToSentence = (
-    text: string
-): { sentence: Sentence; circles: Circle[]; lineSlots: LineSlot[] } => {
+export const convertTextToSentence = (text: string): TextData<Sentence> => {
     const sentenceCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 450,
+        r: DEFAULT_SENTENCE_RADIUS,
         filled: false,
     };
 
@@ -42,70 +55,108 @@ export const convertTextToSentence = (
     const sentence: Sentence = {
         text,
         circleId: sentenceCircle.id,
-        words: wordData.map((it) => it.word),
+        words: wordData.map((it) => it.textPart),
         lineSlots: [],
     };
 
     return {
-        sentence,
+        textPart: sentence,
         circles: wordData.flatMap((it) => it.circles).concat(sentenceCircle),
         lineSlots: wordData.flatMap((it) => it.lineSlots),
     };
 };
 
-const convertTextToWord = (text: string): { word: Word; circles: Circle[]; lineSlots: LineSlot[] } => {
+const convertTextToWord = (text: string): TextData<Word> => {
     const wordCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 100,
+        r: DEFAULT_WORD_RADIUS,
         filled: false,
     };
 
-    const letterData = splitWordToChars(text).map((char) => convertTextToLetter(char));
+    const letterData = splitWordToChars(text)
+        .map(convertTextToLetter)
+        .reduce<TextData<Letter>[]>((acc, textData) => {
+            const prevTextData = Maybe.of(last(acc));
+            const isPrevConsonantWithoutNestedVocal = prevTextData
+                .map((it) => isLetterConsonant(it.textPart) && it.textPart.vocal.isNone())
+                .unwrapOr(false);
+
+            if (isPrevConsonantWithoutNestedVocal && isLetterVocal(textData.textPart)) {
+                const consonant = prevTextData.unwrap() as TextData<Consonant>;
+                consonant.textPart.vocal = Maybe.some(textData.textPart);
+                consonant.circles = consonant.circles.concat(textData.circles);
+                consonant.lineSlots = consonant.lineSlots.concat(textData.lineSlots);
+                return acc.slice(0, acc.length - 1).concat(consonant);
+            } else {
+                return acc.concat(textData);
+            }
+        }, []);
 
     const word: Word = {
         text,
         circleId: wordCircle.id,
-        letters: letterData.map((it) => it.letter),
+        letters: letterData.map((it) => it.textPart),
         lineSlots: [],
     };
 
     return {
-        word,
+        textPart: word,
         circles: letterData.flatMap((it) => it.circles).concat(wordCircle),
         lineSlots: letterData.flatMap((it) => it.lineSlots),
     };
 };
 
-const convertTextToLetter = (text: string): { letter: Letter; circles: Circle[]; lineSlots: LineSlot[] } => {
+const convertTextToLetter = (text: string): TextData<Letter> => {
     const letterCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: isVocal(text) ? 20 : 50,
+        r: 0,
         filled: false,
     };
 
-    const dots = createDots(text);
-    const lineSlots = createLineSlots(text);
+    const lineSlots = createLineSlots(letterCircle.id, text);
 
     const letter: Letter = {
-        text,
+        text: text,
         circleId: letterCircle.id,
-        dots: dots.map((dot) => dot.id),
         lineSlots: lineSlots.map((slot) => slot.id),
     };
 
-    return {
-        letter,
-        circles: dots.concat(letterCircle),
-        lineSlots,
-    };
+    if (isVocal(text)) {
+        letterCircle.r = DEFAULT_VOCAL_RADIUS;
+
+        const vocal: Vocal = {
+            ...letter,
+        };
+
+        return {
+            textPart: vocal,
+            circles: [letterCircle],
+            lineSlots,
+        };
+    } else {
+        letterCircle.r = DEFAULT_CONSONANT_RADIUS;
+
+        const dots = createDots(letterCircle.id, text);
+
+        const consonant: Consonant = {
+            ...letter,
+            dots: dots.map((dot) => dot.id),
+            vocal: Maybe.none(),
+        };
+
+        return {
+            textPart: consonant,
+            circles: dots.concat(letterCircle),
+            lineSlots,
+        };
+    }
 };
 
-const createDots = (char: string): Circle[] => {
-    const dots: Circle[] = [];
+const createDots = (letterId: UUID, char: string): Circle[] => {
     let numberOfDots = 0;
 
     if (isDoubleDot(char)) {
@@ -114,24 +165,19 @@ const createDots = (char: string): Circle[] => {
         numberOfDots = 3;
     }
 
-    for (const _ of range(numberOfDots)) {
-        dots.push({
-            id: v4(),
-            angle: 0,
-            parentDistance: 0,
-            r: 5,
-            filled: true,
-        });
-    }
-
-    return dots;
+    return range(numberOfDots).map((_i) => ({
+        id: v4(),
+        angle: 0,
+        parentDistance: 0,
+        r: 5,
+        filled: true,
+    }));
 };
 
-const createLineSlots = (char: string): LineSlot[] => {
-    const lineSlots: LineSlot[] = [];
+const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
     let numberOfLineSlots = 0;
 
-    if (isSingleLine(char)) {
+    if (isSingleLine(char) || isVocalSingleLine(char)) {
         numberOfLineSlots = 1;
     } else if (isDoubleLine(char)) {
         numberOfLineSlots = 2;
@@ -139,14 +185,10 @@ const createLineSlots = (char: string): LineSlot[] => {
         numberOfLineSlots = 3;
     }
 
-    for (const _ of range(numberOfLineSlots)) {
-        lineSlots.push({
-            id: v4(),
-            angle: 0,
-            parentDistance: 0,
-            connection: Maybe.none(),
-        });
-    }
-
-    return lineSlots;
+    return range(numberOfLineSlots).map((_i) => ({
+        id: v4(),
+        angle: 0,
+        parentDistance: 0,
+        connection: Maybe.none(),
+    }));
 };

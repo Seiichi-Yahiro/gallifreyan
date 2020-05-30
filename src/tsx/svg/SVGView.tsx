@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
-import { useRedux } from '../state/AppStore';
+import { useRedux } from '../hooks/useRedux';
+import { setSelectionAction } from '../state/WorkStore';
 import SVGSentence from './SVGSentence';
 import { UncontrolledReactSVGPanZoom, POSITION_LEFT } from 'react-svg-pan-zoom';
 
@@ -37,16 +39,24 @@ interface SVGProps {
 }
 
 const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
+    const dispatch = useDispatch();
     const viewerRef = useRef<UncontrolledReactSVGPanZoom>(null);
 
-    const size = useRedux((state) => state.svgSize);
-    const sentences = useRedux((state) => state.sentences);
+    const size = useRedux((state) => state.image.svgSize);
+    const sentences = useRedux((state) => state.image.sentences);
 
     useEffect(() => {
         if (viewerRef.current) {
             viewerRef.current.fitToViewer();
         }
     }, []);
+
+    const selection = useRedux((state) => state.work.selection);
+    const deselect = () => {
+        if (selection) {
+            dispatch(setSelectionAction());
+        }
+    };
 
     return (
         <UncontrolledReactSVGPanZoom
@@ -55,6 +65,7 @@ const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
             height={height}
             detectAutoPan={false}
             toolbarProps={{ position: POSITION_LEFT }}
+            onClick={deselect}
         >
             <svg width={size} height={size}>
                 <g style={{ transform: `translate(${size / 2}px, ${size / 2}px)` }} stroke="#000000" fill="#000000">

@@ -221,6 +221,11 @@ class Maybe<T> {
     };
 
     /**
+     * Removes the maybe and returns the containing value
+     */
+    asNullable = (): T | null => this.value;
+
+    /**
      * Compare the containing value with the provided value
      * Returns false if isNone
      * @param value - value to compare

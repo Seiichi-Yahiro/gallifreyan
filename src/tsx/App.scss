@@ -30,9 +30,8 @@ body,
         padding: 5px;
         overflow-y: auto;
         display: grid;
-        grid-template-rows: 32px auto;
+        grid-template-rows: min-content auto min-content;
         grid-template-columns: 100%;
-        word-break: break-word;
         grid-row-gap: 5px;
     }
 
@@ -41,15 +40,13 @@ body,
     }
 }
 
-.text-input {
-    border-width: 0 0 1px 0;
-    border-color: #000000;
-    outline: none;
-}
+.sidebar {
+    &__tree {
+        overflow-y: auto;
+    }
 
-.button {
-    background-color: #ffffff;
-    border: 1px solid #000000;
-    cursor: pointer;
-    outline: none;
+    &__settings {
+        display: grid;
+        grid-row-gap: 8px;
+    }
 }

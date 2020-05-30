@@ -42,16 +42,23 @@ export interface Word {
 export interface Letter {
     text: string;
     circleId: UUID;
-    dots: UUID[];
     lineSlots: UUID[];
 }
 
-export interface AppStoreState {
-    circles: { [key: string]: Circle };
-    lineConnections: { [key: string]: LineConnection };
-    lineSlots: { [key: string]: LineSlot };
-    sentences: Sentence[];
-    svgSize: number;
-    selection: UUID[];
-    hovering: Maybe<UUID>;
+export interface Vocal extends Letter {}
+
+export interface Consonant extends Letter {
+    dots: UUID[];
+    vocal: Maybe<Vocal>;
+}
+
+export interface CircleData extends Referencable {
+    r?: number;
+    angle?: number;
+    parentDistance?: number;
+}
+
+export interface LineSlotData extends Referencable {
+    angle?: number;
+    parentDistance?: number;
 }
