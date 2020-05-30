@@ -1,4 +1,4 @@
-type uuid = string;
+open CommonTypes;
 
 type positionData = {
   angle: float,
@@ -22,17 +22,17 @@ type circle = {
 };
 
 type vocal = {
+  id: uuid,
   text: string,
-  circle: uuid,
   lineSlots: array(uuid),
 };
 
 type consonant = {
+  id: uuid,
   text: string,
-  circle,
   lineSlots: array(uuid),
   dots: array(uuid),
-  vocal: option(vocal),
+  vocal: option(uuid),
 };
 
 type letter =
@@ -40,32 +40,15 @@ type letter =
   | Vocal(vocal);
 
 type word = {
+  id: uuid,
   text: string,
-  circle: uuid,
   lineSlots: array(uuid),
-  letters: array(letter),
+  letters: array(uuid),
 };
 
 type sentence = {
+  id: uuid,
   text: string,
-  circle: uuid,
   lineSlots: array(uuid),
-  words: array(word),
-};
-
-module HashMap =
-  Map.Make({
-    type t = uuid;
-    let compare = compare;
-  });
-
-let findSafe = (key, m) =>
-  switch (HashMap.find(key, m)) {
-  | item => Some(item)
-  | exception _ => None
-  };
-
-type appState = {
-  circles: HashMap.t(circle),
-  sentences: array(sentence),
+  words: array(uuid),
 };

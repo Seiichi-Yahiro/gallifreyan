@@ -12,7 +12,7 @@ let rec load = _event => {
   removeEventListener("load", load);
 
   ReactDOMRe.renderToElementWithId(
-    <AppStore.Provider store=AppStore.appStore> <App /> </AppStore.Provider>,
+    <AppState.Provider store=AppState.store> <App /> </AppState.Provider>,
     "root",
   );
 };
