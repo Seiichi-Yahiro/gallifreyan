@@ -9,6 +9,8 @@ S G:\Intellij_Projects\gallifreyan\node_modules\reason-react\lib\ocaml
 B G:\Intellij_Projects\gallifreyan\node_modules\reason-react\lib\ocaml
 S G:\Intellij_Projects\gallifreyan\node_modules\reductive\lib\ocaml
 B G:\Intellij_Projects\gallifreyan\node_modules\reductive\lib\ocaml
+S G:\Intellij_Projects\gallifreyan\node_modules\bs-webapi\lib\ocaml
+B G:\Intellij_Projects\gallifreyan\node_modules\bs-webapi\lib\ocaml
 S src
 B lib\bs\src
 S src\tsx
@@ -17,6 +19,8 @@ S src\tsx\svg
 B lib\bs\src\tsx\svg
 S src\tsx\state
 B lib\bs\src\tsx\state
+S src\tsx\sidebar
+B lib\bs\src\tsx\sidebar
 S src\bindings
 B lib\bs\src\bindings
 ####BSB GENERATED: NO EDIT}
