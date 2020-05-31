@@ -14,9 +14,15 @@ let make = () => {
   let calculateViewerSize = _ =>
     viewBoxRef.current
     ->Js.Nullable.toOption
-    ->Belt_Option.map(ReactDOMRe.domElementToObj)
-    ->Belt_Option.map(element => element##getBoundingClientRect())
-    ->Belt_Option.forEach(setViewBox);
+    ->Belt_Option.map(Webapi.Dom.Element.getBoundingClientRect)
+    ->Belt_Option.forEach(rect =>
+        setViewBox(_ =>
+          {
+            width: rect->Webapi.Dom.DomRect.width,
+            height: rect->Webapi.Dom.DomRect.height,
+          }
+        )
+      );
 
   React.useEffect0(() => {
     calculateViewerSize();
