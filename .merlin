@@ -11,6 +11,8 @@ S G:\Intellij_Projects\gallifreyan\node_modules\reductive\lib\ocaml
 B G:\Intellij_Projects\gallifreyan\node_modules\reductive\lib\ocaml
 S G:\Intellij_Projects\gallifreyan\node_modules\bs-webapi\lib\ocaml
 B G:\Intellij_Projects\gallifreyan\node_modules\bs-webapi\lib\ocaml
+S G:\Intellij_Projects\gallifreyan\node_modules\@jsiebern\bs-material-ui\lib\ocaml
+B G:\Intellij_Projects\gallifreyan\node_modules\@jsiebern\bs-material-ui\lib\ocaml
 S src
 B lib\bs\src
 S src\tsx

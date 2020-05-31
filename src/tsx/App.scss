@@ -41,6 +41,12 @@ body,
 }
 
 .sidebar {
+    &__sentence-input {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
     &__tree {
         overflow-y: auto;
     }
