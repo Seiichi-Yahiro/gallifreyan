@@ -35,3 +35,12 @@ let neq = (left: 'a, right: 'a): bool => !eq(left, right);
 
 let explodeSring = (str: string) =>
   String.length(str)->Belt.List.makeBy(Js.String2.get(str));
+
+module Option = {
+  let xor = (a, b) =>
+    switch (a->Belt.Option.isSome, b->Belt.Option.isSome) {
+    | (true, false) => a
+    | (false, true) => b
+    | _ => None
+    };
+};

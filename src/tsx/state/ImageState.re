@@ -1,21 +1,20 @@
-open CommonTypes;
 open ImageTypes;
 
 type imageState = {
-  circles: HashMap.t(circle),
-  lines: HashMap.t(line),
-  lineSlots: HashMap.t(lineSlot),
-  circleItems: HashMap.t(circleItem),
-  text: array(circleItem),
+  circles: Belt.Map.String.t(circle),
+  lines: Belt.Map.String.t(line),
+  lineSlots: Belt.Map.String.t(lineSlot),
+  circleItems: Belt.Map.String.t(circleItem),
+  text: list(circleItem),
   svgSize: int,
 };
 
 let initialImageState: imageState = {
-  circles: HashMap.empty,
-  lines: HashMap.empty,
-  lineSlots: HashMap.empty,
-  circleItems: HashMap.empty,
-  text: [||],
+  circles: Belt.Map.String.empty,
+  lines: Belt.Map.String.empty,
+  lineSlots: Belt.Map.String.empty,
+  circleItems: Belt.Map.String.empty,
+  text: [],
   svgSize: 1000,
 };
 
@@ -24,11 +23,21 @@ type imageAction =
 
 let imageReducer = (state: imageState, action: imageAction) =>
   switch (action) {
-  | AddSentence(sentence) => {
+  | AddSentence(sentence) =>
+    let circleItem = TextConverter.convertSentenceToCircleItem(sentence);
+    let circles =
+      TextTransforms.convertCircleItemToCircleRecursive(circleItem)
+      ->Belt.List.map(circle => (circle.id, circle))
+      ->Belt.List.toArray
+      ->Belt.Map.String.fromArray;
+
+    {
       ...state,
-      text: {
-        let circleItem = TextConverter.convertSentenceToCircleItem(sentence);
-        Belt.Array.concat(state.text, [|circleItem|]);
-      },
-    }
+      text: [circleItem, ...state.text],
+      circles:
+        state.circles
+        ->Belt.Map.String.merge(circles, (_, a, b) =>
+            Utils.Option.xor(a, b)
+          ),
+    };
   };
