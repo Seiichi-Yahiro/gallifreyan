@@ -1,7 +1,7 @@
 {
   "name": "your-project-name",
   "reason": { "react-jsx": 3 },
-  "bsc-flags": ["-bs-super-errors"],
+  "bsc-flags": ["-bs-super-errors", "-bs-g"],
   "sources": [
     {
       "dir": "src",
@@ -21,7 +21,8 @@
     "reductive",
     "bs-webapi",
     "@jsiebern/bs-material-ui",
-    "bs-guid"
+    "bs-guid",
+    "reductive-dev-tools"
   ],
   "ppx-flags": [],
   "refmt": 3

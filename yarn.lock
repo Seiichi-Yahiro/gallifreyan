@@ -5075,6 +5075,11 @@ redent@^1.0.0:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
 
+reductive-dev-tools@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/reductive-dev-tools/-/reductive-dev-tools-2.0.0.tgz#0e359d0b4b4f954ac68119f1e8b096b344051a94"
+  integrity sha512-8U/RJ1TbCBV9gUYP+TVv009ARHguiYinEGU7jumlkYA9j/1P5o/kTPe4dFf9tuw7P5TIttZBWSI4FBLj3ExUuQ==
+
 reductive@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/reductive/-/reductive-2.0.1.tgz#23062796549f329bc4216adaad96fe103a120f29"
