@@ -1,5 +1,4 @@
 open CommonTypes;
-open Utils;
 open Uuid.V4;
 open LetterGroups;
 
@@ -19,11 +18,12 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   };
 
 let rec groupWords = (letters: list(string)): list(list(string)) => {
-  let trimmedLetters = letters->dropWhile(eq(" "));
+  let trimmedLetters = letters->Utils.List.dropWhile(Utils.Bool.eq(" "));
   switch (trimmedLetters) {
   | [] => []
   | _ =>
-    let (word, remainder) = trimmedLetters->span(neq(" "));
+    let (word, remainder) =
+      trimmedLetters->Utils.List.span(Utils.Bool.neq(" "));
     [word, ...groupWords(remainder)];
   };
 };
@@ -107,7 +107,7 @@ let convertWordToCircleItem = (word: list(string)): ImageTypes.circleItem => {
 };
 
 let convertSentenceToTree = (sentence: string): list(list(string)) => {
-  explodeSring(sentence)
+  Utils.List.fromString(sentence)
   ->groupDoubleLetters
   ->groupWords
   ->Belt.List.map(Belt.List.keep(_, isValidLetter));
