@@ -6,49 +6,62 @@ type positionData = {
 };
 
 type line = {
+  id: uuid,
   a: uuid,
   b: uuid,
 };
 
 type lineSlot = {
+  id: uuid,
   pos: positionData,
   connection: option(uuid),
 };
 
 type circle = {
+  id: uuid,
   pos: positionData,
   r: float,
   filled: bool,
 };
 
-type vocal = {
+type vocalPosType =
+  | Inside
+  | Outside
+  | OnLine;
+
+type vocalStyleType =
+  | LineInside
+  | LineOutside
+  | NoStyle;
+
+type consonantPosType =
+  | DeepCut
+  | ShallowCut
+  | OnLine
+  | Inside;
+
+type consonantStyleType =
+  | DoubleDot
+  | TripleDot
+  | SingleLine
+  | DoubleLine
+  | TripleLine
+  | NoStyle;
+
+type letterType =
+  | Consonant(consonantPosType, consonantStyleType)
+  | Vocal(vocalPosType, vocalStyleType);
+
+type circleType =
+  | Sentence
+  | Word
+  | Letter(letterType)
+  | Dot;
+
+type circleItem = {
   id: uuid,
   text: string,
-  lineSlots: array(uuid),
-};
-
-type consonant = {
-  id: uuid,
-  text: string,
-  lineSlots: array(uuid),
-  dots: array(uuid),
-  vocal: option(uuid),
-};
-
-type letter =
-  | Consonant(consonant)
-  | Vocal(vocal);
-
-type word = {
-  id: uuid,
-  text: string,
-  lineSlots: array(uuid),
-  letters: array(uuid),
-};
-
-type sentence = {
-  id: uuid,
-  text: string,
-  lineSlots: array(uuid),
-  words: array(uuid),
+  lineSlots: list(uuid),
+  children: list(circleItem),
+  type_: circleType,
 };

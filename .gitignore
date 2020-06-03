@@ -29,3 +29,4 @@ public/css/
 
 lib
 *.bs.js
+.merlin
