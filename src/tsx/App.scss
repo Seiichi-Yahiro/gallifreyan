@@ -49,6 +49,20 @@ body,
 
     &__tree {
         overflow-y: auto;
+
+        .MuiTreeItem {
+            &-iconContainer {
+                & .close {
+                    opacity: 0.3;
+                }
+            }
+
+            &-group {
+                margin: 0 0 0 7px;
+                padding: 0 0 0 18px;
+                border-left: 1px dashed rgba(0, 0, 0, 0.4);
+            }
+        }
     }
 
     &__settings {
@@ -56,3 +70,4 @@ body,
         grid-row-gap: 8px;
     }
 }
+

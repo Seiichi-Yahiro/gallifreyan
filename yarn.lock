@@ -43,7 +43,14 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
-"@jsiebern/bs-material-ui@1.3.0":
+"@jsiebern/bs-material-ui-lab@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui-lab/-/bs-material-ui-lab-1.0.0.tgz#8ccc0deb1434d285e310bb94237295bcfd21473c"
+  integrity sha512-4zjbyCeZUgqwW5cul+/BdsAArkbpRqkvRPeezDlj/lCv5m9FvY8CFr2HV1EzOD328GCbT4beyMpOcz4YGhJMOQ==
+  dependencies:
+    "@jsiebern/bs-material-ui" "*"
+
+"@jsiebern/bs-material-ui@*", "@jsiebern/bs-material-ui@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-1.3.0.tgz#e23398540c1754245356a2ef7bcc8a62beb566db"
   integrity sha512-YfzGVqZXA8Zm4uG3bi0hor0LGTUfBiVhOcAR9mNR/4ijKAUVaG6+BNQQ+5tgFX5W1I2vh+QR/qbMqBaLR5Yw2g==
@@ -5075,7 +5082,7 @@ redent@^1.0.0:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
 
-reductive-dev-tools@^2.0.0:
+reductive-dev-tools@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/reductive-dev-tools/-/reductive-dev-tools-2.0.0.tgz#0e359d0b4b4f954ac68119f1e8b096b344051a94"
   integrity sha512-8U/RJ1TbCBV9gUYP+TVv009ARHguiYinEGU7jumlkYA9j/1P5o/kTPe4dFf9tuw7P5TIttZBWSI4FBLj3ExUuQ==

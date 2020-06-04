@@ -21,6 +21,7 @@
     "reductive",
     "bs-webapi",
     "@jsiebern/bs-material-ui",
+    "@jsiebern/bs-material-ui-lab",
     "bs-guid",
     "reductive-dev-tools"
   ],

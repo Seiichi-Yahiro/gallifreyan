@@ -20,15 +20,15 @@ let make = (~className) => {
 
   let onButtonPress = _ => addSentence(state);
 
-  MaterialUi.(
-    <div className>
-      <TextField
-        type_="text"
-        placeholder="Sentence..."
-        onChange=onTextChange
-        inputProps={"onKeyPress": onKeyPress}
-      />
-      <Button onClick=onButtonPress> {React.string("Add")} </Button>
-    </div>
-  );
+  <div className>
+    <MaterialUi.TextField
+      type_="text"
+      placeholder="Sentence..."
+      onChange=onTextChange
+      inputProps={"onKeyPress": onKeyPress}
+    />
+    <MaterialUi.Button onClick=onButtonPress>
+      {React.string("Add")}
+    </MaterialUi.Button>
+  </div>;
 };
