@@ -1,8 +1,3 @@
-let (>>) = (a: 'a => 'b, b: 'b => 'c): ('a => 'c) => {
-  let helper = vl => vl->a->b;
-  helper;
-};
-
 module List = {
   let rec takeWhile = (items: list('a), predicate: 'a => bool): list('a) =>
     switch (items) {
@@ -33,11 +28,6 @@ module List = {
 
   let fromString = (str: string): list(string) =>
     String.length(str)->Belt.List.makeBy(Js.String2.get(str));
-};
-
-module Bool = {
-  let eq = (left: 'a, right: 'a): bool => left === right;
-  let neq = (left: 'a, right: 'a): bool => !eq(left, right);
 };
 
 module Option = {

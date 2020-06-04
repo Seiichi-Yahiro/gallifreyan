@@ -18,12 +18,11 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   };
 
 let rec groupWords = (letters: list(string)): list(list(string)) => {
-  let trimmedLetters = letters->Utils.List.dropWhile(Utils.Bool.eq(" "));
+  let trimmedLetters = letters->Utils.List.dropWhile((===)(" "));
   switch (trimmedLetters) {
   | [] => []
   | _ =>
-    let (word, remainder) =
-      trimmedLetters->Utils.List.span(Utils.Bool.neq(" "));
+    let (word, remainder) = trimmedLetters->Utils.List.span((!==)(" "));
     [word, ...groupWords(remainder)];
   };
 };
