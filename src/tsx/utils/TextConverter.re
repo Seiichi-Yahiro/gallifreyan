@@ -6,14 +6,14 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   switch (letters) {
   | [] => []
   | [letter] => [letter]
-  | [letter1, letter2, ...rest] =>
+  | [letter1, letter2, ...tail] =>
     switch (letter1->String.lowercase_ascii, letter2->String.lowercase_ascii) {
     | ("c", "h")
     | ("s", "h")
     | ("t", "h")
     | ("q", "u")
-    | ("n", "g") => [letter1 ++ letter2, ...groupDoubleLetters(rest)]
-    | _ => [letter1, ...groupDoubleLetters([letter2, ...rest])]
+    | ("n", "g") => [letter1 ++ letter2, ...groupDoubleLetters(tail)]
+    | _ => [letter1, ...groupDoubleLetters([letter2, ...tail])]
     }
   };
 
@@ -116,9 +116,7 @@ let convertSentenceToCircleItem = (sentence: string): ImageTypes.circleItem => {
   let tree = convertSentenceToTree(sentence);
   let words = tree->Belt.List.map(convertWordToCircleItem);
   let sentence =
-    words
-    ->Belt.List.reduce("", (acc, circleItem) => acc ++ " " ++ circleItem.text)
-    ->String.trim;
+    words->Belt.List.map(word => word.text)->Utils.List.join(" ");
 
   {
     id: uuidv4(),
