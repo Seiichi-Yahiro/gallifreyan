@@ -2,7 +2,8 @@ let createCircle = (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
   switch (circleItem.type_) {
   | Sentence => {
       id: circleItem.id,
-      r: float_of_int @@ Relude.List.length(circleItem.children) * 100 + 20,
+      r:
+        float_of_int @@ Tablecloth.List.length(circleItem.children) * 100 + 20,
       filled: false,
       pos: {
         angle: 0.0,
@@ -11,7 +12,8 @@ let createCircle = (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
     }
   | Word => {
       id: circleItem.id,
-      r: float_of_int @@ Relude.List.length(circleItem.children) * 50 + 20,
+      r:
+        float_of_int @@ Tablecloth.List.length(circleItem.children) * 50 + 20,
       filled: false,
       pos: {
         angle: 0.0,
@@ -51,10 +53,10 @@ let createCircle = (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
   };
 
 let rec flatMapCircleItemDeep =
-        (f: ImageTypes.circleItem => 'a, circleItem: ImageTypes.circleItem)
+        (~f: ImageTypes.circleItem => 'a, circleItem: ImageTypes.circleItem)
         : list(ImageTypes.circle) => {
   circleItem.children
-  |> Relude.List.map(flatMapCircleItemDeep(f))
-  |> Relude.List.flatten
-  |> Relude.List.prepend(f(circleItem));
+  ->Tablecloth.List.map(~f=flatMapCircleItemDeep(~f))
+  ->Tablecloth.List.concat
+  ->Tablecloth.List.cons(f(circleItem), _);
 };

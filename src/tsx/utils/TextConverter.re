@@ -8,8 +8,8 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   | [letter] => [letter]
   | [letter1, letter2, ...tail] =>
     switch (
-      letter1 |> Relude.String.toLowerCase,
-      letter2 |> Relude.String.toLowerCase,
+      letter1->Tablecloth.String.toLower,
+      letter2->Tablecloth.String.toLower,
     ) {
     | ("c", "h")
     | ("s", "h")
@@ -21,11 +21,12 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   };
 
 let rec groupWords = (letters: list(string)): list(list(string)) => {
-  let trimmedLetters = letters |> Relude.List.dropWhile((===)(" "));
+  let trimmedLetters = letters->Tablecloth.List.dropWhile(~f=(===)(" "));
   switch (trimmedLetters) {
   | [] => []
   | _ =>
-    let (word, remainder) = trimmedLetters |> Utils.List.span((!==)(" "));
+    let (word, remainder) =
+      trimmedLetters->Tablecloth.List.splitWhen(~f=(===)(" "));
     [word, ...groupWords(remainder)];
   };
 };
@@ -48,7 +49,7 @@ let createLineSlotIds = (letterType: ImageTypes.letterType): list(uuid) => {
       }
     };
 
-  Relude.List.makeWithIndex(numberOfLines, _ => uuidv4());
+  Tablecloth.List.initialize(numberOfLines, _ => uuidv4());
 };
 
 let createDots =
@@ -64,7 +65,7 @@ let createDots =
     | _ => 0
     };
 
-  Relude.List.makeWithIndex(numberOfDots, _ =>
+  Tablecloth.List.initialize(numberOfDots, _ =>
     ImageTypes.{
       id: uuidv4(),
       text: "DOT",
@@ -102,33 +103,32 @@ let convertLetterToCircleItem = (letter: string): ImageTypes.circleItem => {
 };
 
 let convertWordToCircleItem = (word: list(string)): ImageTypes.circleItem => {
-  let letters = word |> Relude.List.map(convertLetterToCircleItem);
-  let word = word |> Relude.List.foldLeft((++), "");
+  let letters = word->Tablecloth.List.map(~f=convertLetterToCircleItem);
+  let word = word->Tablecloth.String.join(~sep="");
 
   {id: uuidv4(), text: word, lineSlots: [], children: letters, type_: Word};
 };
 
 let convertSentenceToTree = (sentence: string): list(list(string)) => {
   sentence
-  |> Relude.String.toList
-  |> groupDoubleLetters
-  |> groupWords
-  |> Relude.List.map(Relude.List.filter(isValidLetter));
+  ->Tablecloth.String.split(~on="")
+  ->groupDoubleLetters
+  ->groupWords
+  ->Tablecloth.List.map(~f=Tablecloth.List.filter(~f=isValidLetter));
 };
 
 let convertSentenceToCircleItem = (sentence: string): ImageTypes.circleItem => {
   let tree = convertSentenceToTree(sentence);
-  let words = tree |> Relude.List.map(convertWordToCircleItem);
+  let words = tree->Tablecloth.List.map(~f=convertWordToCircleItem);
   let sentence =
     words
-    |> Relude.List.map((word: ImageTypes.circleItem) => word.text)
-    |> Utils.List.join(" ");
+    ->Tablecloth.List.map(~f=word => word.text)
+    ->Tablecloth.String.join(~sep=" ");
 
   {
     id: uuidv4(),
     text: sentence,
     lineSlots: [],
-
     children: words,
     type_: Sentence,
   };

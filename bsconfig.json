@@ -24,8 +24,7 @@
     "@jsiebern/bs-material-ui-lab",
     "bs-guid",
     "reductive-dev-tools",
-    "bs-bastet",
-    "relude"
+    "tablecloth-bucklescript"
   ],
   "ppx-flags": [],
   "refmt": 3

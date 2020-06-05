@@ -25,7 +25,7 @@ let reductiveDevToolsEnhancer =
         ~actionCreators={
           "addSentence": (sentence: string) =>
             ImageAction(AddSentence(sentence))
-            |> ReductiveDevTools.Utilities.Serializer.serializeAction,
+            ->ReductiveDevTools.Utilities.Serializer.serializeAction,
         },
         (),
       ),
