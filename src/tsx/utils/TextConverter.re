@@ -7,7 +7,10 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   | [] => []
   | [letter] => [letter]
   | [letter1, letter2, ...tail] =>
-    switch (letter1->String.lowercase_ascii, letter2->String.lowercase_ascii) {
+    switch (
+      letter1 |> Relude.String.toLowerCase,
+      letter2 |> Relude.String.toLowerCase,
+    ) {
     | ("c", "h")
     | ("s", "h")
     | ("t", "h")
@@ -18,11 +21,11 @@ let rec groupDoubleLetters = (letters: list(string)): list(string) =>
   };
 
 let rec groupWords = (letters: list(string)): list(list(string)) => {
-  let trimmedLetters = letters->Utils.List.dropWhile((===)(" "));
+  let trimmedLetters = letters |> Relude.List.dropWhile((===)(" "));
   switch (trimmedLetters) {
   | [] => []
   | _ =>
-    let (word, remainder) = trimmedLetters->Utils.List.span((!==)(" "));
+    let (word, remainder) = trimmedLetters |> Utils.List.span((!==)(" "));
     [word, ...groupWords(remainder)];
   };
 };
@@ -45,7 +48,7 @@ let createLineSlotIds = (letterType: ImageTypes.letterType): list(uuid) => {
       }
     };
 
-  Belt.List.makeBy(numberOfLines, _ => uuidv4());
+  Relude.List.makeWithIndex(numberOfLines, _ => uuidv4());
 };
 
 let createDots =
@@ -61,7 +64,7 @@ let createDots =
     | _ => 0
     };
 
-  Belt.List.makeBy(numberOfDots, _ =>
+  Relude.List.makeWithIndex(numberOfDots, _ =>
     ImageTypes.{
       id: uuidv4(),
       text: "DOT",
@@ -99,24 +102,27 @@ let convertLetterToCircleItem = (letter: string): ImageTypes.circleItem => {
 };
 
 let convertWordToCircleItem = (word: list(string)): ImageTypes.circleItem => {
-  let letters = word->Belt.List.map(convertLetterToCircleItem);
-  let word = word->Belt.List.reduce("", (++));
+  let letters = word |> Relude.List.map(convertLetterToCircleItem);
+  let word = word |> Relude.List.foldLeft((++), "");
 
   {id: uuidv4(), text: word, lineSlots: [], children: letters, type_: Word};
 };
 
 let convertSentenceToTree = (sentence: string): list(list(string)) => {
-  Utils.List.fromString(sentence)
-  ->groupDoubleLetters
-  ->groupWords
-  ->Belt.List.map(Belt.List.keep(_, isValidLetter));
+  sentence
+  |> Relude.String.toList
+  |> groupDoubleLetters
+  |> groupWords
+  |> Relude.List.map(Relude.List.filter(isValidLetter));
 };
 
 let convertSentenceToCircleItem = (sentence: string): ImageTypes.circleItem => {
   let tree = convertSentenceToTree(sentence);
-  let words = tree->Belt.List.map(convertWordToCircleItem);
+  let words = tree |> Relude.List.map(convertWordToCircleItem);
   let sentence =
-    words->Belt.List.map(word => word.text)->Utils.List.join(" ");
+    words
+    |> Relude.List.map((word: ImageTypes.circleItem) => word.text)
+    |> Utils.List.join(" ");
 
   {
     id: uuidv4(),

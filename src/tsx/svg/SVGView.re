@@ -13,16 +13,16 @@ let make = () => {
 
   let calculateViewerSize = _ =>
     viewBoxRef.current
-    ->Js.Nullable.toOption
-    ->Belt_Option.map(Webapi.Dom.Element.getBoundingClientRect)
-    ->Belt_Option.forEach(rect =>
-        setViewBox(_ =>
-          {
-            width: rect->Webapi.Dom.DomRect.width,
-            height: rect->Webapi.Dom.DomRect.height,
-          }
-        )
-      );
+    |> Js.Nullable.toOption
+    |> Relude.Option.map(Webapi.Dom.Element.getBoundingClientRect)
+    |> Relude.Option.forEach(rect =>
+         setViewBox(_ =>
+           {
+             width: rect |> Webapi.Dom.DomRect.width,
+             height: rect |> Webapi.Dom.DomRect.height,
+           }
+         )
+       );
 
   React.useEffect0(() => {
     calculateViewerSize();
@@ -43,14 +43,14 @@ let make = () => {
           calculateViewerSize,
           Webapi.Dom.window,
         )
-        ->ignore,
+        |> ignore,
     );
   });
 
   let size = AppState.useSelector(svgSizeSelector);
   let viewbox = {j|0 0 $size $size|j};
 
-  <div className="app__svg-view" ref={viewBoxRef->ReactDOMRe.Ref.domRef}>
+  <div className="app__svg-view" ref={viewBoxRef |> ReactDOMRe.Ref.domRef}>
     <SVGPanZoom
       width={viewBox.width}
       height={viewBox.height}

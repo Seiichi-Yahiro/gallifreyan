@@ -1,19 +1,19 @@
 open ImageTypes;
 
 type imageState = {
-  circles: Belt.Map.String.t(circle),
-  lines: Belt.Map.String.t(line),
-  lineSlots: Belt.Map.String.t(lineSlot),
-  circleItems: Belt.Map.String.t(circleItem),
+  circles: Relude.StringMap.t(circle),
+  lines: Relude.StringMap.t(line),
+  lineSlots: Relude.StringMap.t(lineSlot),
+  circleItems: Relude.StringMap.t(circleItem),
   text: list(circleItem),
   svgSize: int,
 };
 
 let initialImageState: imageState = {
-  circles: Belt.Map.String.empty,
-  lines: Belt.Map.String.empty,
-  lineSlots: Belt.Map.String.empty,
-  circleItems: Belt.Map.String.empty,
+  circles: Relude.StringMap.make(),
+  lines: Relude.StringMap.make(),
+  lineSlots: Relude.StringMap.make(),
+  circleItems: Relude.StringMap.make(),
   text: [],
   svgSize: 1000,
 };
@@ -26,18 +26,19 @@ let imageReducer = (state: imageState, action: imageAction) =>
   | AddSentence(sentence) =>
     let circleItem = TextConverter.convertSentenceToCircleItem(sentence);
     let circles =
-      TextTransforms.convertCircleItemToCircleRecursive(circleItem)
-      ->Belt.List.map(circle => (circle.id, circle))
-      ->Belt.List.toArray
-      ->Belt.Map.String.fromArray;
+      circleItem
+      |> TextTransforms.flatMapCircleItemDeep(TextTransforms.createCircle)
+      |> Relude.List.map((circle: circle) => (circle.id, circle))
+      |> Relude.StringMap.fromList;
 
     {
       ...state,
       text: [circleItem, ...state.text],
       circles:
         state.circles
-        ->Belt.Map.String.merge(circles, (_, a, b) =>
-            Utils.Option.xor(a, b)
-          ),
+        |> Relude.StringMap.merge(
+             (_, a, b) => Relude.Option.orElse(a, ~fallback=b),
+             circles,
+           ),
     };
   };

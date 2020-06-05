@@ -58,6 +58,7 @@ type circleType =
   | Letter(letterType)
   | Dot;
 
+// [@bs.deriving accessors]
 type circleItem = {
   id: uuid,
   text: string,

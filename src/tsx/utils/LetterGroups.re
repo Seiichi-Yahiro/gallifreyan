@@ -93,9 +93,9 @@ let isConsonant = (text: string): bool =>
     Consonant.onLine,
     Consonant.doubleLetter,
   ]
-  ->Belt.List.some(Js.Re.test_(_, text));
+  |> Relude.List.any(Js.Re.test_(_, text));
 
 let isVocal = Js.Re.test_(Vocal.vocal, _);
 
 let isValidLetter = (text: string): bool =>
-  [isVocal, isConsonant]->Belt.List.some(predicate => predicate(text));
+  [isVocal, isConsonant] |> Relude.List.any(predicate => predicate(text));

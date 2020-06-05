@@ -1,9 +1,8 @@
-let convertCircleItemToCircle =
-    (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
+let createCircle = (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
   switch (circleItem.type_) {
   | Sentence => {
       id: circleItem.id,
-      r: float_of_int @@ circleItem.children->Belt.List.length * 100 + 20,
+      r: float_of_int @@ Relude.List.length(circleItem.children) * 100 + 20,
       filled: false,
       pos: {
         angle: 0.0,
@@ -12,7 +11,7 @@ let convertCircleItemToCircle =
     }
   | Word => {
       id: circleItem.id,
-      r: float_of_int @@ circleItem.children->Belt.List.length * 50 + 20,
+      r: float_of_int @@ Relude.List.length(circleItem.children) * 50 + 20,
       filled: false,
       pos: {
         angle: 0.0,
@@ -51,10 +50,11 @@ let convertCircleItemToCircle =
     }
   };
 
-let rec convertCircleItemToCircleRecursive =
-        (circleItem: ImageTypes.circleItem): list(ImageTypes.circle) => {
+let rec flatMapCircleItemDeep =
+        (f: ImageTypes.circleItem => 'a, circleItem: ImageTypes.circleItem)
+        : list(ImageTypes.circle) => {
   circleItem.children
-  ->Belt.List.map(convertCircleItemToCircleRecursive)
-  ->Belt.List.flatten
-  ->Belt.List.add(convertCircleItemToCircle(circleItem));
+  |> Relude.List.map(flatMapCircleItemDeep(f))
+  |> Relude.List.flatten
+  |> Relude.List.prepend(f(circleItem));
 };

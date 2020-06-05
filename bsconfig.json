@@ -23,7 +23,9 @@
     "@jsiebern/bs-material-ui",
     "@jsiebern/bs-material-ui-lab",
     "bs-guid",
-    "reductive-dev-tools"
+    "reductive-dev-tools",
+    "bs-bastet",
+    "relude"
   ],
   "ppx-flags": [],
   "refmt": 3

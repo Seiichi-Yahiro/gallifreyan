@@ -1,3 +1,4 @@
+module List = Relude.List;
 open TreeIcons;
 
 let textSelector = (state: AppState.appState) => state.image.text;
@@ -12,16 +13,10 @@ let make = (~className) => {
     defaultEndIcon={<CloseSquare />}
     className>
     {text
-     ->Belt.List.map(item =>
-         <TreeItemCircle
-           key={item.id}
-           id={item.id}
-           text={item.text}
-           lineSlots={item.lineSlots}>
-           {item.children}
-         </TreeItemCircle>
-       )
-     ->Belt.List.reverse
-     ->Belt.List.toArray}
+     |> Relude.List.map((ImageTypes.{id, text, lineSlots, children}) =>
+          <TreeItemCircle key=id id text lineSlots> children </TreeItemCircle>
+        )
+     |> Relude.List.reverse
+     |> Relude.List.toArray}
   </MaterialUi_Lab.TreeView>;
 };

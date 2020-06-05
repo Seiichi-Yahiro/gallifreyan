@@ -14,7 +14,7 @@ let make = (~className) => {
   };
 
   let onKeyPress = event =>
-    if (event->ReactEvent.Keyboard.key === "Enter") {
+    if (event |> ReactEvent.Keyboard.key === "Enter") {
       addSentence(state);
     };
 

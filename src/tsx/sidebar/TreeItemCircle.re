@@ -1,3 +1,5 @@
+module List = Relude.List;
+module Array = Relude.Array;
 open CommonTypes;
 
 module type NodeType = {
@@ -40,28 +42,24 @@ module rec RecursiveTreeItemCircle: NodeType = {
       ) => {
     let children' =
       children
-      ->Belt.List.map(child =>
-          <RecursiveTreeItemCircle
-            key={child.id}
-            id={child.id}
-            text={child.text}
-            lineSlots={child.lineSlots}>
-            {child.children}
-          </RecursiveTreeItemCircle>
-        )
-      ->Belt.List.toArray;
+      |> Relude.List.map((ImageTypes.{id, text, lineSlots, children}) =>
+           <RecursiveTreeItemCircle key=id id text lineSlots>
+             children
+           </RecursiveTreeItemCircle>
+         )
+      |> Relude.List.toArray;
 
     let lineSlots' =
       lineSlots
-      ->Belt.List.map(slot => <TreeItemLineSlot key=slot id=slot />)
-      ->Belt.List.toArray;
+      |> Relude.List.map(slot => <TreeItemLineSlot key=slot id=slot />)
+      |> Relude.List.toArray;
 
     let numberOfChildren =
-      children'->Belt.Array.length + lineSlots'->Belt.Array.length;
+      Relude.Array.length(children') + Relude.Array.length(lineSlots');
 
-    <MaterialUi_Lab.TreeItem nodeId=id label={text->React.string}>
+    <MaterialUi_Lab.TreeItem nodeId=id label={text |> React.string}>
       {if (numberOfChildren > 0) {
-         <> children'->React.array lineSlots'->React.array </>;
+         <> {React.array(children')} {React.array(lineSlots')} </>;
        } else {
          React.null;
        }}
