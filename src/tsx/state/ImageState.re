@@ -26,8 +26,12 @@ let imageReducer = (state: imageState, action: imageAction) =>
   | AddSentence(sentence) =>
     let circleItem = TextConverter.convertSentenceToCircleItem(sentence);
     let circles =
-      circleItem
-      ->TextTransforms.flatMapCircleItemDeep(~f=TextTransforms.createCircle)
+      TextTransforms.createCircles(
+        ~angleStep=0.0,
+        ~parentRadius=0.0,
+        0,
+        circleItem,
+      )
       ->Tablecloth.List.map(~f=circle => (circle.id, circle))
       ->Tablecloth.StrDict.fromList;
 

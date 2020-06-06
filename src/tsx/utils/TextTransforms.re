@@ -1,62 +1,70 @@
-let createCircle = (circleItem: ImageTypes.circleItem): ImageTypes.circle =>
-  switch (circleItem.type_) {
-  | Sentence => {
-      id: circleItem.id,
-      r:
-        float_of_int @@ Tablecloth.List.length(circleItem.children) * 100 + 20,
-      filled: false,
-      pos: {
-        angle: 0.0,
-        distance: 0.0,
-      },
-    }
-  | Word => {
-      id: circleItem.id,
-      r:
-        float_of_int @@ Tablecloth.List.length(circleItem.children) * 50 + 20,
-      filled: false,
-      pos: {
-        angle: 0.0,
-        distance: 0.0,
-      },
-    }
-  | Letter(letterType) =>
-    switch (letterType) {
-    | Vocal(_, _) => {
-        id: circleItem.id,
-        r: 20.0,
-        filled: false,
-        pos: {
-          angle: 0.0,
-          distance: 0.0,
-        },
-      }
-    | Consonant(_, _) => {
-        id: circleItem.id,
-        r: 50.0,
-        filled: false,
-        pos: {
-          angle: 0.0,
-          distance: 0.0,
-        },
-      }
-    }
-  | Dot => {
-      id: circleItem.id,
-      r: 3.0,
-      filled: true,
-      pos: {
-        angle: 0.0,
-        distance: 0.0,
-      },
-    }
-  };
-
-let rec flatMapCircleItemDeep =
-        (~f: ImageTypes.circleItem => 'a, circleItem: ImageTypes.circleItem)
+let rec createCircles =
+        (
+          ~angleStep: float,
+          ~parentRadius: float,
+          indexOfSelf: int,
+          circleItem: ImageTypes.circleItem,
+        )
         : list(ImageTypes.circle) => {
+  let numberOfChildren = circleItem.children->Tablecloth.List.length;
+  let childAngleStep = (-360.0) /. numberOfChildren->float_of_int;
+  let angle = indexOfSelf->float_of_int *. angleStep;
+  let (r, distance) =
+    switch (circleItem.type_) {
+    | Sentence =>
+      let r = 450.0;
+      let distance = 0.0;
+      (r, distance);
+    | Word =>
+      let r = 100.0;
+      let distance = parentRadius -. r -. 10.0;
+      (r, distance);
+    | Letter(Consonant(posType, _)) =>
+      let r = 50.0;
+      let distance =
+        switch (posType) {
+        | DeepCut => parentRadius -. r /. 2.0 *. 1.25
+        | ShallowCut => parentRadius +. r /. 2.0
+        | OnLine => parentRadius
+        | Inside => parentRadius -. r -. 5.0
+        };
+      (r, distance);
+    | Letter(Vocal(posType, _)) =>
+      let r = 20.0;
+      let distance =
+        switch (posType) {
+        | Inside => parentRadius -. r -. 5.0
+        | Outside => parentRadius +. r +. 5.0
+        | OnLine => parentRadius
+        };
+      (r, distance);
+    | Dot =>
+      let r = 5.0;
+      let distance = parentRadius -. r *. 2.0;
+      (r, distance);
+    };
+
+  let filled =
+    switch (circleItem.type_) {
+    | Dot => true
+    | _ => false
+    };
+
   circleItem.children
-  ->Tablecloth.List.map(~f=flatMapCircleItemDeep(~f))
+  ->Tablecloth.List.indexedMap(
+      ~f=createCircles(~angleStep=childAngleStep, ~parentRadius=r),
+    )
   ->Tablecloth.List.concat
-  ->Tablecloth.List.cons(f(circleItem), _);
+  ->Tablecloth.List.cons(
+      ImageTypes.{
+        id: circleItem.id,
+        r,
+        filled,
+        pos: {
+          angle,
+          distance,
+        },
+      },
+      _,
+    );
 };
