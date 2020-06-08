@@ -1,6 +1,6 @@
 open CommonTypes;
 
-module type NodeType = {
+module type RecursiveTreeItemCircleType = {
   let make:
     {
       .
@@ -29,7 +29,7 @@ module type NodeType = {
     };
 };
 
-module rec RecursiveTreeItemCircle: NodeType = {
+module rec RecursiveTreeItemCircle: RecursiveTreeItemCircleType = {
   [@react.component]
   let make =
       (

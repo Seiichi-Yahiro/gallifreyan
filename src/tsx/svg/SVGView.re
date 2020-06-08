@@ -1,5 +1,3 @@
-let svgSizeSelector = (state: AppState.appState) => state.image.svgSize;
-
 type rect = {
   width: float,
   height: float,
@@ -7,16 +5,16 @@ type rect = {
 
 [@react.component]
 let make = () => {
-  let viewBoxRef = React.useRef(Js.Nullable.null);
-  let (viewBox, setViewBox) =
+  let viewAreaRef = React.useRef(Js.Nullable.null);
+  let (viewArea, setViewArea) =
     React.useState(() => {width: 0.0, height: 0.0});
 
   let calculateViewerSize = _ =>
-    viewBoxRef.current
+    viewAreaRef.current
     ->Js.Nullable.toOption
     ->Tablecloth.Option.map(~f=Webapi.Dom.Element.getBoundingClientRect)
     ->Tablecloth.Option.map(~f=rect =>
-        setViewBox(_ =>
+        setViewArea(_ =>
           {
             width: rect->Webapi.Dom.DomRect.width,
             height: rect->Webapi.Dom.DomRect.height,
@@ -48,16 +46,7 @@ let make = () => {
     );
   });
 
-  let size = AppState.useSelector(svgSizeSelector);
-  let viewbox = {j|0 0 $size $size|j};
-
-  <div className="app__svg-view" ref={viewBoxRef->ReactDOMRe.Ref.domRef}>
-    <SVGPanZoom
-      width={viewBox.width}
-      height={viewBox.height}
-      detectAutoPan=false
-      toolbarProps={position: "left"}>
-      <svg viewBox=viewbox />
-    </SVGPanZoom>
+  <div className="app__svg-view" ref={viewAreaRef->ReactDOMRe.Ref.domRef}>
+    <SVG width={viewArea.width} height={viewArea.height} />
   </div>;
 };

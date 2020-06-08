@@ -7,8 +7,7 @@ external make:
     ~height: float,
     ~detectAutoPan: bool=?,
     ~toolbarProps: toolbarProps=?,
-    ~children: React.element,
-    unit
+    ~children: React.element
   ) =>
   React.element =
   "UncontrolledReactSVGPanZoom";
