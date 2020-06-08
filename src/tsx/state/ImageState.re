@@ -29,6 +29,8 @@ let imageReducer = (state: imageState, action: imageAction) =>
       TextTransforms.createCircles(
         ~angleStep=0.0,
         ~parentRadius=0.0,
+        ~parentAngle=0.0,
+        ~numberOfSelf=1,
         0,
         circleItem,
       )

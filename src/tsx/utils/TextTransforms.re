@@ -18,13 +18,17 @@ let rec createCircles =
         (
           ~angleStep: float,
           ~parentRadius: float,
+          ~parentAngle: float,
+          ~numberOfSelf: int,
           indexOfSelf: int,
           circleItem: ImageTypes.circleItem,
         )
         : list(ImageTypes.circle) => {
   let numberOfChildren = circleItem.children->Tablecloth.List.length;
   let childAngleStep = (-360.0) /. numberOfChildren->float_of_int;
-  let angle = indexOfSelf->float_of_int *. angleStep;
+  let angle = ref(indexOfSelf->float_of_int *. angleStep);
+  let filled = ref(false);
+
   let (r, distance) =
     switch (circleItem.type_) {
     | Sentence =>
@@ -57,30 +61,42 @@ let rec createCircles =
     | Dot =>
       let r = 5.0;
       let distance = parentRadius -. r *. 2.0;
+      filled := true;
+
+      let letterSideAngle = parentAngle -. 180.0;
+      let dotDistanceAngle = (-45.0);
+      let centerDotsOnLetterSideAngle =
+        (numberOfSelf - 1)->float_of_int *. dotDistanceAngle /. 2.0;
+      angle :=
+        indexOfSelf->float_of_int
+        *. dotDistanceAngle
+        -. centerDotsOnLetterSideAngle
+        +. letterSideAngle;
       (r, distance);
     };
 
-  let filled =
-    switch (circleItem.type_) {
-    | Dot => true
-    | _ => false
-    };
+  let children =
+    circleItem.children
+    ->Tablecloth.List.indexedMap(
+        ~f=
+          createCircles(
+            ~angleStep=childAngleStep,
+            ~parentRadius=r,
+            ~parentAngle=angle^,
+            ~numberOfSelf=numberOfChildren,
+          ),
+      )
+    ->Tablecloth.List.concat;
 
-  circleItem.children
-  ->Tablecloth.List.indexedMap(
-      ~f=createCircles(~angleStep=childAngleStep, ~parentRadius=r),
-    )
-  ->Tablecloth.List.concat
-  ->Tablecloth.List.cons(
-      ImageTypes.{
-        id: circleItem.id,
-        r,
-        filled,
-        pos: {
-          angle,
-          distance,
-        },
-      },
-      _,
-    );
+  let self: ImageTypes.circle = {
+    id: circleItem.id,
+    r,
+    filled: filled^,
+    pos: {
+      angle: angle^,
+      distance,
+    },
+  };
+
+  [self, ...children];
 };
