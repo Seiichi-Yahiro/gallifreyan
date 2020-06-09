@@ -17,8 +17,8 @@ let make = (~className) => {
     defaultEndIcon={<CloseSquare />}
     className>
     {text
-     ->Tablecloth.List.map(~f=({id, text, lineSlots, children}) =>
-         <TreeItemCircle key=id id text lineSlots> children </TreeItemCircle>
+     ->Tablecloth.List.map(~f=circleItem =>
+         <TreeItemCircle key={circleItem.id} circleItem />
        )
      ->Tablecloth.List.reverse
      ->Tablecloth.Array.fromList}
