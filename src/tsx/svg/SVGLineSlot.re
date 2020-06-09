@@ -22,8 +22,9 @@ let make = (~id: uuid) => {
     let yDir = lineLength *. y /. length;
     let x2 = x +. xDir;
     let y2 = y +. yDir;
-    let [x1, y1, x2, y2] =
-      [x, y, x2, y2]->Tablecloth.List.map(~f=Js.Float.toString);
+
+    let (x1, y1) = (x, y)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
+    let (x2, y2) = (x2, y2)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
 
     <SVGGroup x=0.0 y=0.0>
       <line x1 y1 x2 y2 strokeWidth="1" stroke="inherit" />
