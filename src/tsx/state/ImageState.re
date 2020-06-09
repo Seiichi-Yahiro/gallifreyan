@@ -1,6 +1,6 @@
 open ImageTypes;
 
-type imageState = {
+type state = {
   circles: Tablecloth.StrDict.t(circle),
   lines: Tablecloth.StrDict.t(line),
   lineSlots: Tablecloth.StrDict.t(lineSlot),
@@ -9,7 +9,7 @@ type imageState = {
   svgSize: int,
 };
 
-let initialImageState: imageState = {
+let initialState: state = {
   circles: Tablecloth.StrDict.empty,
   lines: Tablecloth.StrDict.empty,
   lineSlots: Tablecloth.StrDict.empty,
@@ -18,10 +18,10 @@ let initialImageState: imageState = {
   svgSize: 1000,
 };
 
-type imageAction =
+type action =
   | AddSentence(string);
 
-let imageReducer = (state: imageState, action: imageAction) =>
+let reducer = (state: state, action: action) =>
   switch (action) {
   | AddSentence(sentence) =>
     let circleItem = TextConverter.convertSentenceToCircleItem(sentence);

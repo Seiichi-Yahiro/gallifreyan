@@ -1,18 +1,27 @@
-open ImageState;
+type appState = {
+  image: ImageState.state,
+  work: WorkState.state,
+};
 
-type appState = {image: imageState};
-
-let initialAppState: appState = {image: initialImageState};
+let initialAppState: appState = {
+  image: ImageState.initialState,
+  work: WorkState.initialState,
+};
 
 type appAction =
-  | ImageAction(imageAction)
+  | ImageAction(ImageState.action)
+  | WorkAction(WorkState.action)
   | DevToolsCustomAction;
 
 let appReducer = (state: appState, action: appAction) =>
   switch (action) {
   | ImageAction(imageAction) => {
       ...state,
-      image: imageReducer(state.image, imageAction),
+      image: ImageState.reducer(state.image, imageAction),
+    }
+  | WorkAction(workAction) => {
+      ...state,
+      work: WorkState.reducer(state.work, workAction),
     }
   | _ => state
   };
