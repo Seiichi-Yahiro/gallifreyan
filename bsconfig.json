@@ -1,5 +1,5 @@
 {
-  "name": "your-project-name",
+  "name": "Gallifreyan",
   "reason": { "react-jsx": 3 },
   "bsc-flags": ["-bs-super-errors", "-bs-g"],
   "sources": [
