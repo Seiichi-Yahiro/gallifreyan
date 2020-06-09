@@ -1,21 +1,21 @@
+open CommonTypes;
+
 let hoverColor = "#2196f3";
 let selectedColor = "#ff1744";
 
+let getColor = (~isSelected: bool, ~isHovered: bool) =>
+  switch (isSelected, isHovered) {
+  | (true, _) => selectedColor
+  | (false, true) => hoverColor
+  | (false, false) => "inherit"
+  };
+
 [@react.component]
-let make =
-    (
-      ~x: float,
-      ~y: float,
-      ~isHovered: bool=false,
-      ~isSelected: bool=false,
-      ~children: React.element,
-    ) => {
-  let color =
-    switch (isSelected, isHovered) {
-    | (true, _) => selectedColor
-    | (false, true) => hoverColor
-    | (false, false) => "inherit"
-    };
+let make = (~id: uuid, ~x: float, ~y: float, ~children: React.element) => {
+  let isSelected = Hooks.useIsSelected(id);
+  let isHovered = Hooks.useIsHovered(id);
+
+  let color = getColor(~isSelected, ~isHovered);
 
   let style =
     ReactDOMRe.Style.make(

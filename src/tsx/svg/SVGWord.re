@@ -55,6 +55,6 @@ let make =
       <circle r={r->Js.Float.toString} fill="#000000" stroke="#ffffff" />
       consonantCutMasks
     </mask>
-    <SVGCircle r filled mask={j|url(#mask_$id)|j} />
+    <SVGCircle id r filled mask={j|url(#mask_$id)|j} />
   </>;
 };

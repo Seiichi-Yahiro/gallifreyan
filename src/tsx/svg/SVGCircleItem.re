@@ -66,14 +66,14 @@ module rec RecursiveSVGCircleItemType: RecursiveSVGCircleItemType = {
         ->Tablecloth.Array.fromList
         ->React.array;
 
-      <SVGGroup x y>
+      <SVGGroup id x y>
         {switch (type_) {
-         | Sentence => <SVGSentence r filled />
+         | Sentence => <SVGSentence id r filled />
          | Word => <SVGWord id r filled letters=children />
          | Letter(Consonant(posType, _)) =>
            <SVGConsonant id parentId posType x y r filled />
-         | Letter(Vocal(_, _)) => <SVGVocal r filled />
-         | Dot => <SVGDot r filled />
+         | Letter(Vocal(_, _)) => <SVGVocal id r filled />
+         | Dot => <SVGDot id r filled />
          }}
         lineSlots'
         children'

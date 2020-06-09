@@ -13,6 +13,9 @@ type action =
 
 let reducer = (state: state, action: action) =>
   switch (action) {
-  | Select(item) => {...state, selected: item}
-  | Hover(item) => {...state, hovered: item}
+  | Select(newSelection) =>
+    let isAlreadySelected =
+      newSelection->Belt.Option.eq(state.selected, (===));
+    {...state, selected: isAlreadySelected ? None : newSelection};
+  | Hover(newHoverd) => {...state, hovered: newHoverd}
   };

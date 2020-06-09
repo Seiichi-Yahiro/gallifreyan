@@ -2,6 +2,10 @@ open CommonTypes;
 
 [@react.component]
 let make = (~id: uuid) => {
+  let dispatch = AppState.useDispatch();
+  let isSelected = Hooks.useIsSelected(id);
+  let isHovered = Hooks.useIsHovered(id);
+
   let lineSlotSelector =
     React.useCallback1(
       (state: AppState.appState) =>
@@ -26,8 +30,27 @@ let make = (~id: uuid) => {
     let (x1, y1) = (x, y)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
     let (x2, y2) = (x2, y2)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
 
-    <SVGGroup x=0.0 y=0.0>
+    let onMouseEnter = _ => id->Some->Hover->WorkAction->dispatch;
+    let onMouseLeave = _ => None->Hover->WorkAction->dispatch;
+    let onClick = event => {
+      id->Some->Select->WorkAction->dispatch;
+      event->ReactEvent.Mouse.stopPropagation;
+    };
+
+    let color = SVGGroup.getColor(~isHovered, ~isSelected);
+
+    <g fill=color stroke=color>
       <line x1 y1 x2 y2 strokeWidth="1" stroke="inherit" />
-    </SVGGroup>;
+      <circle
+        cx=x1
+        cy=y1
+        r="5"
+        fill="transparent"
+        stroke={isSelected || isHovered ? "inherit" : "none"}
+        onMouseEnter
+        onMouseLeave
+        onClick
+      />
+    </g>;
   };
 };

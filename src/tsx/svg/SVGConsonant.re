@@ -48,8 +48,8 @@ let make =
         <circle r={r->Js.Float.toString} fill="#000000" stroke="#ffffff" />
       </mask>
       <SVGWordCutMask id=parentId letterId=id x y />
-      <SVGCircle r filled fill="transparent" stroke="none" />
+      <SVGCircle id r filled fill="transparent" stroke="none" />
     </>
-  | _ => <SVGCircle r filled />
+  | _ => <SVGCircle id r filled />
   };
 };
