@@ -36,6 +36,12 @@ let imageReducer = (state: imageState, action: imageAction) =>
       ->Tablecloth.List.map(~f=circle => (circle.id, circle))
       ->Tablecloth.StrDict.fromList;
 
+    let lineSlots =
+      circleItem
+      ->TextConverter.createLineSlots(~circles)
+      ->Tablecloth.List.map(~f=slot => (slot.id, slot))
+      ->Tablecloth.StrDict.fromList;
+
     {
       ...state,
       text: [circleItem, ...state.text],
@@ -44,6 +50,12 @@ let imageReducer = (state: imageState, action: imageAction) =>
         ->Tablecloth.StrDict.merge(
             ~f=(_, a, b) => Tablecloth.Option.orElse(a, b),
             circles,
+          ),
+      lineSlots:
+        state.lineSlots
+        ->Tablecloth.StrDict.merge(
+            ~f=(_, a, b) => Tablecloth.Option.orElse(a, b),
+            lineSlots,
           ),
     };
   };

@@ -60,6 +60,12 @@ module rec RecursiveSVGCircleItemType: RecursiveSVGCircleItemType = {
         ->React.array;
       };
 
+      let lineSlots' =
+        lineSlots
+        ->Tablecloth.List.map(~f=slot => <SVGLineSlot key=slot id=slot />)
+        ->Tablecloth.Array.fromList
+        ->React.array;
+
       <SVGGroup x y>
         {switch (type_) {
          | Sentence => <SVGSentence r filled />
@@ -69,6 +75,7 @@ module rec RecursiveSVGCircleItemType: RecursiveSVGCircleItemType = {
          | Letter(Vocal(_, _)) => <SVGVocal r filled />
          | Dot => <SVGDot r filled />
          }}
+        lineSlots'
         children'
       </SVGGroup>;
     };

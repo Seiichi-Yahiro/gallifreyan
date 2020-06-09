@@ -53,6 +53,24 @@ let defaultAngle =
     index->float_of_int *. angleStep;
   };
 
+let defaultLineSlotAngle =
+    (
+      ~numberOfSiblings: int,
+      ~parentAngle: float,
+      ~pointOutside=false,
+      index: int,
+    )
+    : float => {
+  let parentSideAngle = parentAngle -. (pointOutside ? 0.0 : 180.0);
+  let lineDistanceAngle = (-45.0);
+  let centerLinesOnParentSideAngle =
+    (numberOfSiblings - 1)->float_of_int *. lineDistanceAngle /. 2.0;
+  index->float_of_int
+  *. lineDistanceAngle
+  -. centerLinesOnParentSideAngle
+  +. parentSideAngle;
+};
+
 let isFilled = (type_: ImageTypes.circleType): bool =>
   switch (type_) {
   | Dot => true

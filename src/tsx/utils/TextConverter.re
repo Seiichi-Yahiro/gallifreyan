@@ -176,3 +176,59 @@ let rec createCircles =
 
   [self, ...children];
 };
+
+let rec createLineSlots =
+        (
+          ~circles: Tablecloth.StrDict.t(ImageTypes.circle),
+          circleItem: ImageTypes.circleItem,
+        )
+        : list(ImageTypes.lineSlot) => {
+  switch (circleItem.type_) {
+  | Letter(
+      Consonant(_, SingleLine | DoubleLine | TripleLine) as letterType |
+      Vocal(_, LineInside | LineOutside) as letterType,
+    ) =>
+    let numberOfSiblings = circleItem.lineSlots->Tablecloth.List.length;
+
+    let circle = circles->Tablecloth.StrDict.get(~key=circleItem.id);
+
+    let parentAngle =
+      circle
+      ->Tablecloth.Option.map(~f=circle => circle.pos.angle)
+      ->Tablecloth.Option.withDefault(~default=0.0);
+
+    let pointOutside =
+      switch (letterType) {
+      | Vocal(_, LineOutside) => true
+      | _ => false
+      };
+
+    let calculateAngle =
+      CircleUtils.defaultLineSlotAngle(
+        ~numberOfSiblings,
+        ~parentAngle,
+        ~pointOutside,
+      );
+
+    let radius =
+      circle
+      ->Tablecloth.Option.map(~f=circle => circle.r)
+      ->Tablecloth.Option.withDefault(~default=0.0);
+
+    circleItem.lineSlots
+    ->Tablecloth.List.indexedMap(~f=(i, id) =>
+        ImageTypes.{
+          id,
+          pos: {
+            angle: calculateAngle(i),
+            distance: radius,
+          },
+          connection: None,
+        }
+      );
+  | _ =>
+    circleItem.children
+    ->Tablecloth.List.map(~f=createLineSlots(~circles))
+    ->Tablecloth.List.concat
+  };
+};
