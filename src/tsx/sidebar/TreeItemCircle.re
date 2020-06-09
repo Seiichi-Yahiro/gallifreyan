@@ -56,7 +56,7 @@ module rec RecursiveTreeItemCircle: RecursiveTreeItemCircleType = {
       Tablecloth.Array.length(children')
       + Tablecloth.Array.length(lineSlots');
 
-    <MaterialUi_Lab.TreeItem nodeId=id label={text->React.string}>
+    <MaterialUi_Lab.TreeItem nodeId=id label={<TreeLabel id text />}>
       {if (numberOfChildren > 0) {
          <> {React.array(children')} {React.array(lineSlots')} </>;
        } else {
