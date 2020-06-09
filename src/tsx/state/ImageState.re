@@ -26,11 +26,10 @@ let imageReducer = (state: imageState, action: imageAction) =>
   | AddSentence(sentence) =>
     let circleItem = TextConverter.convertSentenceToCircleItem(sentence);
     let circles =
-      TextTransforms.createCircles(
-        ~angleStep=0.0,
+      TextConverter.createCircles(
         ~parentRadius=0.0,
         ~parentAngle=0.0,
-        ~numberOfSelf=1,
+        ~numberOfSiblings=1,
         0,
         circleItem,
       )

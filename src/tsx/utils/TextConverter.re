@@ -133,3 +133,46 @@ let convertSentenceToCircleItem = (sentence: string): ImageTypes.circleItem => {
     type_: Sentence,
   };
 };
+
+let rec createCircles =
+        (
+          ~parentRadius: float,
+          ~parentAngle: float,
+          ~numberOfSiblings: int,
+          index: int,
+          circleItem: ImageTypes.circleItem,
+        )
+        : list(ImageTypes.circle) => {
+  let type_ = circleItem.type_;
+  let numberOfChildren = circleItem.children->Tablecloth.List.length;
+  let r = CircleUtils.defaultRadius(type_);
+  let distance =
+    CircleUtils.defaultDistance(~type_, ~ownRadius=r, ~parentRadius);
+  let angle =
+    index->CircleUtils.defaultAngle(~type_, ~numberOfSiblings, ~parentAngle);
+  let filled = CircleUtils.isFilled(type_);
+
+  let children =
+    circleItem.children
+    ->Tablecloth.List.indexedMap(
+        ~f=
+          createCircles(
+            ~parentRadius=r,
+            ~parentAngle=angle,
+            ~numberOfSiblings=numberOfChildren,
+          ),
+      )
+    ->Tablecloth.List.concat;
+
+  let self: ImageTypes.circle = {
+    id: circleItem.id,
+    r,
+    filled,
+    pos: {
+      angle,
+      distance,
+    },
+  };
+
+  [self, ...children];
+};
