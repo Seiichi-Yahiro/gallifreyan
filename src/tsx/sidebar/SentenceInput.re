@@ -25,6 +25,7 @@ let make = (~className) => {
       type_="text"
       placeholder="Sentence..."
       onChange=onTextChange
+      value={`String(state)}
       inputProps={"onKeyPress": onKeyPress}
     />
     <MaterialUi.Button onClick=onButtonPress>
