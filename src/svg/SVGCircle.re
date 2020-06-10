@@ -10,7 +10,7 @@ let make =
       ~fill: string="inherit",
       ~mask: string="",
     ) => {
-  let dispatch = AppState.useDispatch();
+  let dispatch = Store.useDispatch();
   let onMouseEnter = _ => id->Some->Hover->WorkAction->dispatch;
   let onMouseLeave = _ => None->Hover->WorkAction->dispatch;
   let onClick = event => {

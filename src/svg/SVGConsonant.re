@@ -5,14 +5,14 @@ module SVGWordCutMask = {
   let make = (~id: uuid, ~letterId: uuid, ~x: float, ~y: float) => {
     let circleRSelector =
       React.useCallback1(
-        (state: AppState.appState) =>
+        (state: Store.State.t) =>
           state.image.circles
           ->Tablecloth.StrDict.get(~key=id)
           ->Tablecloth.Option.map(~f=circle => circle.r),
         [|id|],
       );
 
-    let r: option(float) = AppState.useSelector(circleRSelector);
+    let r: option(float) = Store.useSelector(circleRSelector);
 
     switch (r) {
     | None => React.null

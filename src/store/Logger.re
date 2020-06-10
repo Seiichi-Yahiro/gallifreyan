@@ -1,5 +1,5 @@
 [@bs.val] [@bs.scope "console"]
-external logState:
+external logDispatch:
   (string, string, string, 'a, string, string, 'b, string, string, 'c) => unit =
   "log";
 
@@ -17,7 +17,7 @@ let logger = (store, next, action) => {
   let returnValue = next(action);
   let nextState = Reductive.Store.getState(store);
 
-  logState(
+  logDispatch(
     format,
     prevStateColor,
     colorReset,

@@ -1,9 +1,9 @@
-let svgSizeSelector = (state: AppState.appState) => state.image.svgSize;
-let textSelector = (state: AppState.appState) => state.image.text;
+let svgSizeSelector = (state: Store.State.t) => state.image.svgSize;
+let textSelector = (state: Store.State.t) => state.image.text;
 
 [@react.component]
 let make = (~width: float, ~height: float) => {
-  let size = AppState.useSelector(svgSizeSelector);
+  let size = Store.useSelector(svgSizeSelector);
   let (viewBox, style) =
     React.useMemo1(
       () =>
@@ -22,7 +22,7 @@ let make = (~width: float, ~height: float) => {
       [|size|],
     );
 
-  let text = AppState.useSelector(textSelector);
+  let text = Store.useSelector(textSelector);
   let text' =
     text
     ->Tablecloth.List.map(~f=circleItem =>

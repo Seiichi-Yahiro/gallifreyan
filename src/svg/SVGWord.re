@@ -5,13 +5,13 @@ module SVGConsonantCutMask = {
   let make = (~id: uuid) => {
     let circleSelector =
       React.useCallback1(
-        (state: AppState.appState) =>
+        (state: Store.State.t) =>
           state.image.circles->Tablecloth.StrDict.get(~key=id),
         [|id|],
       );
 
     let circle: option(ImageTypes.circle) =
-      AppState.useSelector(circleSelector);
+      Store.useSelector(circleSelector);
 
     switch (circle) {
     | None => React.null

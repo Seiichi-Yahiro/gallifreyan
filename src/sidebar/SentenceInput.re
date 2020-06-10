@@ -1,7 +1,7 @@
 [@react.component]
 let make = (~className) => {
   let (state, setState) = React.useState(() => "");
-  let dispatch = AppState.useDispatch();
+  let dispatch = Store.useDispatch();
 
   let addSentence = (sentence: string) => {
     dispatch(ImageAction(AddSentence(sentence)));

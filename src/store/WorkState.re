@@ -1,17 +1,21 @@
 open CommonTypes;
 
-type state = {
-  selected: option(uuid),
-  hovered: option(uuid),
+module State = {
+  type t = {
+    selected: option(uuid),
+    hovered: option(uuid),
+  };
+
+  let initial: t = {selected: None, hovered: None};
 };
 
-let initialState: state = {selected: None, hovered: None};
+module Action = {
+  type t =
+    | Select(option(uuid))
+    | Hover(option(uuid));
+};
 
-type action =
-  | Select(option(uuid))
-  | Hover(option(uuid));
-
-let reducer = (state: state, action: action) =>
+let reducer = (state: State.t, action: Action.t) =>
   switch (action) {
   | Select(newSelection) =>
     let isAlreadySelected =

@@ -2,19 +2,19 @@ open CommonTypes;
 
 [@react.component]
 let make = (~id: uuid) => {
-  let dispatch = AppState.useDispatch();
+  let dispatch = Store.useDispatch();
   let isSelected = Hooks.useIsSelected(id);
   let isHovered = Hooks.useIsHovered(id);
 
   let lineSlotSelector =
     React.useCallback1(
-      (state: AppState.appState) =>
+      (state: Store.State.t) =>
         state.image.lineSlots->Tablecloth.StrDict.get(~key=id),
       [|id|],
     );
 
   let lineSlot: option(ImageTypes.lineSlot) =
-    AppState.useSelector(lineSlotSelector);
+    Store.useSelector(lineSlotSelector);
 
   switch (lineSlot) {
   | None => React.null

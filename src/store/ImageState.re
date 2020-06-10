@@ -1,27 +1,31 @@
 open ImageTypes;
 
-type state = {
-  circles: Tablecloth.StrDict.t(circle),
-  lines: Tablecloth.StrDict.t(line),
-  lineSlots: Tablecloth.StrDict.t(lineSlot),
-  circleItems: Tablecloth.StrDict.t(circleItem),
-  text: list(circleItem),
-  svgSize: int,
+module State = {
+  type t = {
+    circles: Tablecloth.StrDict.t(circle),
+    lines: Tablecloth.StrDict.t(line),
+    lineSlots: Tablecloth.StrDict.t(lineSlot),
+    circleItems: Tablecloth.StrDict.t(circleItem),
+    text: list(circleItem),
+    svgSize: int,
+  };
+
+  let initial: t = {
+    circles: Tablecloth.StrDict.empty,
+    lines: Tablecloth.StrDict.empty,
+    lineSlots: Tablecloth.StrDict.empty,
+    circleItems: Tablecloth.StrDict.empty,
+    text: [],
+    svgSize: 1000,
+  };
 };
 
-let initialState: state = {
-  circles: Tablecloth.StrDict.empty,
-  lines: Tablecloth.StrDict.empty,
-  lineSlots: Tablecloth.StrDict.empty,
-  circleItems: Tablecloth.StrDict.empty,
-  text: [],
-  svgSize: 1000,
+module Action = {
+  type t =
+    | AddSentence(string);
 };
 
-type action =
-  | AddSentence(string);
-
-let reducer = (state: state, action: action) =>
+let reducer = (state: State.t, action: Action.t) =>
   switch (action) {
   | AddSentence(sentence) =>
     let circleItem = TextConverter.convertSentenceToCircleItem(sentence);

@@ -1,14 +1,14 @@
 open TreeIcons;
 
-let textSelector = (state: AppState.appState) => state.image.text;
-let selectedSelector = (state: AppState.appState) =>
+let textSelector = (state: Store.State.t) => state.image.text;
+let selectedSelector = (state: Store.State.t) =>
   state.work.selected->Tablecloth.Option.withDefault(~default="");
 
 [@react.component]
 let make = (~className) => {
-  let text = AppState.useSelector(textSelector);
+  let text = Store.useSelector(textSelector);
 
-  let selected = AppState.useSelector(selectedSelector);
+  let selected = Store.useSelector(selectedSelector);
 
   <MaterialUi_Lab.TreeView
     selected={`String(selected)}

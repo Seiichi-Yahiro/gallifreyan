@@ -1,19 +1,23 @@
-type appState = {
-  image: ImageState.state,
-  work: WorkState.state,
+module State = {
+  type t = {
+    image: ImageState.State.t,
+    work: WorkState.State.t,
+  };
+
+  let initial: t = {
+    image: ImageState.State.initial,
+    work: WorkState.State.initial,
+  };
 };
 
-let initialAppState: appState = {
-  image: ImageState.initialState,
-  work: WorkState.initialState,
+module Action = {
+  type t =
+    | ImageAction(ImageState.Action.t)
+    | WorkAction(WorkState.Action.t)
+    | DevToolsCustomAction;
 };
 
-type appAction =
-  | ImageAction(ImageState.action)
-  | WorkAction(WorkState.action)
-  | DevToolsCustomAction;
-
-let appReducer = (state: appState, action: appAction) =>
+let appReducer = (state: State.t, action: Action.t) =>
   switch (action) {
   | ImageAction(imageAction) => {
       ...state,
@@ -33,24 +37,26 @@ let reductiveDevToolsEnhancer =
         ~name="Gallifreyan",
         ~actionCreators={
           "addSentence": (sentence: string) =>
-            ImageAction(AddSentence(sentence))
+            Action.ImageAction(AddSentence(sentence))
             ->ReductiveDevTools.Utilities.Serializer.serializeAction,
         },
         (),
       ),
-    ~devToolsUpdateActionCreator=(_: appState) => DevToolsCustomAction,
+    ~devToolsUpdateActionCreator=(_: State.t) => Action.DevToolsCustomAction,
     (),
   );
+
+let enhancer = (store, next) => Logger.logger(store) @@ next;
 
 let store =
   (reductiveDevToolsEnhancer @@ Reductive.Store.create)(
     ~reducer=appReducer,
-    ~preloadedState=initialAppState,
-    ~enhancer=Middleware.logger,
+    ~preloadedState=State.initial,
+    ~enhancer,
     (),
   );
 
 include ReductiveContext.Make({
-  type action = appAction;
-  type state = appState;
+  type action = Action.t;
+  type state = State.t;
 });
