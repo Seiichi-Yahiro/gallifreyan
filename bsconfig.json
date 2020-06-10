@@ -19,11 +19,15 @@
   "bs-dependencies": [
     "reason-react",
     "reductive",
+    "reductive-dev-tools",
+    "reductive-observable",
+    "@ambientlight/bs-rx",
+    "reason-promise",
+    "bs-fetch",
     "bs-webapi",
     "@jsiebern/bs-material-ui",
     "@jsiebern/bs-material-ui-lab",
     "bs-guid",
-    "reductive-dev-tools",
     "tablecloth-bucklescript"
   ],
   "ppx-flags": [],

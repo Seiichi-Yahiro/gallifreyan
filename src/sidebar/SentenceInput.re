@@ -4,7 +4,7 @@ let make = (~className) => {
   let dispatch = Store.useDispatch();
 
   let addSentence = (sentence: string) => {
-    dispatch(ImageAction(AddSentence(sentence)));
+    sentence->AddSentence->Image->dispatch;
     setState(_ => "");
   };
 

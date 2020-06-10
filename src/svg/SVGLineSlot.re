@@ -30,10 +30,10 @@ let make = (~id: uuid) => {
     let (x1, y1) = (x, y)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
     let (x2, y2) = (x2, y2)->Tablecloth.Tuple2.mapAll(~f=Js.Float.toString);
 
-    let onMouseEnter = _ => id->Some->Hover->WorkAction->dispatch;
-    let onMouseLeave = _ => None->Hover->WorkAction->dispatch;
+    let onMouseEnter = _ => id->Some->Hover->Work->dispatch;
+    let onMouseLeave = _ => None->Hover->Work->dispatch;
     let onClick = event => {
-      id->Some->Select->WorkAction->dispatch;
+      id->Some->Select->Work->dispatch;
       event->ReactEvent.Mouse.stopPropagation;
     };
 

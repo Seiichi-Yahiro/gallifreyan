@@ -11,10 +11,10 @@ let make =
       ~mask: string="",
     ) => {
   let dispatch = Store.useDispatch();
-  let onMouseEnter = _ => id->Some->Hover->WorkAction->dispatch;
-  let onMouseLeave = _ => None->Hover->WorkAction->dispatch;
+  let onMouseEnter = _ => id->Some->Hover->Work->dispatch;
+  let onMouseLeave = _ => None->Hover->Work->dispatch;
   let onClick = event => {
-    id->Some->Select->WorkAction->dispatch;
+    id->Some->Select->Work->dispatch;
     event->ReactEvent.Mouse.stopPropagation;
   };
 
