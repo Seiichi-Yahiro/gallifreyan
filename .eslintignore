@@ -1,5 +1,0 @@
-node_modules
-build
-.eslintrc.js
-webpack.config.js
-*.bs.js
