@@ -21,12 +21,14 @@ const defaultState: ImageStore = {
     svgSize: 1000,
 };
 
-export const addSentenceAction = createActionCreator('ADD_SENTENCE', (resolve) => (sentence: string) =>
-    resolve(sentence)
+export const addSentenceAction = createActionCreator(
+    'ADD_SENTENCE',
+    (resolve) => (sentence: string) => resolve(sentence)
 );
 
-export const updateCircleDataAction = createActionCreator('UPDATE_CIRCLE_DATA', (resolve) => (data: CircleData) =>
-    resolve(data)
+export const updateCircleDataAction = createActionCreator(
+    'UPDATE_CIRCLE_DATA',
+    (resolve) => (data: CircleData) => resolve(data)
 );
 export const updateLineSlotDataAction = createActionCreator(
     'UPDATE_LINE_SLOT_DATA',
