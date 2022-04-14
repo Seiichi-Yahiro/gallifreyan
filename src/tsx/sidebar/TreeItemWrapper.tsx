@@ -1,12 +1,12 @@
-import { createStyles, fade, Theme } from '@material-ui/core';
-import withStyles from '@material-ui/core/styles/withStyles';
-import { TreeItem, TreeItemProps } from '@material-ui/lab';
+import { createStyles, alpha, Theme } from '@mui/material';
+import { withStyles } from 'tss-react/mui';
+import { TreeItem } from '@mui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { UUID } from '../state/ImageTypes';
 import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 
-const StyledTreeItem = withStyles((theme: Theme) =>
+const StyledTreeItem = withStyles(TreeItem, (theme: Theme) =>
     createStyles({
         iconContainer: {
             '& .close': {
@@ -16,15 +16,16 @@ const StyledTreeItem = withStyles((theme: Theme) =>
         group: {
             marginLeft: 7,
             paddingLeft: 18,
-            borderLeft: `1px dashed ${fade(theme.palette.text.primary, 0.4)}`,
+            borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
         },
     })
-)((props: TreeItemProps) => <TreeItem {...props} />);
+);
 
 interface TreeItemWrapperProps {
     text: string;
     circleId: UUID;
     lineSlots: UUID[];
+    children?: React.ReactNode;
 }
 
 const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, circleId, lineSlots, children }) => {
@@ -35,7 +36,7 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, 
         <StyledTreeItem
             nodeId={circleId}
             label={text}
-            onLabelClick={(event) => {
+            onClick={(event) => {
                 dispatcher(setSelectionAction(circleId));
                 event.preventDefault();
             }}
@@ -50,7 +51,7 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({ text, 
                             key={slot}
                             nodeId={slot}
                             label="LINE"
-                            onLabelClick={(event) => {
+                            onClick={(event) => {
                                 dispatcher(setSelectionAction(slot));
                                 event.preventDefault();
                             }}

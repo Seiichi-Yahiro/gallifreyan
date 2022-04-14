@@ -31,7 +31,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 stroke="inherit"
                 filled={dotCircle.filled}
                 onClick={useCallback(
-                    (event) => {
+                    (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
                             dispatcher(setSelectionAction(id));
                         }

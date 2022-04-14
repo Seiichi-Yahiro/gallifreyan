@@ -37,7 +37,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 stroke="#inherit"
                 mask={`url(#mask_${circleId})`}
                 onClick={useCallback(
-                    (event) => {
+                    (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
                             dispatcher(setSelectionAction(circleId));
                         }

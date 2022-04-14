@@ -2,6 +2,7 @@
 
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -39,7 +40,6 @@ module.exports = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
-                            sourceMap: true,
                             publicPath: '../',
                         },
                     },
@@ -66,8 +66,8 @@ module.exports = {
         },
     },
     plugins: [
-        // async: true = faster builds but builds are always successful
-        new ForkTsCheckerWebpackPlugin({ async: false, eslint: true, eslintOptions: { cache: true } }),
+        new ForkTsCheckerWebpackPlugin(),
+        new ESLintPlugin({ extensions: ['ts', 'tsx'] }),
         new HtmlWebpackPlugin({
             inject: 'head',
             filename: 'index.html',
@@ -79,7 +79,6 @@ module.exports = {
         }),
     ],
     devServer: {
-        contentBase: 'build',
         port: 3000,
         headers: {
             'Access-Control-Allow-Origin': '*',

@@ -1,6 +1,6 @@
-import { SvgIcon, SvgIconProps } from '@material-ui/core';
+import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
-import { TreeView } from '@material-ui/lab';
+import { TreeView } from '@mui/lab';
 import { useRedux } from '../hooks/useRedux';
 import { isLetterConsonant } from '../utils/LetterGroups';
 import TreeItemWrapper from './TreeItemWrapper';

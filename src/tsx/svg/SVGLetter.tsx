@@ -35,7 +35,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     fill={fill}
                     stroke={stroke}
                     onClick={useCallback(
-                        (event) => {
+                        (event: React.MouseEvent<SVGCircleElement>) => {
                             if (!isSelected) {
                                 dispatcher(setSelectionAction(circleId));
                             }
@@ -84,7 +84,7 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 fill={fill}
                 stroke={stroke}
                 onClick={useCallback(
-                    (event) => {
+                    (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
                             dispatcher(setSelectionAction(circleId));
                         }

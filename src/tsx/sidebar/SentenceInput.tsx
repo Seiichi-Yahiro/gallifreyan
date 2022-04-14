@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from '@material-ui/core';
+import { Box, Button, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addSentenceAction } from '../state/ImageStore';
@@ -30,6 +30,7 @@ const SentenceInput: React.FunctionComponent<SentenceInputProps> = ({ className 
         <Box display="flex" justifyContent="space-between" className={className}>
             <TextField
                 type="text"
+                variant="standard"
                 placeholder="Sentence..."
                 value={state}
                 onChange={onTextChange}

@@ -26,7 +26,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
                 filled={sentenceCircle.filled}
                 lineSlots={lineSlots}
                 onClick={useCallback(
-                    (event) => {
+                    (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
                             dispatcher(setSelectionAction(circleId));
                         }
