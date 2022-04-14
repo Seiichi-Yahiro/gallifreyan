@@ -58,6 +58,7 @@
     "scripts": {
         "start": "webpack-dev-server --config webpack.config.js",
         "build:dev": "rimraf build && webpack --config webpack.config.js",
-        "pretty-quick": "pretty-quick"
+        "pretty-quick": "pretty-quick",
+        "prepare": "husky install"
     }
 }
