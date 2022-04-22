@@ -21,7 +21,6 @@
         "reselect": "4.1.5",
         "rxjs": "6.6.7",
         "tslib": "1.14.1",
-        "tss-react": "3.6.1",
         "uuid": "8.3.2"
     },
     "devDependencies": {

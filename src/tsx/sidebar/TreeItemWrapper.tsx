@@ -1,25 +1,22 @@
-import { createStyles, alpha, Theme } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import { TreeItem } from '@mui/lab';
+import { alpha, styled } from '@mui/material';
+import { TreeItem, treeItemClasses, TreeItemProps } from '@mui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { UUID } from '../state/ImageTypes';
 import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 
-const StyledTreeItem = withStyles(TreeItem, (theme: Theme) =>
-    createStyles({
-        iconContainer: {
-            '& .close': {
-                opacity: 0.3,
-            },
+const StyledTreeItem = styled((props: TreeItemProps) => <TreeItem {...props} />)(({ theme }) => ({
+    [`& .${treeItemClasses.iconContainer}`]: {
+        '& .close': {
+            opacity: 0.3,
         },
-        group: {
-            marginLeft: 7,
-            paddingLeft: 18,
-            borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
-        },
-    })
-);
+    },
+    [`& .${treeItemClasses.group}`]: {
+        marginLeft: 15,
+        paddingLeft: 18,
+        borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
+    },
+}));
 
 interface TreeItemWrapperProps {
     text: string;
