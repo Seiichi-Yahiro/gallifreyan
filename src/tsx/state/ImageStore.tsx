@@ -9,20 +9,25 @@ export interface ImageStore {
     circles: { [key: string]: Circle };
     lineConnections: { [key: string]: LineConnection };
     lineSlots: { [key: string]: LineSlot };
-    sentences: Sentence[];
+    sentence: Sentence;
     svgSize: number;
 }
 
 const defaultState: ImageStore = {
-    circles: {},
+    circles: { uuid: { id: 'uuid', angle: 0, parentDistance: 0, r: 0, filled: false } },
     lineConnections: {},
     lineSlots: {},
-    sentences: [],
+    sentence: {
+        text: '',
+        circleId: 'uuid',
+        words: [],
+        lineSlots: [],
+    },
     svgSize: 1000,
 };
 
-export const addSentenceAction = createActionCreator(
-    'ADD_SENTENCE',
+export const updateSentence = createActionCreator(
+    'UPDATE_SENTENCE',
     (resolve) => (sentence: string) => resolve(sentence)
 );
 
@@ -36,7 +41,7 @@ export const updateLineSlotDataAction = createActionCreator(
 );
 
 export const imageStoreReducer = createReducer(defaultState, (handle) => [
-    handle(addSentenceAction, (state, { payload: sentenceText }) =>
+    handle(updateSentence, (state, { payload: sentenceText }) =>
         produce(state, (draft) => {
             const text = sentenceText
                 .split(' ')
@@ -45,7 +50,17 @@ export const imageStoreReducer = createReducer(defaultState, (handle) => [
                 .join(' ');
             const { textPart: sentence, circles, lineSlots } = convertTextToSentence(text);
 
-            draft.sentences.push(sentence);
+            draft.sentence = sentence;
+
+            //TODO space then invalid letter deletes space
+            if (sentenceText.endsWith(' ')) {
+                draft.sentence.text += ' ';
+            }
+
+            draft.circles = {};
+            draft.lineSlots = {};
+            draft.lineConnections = {};
+
             circles.forEach((circle) => (draft.circles[circle.id] = circle));
             lineSlots.forEach((slot) => (draft.lineSlots[slot.id] = slot));
 

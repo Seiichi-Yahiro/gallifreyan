@@ -110,10 +110,7 @@ export const calculateInitialLineSlotPositionDatas = (
     }));
 };
 
-export const resetPositionDatas = (state: ImageStore) =>
-    state.sentences.forEach((sentence) => {
-        resetSentencePositionData(state, sentence);
-    });
+export const resetPositionDatas = (state: ImageStore) => resetSentencePositionData(state, state.sentence);
 
 export const resetSentencePositionData = (state: ImageStore, sentence: Sentence) => {
     const sentenceCircle = state.circles[sentence.circleId];

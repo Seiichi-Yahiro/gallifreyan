@@ -50,7 +50,10 @@ export const convertTextToSentence = (text: string): TextData<Sentence> => {
         filled: false,
     };
 
-    const wordData = text.split(' ').map((word) => convertTextToWord(word));
+    const wordData = text
+        .split(' ')
+        .filter((word) => word.length > 0)
+        .map(convertTextToWord);
 
     const sentence: Sentence = {
         text,
