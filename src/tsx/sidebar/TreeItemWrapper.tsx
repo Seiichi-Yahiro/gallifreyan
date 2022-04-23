@@ -62,6 +62,7 @@ const createTreeItemContent =
                     <TextField
                         variant="standard"
                         value={label}
+                        placeholder="Type a sentence."
                         onClick={handleSelectionClick}
                         className={classes.label}
                         onChange={onChangeText}
