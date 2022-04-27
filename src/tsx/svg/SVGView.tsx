@@ -3,9 +3,10 @@ import { useDispatch } from 'react-redux';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
 import { useRedux } from '../hooks/useRedux';
+import { updateSvgPanZoomTool, updateSvgPanZoomValue } from '../state/SvgPanZoomStore';
 import { setSelectionAction } from '../state/WorkStore';
 import SVGSentence from './SVGSentence';
-import { UncontrolledReactSVGPanZoom, POSITION_LEFT } from 'react-svg-pan-zoom';
+import { ReactSVGPanZoom, POSITION_LEFT, Value, Tool } from 'react-svg-pan-zoom';
 
 interface SVGViewProps {}
 
@@ -40,7 +41,9 @@ interface SVGProps {
 
 const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
     const dispatch = useDispatch();
-    const viewerRef = useRef<UncontrolledReactSVGPanZoom>(null);
+    const { value, tool } = useRedux((state) => state.svgPanZoom);
+
+    const viewerRef = useRef<ReactSVGPanZoom>(null);
 
     const size = useRedux((state) => state.image.svgSize);
     const sentence = useRedux((state) => state.image.sentence);
@@ -58,21 +61,29 @@ const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
         }
     };
 
+    const onChangeValue = (value: Value) => dispatch(updateSvgPanZoomValue(value));
+
+    const onChangeTool = (tool: Tool) => dispatch(updateSvgPanZoomTool(tool));
+
     return (
-        <UncontrolledReactSVGPanZoom
+        <ReactSVGPanZoom
             ref={viewerRef}
             width={width}
             height={height}
+            value={value}
+            tool={tool}
             detectAutoPan={false}
             toolbarProps={{ position: POSITION_LEFT }}
             onClick={deselect}
+            onChangeValue={onChangeValue}
+            onChangeTool={onChangeTool}
         >
             <svg width={size} height={size}>
                 <g style={{ transform: `translate(${size / 2}px, ${size / 2}px)` }} stroke="#000000" fill="#000000">
                     <SVGSentence key={sentence.circleId} {...sentence} />
                 </g>
             </svg>
-        </UncontrolledReactSVGPanZoom>
+        </ReactSVGPanZoom>
     );
 };
 
