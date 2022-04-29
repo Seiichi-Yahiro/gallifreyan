@@ -31,6 +31,8 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
 
     return selected
         .map(({ selected, id }) => {
+            const isCircle = 'r' in selected;
+
             const changeRadius = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const r = Number(event.currentTarget.value);
                 dispatch(updateCircleDataAction({ id, r }));
@@ -38,16 +40,14 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
 
             const changeDistance = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const parentDistance = Number(event.currentTarget.value);
-                if ('r' in selected) {
+                if (isCircle) {
                     dispatch(updateCircleDataAction({ id, parentDistance }));
-                } else {
-                    dispatch(updateLineSlotDataAction({ id, parentDistance }));
                 }
             };
 
             const changeAngle = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const angle = Number(event.currentTarget.value);
-                if ('r' in selected) {
+                if (isCircle) {
                     dispatch(updateCircleDataAction({ id, angle }));
                 } else {
                     dispatch(updateLineSlotDataAction({ id, angle }));
@@ -56,7 +56,7 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
 
             return (
                 <div key={selected.id} className={className}>
-                    {'r' in selected && (
+                    {isCircle && (
                         <TextField
                             type="number"
                             label="Radius"
@@ -71,6 +71,7 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
                         variant="outlined"
                         value={selected.parentDistance}
                         onChange={changeDistance}
+                        disabled={!isCircle}
                     />
                     <TextField
                         type="number"
