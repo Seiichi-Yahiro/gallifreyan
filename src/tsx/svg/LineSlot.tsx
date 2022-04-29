@@ -14,7 +14,7 @@ interface SVGLineSlotProps {
 
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const { angle, parentDistance } = useRedux((state) => state.image.lineSlots[id]);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
 
@@ -39,12 +39,12 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
                 onClick={(event) => {
                     if (!isSelectedSlot) {
-                        dispatcher(setSelectionAction(id));
+                        dispatch(setSelectionAction(id));
                     }
                     event.stopPropagation();
                 }}
-                onMouseEnter={() => dispatcher(setHoveringAction(id))}
-                onMouseLeave={() => dispatcher(setHoveringAction())}
+                onMouseEnter={() => dispatch(setHoveringAction(id))}
+                onMouseLeave={() => dispatch(setHoveringAction())}
             />
             <circle
                 cx={x2}

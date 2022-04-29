@@ -21,7 +21,7 @@ interface ConsonantProps extends Consonant, LetterProps {
 export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     ({ circleId, dots, fill, stroke, children, lineSlots, vocal }) => {
         const consonantCircle = useRedux((state) => state.image.circles[circleId]);
-        const dispatcher = useDispatch();
+        const dispatch = useDispatch();
         const isHovered = useIsHoveredSelector(circleId);
         const isSelected = useIsSelectedSelector(circleId);
 
@@ -37,14 +37,14 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     onClick={useCallback(
                         (event: React.MouseEvent<SVGCircleElement>) => {
                             if (!isSelected) {
-                                dispatcher(setSelectionAction(circleId));
+                                dispatch(setSelectionAction(circleId));
                             }
                             event.stopPropagation();
                         },
                         [circleId, isSelected]
                     )}
-                    onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
-                    onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
+                    onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
+                    onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
                 />
                 {children && (
                     <Group x={-x} y={-y}>
@@ -70,7 +70,7 @@ interface VocalProps extends Vocal, LetterProps {}
 
 export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, fill, stroke, lineSlots }) => {
     const vocalCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
 
@@ -86,14 +86,14 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatcher(setSelectionAction(circleId));
+                            dispatch(setSelectionAction(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
             />
         </Group>
     );

@@ -13,7 +13,7 @@ interface SentenceProps extends Sentence {}
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, lineSlots }) => {
     const sentenceCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
 
@@ -28,14 +28,14 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatcher(setSelectionAction(circleId));
+                            dispatch(setSelectionAction(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
             />
             {words.map((word) => (
                 <SVGWord key={word.circleId} {...word} />

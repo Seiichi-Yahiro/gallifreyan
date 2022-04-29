@@ -16,7 +16,7 @@ const lineSlots: UUID[] = [];
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dotCircle = useRedux((state) => state.image.circles[id]);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);
 
@@ -33,14 +33,14 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatcher(setSelectionAction(id));
+                            dispatch(setSelectionAction(id));
                         }
                         event.stopPropagation();
                     },
                     [id, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(id)), [id])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHoveringAction(id)), [id])}
+                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
             />
         </Group>
     );

@@ -14,7 +14,7 @@ interface WordProps extends Word {}
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
     const wordCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
 
@@ -39,14 +39,14 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatcher(setSelectionAction(circleId));
+                            dispatch(setSelectionAction(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatcher(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatcher(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
             />
             {letters.map((letter) => {
                 if (isLetterConsonant(letter)) {
