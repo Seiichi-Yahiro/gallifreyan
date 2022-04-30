@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
 import { useRedux } from '../hooks/useRedux';
-import { updateSvgPanZoomTool, updateSvgPanZoomValue } from '../state/SvgPanZoomStore';
+import { updateSvgPanZoomToolAction, updateSvgPanZoomValueAction } from '../state/SvgPanZoomStore';
 import { setSelectionAction } from '../state/WorkStore';
 import SVGSentence from './SVGSentence';
 import { ReactSVGPanZoom, POSITION_LEFT, Value, Tool } from 'react-svg-pan-zoom';
@@ -61,9 +61,9 @@ const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
         }
     };
 
-    const onChangeValue = (value: Value) => dispatch(updateSvgPanZoomValue(value));
+    const onChangeValue = (value: Value) => dispatch(updateSvgPanZoomValueAction(value));
 
-    const onChangeTool = (tool: Tool) => dispatch(updateSvgPanZoomTool(tool));
+    const onChangeTool = (tool: Tool) => dispatch(updateSvgPanZoomToolAction(tool));
 
     return (
         <ReactSVGPanZoom

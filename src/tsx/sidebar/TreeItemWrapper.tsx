@@ -2,7 +2,7 @@ import { alpha, TextField, styled, Typography } from '@mui/material';
 import { TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem } from '@mui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { updateSentence } from '../state/ImageStore';
+import { updateSentenceAction } from '../state/ImageStore';
 import { UUID } from '../state/ImageTypes';
 import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
 import createClassName from '../utils/createClassName';
@@ -56,7 +56,7 @@ const createTreeItemContent =
         const createContent = () => {
             if (editable) {
                 const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) =>
-                    dispatch(updateSentence(event.target.value));
+                    dispatch(updateSentenceAction(event.target.value));
 
                 return (
                     <TextField

@@ -31,23 +31,23 @@ const defaultState: SvgPanZoomStore = {
     tool: TOOL_NONE,
 };
 
-export const updateSvgPanZoomValue = createActionCreator(
+export const updateSvgPanZoomValueAction = createActionCreator(
     'UPDATE_SVGPANZOOM_VALUE',
     (resolve) => (value: Value) => resolve(value)
 );
 
-export const updateSvgPanZoomTool = createActionCreator(
+export const updateSvgPanZoomToolAction = createActionCreator(
     'UPDATE_SVGPANZOOM_TOOL',
     (resolve) => (tool: Tool) => resolve(tool)
 );
 
 export const svgPanZoomReducer = createReducer(defaultState, (handle) => [
-    handle(updateSvgPanZoomValue, (state, { payload: value }) =>
+    handle(updateSvgPanZoomValueAction, (state, { payload: value }) =>
         produce(state, (draft) => {
             draft.value = value;
         })
     ),
-    handle(updateSvgPanZoomTool, (state, { payload: tool }) =>
+    handle(updateSvgPanZoomToolAction, (state, { payload: tool }) =>
         produce(state, (draft) => {
             draft.tool = tool;
         })

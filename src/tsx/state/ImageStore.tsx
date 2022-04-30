@@ -26,7 +26,7 @@ const defaultState: ImageStore = {
     svgSize: 1000,
 };
 
-export const updateSentence = createActionCreator(
+export const updateSentenceAction = createActionCreator(
     'UPDATE_SENTENCE',
     (resolve) => (sentence: string) => resolve(sentence)
 );
@@ -41,7 +41,7 @@ export const updateLineSlotDataAction = createActionCreator(
 );
 
 export const imageStoreReducer = createReducer(defaultState, (handle) => [
-    handle(updateSentence, (state, { payload: sentenceText }) =>
+    handle(updateSentenceAction, (state, { payload: sentenceText }) =>
         produce(state, (draft) => {
             const text = sentenceText
                 .split(' ')
