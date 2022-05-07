@@ -20,4 +20,5 @@ const reducer = combineReducers<AppStore>({
     work: workStoreReducer,
 });
 
-export const configureStore = () => createStore(reducer, composeWithDevTools(applyMiddleware(logger)));
+export const configureStoreWithDevTools = () => createStore(reducer, composeWithDevTools(applyMiddleware(logger)));
+export const configureStore = () => createStore(reducer);

@@ -54,13 +54,13 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                 {dots.map((dot) => (
                     <SVGDot key={dot} id={dot} />
                 ))}
-                <Group x={-x} y={-y}>
-                    {vocal
-                        .map((vocal) => (
-                            <SVGVocal key={vocal.circleId} {...vocal} fill="transparent" stroke="inherit" />
-                        ))
-                        .asNullable()}
-                </Group>
+                {vocal
+                    .map((vocal) => (
+                        <Group key={vocal.circleId} x={-x} y={-y}>
+                            <SVGVocal {...vocal} fill="transparent" stroke="inherit" />
+                        </Group>
+                    ))
+                    .asNullable()}
             </Group>
         );
     }
