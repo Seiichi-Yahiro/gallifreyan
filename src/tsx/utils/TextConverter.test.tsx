@@ -3,7 +3,7 @@ import { convertTextToSentence, splitWordToChars } from './TextConverter';
 
 describe('TextConverter', () => {
     it('should split lower case word', () => {
-        const result = splitWordToChars('aeioubjtthchkshydlrzcqgnvquhpwxfmsng');
+        const result = splitWordToChars('aeioubjtthphwhghchkshydlrzcqgnvquhpwxfmsng');
         expect(result).toEqual([
             'a',
             'e',
@@ -14,6 +14,9 @@ describe('TextConverter', () => {
             'j',
             't',
             'th',
+            'ph',
+            'wh',
+            'gh',
             'ch',
             'k',
             'sh',
@@ -40,7 +43,7 @@ describe('TextConverter', () => {
     });
 
     it('should split upper case word', () => {
-        const result = splitWordToChars('AEIOUBJTTHCHKSHYDLRZCQGNVQUHPWXFMSNG');
+        const result = splitWordToChars('AEIOUBJTTHPHWHGHCHKSHYDLRZCQGNVQUHPWXFMSNG');
         expect(result).toEqual([
             'A',
             'E',
@@ -51,6 +54,9 @@ describe('TextConverter', () => {
             'J',
             'T',
             'TH',
+            'PH',
+            'WH',
+            'GH',
             'CH',
             'K',
             'SH',
@@ -77,23 +83,40 @@ describe('TextConverter', () => {
     });
 
     it('should split mixed case double letters', () => {
-        const result = splitWordToChars('tHThcHChsHShqUQunGNg');
-        expect(result).toEqual(['tH', 'Th', 'cH', 'Ch', 'sH', 'Sh', 'qU', 'Qu', 'nG', 'Ng']);
+        const result = splitWordToChars('tHThpHPhwHWhgHGhcHChsHShqUQunGNg');
+        expect(result).toEqual([
+            'tH',
+            'Th',
+            'pH',
+            'Ph',
+            'wH',
+            'Wh',
+            'gH',
+            'Gh',
+            'cH',
+            'Ch',
+            'sH',
+            'Sh',
+            'qU',
+            'Qu',
+            'nG',
+            'Ng',
+        ]);
     });
 
     it('should convert text to circles', () => {
-        const { circles } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
+        const { circles } = convertTextToSentence('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
 
         // 5 vocals
-        // 26 consonants
-        // 28 dots
-        // 8 words
+        // 29 consonants
+        // 31 dots
+        // 9 words
         // 1 sentence
-        expect(circles.length).toBe(68);
+        expect(circles.length).toBe(75);
     });
 
     it('should convert text to line slots', () => {
-        const { lineSlots } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
+        const { lineSlots } = convertTextToSentence('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
 
         // 2 vocals
         // 24 consonants
@@ -101,13 +124,13 @@ describe('TextConverter', () => {
     });
 
     it('should convert text to sentence', () => {
-        const { textPart: sentence } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
+        const { textPart: sentence } = convertTextToSentence('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
 
-        expect(sentence.text).toBe('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
+        expect(sentence.text).toBe('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
         expect(sentence.lineSlots.length).toBe(0);
-        expect(sentence.words.length).toBe(8);
+        expect(sentence.words.length).toBe(9);
 
-        const [aeiou, bjtth, chkshy, dlrz, cq, gnvqu, hpwx, fmsng] = sentence.words;
+        const [aeiou, bjtth, phwhgh, chkshy, dlrz, cq, gnvqu, hpwx, fmsng] = sentence.words;
 
         expect(aeiou.text).toBe('aeiou');
         expect(aeiou.lineSlots.length).toBe(0);
@@ -116,6 +139,10 @@ describe('TextConverter', () => {
         expect(bjtth.text).toBe('bjtth');
         expect(bjtth.lineSlots.length).toBe(0);
         expect(bjtth.letters.length).toBe(4);
+
+        expect(phwhgh.text).toBe('phwhgh');
+        expect(phwhgh.lineSlots.length).toBe(0);
+        expect(phwhgh.letters.length).toBe(3);
 
         expect(chkshy.text).toBe('chkshy');
         expect(chkshy.lineSlots.length).toBe(0);
@@ -228,6 +255,38 @@ describe('TextConverter', () => {
                 expect(consonant.text).toBe('th');
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
+                expect(consonant.vocal.isSome()).toBeFalsy();
+            });
+        });
+
+        describe('Single dot', () => {
+            it('should convert "ph"', () => {
+                const { textPart: sentence } = convertTextToSentence('ph');
+                const consonant = sentence.words.at(0)!.letters.at(0)! as Consonant;
+
+                expect(consonant.text).toBe('ph');
+                expect(consonant.lineSlots.length).toBe(0);
+                expect(consonant.dots.length).toBe(1);
+                expect(consonant.vocal.isSome()).toBeFalsy();
+            });
+
+            it('should convert "wh"', () => {
+                const { textPart: sentence } = convertTextToSentence('wh');
+                const consonant = sentence.words.at(0)!.letters.at(0)! as Consonant;
+
+                expect(consonant.text).toBe('wh');
+                expect(consonant.lineSlots.length).toBe(0);
+                expect(consonant.dots.length).toBe(1);
+                expect(consonant.vocal.isSome()).toBeFalsy();
+            });
+
+            it('should convert "gh"', () => {
+                const { textPart: sentence } = convertTextToSentence('gh');
+                const consonant = sentence.words.at(0)!.letters.at(0)! as Consonant;
+
+                expect(consonant.text).toBe('gh');
+                expect(consonant.lineSlots.length).toBe(0);
+                expect(consonant.dots.length).toBe(1);
                 expect(consonant.vocal.isSome()).toBeFalsy();
             });
         });

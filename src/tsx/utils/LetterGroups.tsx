@@ -1,10 +1,11 @@
 import { Consonant, Letter, Vocal } from '../state/ImageTypes';
 
 export const DEEP_CUT = new RegExp('^(?:b|ch|d|g|h|f)$', 'i');
-export const INSIDE = new RegExp('^[jklcnpm]$', 'i');
-export const SHALLOW_CUT = new RegExp('^(?:t|sh|r|v|w|s)$', 'i');
-export const ON_LINE = new RegExp('^(?:th|y|z|qu?|x|ng)$', 'i');
+export const INSIDE = new RegExp('^(?:j|ph|k|l|c|n|p|m)$', 'i');
+export const SHALLOW_CUT = new RegExp('^(?:t|wh|sh|r|v|w|s)$', 'i');
+export const ON_LINE = new RegExp('^(?:th|gh|y|z|qu?|x|ng)$', 'i');
 
+export const SINGLE_DOT = new RegExp('^(?:ph|wh|gh)$', 'i');
 export const DOUBLE_DOT = new RegExp('^(?:ch|k|sh|y)$', 'i');
 export const TRIPLE_DOT = new RegExp('^[dlrz]$', 'i');
 export const QUADRUPLE_DOT = new RegExp('^[cq]$', 'i');
@@ -21,13 +22,14 @@ export const VOCAL_SINGLE_LINE = new RegExp('^[iu]$', 'i');
 export const VOCAL_LINE_INSIDE = new RegExp('^i$', 'i');
 export const VOCAL_LINE_OUTSIDE = new RegExp('^u$', 'i');
 
-export const DOUBLE_LETTER = new RegExp('ch|sh|th|qu|ng', 'i');
+export const DOUBLE_LETTER = new RegExp('th|ph|wh|gh|ch|sh|qu|ng', 'i');
 
 export const isDeepCut = (text: string) => DEEP_CUT.test(text);
 export const isInside = (text: string) => INSIDE.test(text);
 export const isShallowCut = (text: string) => SHALLOW_CUT.test(text);
 export const isOnLine = (text: string) => ON_LINE.test(text);
 
+export const isSingleDot = (text: string) => SINGLE_DOT.test(text);
 export const isDoubleDot = (text: string) => DOUBLE_DOT.test(text);
 export const isTripleDot = (text: string) => TRIPLE_DOT.test(text);
 export const isQuadrupleDot = (text: string) => QUADRUPLE_DOT.test(text);

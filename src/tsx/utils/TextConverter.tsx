@@ -7,6 +7,7 @@ import {
     isLetterConsonant,
     isLetterVocal,
     isQuadrupleDot,
+    isSingleDot,
     isSingleLine,
     isTripleDot,
     isTripleLine,
@@ -163,7 +164,9 @@ const convertTextToLetter = (text: string): TextData<Letter> => {
 const createDots = (letterId: UUID, char: string): Circle[] => {
     let numberOfDots = 0;
 
-    if (isDoubleDot(char)) {
+    if (isSingleDot(char)) {
+        numberOfDots = 1;
+    } else if (isDoubleDot(char)) {
         numberOfDots = 2;
     } else if (isTripleDot(char)) {
         numberOfDots = 3;
