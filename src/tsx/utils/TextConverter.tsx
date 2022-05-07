@@ -1,23 +1,31 @@
+import { last, range } from 'lodash';
 import { v4 } from 'uuid';
-import { Letter, Circle, UUID, LineSlot, Sentence, Word, Vocal, Consonant } from '../state/ImageTypes';
 import {
+    Circle,
+    Consonant,
+    ConsonantDecoration,
+    Letter,
+    LineSlot,
+    Sentence,
+    UUID,
+    Vocal,
+    VocalDecoration,
+    Word,
+} from '../state/ImageTypes';
+import {
+    assignConsonantDecoration,
+    assignConsonantPlacement,
+    assignVocalDecoration,
+    assignVocalPlacement,
     DOUBLE_LETTER,
-    isDoubleDot,
-    isDoubleLine,
     isLetterConsonant,
     isLetterVocal,
-    isQuadrupleDot,
-    isSingleDot,
-    isSingleLine,
-    isTripleDot,
-    isTripleLine,
     isVocal,
-    isVocalSingleLine,
 } from './LetterGroups';
 import Maybe from './Maybe';
-import { range, last } from 'lodash';
 import {
     DEFAULT_CONSONANT_RADIUS,
+    DEFAULT_DOT_RADIUS,
     DEFAULT_SENTENCE_RADIUS,
     DEFAULT_VOCAL_RADIUS,
     DEFAULT_WORD_RADIUS,
@@ -113,88 +121,109 @@ const convertTextToWord = (text: string): TextData<Word> => {
     };
 };
 
-const convertTextToLetter = (text: string): TextData<Letter> => {
-    const letterCircle: Circle = {
+const convertTextToLetter = (text: string): TextData<Letter> =>
+    isVocal(text) ? convertTextToVocal(text) : convertTextToConsonant(text);
+
+const convertTextToVocal = (text: string): TextData<Vocal> => {
+    const vocalCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 0,
+        r: DEFAULT_VOCAL_RADIUS,
         filled: false,
     };
 
-    const lineSlots = createLineSlots(letterCircle.id, text);
+    const decoration = assignVocalDecoration(text).unwrap();
+    const lineSlots = createLineSlots(vocalCircle.id, decoration);
 
-    const letter: Letter = {
-        text: text,
-        circleId: letterCircle.id,
+    const vocal: Vocal = {
+        text,
+        circleId: vocalCircle.id,
         lineSlots: lineSlots.map((slot) => slot.id),
+        placement: assignVocalPlacement(text).unwrap(),
+        decoration,
     };
 
-    if (isVocal(text)) {
-        letterCircle.r = DEFAULT_VOCAL_RADIUS;
-
-        const vocal: Vocal = {
-            ...letter,
-        };
-
-        return {
-            textPart: vocal,
-            circles: [letterCircle],
-            lineSlots,
-        };
-    } else {
-        letterCircle.r = DEFAULT_CONSONANT_RADIUS;
-
-        const dots = createDots(letterCircle.id, text);
-
-        const consonant: Consonant = {
-            ...letter,
-            dots: dots.map((dot) => dot.id),
-            vocal: Maybe.none(),
-        };
-
-        return {
-            textPart: consonant,
-            circles: dots.concat(letterCircle),
-            lineSlots,
-        };
-    }
+    return {
+        textPart: vocal,
+        circles: [vocalCircle],
+        lineSlots,
+    };
 };
 
-const createDots = (letterId: UUID, char: string): Circle[] => {
-    let numberOfDots = 0;
-
-    if (isSingleDot(char)) {
-        numberOfDots = 1;
-    } else if (isDoubleDot(char)) {
-        numberOfDots = 2;
-    } else if (isTripleDot(char)) {
-        numberOfDots = 3;
-    } else if (isQuadrupleDot(char)) {
-        numberOfDots = 4;
-    }
-
-    return range(numberOfDots).map((_i) => ({
+const convertTextToConsonant = (text: string): TextData<Consonant> => {
+    const consonantCircle: Circle = {
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        r: 5,
+        r: DEFAULT_CONSONANT_RADIUS,
+        filled: false,
+    };
+
+    const decoration = assignConsonantDecoration(text).unwrap();
+
+    const lineSlots = createLineSlots(consonantCircle.id, decoration);
+    const dots = createDots(consonantCircle.id, decoration);
+
+    const consonant: Consonant = {
+        text: text,
+        circleId: consonantCircle.id,
+        lineSlots: lineSlots.map((slot) => slot.id),
+        dots: dots.map((dot) => dot.id),
+        vocal: Maybe.none(),
+        placement: assignConsonantPlacement(text).unwrap(),
+        decoration,
+    };
+
+    return {
+        textPart: consonant,
+        circles: dots.concat(consonantCircle),
+        lineSlots,
+    };
+};
+
+const createDots = (letterId: UUID, decoration: ConsonantDecoration): Circle[] => {
+    const numberOfDots = () => {
+        switch (decoration) {
+            case ConsonantDecoration.SingleDot:
+                return 1;
+            case ConsonantDecoration.DoubleDot:
+                return 2;
+            case ConsonantDecoration.TripleDot:
+                return 3;
+            case ConsonantDecoration.QuadrupleDot:
+                return 4;
+            default:
+                return 0;
+        }
+    };
+
+    return range(numberOfDots()).map((_i) => ({
+        id: v4(),
+        angle: 0,
+        parentDistance: 0,
+        r: DEFAULT_DOT_RADIUS,
         filled: true,
     }));
 };
 
-const createLineSlots = (letterId: UUID, char: string): LineSlot[] => {
-    let numberOfLineSlots = 0;
+const createLineSlots = (letterId: UUID, decoration: ConsonantDecoration | VocalDecoration): LineSlot[] => {
+    const numberOfLineSlots = () => {
+        switch (decoration) {
+            case ConsonantDecoration.SingleLine:
+            case VocalDecoration.LineOutside:
+            case VocalDecoration.LineInside:
+                return 1;
+            case ConsonantDecoration.DoubleLine:
+                return 2;
+            case ConsonantDecoration.TripleLine:
+                return 3;
+            default:
+                return 0;
+        }
+    };
 
-    if (isSingleLine(char) || isVocalSingleLine(char)) {
-        numberOfLineSlots = 1;
-    } else if (isDoubleLine(char)) {
-        numberOfLineSlots = 2;
-    } else if (isTripleLine(char)) {
-        numberOfLineSlots = 3;
-    }
-
-    return range(numberOfLineSlots).map((_i) => ({
+    return range(numberOfLineSlots()).map((_i) => ({
         id: v4(),
         angle: 0,
         parentDistance: 0,

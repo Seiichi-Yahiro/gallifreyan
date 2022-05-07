@@ -1,4 +1,10 @@
-import { Consonant } from '../state/ImageTypes';
+import {
+    Consonant,
+    ConsonantDecoration,
+    ConsonantPlacement,
+    VocalDecoration,
+    VocalPlacement,
+} from '../state/ImageTypes';
 import { convertTextToSentence, splitWordToChars } from './TextConverter';
 
 describe('TextConverter', () => {
@@ -177,6 +183,8 @@ describe('TextConverter', () => {
             expect((vocal as Consonant).dots).not.toBeDefined();
             expect(vocal.text).toBe('a');
             expect(vocal.lineSlots.length).toBe(0);
+            expect(vocal.placement).toBe(VocalPlacement.Outside);
+            expect(vocal.decoration).toBe(VocalDecoration.None);
         });
 
         it('should convert "e"', () => {
@@ -186,6 +194,8 @@ describe('TextConverter', () => {
             expect((vocal as Consonant).dots).not.toBeDefined();
             expect(vocal.text).toBe('e');
             expect(vocal.lineSlots.length).toBe(0);
+            expect(vocal.placement).toBe(VocalPlacement.OnLine);
+            expect(vocal.decoration).toBe(VocalDecoration.None);
         });
 
         it('should convert "i"', () => {
@@ -195,6 +205,8 @@ describe('TextConverter', () => {
             expect((vocal as Consonant).dots).not.toBeDefined();
             expect(vocal.text).toBe('i');
             expect(vocal.lineSlots.length).toBe(1);
+            expect(vocal.placement).toBe(VocalPlacement.OnLine);
+            expect(vocal.decoration).toBe(VocalDecoration.LineInside);
         });
 
         it('should convert "o"', () => {
@@ -204,6 +216,8 @@ describe('TextConverter', () => {
             expect((vocal as Consonant).dots).not.toBeDefined();
             expect(vocal.text).toBe('o');
             expect(vocal.lineSlots.length).toBe(0);
+            expect(vocal.placement).toBe(VocalPlacement.Inside);
+            expect(vocal.decoration).toBe(VocalDecoration.None);
         });
 
         it('should convert "u"', () => {
@@ -213,6 +227,8 @@ describe('TextConverter', () => {
             expect((vocal as Consonant).dots).not.toBeDefined();
             expect(vocal.text).toBe('u');
             expect(vocal.lineSlots.length).toBe(1);
+            expect(vocal.placement).toBe(VocalPlacement.OnLine);
+            expect(vocal.decoration).toBe(VocalDecoration.LineOutside);
         });
     });
 
@@ -226,6 +242,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.None);
             });
 
             it('should convert "j"', () => {
@@ -236,6 +254,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.None);
             });
 
             it('should convert "t"', () => {
@@ -246,6 +266,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.None);
             });
 
             it('should convert "th"', () => {
@@ -256,6 +278,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.None);
             });
         });
 
@@ -268,6 +292,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(1);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleDot);
             });
 
             it('should convert "wh"', () => {
@@ -278,6 +304,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(1);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleDot);
             });
 
             it('should convert "gh"', () => {
@@ -288,6 +316,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(1);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleDot);
             });
         });
 
@@ -300,6 +330,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(2);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleDot);
             });
 
             it('should convert "k"', () => {
@@ -310,6 +342,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(2);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleDot);
             });
 
             it('should convert "sh"', () => {
@@ -320,6 +354,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(2);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleDot);
             });
 
             it('should convert "y"', () => {
@@ -330,6 +366,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(2);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleDot);
             });
         });
 
@@ -342,6 +380,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(3);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleDot);
             });
 
             it('should convert "l"', () => {
@@ -352,6 +392,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(3);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleDot);
             });
 
             it('should convert "r"', () => {
@@ -362,6 +404,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(3);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleDot);
             });
 
             it('should convert "z"', () => {
@@ -372,6 +416,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(3);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleDot);
             });
         });
 
@@ -384,6 +430,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(4);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.QuadrupleDot);
             });
 
             it('should convert "q"', () => {
@@ -394,6 +442,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(4);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.QuadrupleDot);
             });
         });
 
@@ -406,6 +456,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(1);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleLine);
             });
 
             it('should convert "n"', () => {
@@ -416,6 +468,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(1);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleLine);
             });
 
             it('should convert "v"', () => {
@@ -426,6 +480,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(1);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleLine);
             });
 
             it('should convert "qu"', () => {
@@ -436,6 +492,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(1);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.SingleLine);
             });
         });
 
@@ -448,6 +506,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(2);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleLine);
             });
 
             it('should convert "p"', () => {
@@ -458,6 +518,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(2);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleLine);
             });
 
             it('should convert "w"', () => {
@@ -468,6 +530,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(2);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleLine);
             });
 
             it('should convert "x"', () => {
@@ -478,6 +542,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(2);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.DoubleLine);
             });
         });
 
@@ -490,6 +556,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(3);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleLine);
             });
 
             it('should convert "m"', () => {
@@ -500,6 +568,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(3);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.Inside);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleLine);
             });
 
             it('should convert "s"', () => {
@@ -510,6 +580,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(3);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.ShallowCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleLine);
             });
 
             it('should convert "ng"', () => {
@@ -520,6 +592,8 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(3);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeFalsy();
+                expect(consonant.placement).toBe(ConsonantPlacement.OnLine);
+                expect(consonant.decoration).toBe(ConsonantDecoration.TripleLine);
             });
         });
 
@@ -546,11 +620,15 @@ describe('TextConverter', () => {
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(0);
                 expect(consonant.vocal.isSome()).toBeTruthy();
+                expect(consonant.placement).toBe(ConsonantPlacement.DeepCut);
+                expect(consonant.decoration).toBe(ConsonantDecoration.None);
 
                 const vocal = consonant.vocal.unwrap();
 
                 expect(vocal.text).toBe('a');
                 expect(vocal.lineSlots.length).toBe(0);
+                expect(vocal.placement).toBe(VocalPlacement.Outside);
+                expect(vocal.decoration).toBe(VocalDecoration.None);
             });
         });
     });

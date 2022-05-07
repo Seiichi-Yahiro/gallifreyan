@@ -1,14 +1,14 @@
 import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useRedux } from '../hooks/useRedux';
+import { ConsonantPlacement, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { Word } from '../state/ImageTypes';
 import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
-import { isDeepCut, isLetterConsonant, isShallowCut } from '../utils/LetterGroups';
+import { isLetterConsonant, isPlacement } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
-import { SVGConsonant, SVGVocal, SVGConsonantCutMask } from './SVGLetter';
-import { useDispatch } from 'react-redux';
+import { SVGConsonant, SVGConsonantCutMask, SVGVocal } from './SVGLetter';
 
 interface WordProps extends Word {}
 
@@ -25,7 +25,9 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
             <mask id={`mask_${circleId}`}>
                 <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
                 {letters
-                    .filter((letter) => isShallowCut(letter.text) || isDeepCut(letter.text))
+                    .filter((letter) =>
+                        isPlacement(letter.placement, [ConsonantPlacement.ShallowCut, ConsonantPlacement.DeepCut])
+                    )
                     .map((letter) => (
                         <SVGConsonantCutMask key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
                     ))}
@@ -50,7 +52,10 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
             />
             {letters.map((letter) => {
                 if (isLetterConsonant(letter)) {
-                    return isShallowCut(letter.text) || isDeepCut(letter.text) ? (
+                    return isPlacement(letter.placement, [
+                        ConsonantPlacement.ShallowCut,
+                        ConsonantPlacement.DeepCut,
+                    ]) ? (
                         <React.Fragment key={letter.circleId}>
                             <mask id={`mask_${letter.circleId}`}>
                                 <SVGConsonantCutMask {...letter} fill="#000000" stroke="#ffffff" />

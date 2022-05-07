@@ -1,15 +1,17 @@
-import { ImageStore } from '../state/ImageStore';
-import { Consonant, Letter, PositionData, Sentence, Vocal, Word } from '../state/ImageTypes';
 import { range, zip } from 'lodash';
+import { ImageStore } from '../state/ImageStore';
 import {
-    isDeepCut,
-    isInside,
-    isLetterConsonant,
-    isShallowCut,
-    isVocalInside,
-    isVocalLineOutside,
-    isVocalOutside,
-} from './LetterGroups';
+    Consonant,
+    ConsonantPlacement,
+    Letter,
+    PositionData,
+    Sentence,
+    Vocal,
+    VocalDecoration,
+    VocalPlacement,
+    Word,
+} from '../state/ImageTypes';
+import { isLetterConsonant } from './LetterGroups';
 import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultValues';
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
@@ -39,38 +41,40 @@ export const calculateInitialLetterPositionDatas = (letters: Letter[], wordRadiu
 
     return letters
         .map((letter) => {
-            if (isDeepCut(letter.text)) {
-                return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 1.25;
-            } else if (isShallowCut(letter.text)) {
-                return wordRadius + DEFAULT_CONSONANT_RADIUS / 2;
-            } else if (isInside(letter.text)) {
-                return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 2 - 5;
-            } else if (isVocalOutside(letter.text)) {
-                return wordRadius + DEFAULT_VOCAL_RADIUS + 5;
-            } else if (isVocalInside(letter.text)) {
-                return wordRadius - DEFAULT_VOCAL_RADIUS - 5;
-            } else {
-                return wordRadius;
+            switch (letter.placement) {
+                case ConsonantPlacement.DeepCut:
+                    return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 1.25;
+                case ConsonantPlacement.ShallowCut:
+                    return wordRadius + DEFAULT_CONSONANT_RADIUS / 2;
+                case ConsonantPlacement.Inside:
+                    return wordRadius - (DEFAULT_CONSONANT_RADIUS / 2) * 2 - 5;
+                case VocalPlacement.Outside:
+                    return wordRadius + DEFAULT_VOCAL_RADIUS + 5;
+                case VocalPlacement.Inside:
+                    return wordRadius - DEFAULT_VOCAL_RADIUS - 5;
+                case ConsonantPlacement.OnLine:
+                case VocalPlacement.OnLine:
+                    return wordRadius;
             }
         })
         .map((parentDistance, index) => ({ parentDistance, angle: index * letterAngle }));
 };
 
 export const calculateInitialNestedVocalPositionData = (
-    vocal: string,
-    parentConsonant: string,
+    vocalPlacement: VocalPlacement,
+    parentConsonantPlacement: ConsonantPlacement,
     consonantPositionData: PositionData,
     wordRadius: number
 ): PositionData => {
-    if (isVocalOutside(vocal)) {
+    if (vocalPlacement === VocalPlacement.Outside) {
         const angle = consonantPositionData.angle;
         const parentDistance = wordRadius + DEFAULT_VOCAL_RADIUS + 5;
         return { angle, parentDistance };
-    } else if (isVocalInside(vocal)) {
+    } else if (vocalPlacement === VocalPlacement.Inside) {
         const data = { ...consonantPositionData };
         data.parentDistance -= DEFAULT_CONSONANT_RADIUS;
         return data;
-    } else if (isShallowCut(parentConsonant)) {
+    } else if (parentConsonantPlacement === ConsonantPlacement.ShallowCut) {
         const angle = consonantPositionData.angle;
         const parentDistance = wordRadius;
         return { angle, parentDistance };
@@ -158,7 +162,7 @@ const resetVocalPositionData = (state: ImageStore, vocal: Vocal, vocalPositionDa
         vocalCircle.r,
         vocalPositionData.angle,
         vocal.lineSlots.length,
-        isVocalLineOutside(vocal.text)
+        vocal.decoration === VocalDecoration.LineOutside
     );
 
     zipEqual(
@@ -211,8 +215,8 @@ const resetConsonantPositionData = (
 
     consonant.vocal.ifIsSome((vocal) => {
         const vocalPositionData = calculateInitialNestedVocalPositionData(
-            vocal.text,
-            consonant.text,
+            vocal.placement,
+            consonant.placement,
             consonantPositionData,
             wordRadius
         );

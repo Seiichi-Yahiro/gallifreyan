@@ -1,65 +1,127 @@
-import { Consonant, Letter, Vocal } from '../state/ImageTypes';
+import {
+    Consonant,
+    Letter,
+    Vocal,
+    ConsonantDecoration,
+    ConsonantPlacement,
+    VocalPlacement,
+    VocalDecoration,
+} from '../state/ImageTypes';
+import Maybe from './Maybe';
 
-export const DEEP_CUT = new RegExp('^(?:b|ch|d|g|h|f)$', 'i');
-export const INSIDE = new RegExp('^(?:j|ph|k|l|c|n|p|m)$', 'i');
-export const SHALLOW_CUT = new RegExp('^(?:t|wh|sh|r|v|w|s)$', 'i');
-export const ON_LINE = new RegExp('^(?:th|gh|y|z|qu?|x|ng)$', 'i');
+export const isPlacement = (
+    placement: ConsonantPlacement | VocalPlacement,
+    placements: (ConsonantPlacement | VocalPlacement)[]
+) => placements.includes(placement);
 
-export const SINGLE_DOT = new RegExp('^(?:ph|wh|gh)$', 'i');
-export const DOUBLE_DOT = new RegExp('^(?:ch|k|sh|y)$', 'i');
-export const TRIPLE_DOT = new RegExp('^[dlrz]$', 'i');
-export const QUADRUPLE_DOT = new RegExp('^[cq]$', 'i');
+type RegexTest = (text: string) => boolean;
 
-export const SINGLE_LINE = new RegExp('^(?:g|n|v|qu)$', 'i');
-export const DOUBLE_LINE = new RegExp('^[hpwx]$', 'i');
-export const TRIPLE_LINE = new RegExp('^(?:f|m|s|ng)$', 'i');
+const assignT = <T,>(tests: [RegexTest, T][], letter: string): Maybe<T> =>
+    Maybe.of(tests.find(([test, _]) => test(letter))).map(([_, value]) => value);
 
-export const VOCAL = new RegExp('^[aeiou]$', 'i');
-export const VOCAL_ON_LINE = new RegExp('^[eiu]$', 'i');
-export const VOCAL_OUTSIDE = new RegExp('^a$', 'i');
-export const VOCAL_INSIDE = new RegExp('^o$', 'i');
-export const VOCAL_SINGLE_LINE = new RegExp('^[iu]$', 'i');
-export const VOCAL_LINE_INSIDE = new RegExp('^i$', 'i');
-export const VOCAL_LINE_OUTSIDE = new RegExp('^u$', 'i');
+export const assignConsonantPlacement = (letter: string): Maybe<ConsonantPlacement> =>
+    assignT(
+        [
+            [isDeepCut, ConsonantPlacement.DeepCut],
+            [isInside, ConsonantPlacement.Inside],
+            [isShallowCut, ConsonantPlacement.ShallowCut],
+            [isOnLine, ConsonantPlacement.OnLine],
+        ],
+        letter
+    );
+
+export const assignConsonantDecoration = (letter: string): Maybe<ConsonantDecoration> =>
+    assignT(
+        [
+            [isNoDecoration, ConsonantDecoration.None],
+            [isSingleDot, ConsonantDecoration.SingleDot],
+            [isDoubleDot, ConsonantDecoration.DoubleDot],
+            [isTripleDot, ConsonantDecoration.TripleDot],
+            [isQuadrupleDot, ConsonantDecoration.QuadrupleDot],
+            [isSingleLine, ConsonantDecoration.SingleLine],
+            [isDoubleLine, ConsonantDecoration.DoubleLine],
+            [isTripleLine, ConsonantDecoration.TripleLine],
+        ],
+        letter
+    );
+
+export const assignVocalPlacement = (letter: string): Maybe<VocalPlacement> =>
+    assignT(
+        [
+            [isVocalOnLine, VocalPlacement.OnLine],
+            [isVocalOutside, VocalPlacement.Outside],
+            [isVocalInside, VocalPlacement.Inside],
+        ],
+        letter
+    );
+
+export const assignVocalDecoration = (letter: string): Maybe<VocalDecoration> =>
+    assignT(
+        [
+            [isVocalNoDecoration, VocalDecoration.None],
+            [isVocalLineInside, VocalDecoration.LineInside],
+            [isVocalLineOutside, VocalDecoration.LineOutside],
+        ],
+        letter
+    );
+
+const CONSONANT_DEEP_CUT = new RegExp('^(?:b|ch|d|g|h|f)$', 'i');
+const CONSONANT_INSIDE = new RegExp('^(?:j|ph|k|l|c|n|p|m)$', 'i');
+const CONSONANT_SHALLOW_CUT = new RegExp('^(?:t|wh|sh|r|v|w|s)$', 'i');
+const CONSONANT_ON_LINE = new RegExp('^(?:th|gh|y|z|qu?|x|ng)$', 'i');
+
+const CONSONANT_NO_DECORATION = new RegExp('^(?:b|j|th?)$', 'i');
+const SINGLE_DOT = new RegExp('^(?:ph|wh|gh)$', 'i');
+const CONSONANT_DOUBLE_DOT = new RegExp('^(?:ch|k|sh|y)$', 'i');
+const CONSONANT_TRIPLE_DOT = new RegExp('^[dlrz]$', 'i');
+const QUADRUPLE_DOT = new RegExp('^[cq]$', 'i');
+
+const CONSONANT_SINGLE_LINE = new RegExp('^(?:g|n|v|qu)$', 'i');
+const CONSONANT_DOUBLE_LINE = new RegExp('^[hpwx]$', 'i');
+const CONSONANT_TRIPLE_LINE = new RegExp('^(?:f|m|s|ng)$', 'i');
+
+const VOCAL = new RegExp('^[aeiou]$', 'i');
+const VOCAL_ON_LINE = new RegExp('^[eiu]$', 'i');
+const VOCAL_OUTSIDE = new RegExp('^a$', 'i');
+const VOCAL_INSIDE = new RegExp('^o$', 'i');
+const VOCAL_NO_DECORATION = new RegExp('^[aeo]$', 'i');
+const VOCAL_LINE_INSIDE = new RegExp('^i$', 'i');
+const VOCAL_LINE_OUTSIDE = new RegExp('^u$', 'i');
 
 export const DOUBLE_LETTER = new RegExp('th|ph|wh|gh|ch|sh|qu|ng', 'i');
 
-export const isDeepCut = (text: string) => DEEP_CUT.test(text);
-export const isInside = (text: string) => INSIDE.test(text);
-export const isShallowCut = (text: string) => SHALLOW_CUT.test(text);
-export const isOnLine = (text: string) => ON_LINE.test(text);
+const isDeepCut = (text: string) => CONSONANT_DEEP_CUT.test(text);
+const isInside = (text: string) => CONSONANT_INSIDE.test(text);
+const isShallowCut = (text: string) => CONSONANT_SHALLOW_CUT.test(text);
+const isOnLine = (text: string) => CONSONANT_ON_LINE.test(text);
 
-export const isSingleDot = (text: string) => SINGLE_DOT.test(text);
-export const isDoubleDot = (text: string) => DOUBLE_DOT.test(text);
-export const isTripleDot = (text: string) => TRIPLE_DOT.test(text);
-export const isQuadrupleDot = (text: string) => QUADRUPLE_DOT.test(text);
+const isNoDecoration = (text: string) => CONSONANT_NO_DECORATION.test(text);
+const isSingleDot = (text: string) => SINGLE_DOT.test(text);
+const isDoubleDot = (text: string) => CONSONANT_DOUBLE_DOT.test(text);
+const isTripleDot = (text: string) => CONSONANT_TRIPLE_DOT.test(text);
+const isQuadrupleDot = (text: string) => QUADRUPLE_DOT.test(text);
 
-export const isSingleLine = (text: string) => SINGLE_LINE.test(text);
-export const isDoubleLine = (text: string) => DOUBLE_LINE.test(text);
-export const isTripleLine = (text: string) => TRIPLE_LINE.test(text);
+const isSingleLine = (text: string) => CONSONANT_SINGLE_LINE.test(text);
+const isDoubleLine = (text: string) => CONSONANT_DOUBLE_LINE.test(text);
+const isTripleLine = (text: string) => CONSONANT_TRIPLE_LINE.test(text);
 
 export const isVocal = (text: string) => VOCAL.test(text);
-export const isVocalOnLine = (text: string) => VOCAL_ON_LINE.test(text);
-export const isVocalOutside = (text: string) => VOCAL_OUTSIDE.test(text);
-export const isVocalInside = (text: string) => VOCAL_INSIDE.test(text);
-export const isVocalSingleLine = (text: string) => VOCAL_SINGLE_LINE.test(text);
-export const isVocalLineInside = (text: string) => VOCAL_LINE_INSIDE.test(text);
-export const isVocalLineOutside = (text: string) => VOCAL_LINE_OUTSIDE.test(text);
+const isVocalOnLine = (text: string) => VOCAL_ON_LINE.test(text);
+const isVocalOutside = (text: string) => VOCAL_OUTSIDE.test(text);
+const isVocalInside = (text: string) => VOCAL_INSIDE.test(text);
+const isVocalNoDecoration = (text: string) => VOCAL_NO_DECORATION.test(text);
+const isVocalLineInside = (text: string) => VOCAL_LINE_INSIDE.test(text);
+const isVocalLineOutside = (text: string) => VOCAL_LINE_OUTSIDE.test(text);
 
-export const isDoubleLetter = (text: string) => DOUBLE_LETTER.test(text);
+const isDoubleLetter = (text: string) => DOUBLE_LETTER.test(text);
 
-export const isEmpty = (text: string) => text.length === 0;
-
-export const letterGroupsCombination =
-    (...fns: Array<(text: string) => boolean>) =>
+const letterGroupsCombination =
+    (...fns: Array<RegexTest>) =>
     (text: string) =>
         fns.some((fn) => fn(text));
 
-export const isFullCircle = letterGroupsCombination(isOnLine, isInside, isVocal);
-export const isConsonant = letterGroupsCombination(isDeepCut, isShallowCut, isInside, isOnLine);
-
-export const isLetterVocal = (letter: Letter): letter is Vocal => isVocal(letter.text);
-export const isLetterConsonant = (letter: Letter): letter is Consonant => isConsonant(letter.text);
+export const isLetterVocal = (letter: Letter): letter is Vocal => (letter as Consonant).dots === undefined;
+export const isLetterConsonant = (letter: Letter): letter is Consonant => !isLetterVocal(letter);
 
 export const isValidLetter = letterGroupsCombination(
     isDeepCut,

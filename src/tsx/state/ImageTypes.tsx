@@ -39,17 +39,54 @@ export interface Word {
     lineSlots: UUID[];
 }
 
-export interface Letter {
+export type Letter = Vocal | Consonant;
+
+export interface Vocal {
     text: string;
     circleId: UUID;
     lineSlots: UUID[];
+    placement: VocalPlacement;
+    decoration: VocalDecoration;
 }
 
-export interface Vocal extends Letter {}
-
-export interface Consonant extends Letter {
+export interface Consonant {
+    text: string;
+    circleId: UUID;
+    lineSlots: UUID[];
     dots: UUID[];
     vocal: Maybe<Vocal>;
+    placement: ConsonantPlacement;
+    decoration: ConsonantDecoration;
+}
+
+export enum ConsonantPlacement {
+    DeepCut = 'DeepCut',
+    Inside = 'Inside',
+    ShallowCut = 'ShallowCut',
+    OnLine = 'OnLine',
+}
+
+export enum ConsonantDecoration {
+    None = 'None',
+    SingleDot = 'SingleDot',
+    DoubleDot = 'DoubleDot',
+    TripleDot = 'TripleDot',
+    QuadrupleDot = 'QuadrupleDot',
+    SingleLine = 'SingleLine',
+    DoubleLine = 'DoubleLine',
+    TripleLine = 'TripleLine',
+}
+
+export enum VocalPlacement {
+    OnLine = 'OnLine',
+    Outside = 'Outside',
+    Inside = 'Inside',
+}
+
+export enum VocalDecoration {
+    None = 'None',
+    LineInside = 'LineInside',
+    LineOutside = 'LineOutside',
 }
 
 export interface CircleData extends Referencable {
