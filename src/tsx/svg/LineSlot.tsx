@@ -29,7 +29,13 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const y2 = y + yDir;
 
     return (
-        <Group x={0} y={0} isHovered={isHoveredSlot || isHoveredConnection} isSelected={isSelectedSlot}>
+        <Group
+            x={0}
+            y={0}
+            isHovered={isHoveredSlot || isHoveredConnection}
+            isSelected={isSelectedSlot}
+            className="group-line-slot"
+        >
             <line x1={x} y1={y} x2={x2} y2={y2} strokeWidth={1} stroke="inherit" />
             <circle
                 cx={x}

@@ -20,7 +20,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
     const { x, y } = calculateTranslation(sentenceCircle.angle, sentenceCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-sentence">
             <SVGCircle
                 r={sentenceCircle.r}
                 filled={sentenceCircle.filled}

@@ -23,7 +23,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const { x, y } = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-dot">
             <SVGCircle
                 r={dotCircle.r}
                 lineSlots={lineSlots}

@@ -21,7 +21,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected}>
+        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-word">
             <mask id={`mask_${circleId}`}>
                 <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
                 {letters
@@ -50,33 +50,23 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
             />
-            {letters.map((letter) => {
-                if (isLetterConsonant(letter)) {
-                    return isPlacement(letter.placement, [
-                        ConsonantPlacement.ShallowCut,
-                        ConsonantPlacement.DeepCut,
-                    ]) ? (
-                        <React.Fragment key={letter.circleId}>
-                            <mask id={`mask_${letter.circleId}`}>
-                                <SVGConsonantCutMask {...letter} fill="#000000" stroke="#ffffff" />
-                            </mask>
-                            <SVGConsonant {...letter} fill="transparent" stroke="none">
-                                <circle
-                                    r={wordCircle.r}
-                                    fill="inherit"
-                                    stroke="inherit"
-                                    mask={`url(#mask_${letter.circleId})`}
-                                    style={{ pointerEvents: 'none' }}
-                                />
-                            </SVGConsonant>
-                        </React.Fragment>
-                    ) : (
-                        <SVGConsonant key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />
-                    );
-                } else {
-                    return <SVGVocal key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />;
-                }
-            })}
+            {letters.map((letter) =>
+                isLetterConsonant(letter) ? (
+                    <SVGConsonant
+                        key={letter.circleId}
+                        {...letter}
+                        parentRadius={wordCircle.r}
+                        fill="transparent"
+                        stroke={
+                            [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(letter.placement)
+                                ? 'none'
+                                : 'inherit'
+                        }
+                    />
+                ) : (
+                    <SVGVocal key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />
+                )
+            )}
         </Group>
     );
 };

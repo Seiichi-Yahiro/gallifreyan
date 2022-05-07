@@ -18,91 +18,24 @@ describe('SVG Letter', () => {
             return <svg>{vocal && <SVGVocal {...vocal} fill="#000000" stroke="#000000" />}</svg>;
         };
 
-        it('should render "a"', () => {
-            const { container } = render(<SetVocal text={'a'} />);
+        const expectVocal = (text: string, countLineSlots: number) => {
+            const { container } = render(<SetVocal text={text} />);
 
-            const vocals = container.querySelectorAll('svg > g > circle');
+            const vocals = container.querySelectorAll('.group-vocal');
             expect(vocals.length).toBe(1);
 
-            const groups = container.querySelectorAll('g');
-            expect(groups.length).toBe(1);
+            const dots = container.querySelectorAll('.group-dot');
+            expect(dots.length).toBe(0);
 
-            const circles = container.querySelectorAll('circle');
-            expect(circles.length).toBe(1);
+            const lineSlots = container.querySelectorAll('.group-line-slot');
+            expect(lineSlots.length).toBe(countLineSlots);
+        };
 
-            const lines = container.querySelectorAll('line');
-            expect(lines.length).toBe(0);
-        });
-
-        it('should render "e"', () => {
-            const { container } = render(<SetVocal text={'e'} />);
-
-            const vocals = container.querySelectorAll('svg > g > circle');
-            expect(vocals.length).toBe(1);
-
-            const groups = container.querySelectorAll('g');
-            expect(groups.length).toBe(1);
-
-            const circles = container.querySelectorAll('circle');
-            expect(circles.length).toBe(1);
-
-            const lines = container.querySelectorAll('line');
-            expect(lines.length).toBe(0);
-        });
-
-        it('should render "o"', () => {
-            const { container } = render(<SetVocal text={'o'} />);
-
-            const vocals = container.querySelectorAll('svg > g > circle');
-            expect(vocals.length).toBe(1);
-
-            const groups = container.querySelectorAll('g');
-            expect(groups.length).toBe(1);
-
-            const circles = container.querySelectorAll('circle');
-            expect(circles.length).toBe(1);
-
-            const lines = container.querySelectorAll('line');
-            expect(lines.length).toBe(0);
-        });
-
-        it('should render "i"', () => {
-            const { container } = render(<SetVocal text={'i'} />);
-
-            const vocals = container.querySelectorAll('svg > g > circle');
-            expect(vocals.length).toBe(1);
-
-            const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-            expect(lineSlot.length).toBe(1);
-
-            const groups = container.querySelectorAll('g');
-            expect(groups.length).toBe(2);
-
-            const circles = container.querySelectorAll('circle');
-            expect(circles.length).toBe(3);
-
-            const lines = container.querySelectorAll('line');
-            expect(lines.length).toBe(1);
-        });
-
-        it('should render "u"', () => {
-            const { container } = render(<SetVocal text={'u'} />);
-
-            const vocals = container.querySelectorAll('svg > g > circle');
-            expect(vocals.length).toBe(1);
-
-            const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-            expect(lineSlot.length).toBe(1);
-
-            const groups = container.querySelectorAll('g');
-            expect(groups.length).toBe(2);
-
-            const circles = container.querySelectorAll('circle');
-            expect(circles.length).toBe(3);
-
-            const lines = container.querySelectorAll('line');
-            expect(lines.length).toBe(1);
-        });
+        it('should render "a"', () => expectVocal('a', 0));
+        it('should render "e"', () => expectVocal('e', 0));
+        it('should render "o"', () => expectVocal('o', 0));
+        it('should render "i"', () => expectVocal('i', 1));
+        it('should render "u"', () => expectVocal('u', 1));
     });
 
     describe('SVG Consonant', () => {
@@ -113,583 +46,98 @@ describe('SVG Letter', () => {
                 dispatch(updateSentenceAction(text));
             }, []);
 
-            return <svg>{consonant && <SVGConsonant {...consonant} fill="#000000" stroke="#000000" />}</svg>;
+            return (
+                <svg>
+                    {consonant && <SVGConsonant {...consonant} parentRadius={100} fill="#000000" stroke="#000000" />}
+                </svg>
+            );
+        };
+
+        interface Expectations {
+            arcs: number;
+            dots: number;
+            lineSlots: number;
+            vocals: number;
+        }
+
+        const expectConsonant = (text: string, expectations: Expectations) => {
+            const { container } = render(<SetConsonant text={text} />);
+
+            const consonants = container.querySelectorAll('.group-consonant');
+            expect(consonants.length).toBe(1);
+
+            const arcs = container.querySelectorAll('.group-consonant__arc');
+            expect(arcs.length).toBe(expectations.arcs);
+
+            const dots = container.querySelectorAll('.group-dot');
+            expect(dots.length).toBe(expectations.dots);
+
+            const lineSlots = container.querySelectorAll('.group-line-slot');
+            expect(lineSlots.length).toBe(expectations.lineSlots);
+
+            const vocals = container.querySelectorAll('.group-consonant__vocal');
+            expect(vocals.length).toBe(expectations.vocals);
         };
 
         describe('No decoration', () => {
-            it('should render "b"', () => {
-                const { container } = render(<SetConsonant text={'b'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(1);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(1);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "j"', () => {
-                const { container } = render(<SetConsonant text={'j'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(1);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(1);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "t"', () => {
-                const { container } = render(<SetConsonant text={'t'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(1);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(1);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "th"', () => {
-                const { container } = render(<SetConsonant text={'th'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(1);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(1);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "b"', () => expectConsonant('b', { arcs: 1, dots: 0, lineSlots: 0, vocals: 0 }));
+            it('should render "j"', () => expectConsonant('j', { arcs: 0, dots: 0, lineSlots: 0, vocals: 0 }));
+            it('should render "t"', () => expectConsonant('t', { arcs: 1, dots: 0, lineSlots: 0, vocals: 0 }));
+            it('should render "th"', () => expectConsonant('th', { arcs: 0, dots: 0, lineSlots: 0, vocals: 0 }));
         });
 
         describe('Single dot', () => {
-            it('should render "ph"', () => {
-                const { container } = render(<SetConsonant text={'ph'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(2);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "wh"', () => {
-                const { container } = render(<SetConsonant text={'wh'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(2);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "gh"', () => {
-                const { container } = render(<SetConsonant text={'gh'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(2);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "ph"', () => expectConsonant('ph', { arcs: 0, dots: 1, lineSlots: 0, vocals: 0 }));
+            it('should render "wh"', () => expectConsonant('wh', { arcs: 1, dots: 1, lineSlots: 0, vocals: 0 }));
+            it('should render "gh"', () => expectConsonant('gh', { arcs: 0, dots: 1, lineSlots: 0, vocals: 0 }));
         });
 
         describe('Double dot', () => {
-            it('should render "ch"', () => {
-                const { container } = render(<SetConsonant text={'ch'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "k"', () => {
-                const { container } = render(<SetConsonant text={'k'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "sh"', () => {
-                const { container } = render(<SetConsonant text={'sh'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "y"', () => {
-                const { container } = render(<SetConsonant text={'y'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "ch"', () => expectConsonant('ch', { arcs: 1, dots: 2, lineSlots: 0, vocals: 0 }));
+            it('should render "k"', () => expectConsonant('k', { arcs: 0, dots: 2, lineSlots: 0, vocals: 0 }));
+            it('should render "sh"', () => expectConsonant('sh', { arcs: 1, dots: 2, lineSlots: 0, vocals: 0 }));
+            it('should render "y"', () => expectConsonant('y', { arcs: 0, dots: 2, lineSlots: 0, vocals: 0 }));
         });
 
         describe('Triple dot', () => {
-            it('should render "d"', () => {
-                const { container } = render(<SetConsonant text={'d'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(4);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "l"', () => {
-                const { container } = render(<SetConsonant text={'l'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(4);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "r"', () => {
-                const { container } = render(<SetConsonant text={'r'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(4);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "z"', () => {
-                const { container } = render(<SetConsonant text={'z'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(4);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "d"', () => expectConsonant('d', { arcs: 1, dots: 3, lineSlots: 0, vocals: 0 }));
+            it('should render "l"', () => expectConsonant('l', { arcs: 0, dots: 3, lineSlots: 0, vocals: 0 }));
+            it('should render "r"', () => expectConsonant('r', { arcs: 1, dots: 3, lineSlots: 0, vocals: 0 }));
+            it('should render "z"', () => expectConsonant('z', { arcs: 0, dots: 3, lineSlots: 0, vocals: 0 }));
         });
 
         describe('Quadruple dot', () => {
-            it('should render "c"', () => {
-                const { container } = render(<SetConsonant text={'c'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(4);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(5);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
-
-            it('should render "q"', () => {
-                const { container } = render(<SetConsonant text={'q'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const dots = container.querySelectorAll('svg > g > g > circle');
-                expect(dots.length).toBe(4);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(5);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "c"', () => expectConsonant('c', { arcs: 0, dots: 4, lineSlots: 0, vocals: 0 }));
+            it('should render "q"', () => expectConsonant('q', { arcs: 0, dots: 4, lineSlots: 0, vocals: 0 }));
         });
 
         describe('Single line', () => {
-            it('should render "g"', () => {
-                const { container } = render(<SetConsonant text={'g'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(1);
-            });
-
-            it('should render "n"', () => {
-                const { container } = render(<SetConsonant text={'n'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(1);
-            });
-
-            it('should render "v"', () => {
-                const { container } = render(<SetConsonant text={'v'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(1);
-            });
-
-            it('should render "qu"', () => {
-                const { container } = render(<SetConsonant text={'qu'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(2);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(3);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(1);
-            });
+            it('should render "g"', () => expectConsonant('g', { arcs: 1, dots: 0, lineSlots: 1, vocals: 0 }));
+            it('should render "n"', () => expectConsonant('n', { arcs: 0, dots: 0, lineSlots: 1, vocals: 0 }));
+            it('should render "v"', () => expectConsonant('v', { arcs: 1, dots: 0, lineSlots: 1, vocals: 0 }));
+            it('should render "qu"', () => expectConsonant('qu', { arcs: 0, dots: 0, lineSlots: 1, vocals: 0 }));
         });
 
         describe('Double line', () => {
-            it('should render "h"', () => {
-                const { container } = render(<SetConsonant text={'h'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(2);
-            });
-
-            it('should render "p"', () => {
-                const { container } = render(<SetConsonant text={'p'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(2);
-            });
-
-            it('should render "w"', () => {
-                const { container } = render(<SetConsonant text={'w'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(2);
-            });
-
-            it('should render "x"', () => {
-                const { container } = render(<SetConsonant text={'x'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(2);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(5);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(2);
-            });
+            it('should render "h"', () => expectConsonant('h', { arcs: 1, dots: 0, lineSlots: 2, vocals: 0 }));
+            it('should render "p"', () => expectConsonant('p', { arcs: 0, dots: 0, lineSlots: 2, vocals: 0 }));
+            it('should render "w"', () => expectConsonant('w', { arcs: 1, dots: 0, lineSlots: 2, vocals: 0 }));
+            it('should render "x"', () => expectConsonant('x', { arcs: 0, dots: 0, lineSlots: 2, vocals: 0 }));
         });
 
         describe('Triple line', () => {
-            it('should render "f"', () => {
-                const { container } = render(<SetConsonant text={'f'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(7);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(3);
-            });
-
-            it('should render "m"', () => {
-                const { container } = render(<SetConsonant text={'m'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(7);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(3);
-            });
-
-            it('should render "s"', () => {
-                const { container } = render(<SetConsonant text={'s'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(7);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(3);
-            });
-
-            it('should render "ng"', () => {
-                const { container } = render(<SetConsonant text={'ng'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const lineSlot = container.querySelectorAll('svg > g > g > line + circle + circle');
-                expect(lineSlot.length).toBe(3);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(4);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(7);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(3);
-            });
+            it('should render "f"', () => expectConsonant('f', { arcs: 1, dots: 0, lineSlots: 3, vocals: 0 }));
+            it('should render "m"', () => expectConsonant('m', { arcs: 0, dots: 0, lineSlots: 3, vocals: 0 }));
+            it('should render "s"', () => expectConsonant('s', { arcs: 1, dots: 0, lineSlots: 3, vocals: 0 }));
+            it('should render "ng"', () => expectConsonant('ng', { arcs: 0, dots: 0, lineSlots: 3, vocals: 0 }));
         });
 
         describe('Nested vocal', () => {
-            it('should render nested vocal', () => {
-                const { container } = render(<SetConsonant text={'ba'} />);
-
-                const consonants = container.querySelectorAll('svg > g > circle');
-                expect(consonants.length).toBe(1);
-
-                const vocal = container.querySelectorAll('svg > g > g > g > circle');
-                expect(vocal.length).toBe(1);
-
-                const groups = container.querySelectorAll('g');
-                expect(groups.length).toBe(3);
-
-                const circles = container.querySelectorAll('circle');
-                expect(circles.length).toBe(2);
-
-                const lines = container.querySelectorAll('line');
-                expect(lines.length).toBe(0);
-            });
+            it('should render "ba', () => expectConsonant('ba', { arcs: 1, dots: 0, lineSlots: 0, vocals: 1 }));
+            it('should render "ke', () => expectConsonant('ke', { arcs: 0, dots: 2, lineSlots: 0, vocals: 1 }));
+            it('should render "ri', () => expectConsonant('ri', { arcs: 1, dots: 3, lineSlots: 1, vocals: 1 }));
+            it('should render "quu', () => expectConsonant('quu', { arcs: 0, dots: 0, lineSlots: 2, vocals: 1 }));
+            it('should render "wo', () => expectConsonant('wo', { arcs: 1, dots: 0, lineSlots: 2, vocals: 1 }));
         });
     });
 });
