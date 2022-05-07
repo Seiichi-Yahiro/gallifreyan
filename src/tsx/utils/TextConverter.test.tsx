@@ -3,7 +3,7 @@ import { convertTextToSentence, splitWordToChars } from './TextConverter';
 
 describe('TextConverter', () => {
     it('should split lower case word', () => {
-        const result = splitWordToChars('aeioubjtthchkshydlrzgnvquhpwxfmsng');
+        const result = splitWordToChars('aeioubjtthchkshydlrzcqgnvquhpwxfmsng');
         expect(result).toEqual([
             'a',
             'e',
@@ -22,6 +22,8 @@ describe('TextConverter', () => {
             'l',
             'r',
             'z',
+            'c',
+            'q',
             'g',
             'n',
             'v',
@@ -38,7 +40,7 @@ describe('TextConverter', () => {
     });
 
     it('should split upper case word', () => {
-        const result = splitWordToChars('AEIOUBJTTHCHKSHYDLRZGNVQUHPWXFMSNG');
+        const result = splitWordToChars('AEIOUBJTTHCHKSHYDLRZCQGNVQUHPWXFMSNG');
         expect(result).toEqual([
             'A',
             'E',
@@ -57,6 +59,8 @@ describe('TextConverter', () => {
             'L',
             'R',
             'Z',
+            'C',
+            'Q',
             'G',
             'N',
             'V',
@@ -78,18 +82,18 @@ describe('TextConverter', () => {
     });
 
     it('should convert text to circles', () => {
-        const { circles } = convertTextToSentence('aeiou bjtth chkshy dlrz gnvqu hpwx fmsng');
+        const { circles } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
 
         // 5 vocals
-        // 24 consonants
-        // 20 dots
-        // 7 words
+        // 26 consonants
+        // 28 dots
+        // 8 words
         // 1 sentence
-        expect(circles.length).toBe(57);
+        expect(circles.length).toBe(68);
     });
 
     it('should convert text to line slots', () => {
-        const { lineSlots } = convertTextToSentence('aeiou bjtth chkshy dlrz gnvqu hpwx fmsng');
+        const { lineSlots } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
 
         // 2 vocals
         // 24 consonants
@@ -97,13 +101,13 @@ describe('TextConverter', () => {
     });
 
     it('should convert text to sentence', () => {
-        const { textPart: sentence } = convertTextToSentence('aeiou bjtth chkshy dlrz gnvqu hpwx fmsng');
+        const { textPart: sentence } = convertTextToSentence('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
 
-        expect(sentence.text).toBe('aeiou bjtth chkshy dlrz gnvqu hpwx fmsng');
+        expect(sentence.text).toBe('aeiou bjtth chkshy dlrz cq gnvqu hpwx fmsng');
         expect(sentence.lineSlots.length).toBe(0);
-        expect(sentence.words.length).toBe(7);
+        expect(sentence.words.length).toBe(8);
 
-        const [aeiou, bjtth, chkshy, dlrz, gnvqu, hpwx, fmsng] = sentence.words;
+        const [aeiou, bjtth, chkshy, dlrz, cq, gnvqu, hpwx, fmsng] = sentence.words;
 
         expect(aeiou.text).toBe('aeiou');
         expect(aeiou.lineSlots.length).toBe(0);
@@ -120,6 +124,10 @@ describe('TextConverter', () => {
         expect(dlrz.text).toBe('dlrz');
         expect(dlrz.lineSlots.length).toBe(0);
         expect(dlrz.letters.length).toBe(4);
+
+        expect(cq.text).toBe('cq');
+        expect(cq.lineSlots.length).toBe(0);
+        expect(cq.letters.length).toBe(2);
 
         expect(gnvqu.text).toBe('gnvqu');
         expect(gnvqu.lineSlots.length).toBe(0);
@@ -304,6 +312,28 @@ describe('TextConverter', () => {
                 expect(consonant.text).toBe('z');
                 expect(consonant.lineSlots.length).toBe(0);
                 expect(consonant.dots.length).toBe(3);
+                expect(consonant.vocal.isSome()).toBeFalsy();
+            });
+        });
+
+        describe('Quadruple dot', () => {
+            it('should convert "c"', () => {
+                const { textPart: sentence } = convertTextToSentence('c');
+                const consonant = sentence.words.at(0)!.letters.at(0)! as Consonant;
+
+                expect(consonant.text).toBe('c');
+                expect(consonant.lineSlots.length).toBe(0);
+                expect(consonant.dots.length).toBe(4);
+                expect(consonant.vocal.isSome()).toBeFalsy();
+            });
+
+            it('should convert "q"', () => {
+                const { textPart: sentence } = convertTextToSentence('q');
+                const consonant = sentence.words.at(0)!.letters.at(0)! as Consonant;
+
+                expect(consonant.text).toBe('q');
+                expect(consonant.lineSlots.length).toBe(0);
+                expect(consonant.dots.length).toBe(4);
                 expect(consonant.vocal.isSome()).toBeFalsy();
             });
         });

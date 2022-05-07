@@ -338,6 +338,46 @@ describe('SVG Letter', () => {
             });
         });
 
+        describe('Quadruple dot', () => {
+            it('should render "c"', () => {
+                const { container } = render(<SetConsonant text={'c'} />);
+
+                const consonants = container.querySelectorAll('svg > g > circle');
+                expect(consonants.length).toBe(1);
+
+                const dots = container.querySelectorAll('svg > g > g > circle');
+                expect(dots.length).toBe(4);
+
+                const groups = container.querySelectorAll('g');
+                expect(groups.length).toBe(5);
+
+                const circles = container.querySelectorAll('circle');
+                expect(circles.length).toBe(5);
+
+                const lines = container.querySelectorAll('line');
+                expect(lines.length).toBe(0);
+            });
+
+            it('should render "q"', () => {
+                const { container } = render(<SetConsonant text={'q'} />);
+
+                const consonants = container.querySelectorAll('svg > g > circle');
+                expect(consonants.length).toBe(1);
+
+                const dots = container.querySelectorAll('svg > g > g > circle');
+                expect(dots.length).toBe(4);
+
+                const groups = container.querySelectorAll('g');
+                expect(groups.length).toBe(5);
+
+                const circles = container.querySelectorAll('circle');
+                expect(circles.length).toBe(5);
+
+                const lines = container.querySelectorAll('line');
+                expect(lines.length).toBe(0);
+            });
+        });
+
         describe('Single line', () => {
             it('should render "g"', () => {
                 const { container } = render(<SetConsonant text={'g'} />);

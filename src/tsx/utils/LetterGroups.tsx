@@ -1,12 +1,13 @@
 import { Consonant, Letter, Vocal } from '../state/ImageTypes';
 
 export const DEEP_CUT = new RegExp('^(?:b|ch|d|g|h|f)$', 'i');
-export const INSIDE = new RegExp('^[jklnpm]$', 'i');
+export const INSIDE = new RegExp('^[jklcnpm]$', 'i');
 export const SHALLOW_CUT = new RegExp('^(?:t|sh|r|v|w|s)$', 'i');
-export const ON_LINE = new RegExp('^(?:th|y|z|qu|x|ng)$', 'i');
+export const ON_LINE = new RegExp('^(?:th|y|z|qu?|x|ng)$', 'i');
 
 export const DOUBLE_DOT = new RegExp('^(?:ch|k|sh|y)$', 'i');
 export const TRIPLE_DOT = new RegExp('^[dlrz]$', 'i');
+export const QUADRUPLE_DOT = new RegExp('^[cq]$', 'i');
 
 export const SINGLE_LINE = new RegExp('^(?:g|n|v|qu)$', 'i');
 export const DOUBLE_LINE = new RegExp('^[hpwx]$', 'i');
@@ -29,6 +30,7 @@ export const isOnLine = (text: string) => ON_LINE.test(text);
 
 export const isDoubleDot = (text: string) => DOUBLE_DOT.test(text);
 export const isTripleDot = (text: string) => TRIPLE_DOT.test(text);
+export const isQuadrupleDot = (text: string) => QUADRUPLE_DOT.test(text);
 
 export const isSingleLine = (text: string) => SINGLE_LINE.test(text);
 export const isDoubleLine = (text: string) => DOUBLE_LINE.test(text);

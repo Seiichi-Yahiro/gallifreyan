@@ -6,6 +6,7 @@ import {
     isDoubleLine,
     isLetterConsonant,
     isLetterVocal,
+    isQuadrupleDot,
     isSingleLine,
     isTripleDot,
     isTripleLine,
@@ -166,6 +167,8 @@ const createDots = (letterId: UUID, char: string): Circle[] => {
         numberOfDots = 2;
     } else if (isTripleDot(char)) {
         numberOfDots = 3;
+    } else if (isQuadrupleDot(char)) {
+        numberOfDots = 4;
     }
 
     return range(numberOfDots).map((_i) => ({
