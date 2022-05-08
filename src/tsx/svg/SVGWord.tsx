@@ -52,19 +52,9 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
             />
             {letters.map((letter) =>
                 isLetterConsonant(letter) ? (
-                    <SVGConsonant
-                        key={letter.circleId}
-                        {...letter}
-                        parentRadius={wordCircle.r}
-                        fill="transparent"
-                        stroke={
-                            [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(letter.placement)
-                                ? 'none'
-                                : 'inherit'
-                        }
-                    />
+                    <SVGConsonant key={letter.circleId} {...letter} parentRadius={wordCircle.r} />
                 ) : (
-                    <SVGVocal key={letter.circleId} {...letter} fill="transparent" stroke="inherit" />
+                    <SVGVocal key={letter.circleId} {...letter} />
                 )
             )}
         </Group>

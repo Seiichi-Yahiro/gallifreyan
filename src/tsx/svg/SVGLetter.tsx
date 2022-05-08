@@ -9,17 +9,12 @@ import Group from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
 
-interface LetterProps {
-    fill: string;
-    stroke: string;
-}
-
-interface ConsonantProps extends Consonant, LetterProps {
+interface ConsonantProps extends Consonant {
     parentRadius: number;
 }
 
 export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo((props) => {
-    const { circleId, dots, fill, stroke, parentRadius, lineSlots, vocal, placement } = props;
+    const { circleId, dots, parentRadius, lineSlots, vocal, placement } = props;
 
     const consonantCircle = useRedux((state) => state.image.circles[circleId]);
     const dispatch = useDispatch();
@@ -36,8 +31,8 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             <SVGCircle
                 r={consonantCircle.r}
                 lineSlots={lineSlots}
-                fill={fill}
-                stroke={stroke}
+                fill="transparent"
+                stroke={isCut ? 'none' : 'inherit'}
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
@@ -71,7 +66,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             {vocal
                 .map((vocal) => (
                     <Group key={vocal.circleId} x={-x} y={-y} className="group-consonant__vocal">
-                        <SVGVocal {...vocal} fill="transparent" stroke="inherit" />
+                        <SVGVocal {...vocal} />
                     </Group>
                 ))
                 .asNullable()}
@@ -79,9 +74,9 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     );
 });
 
-interface VocalProps extends Vocal, LetterProps {}
+interface VocalProps extends Vocal {}
 
-export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, fill, stroke, lineSlots }) => {
+export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, lineSlots }) => {
     const vocalCircle = useRedux((state) => state.image.circles[circleId]);
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
@@ -94,8 +89,8 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
             <SVGCircle
                 r={vocalCircle.r}
                 lineSlots={lineSlots}
-                fill={fill}
-                stroke={stroke}
+                fill="transparent"
+                stroke="inherit"
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
@@ -112,7 +107,9 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
     );
 });
 
-interface ConsonantCutMaskProps extends LetterProps {
+interface ConsonantCutMaskProps {
+    fill: string;
+    stroke: string;
     circleId: UUID;
 }
 
