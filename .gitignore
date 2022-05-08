@@ -26,3 +26,11 @@ yarn-error.log*
 public/css/
 
 .eslintcache
+
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
