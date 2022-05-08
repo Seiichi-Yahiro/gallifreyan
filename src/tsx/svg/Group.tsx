@@ -1,7 +1,7 @@
 import React from 'react';
 
-const hoverColor = '#2196f3';
-const selectedColor = '#ff1744';
+export const hoverColor = '#2196f3';
+export const selectedColor = '#ff1744';
 
 interface GroupProps extends React.SVGProps<SVGGElement> {
     x: number;
