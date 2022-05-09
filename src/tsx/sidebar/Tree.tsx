@@ -3,6 +3,7 @@ import React from 'react';
 import { TreeView } from '@mui/lab';
 import { useRedux } from '../hooks/useRedux';
 import { isLetterConsonant } from '../utils/LetterGroups';
+import Maybe from '../utils/Maybe';
 import TreeItemWrapper from './TreeItemWrapper';
 
 const MinusSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: SvgIconProps) => (
@@ -56,14 +57,16 @@ const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
                             isLetterConsonant(letter) ? (
                                 <TreeItemWrapper
                                     key={letter.circleId}
-                                    text={letter.vocal.map((vocal) => letter.text + vocal.text).unwrapOr(letter.text)}
+                                    text={Maybe.of(letter.vocal)
+                                        .map((vocal) => letter.text + vocal.text)
+                                        .unwrapOr(letter.text)}
                                     circleId={letter.circleId}
                                     lineSlots={letter.lineSlots}
                                 >
                                     {letter.dots.map((dot) => (
                                         <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
                                     ))}
-                                    {letter.vocal
+                                    {Maybe.of(letter.vocal)
                                         .map((vocal) => (
                                             <TreeItemWrapper
                                                 key={vocal.circleId}

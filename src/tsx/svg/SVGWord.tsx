@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRedux } from '../hooks/useRedux';
 import { ConsonantPlacement, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
+import { setHovering, setSelection } from '../state/WorkState';
 import { isLetterConsonant, isPlacement } from '../utils/LetterGroups';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
@@ -41,14 +41,14 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelectionAction(circleId));
+                            dispatch(setSelection(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
             {letters.map((letter) =>
                 isLetterConsonant(letter) ? (

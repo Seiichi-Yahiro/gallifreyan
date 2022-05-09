@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
-import { AppStore } from '../state/AppStore';
+import { AppState } from '../state/AppState';
 
-export function useRedux<S>(selector: (state: AppStore) => S, equalityFn?: (left: S, right: S) => boolean) {
-    return useSelector<AppStore, S>(selector, equalityFn);
-}
+export const useRedux = <S,>(selector: (state: AppState) => S, equalityFn?: (left: S, right: S) => boolean) =>
+    useSelector<AppState, S>(selector, equalityFn);

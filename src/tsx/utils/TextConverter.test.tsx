@@ -236,7 +236,7 @@ describe('TextConverter', () => {
             expect(consonant.text).toBe(text);
             expect(consonant.lineSlots.length).toBe(expectations.lineSlots);
             expect(consonant.dots.length).toBe(expectations.dots);
-            expect(consonant.vocal.isSome()).toBeFalsy();
+            expect(consonant.vocal).not.toBeDefined();
             expect(consonant.placement).toBe(expectations.placement);
             expect(consonant.decoration).toBe(expectations.decoration);
         };
@@ -504,9 +504,9 @@ describe('TextConverter', () => {
                 expect(consonant.dots.length).toBe(consonantExpectations.dots);
                 expect(consonant.placement).toBe(consonantExpectations.placement);
                 expect(consonant.decoration).toBe(consonantExpectations.decoration);
-                expect(consonant.vocal.isSome()).toBeTruthy();
+                expect(consonant.vocal).toBeDefined();
 
-                const vocal = consonant.vocal.unwrap();
+                const vocal = consonant.vocal!;
 
                 expect(vocal.text).toBe(vocalText);
                 expect(vocal.lineSlots.length).toBe(vocalExpectations.lineSlots);

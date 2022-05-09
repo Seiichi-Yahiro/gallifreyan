@@ -1,5 +1,3 @@
-import Maybe from '../utils/Maybe';
-
 export type UUID = string;
 
 export interface Referencable {
@@ -22,7 +20,7 @@ export interface LineConnection extends Referencable {
 }
 
 export interface LineSlot extends Referencable, PositionData {
-    connection: Maybe<LineConnection>;
+    connection?: LineConnection;
 }
 
 export interface Sentence {
@@ -54,7 +52,7 @@ export interface Consonant {
     circleId: UUID;
     lineSlots: UUID[];
     dots: UUID[];
-    vocal: Maybe<Vocal>;
+    vocal?: Vocal;
     placement: ConsonantPlacement;
     decoration: ConsonantDecoration;
 }

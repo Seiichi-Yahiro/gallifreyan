@@ -2,9 +2,9 @@ import { TextField } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRedux } from '../hooks/useRedux';
-import { AppStore } from '../state/AppStore';
+import { AppState } from '../state/AppState';
 import { createSelector } from 'reselect';
-import { updateCircleDataAction, updateLineSlotDataAction } from '../state/ImageStore';
+import { updateCircleData, updateLineSlotData } from '../state/ImageState';
 import Maybe from '../utils/Maybe';
 
 interface SettingsProps {
@@ -13,9 +13,9 @@ interface SettingsProps {
 
 const createSelectedSelector = () =>
     createSelector(
-        (state: AppStore) => state.work.selection,
-        (state: AppStore) => state.image.circles,
-        (state: AppStore) => state.image.lineSlots,
+        (state: AppState) => state.work.selection,
+        (state: AppState) => state.image.circles,
+        (state: AppState) => state.image.lineSlots,
         (selection, circles, lineSlots) => {
             const id = selection ?? '';
             return Maybe.of(circles[id])
@@ -35,22 +35,22 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
 
             const changeRadius = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const r = Number(event.currentTarget.value);
-                dispatch(updateCircleDataAction({ id, r }));
+                dispatch(updateCircleData({ id, r }));
             };
 
             const changeDistance = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const parentDistance = Number(event.currentTarget.value);
                 if (isCircle) {
-                    dispatch(updateCircleDataAction({ id, parentDistance }));
+                    dispatch(updateCircleData({ id, parentDistance }));
                 }
             };
 
             const changeAngle = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const angle = Number(event.currentTarget.value);
                 if (isCircle) {
-                    dispatch(updateCircleDataAction({ id, angle }));
+                    dispatch(updateCircleData({ id, angle }));
                 } else {
-                    dispatch(updateLineSlotDataAction({ id, angle }));
+                    dispatch(updateLineSlotData({ id, angle }));
                 }
             };
 

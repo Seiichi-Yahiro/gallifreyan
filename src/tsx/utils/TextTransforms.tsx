@@ -1,5 +1,5 @@
 import { range, zip } from 'lodash';
-import { ImageStore } from '../state/ImageStore';
+import { ImageState } from '../state/ImageState';
 import {
     Consonant,
     ConsonantPlacement,
@@ -12,6 +12,7 @@ import {
     Word,
 } from '../state/ImageTypes';
 import { isLetterConsonant } from './LetterGroups';
+import Maybe from './Maybe';
 import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultValues';
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
@@ -114,9 +115,9 @@ export const calculateInitialLineSlotPositionDatas = (
     }));
 };
 
-export const resetPositionDatas = (state: ImageStore) => resetSentencePositionData(state, state.sentence);
+export const resetPositionDatas = (state: ImageState) => resetSentencePositionData(state, state.sentence);
 
-export const resetSentencePositionData = (state: ImageStore, sentence: Sentence) => {
+export const resetSentencePositionData = (state: ImageState, sentence: Sentence) => {
     const sentenceCircle = state.circles[sentence.circleId];
 
     zipEqual(sentence.words, calculateInitialWordPositionDatas(sentenceCircle.r, sentence.words.length)).forEach(
@@ -126,7 +127,7 @@ export const resetSentencePositionData = (state: ImageStore, sentence: Sentence)
     );
 };
 
-export const resetWordPositionData = (state: ImageStore, word: Word, wordPositionData: PositionData) => {
+export const resetWordPositionData = (state: ImageState, word: Word, wordPositionData: PositionData) => {
     const wordCircle = state.circles[word.circleId];
 
     wordCircle.angle = wordPositionData.angle;
@@ -140,7 +141,7 @@ export const resetWordPositionData = (state: ImageStore, word: Word, wordPositio
 };
 
 const resetLetterPositionData = (
-    state: ImageStore,
+    state: ImageState,
     letter: Letter,
     letterPositionData: PositionData,
     wordRadius: number
@@ -152,7 +153,7 @@ const resetLetterPositionData = (
     }
 };
 
-const resetVocalPositionData = (state: ImageStore, vocal: Vocal, vocalPositionData: PositionData) => {
+const resetVocalPositionData = (state: ImageState, vocal: Vocal, vocalPositionData: PositionData) => {
     const vocalCircle = state.circles[vocal.circleId];
 
     vocalCircle.angle = vocalPositionData.angle;
@@ -175,7 +176,7 @@ const resetVocalPositionData = (state: ImageStore, vocal: Vocal, vocalPositionDa
 };
 
 const resetConsonantPositionData = (
-    state: ImageStore,
+    state: ImageState,
     consonant: Consonant,
     consonantPositionData: PositionData,
     wordRadius: number
@@ -213,7 +214,7 @@ const resetConsonantPositionData = (
         dotCircle.parentDistance = dotParentDistance;
     });
 
-    consonant.vocal.ifIsSome((vocal) => {
+    Maybe.of(consonant.vocal).ifIsSome((vocal) => {
         const vocalPositionData = calculateInitialNestedVocalPositionData(
             vocal.placement,
             consonant.placement,

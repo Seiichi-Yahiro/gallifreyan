@@ -2,7 +2,7 @@ import React from 'react';
 import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
-import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
+import { setHovering, setSelection } from '../state/WorkState';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { useDispatch } from 'react-redux';
@@ -45,12 +45,12 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
                 onClick={(event) => {
                     if (!isSelectedSlot) {
-                        dispatch(setSelectionAction(id));
+                        dispatch(setSelection(id));
                     }
                     event.stopPropagation();
                 }}
-                onMouseEnter={() => dispatch(setHoveringAction(id))}
-                onMouseLeave={() => dispatch(setHoveringAction())}
+                onMouseEnter={() => dispatch(setHovering(id))}
+                onMouseLeave={() => dispatch(setHovering())}
             />
             <circle
                 cx={x2}

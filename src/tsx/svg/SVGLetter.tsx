@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRedux } from '../hooks/useRedux';
 import { Consonant, ConsonantPlacement, UUID, Vocal } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
+import { setHovering, setSelection } from '../state/WorkState';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -36,14 +36,14 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelectionAction(circleId));
+                            dispatch(setSelection(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
             {/*This will render the circle arc cutting into the word circle*/}
             {isCut && (
@@ -63,13 +63,11 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             {dots.map((dot) => (
                 <SVGDot key={dot} id={dot} />
             ))}
-            {vocal
-                .map((vocal) => (
-                    <Group key={vocal.circleId} x={-x} y={-y} className="group-consonant__vocal">
-                        <SVGVocal {...vocal} />
-                    </Group>
-                ))
-                .asNullable()}
+            {vocal && (
+                <Group key={vocal.circleId} x={-x} y={-y} className="group-consonant__vocal">
+                    <SVGVocal {...vocal} />
+                </Group>
+            )}
         </Group>
     );
 });
@@ -94,14 +92,14 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelectionAction(circleId));
+                            dispatch(setSelection(circleId));
                         }
                         event.stopPropagation();
                     },
                     [circleId, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatch(setHoveringAction(circleId)), [circleId])}
-                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
+                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
         </Group>
     );

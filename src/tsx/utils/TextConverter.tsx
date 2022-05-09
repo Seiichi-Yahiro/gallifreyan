@@ -93,12 +93,12 @@ const convertTextToWord = (text: string): TextData<Word> => {
         .reduce<TextData<Letter>[]>((acc, textData) => {
             const prevTextData = Maybe.of(last(acc));
             const isPrevConsonantWithoutNestedVocal = prevTextData
-                .map((it) => isLetterConsonant(it.textPart) && it.textPart.vocal.isNone())
+                .map((it) => isLetterConsonant(it.textPart) && !it.textPart.vocal)
                 .unwrapOr(false);
 
             if (isPrevConsonantWithoutNestedVocal && isLetterVocal(textData.textPart)) {
                 const consonant = prevTextData.unwrap() as TextData<Consonant>;
-                consonant.textPart.vocal = Maybe.some(textData.textPart);
+                consonant.textPart.vocal = textData.textPart;
                 consonant.circles = consonant.circles.concat(textData.circles);
                 consonant.lineSlots = consonant.lineSlots.concat(textData.lineSlots);
                 return acc.slice(0, acc.length - 1).concat(consonant);
@@ -170,7 +170,6 @@ const convertTextToConsonant = (text: string): TextData<Consonant> => {
         circleId: consonantCircle.id,
         lineSlots: lineSlots.map((slot) => slot.id),
         dots: dots.map((dot) => dot.id),
-        vocal: Maybe.none(),
         placement: assignConsonantPlacement(text).unwrap(),
         decoration,
     };
@@ -227,6 +226,5 @@ const createLineSlots = (letterId: UUID, decoration: ConsonantDecoration | Vocal
         id: v4(),
         angle: 0,
         parentDistance: 0,
-        connection: Maybe.none(),
     }));
 };

@@ -2,9 +2,9 @@ import { alpha, TextField, styled, Typography } from '@mui/material';
 import { TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem } from '@mui/lab';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { updateSentenceAction } from '../state/ImageStore';
+import { updateSentence } from '../state/ImageState';
 import { UUID } from '../state/ImageTypes';
-import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
+import { setHovering, setSelection } from '../state/WorkState';
 import createClassName from '../utils/createClassName';
 
 const StyledTreeItem = styled((props: TreeItemProps) => <TreeItem {...props} />)(({ theme }) => ({
@@ -43,7 +43,7 @@ const createTreeItemContent =
 
         const handleSelectionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             handleSelection(event);
-            dispatch(setSelectionAction(nodeId));
+            dispatch(setSelection(nodeId));
         };
 
         const classNames = createClassName(className, classes.root, {
@@ -56,7 +56,7 @@ const createTreeItemContent =
         const createContent = () => {
             if (editable) {
                 const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) =>
-                    dispatch(updateSentenceAction(event.target.value));
+                    dispatch(updateSentence(event.target.value));
 
                 return (
                     <TextField
@@ -106,8 +106,8 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({
             nodeId={circleId}
             label={text}
             ContentComponent={editable ? EditableTreeItemContent : TreeItemContent}
-            onMouseEnter={() => dispatch(setHoveringAction(circleId))}
-            onMouseLeave={() => dispatch(setHoveringAction())}
+            onMouseEnter={() => dispatch(setHovering(circleId))}
+            onMouseLeave={() => dispatch(setHovering())}
         >
             {hasChildren && (
                 <>
@@ -118,8 +118,8 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({
                             ContentComponent={TreeItemContent}
                             nodeId={slot}
                             label="LINE"
-                            onMouseEnter={() => dispatch(setHoveringAction(slot))}
-                            onMouseLeave={() => dispatch(setHoveringAction())}
+                            onMouseEnter={() => dispatch(setHovering(slot))}
+                            onMouseLeave={() => dispatch(setHovering())}
                         />
                     ))}
                 </>

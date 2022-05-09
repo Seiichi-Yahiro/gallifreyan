@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useRedux } from '../hooks/useRedux';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
-import { setHoveringAction, setSelectionAction } from '../state/WorkStore';
+import { setHovering, setSelection } from '../state/WorkState';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -33,14 +33,14 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelectionAction(id));
+                            dispatch(setSelection(id));
                         }
                         event.stopPropagation();
                     },
                     [id, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatch(setHoveringAction(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHoveringAction()), [])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
+                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
         </Group>
     );
