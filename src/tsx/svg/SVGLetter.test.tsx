@@ -85,7 +85,7 @@ describe('SVG Letter', () => {
                 expect(arc_circle.getAttribute('stroke')).toBe('inherit');
                 expect(arc_circle.style.pointerEvents).toBe('none');
 
-                expect(arc_circle.getAttribute('mask')?.includes(mask.id)).toBeTruthy();
+                expect(arc_circle.getAttribute('mask')).toBe('url(#' + mask.id + ')');
             });
 
             const dots = container.querySelectorAll('.group-dot');

@@ -35,8 +35,8 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
             <SVGCircle
                 r={wordCircle.r}
                 lineSlots={lineSlots}
-                fill="inherit"
-                stroke="#inherit"
+                fill="transparent"
+                stroke="inherit"
                 mask={`url(#mask_${circleId})`}
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
