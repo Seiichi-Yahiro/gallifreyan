@@ -1,6 +1,6 @@
 import { range, zip } from 'lodash';
 import { ImageState } from '../state/ImageState';
-import { rotate, toRadian, Vector2 } from './LinearAlgebra';
+import { Degree, rotate, toRadian, Vector2 } from './LinearAlgebra';
 import {
     Consonant,
     ConsonantPlacement,
@@ -18,16 +18,24 @@ import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultVal
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
 
+export const adjustAngle = (angle: Degree): Degree => {
+    const newAngle = angle % 360;
+    return newAngle > 180 ? newAngle - 360 : newAngle;
+};
+
 export const calculateTranslation = (angle: number, parentDistance: number): Vector2 =>
-    rotate({ x: 0, y: parentDistance }, toRadian(angle));
+    rotate({ x: 0, y: parentDistance }, toRadian(-angle));
 
 export const calculateInitialWordPositionDatas = (sentenceRadius: number, numberOfWords: number): PositionData[] => {
-    const wordAngle = -360 / numberOfWords;
-    return range(numberOfWords).map((i) => ({ angle: i * wordAngle, parentDistance: sentenceRadius - 150 }));
+    const wordAngle = 360 / numberOfWords;
+    return range(numberOfWords).map((i) => ({
+        angle: adjustAngle(i * wordAngle),
+        parentDistance: sentenceRadius - 150,
+    }));
 };
 
 export const calculateInitialLetterPositionDatas = (letters: Letter[], wordRadius: number): PositionData[] => {
-    const letterAngle = -360 / letters.length;
+    const letterAngle = 360 / letters.length;
 
     return letters
         .map((letter) => {
@@ -47,7 +55,7 @@ export const calculateInitialLetterPositionDatas = (letters: Letter[], wordRadiu
                     return wordRadius;
             }
         })
-        .map((parentDistance, index) => ({ parentDistance, angle: index * letterAngle }));
+        .map((parentDistance, index) => ({ parentDistance, angle: adjustAngle(index * letterAngle) }));
 };
 
 export const calculateInitialNestedVocalPositionData = (
@@ -78,13 +86,13 @@ export const calculateInitialDotPositionDatas = (
     letterAngle: number,
     numberOfDots: number
 ): PositionData[] => {
-    const letterSideAngle = letterAngle - 180;
-    const dotDistanceAngle = -45;
+    const letterSideAngle = letterAngle + 180;
+    const dotDistanceAngle = 45;
     const centerDotsOnLetterSideAngle = ((numberOfDots - 1) * dotDistanceAngle) / 2;
 
     return range(numberOfDots).map((i) => ({
         parentDistance: letterRadius - 10,
-        angle: i * dotDistanceAngle - centerDotsOnLetterSideAngle + letterSideAngle,
+        angle: adjustAngle(i * dotDistanceAngle - centerDotsOnLetterSideAngle + letterSideAngle),
     }));
 };
 
@@ -94,13 +102,13 @@ export const calculateInitialLineSlotPositionDatas = (
     numberOfLines: number,
     pointOutside: boolean
 ): PositionData[] => {
-    const letterSideAngle = letterAngle - (pointOutside ? 0 : 180);
-    const lineDistanceAngle = -45;
+    const letterSideAngle = letterAngle + (pointOutside ? 0 : 180);
+    const lineDistanceAngle = 45;
     const centerLinesOnLetterSideAngle = ((numberOfLines - 1) * lineDistanceAngle) / 2;
 
     return range(numberOfLines).map((i) => ({
         parentDistance: letterRadius,
-        angle: i * lineDistanceAngle - centerLinesOnLetterSideAngle + letterSideAngle,
+        angle: adjustAngle(i * lineDistanceAngle - centerLinesOnLetterSideAngle + letterSideAngle),
     }));
 };
 

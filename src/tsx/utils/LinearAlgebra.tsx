@@ -29,7 +29,7 @@ export const det = (v1: Vector2, v2: Vector2): number => v1.x * v2.y - v1.y * v2
 
 export const length = (v: Vector2): number => Math.hypot(v.x, v.y);
 
-export const angleBetween = (v1: Vector2, v2: Vector2): Radian => -Math.atan2(det(v1, v2), dot(v1, v2));
+export const angleBetween = (v1: Vector2, v2: Vector2): Radian => Math.atan2(det(v1, v2), dot(v1, v2));
 
 export const rotate = (v: Dimension2, angle: Radian): Dimension2 => {
     const cos = Math.cos(angle);
