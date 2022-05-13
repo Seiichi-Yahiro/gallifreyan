@@ -1,6 +1,5 @@
 import { range, zip } from 'lodash';
 import { ImageState } from '../state/ImageState';
-import { Degree, rotate, toRadian, Vector2 } from './LinearAlgebra';
 import {
     Consonant,
     ConsonantPlacement,
@@ -13,6 +12,7 @@ import {
     Word,
 } from '../state/ImageTypes';
 import { isLetterConsonant } from './LetterGroups';
+import { Degree, rotate, toRadian, Vector2 } from './LinearAlgebra';
 import Maybe from './Maybe';
 import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultValues';
 
@@ -64,20 +64,29 @@ export const calculateInitialNestedVocalPositionData = (
     consonantPositionData: PositionData,
     wordRadius: number
 ): PositionData => {
-    if (vocalPlacement === VocalPlacement.Outside) {
-        const angle = consonantPositionData.angle;
-        const parentDistance = wordRadius + DEFAULT_VOCAL_RADIUS + 5;
-        return { angle, parentDistance };
-    } else if (vocalPlacement === VocalPlacement.Inside) {
-        const data = { ...consonantPositionData };
-        data.parentDistance -= DEFAULT_CONSONANT_RADIUS;
-        return data;
-    } else if (parentConsonantPlacement === ConsonantPlacement.ShallowCut) {
-        const angle = consonantPositionData.angle;
-        const parentDistance = wordRadius;
-        return { angle, parentDistance };
-    } else {
-        return { ...consonantPositionData };
+    switch (vocalPlacement) {
+        case VocalPlacement.OnLine:
+            if (parentConsonantPlacement === ConsonantPlacement.ShallowCut) {
+                return {
+                    angle: consonantPositionData.angle,
+                    parentDistance: wordRadius - consonantPositionData.parentDistance,
+                };
+            } else {
+                return {
+                    angle: consonantPositionData.angle,
+                    parentDistance: 0,
+                };
+            }
+        case VocalPlacement.Outside:
+            return {
+                angle: consonantPositionData.angle,
+                parentDistance: wordRadius - consonantPositionData.parentDistance + DEFAULT_VOCAL_RADIUS + 5,
+            };
+        case VocalPlacement.Inside:
+            return {
+                angle: adjustAngle(consonantPositionData.angle + 180),
+                parentDistance: DEFAULT_CONSONANT_RADIUS,
+            };
     }
 };
 

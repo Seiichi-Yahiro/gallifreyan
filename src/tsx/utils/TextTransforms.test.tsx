@@ -1,10 +1,11 @@
 import { range } from 'lodash';
-import { Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
+import { ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
 import {
     adjustAngle,
     calculateInitialDotPositionDatas,
     calculateInitialLetterPositionDatas,
     calculateInitialLineSlotPositionDatas,
+    calculateInitialNestedVocalPositionData,
     calculateInitialWordPositionDatas,
     calculateTranslation,
 } from './TextTransforms';
@@ -80,6 +81,51 @@ describe('Text Transforms', () => {
             }));
             const result = calculateInitialLetterPositionDatas(letters, 10).map((it) => it.angle);
             expect(result).toEqual([0, 90, 180, -90]);
+        });
+
+        describe('Nested Vocal', () => {
+            const consonantPlacements = [
+                ConsonantPlacement.DeepCut,
+                ConsonantPlacement.Inside,
+                ConsonantPlacement.ShallowCut,
+                ConsonantPlacement.OnLine,
+            ];
+
+            [VocalPlacement.Outside, VocalPlacement.OnLine]
+                .flatMap((vocalPlacement) =>
+                    consonantPlacements.map<[VocalPlacement, ConsonantPlacement]>((consonantPlacement) => [
+                        vocalPlacement,
+                        consonantPlacement,
+                    ])
+                )
+                .forEach(([vocalPlacement, consonantPlacement]) => {
+                    it(`should have angle of 90 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
+                        const result = calculateInitialNestedVocalPositionData(
+                            vocalPlacement,
+                            consonantPlacement,
+                            { angle: 90, parentDistance: 10 },
+                            100
+                        ).angle;
+                        expect(result).toBe(90);
+                    });
+                });
+
+            consonantPlacements
+                .map<[VocalPlacement, ConsonantPlacement]>((consonantPlacement) => [
+                    VocalPlacement.Inside,
+                    consonantPlacement,
+                ])
+                .forEach(([vocalPlacement, consonantPlacement]) => {
+                    it(`should have angle of 90 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
+                        const result = calculateInitialNestedVocalPositionData(
+                            vocalPlacement,
+                            consonantPlacement,
+                            { angle: 90, parentDistance: 10 },
+                            100
+                        ).angle;
+                        expect(result).toBe(-90);
+                    });
+                });
         });
 
         it('should have correct dot angles', () => {

@@ -94,7 +94,7 @@ describe('SVG Letter', () => {
             const lineSlots = container.querySelectorAll('.group-line-slot');
             expect(lineSlots.length).toBe(expectations.lineSlots);
 
-            const vocals = container.querySelectorAll('.group-consonant__vocal');
+            const vocals = container.querySelectorAll('.group-vocal');
             expect(vocals.length).toBe(expectations.vocals);
         };
 

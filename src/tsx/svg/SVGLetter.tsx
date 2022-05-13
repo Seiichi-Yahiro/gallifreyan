@@ -78,11 +78,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             {dots.map((dot) => (
                 <SVGDot key={dot} id={dot} />
             ))}
-            {vocal && (
-                <Group key={vocal.circleId} x={-translation.x} y={-translation.y} className="group-consonant__vocal">
-                    <SVGVocal {...vocal} />
-                </Group>
-            )}
+            {vocal && <SVGVocal {...vocal} />}
         </Group>
     );
 });
