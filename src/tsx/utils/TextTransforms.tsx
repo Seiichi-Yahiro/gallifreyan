@@ -1,5 +1,6 @@
 import { range, zip } from 'lodash';
 import { ImageState } from '../state/ImageState';
+import { rotate, toRadian, Vector2 } from './LinearAlgebra';
 import {
     Consonant,
     ConsonantPlacement,
@@ -17,20 +18,8 @@ import { DEFAULT_CONSONANT_RADIUS, DEFAULT_VOCAL_RADIUS } from './TextDefaultVal
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
 
-const toRadian = (degree: number) => degree * (Math.PI / 180);
-
-const rotate = (x: number, y: number, angle: number): { x: number; y: number } => {
-    const radian = toRadian(angle);
-    const cosAngle = Math.cos(radian);
-    const sinAngle = Math.sin(radian);
-
-    const rotatedX = x * cosAngle - y * sinAngle;
-    const rotatedY = x * sinAngle + y * cosAngle;
-
-    return { x: rotatedX, y: rotatedY };
-};
-
-export const calculateTranslation = (angle: number, parentDistance: number) => rotate(0, parentDistance, angle);
+export const calculateTranslation = (angle: number, parentDistance: number): Vector2 =>
+    rotate({ x: 0, y: parentDistance }, toRadian(angle));
 
 export const calculateInitialWordPositionDatas = (sentenceRadius: number, numberOfWords: number): PositionData[] => {
     const wordAngle = -360 / numberOfWords;

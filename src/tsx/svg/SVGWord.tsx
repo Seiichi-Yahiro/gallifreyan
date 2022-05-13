@@ -1,6 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
+import { updateCircleData } from '../state/ImageState';
 import { ConsonantPlacement, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
@@ -17,11 +19,16 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
+    const wordRef = useRef<SVGCircleElement>(null);
 
-    const { x, y } = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
+    const translation = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
+
+    const onMouseDown = useDragAndDrop(circleId, wordRef, translation, (positionData) =>
+        dispatch(updateCircleData({ id: circleId, ...positionData }))
+    );
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-word">
+        <Group x={translation.x} y={translation.y} isHovered={isHovered} isSelected={isSelected} className="group-word">
             <mask id={`mask_${circleId}`}>
                 <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
                 {letters
@@ -33,6 +40,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                     ))}
             </mask>
             <SVGCircle
+                ref={wordRef}
                 r={wordCircle.r}
                 lineSlots={lineSlots}
                 fill="transparent"
@@ -47,6 +55,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                     },
                     [circleId, isSelected]
                 )}
+                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />

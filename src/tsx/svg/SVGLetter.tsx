@@ -1,6 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
+import { updateCircleData } from '../state/ImageState';
 import { Consonant, ConsonantPlacement, UUID, Vocal } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
@@ -20,15 +22,27 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
+    const consonantRef = useRef<SVGCircleElement>(null);
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(placement);
 
-    const { x, y } = calculateTranslation(consonantCircle.angle, consonantCircle.parentDistance);
+    const translation = calculateTranslation(consonantCircle.angle, consonantCircle.parentDistance);
+
+    const onMouseDown = useDragAndDrop(circleId, consonantRef, translation, (positionData) =>
+        dispatch(updateCircleData({ id: circleId, ...positionData }))
+    );
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-consonant">
+        <Group
+            x={translation.x}
+            y={translation.y}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-consonant"
+        >
             {/*This will be invisible if isCut but it is still used to handle mouse events*/}
             <SVGCircle
+                ref={consonantRef}
                 r={consonantCircle.r}
                 lineSlots={lineSlots}
                 fill="transparent"
@@ -42,12 +56,13 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                     },
                     [circleId, isSelected]
                 )}
+                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
             {/*This will render the circle arc cutting into the word circle*/}
             {isCut && (
-                <Group x={-x} y={-y} className="group-consonant__arc">
+                <Group x={-translation.x} y={-translation.y} className="group-consonant__arc">
                     <mask id={`mask_${circleId}`}>
                         <SVGConsonantCutMask {...props} fill="#000000" stroke="#ffffff" />
                     </mask>
@@ -64,7 +79,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
                 <SVGDot key={dot} id={dot} />
             ))}
             {vocal && (
-                <Group key={vocal.circleId} x={-x} y={-y} className="group-consonant__vocal">
+                <Group key={vocal.circleId} x={-translation.x} y={-translation.y} className="group-consonant__vocal">
                     <SVGVocal {...vocal} />
                 </Group>
             )}
@@ -79,12 +94,24 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
+    const vocalRef = useRef<SVGCircleElement>(null);
 
-    const { x, y } = calculateTranslation(vocalCircle.angle, vocalCircle.parentDistance);
+    const translation = calculateTranslation(vocalCircle.angle, vocalCircle.parentDistance);
+
+    const onMouseDown = useDragAndDrop(circleId, vocalRef, translation, (positionData) =>
+        dispatch(updateCircleData({ id: circleId, ...positionData }))
+    );
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-vocal">
+        <Group
+            x={translation.x}
+            y={translation.y}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-vocal"
+        >
             <SVGCircle
+                ref={vocalRef}
                 r={vocalCircle.r}
                 lineSlots={lineSlots}
                 fill="transparent"
@@ -98,6 +125,7 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
                     },
                     [circleId, isSelected]
                 )}
+                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />

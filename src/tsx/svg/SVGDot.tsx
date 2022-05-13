@@ -1,5 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
+import { updateCircleData } from '../state/ImageState';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
 import { setHovering, setSelection } from '../state/WorkState';
@@ -19,12 +21,18 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);
+    const dotRef = useRef<SVGCircleElement>(null);
 
-    const { x, y } = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
+    const translation = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
+
+    const onMouseDown = useDragAndDrop(id, dotRef, translation, (positionData) =>
+        dispatch(updateCircleData({ id, ...positionData }))
+    );
 
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-dot">
+        <Group x={translation.x} y={translation.y} isHovered={isHovered} isSelected={isSelected} className="group-dot">
             <SVGCircle
+                ref={dotRef}
                 r={dotCircle.r}
                 lineSlots={lineSlots}
                 fill="inherit"
@@ -39,6 +47,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                     },
                     [id, isSelected]
                 )}
+                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
+import { updateLineSlotData } from '../state/ImageState';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
 import { setHovering, setSelection } from '../state/WorkState';
+import { add, mul, normalize, Position, Vector2 } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group from './Group';
 import { useDispatch } from 'react-redux';
@@ -17,16 +20,19 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const dispatch = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
-
+    const slotCircleRef = useRef<SVGCircleElement>(null);
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
-    const { x, y } = calculateTranslation(angle, parentDistance);
-    const length = Math.sqrt(x * x + y * y); // TODO what if 0
+    const translation = calculateTranslation(angle, parentDistance);
+
     const lineLength = 10;
-    const xDir = (lineLength * x) / length;
-    const yDir = (lineLength * y) / length;
-    const x2 = x + xDir;
-    const y2 = y + yDir;
+    const lineStart: Position = translation;
+    const direction: Vector2 = mul(normalize(translation), lineLength);
+    const lineEnd: Position = add(translation, direction);
+
+    const onMouseDown = useDragAndDrop(id, slotCircleRef, translation, (positionData) =>
+        dispatch(updateLineSlotData({ id, ...positionData }))
+    );
 
     return (
         <Group
@@ -36,10 +42,11 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
             isSelected={isSelectedSlot}
             className="group-line-slot"
         >
-            <line x1={x} y1={y} x2={x2} y2={y2} strokeWidth={1} stroke="inherit" />
+            <line x1={lineStart.x} y1={lineStart.y} x2={lineEnd.x} y2={lineEnd.y} strokeWidth={1} stroke="inherit" />
             <circle
-                cx={x}
-                cy={y}
+                ref={slotCircleRef}
+                cx={lineStart.x}
+                cy={lineStart.y}
                 r={5}
                 fill="transparent"
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
@@ -49,12 +56,13 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                     }
                     event.stopPropagation();
                 }}
+                onMouseDown={onMouseDown}
                 onMouseEnter={() => dispatch(setHovering(id))}
                 onMouseLeave={() => dispatch(setHovering())}
             />
             <circle
-                cx={x2}
-                cy={y2}
+                cx={lineEnd.x}
+                cy={lineEnd.y}
                 r={5}
                 fill="transparent"
                 stroke={isHoveredConnection ? 'inherit' : 'none'}
