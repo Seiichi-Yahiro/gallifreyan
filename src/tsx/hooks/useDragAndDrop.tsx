@@ -1,15 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { UUID } from '../state/ImageTypes';
+import { PositionData, UUID } from '../state/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
 import { calculateAngle, calculateParentDistance, calculateParentPos } from '../utils/DragAndDrop';
 import { Position, Vector2 } from '../utils/LinearAlgebra';
 import useEventListener from './useEventListener';
 import { useRedux } from './useRedux';
-
-interface PositionData {
-    parentDistance: number;
-    angle: number;
-}
 
 export const useDragAndDrop = (
     id: UUID,
