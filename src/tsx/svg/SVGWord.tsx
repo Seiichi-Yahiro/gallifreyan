@@ -7,8 +7,7 @@ import { ConsonantPlacement, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
 import { isLetterConsonant, isPlacement } from '../utils/LetterGroups';
-import { calculateTranslation } from '../utils/TextTransforms';
-import Group from './Group';
+import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import { SVGConsonant, SVGConsonantCutMask, SVGVocal } from './SVGLetter';
 
@@ -21,14 +20,22 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const isSelected = useIsSelectedSelector(circleId);
     const wordRef = useRef<SVGCircleElement>(null);
 
-    const translation = calculateTranslation(wordCircle.angle, wordCircle.parentDistance);
-
-    const onMouseDown = useDragAndDrop(circleId, wordRef, translation, (positionData) =>
-        dispatch(updateCircleData({ id: circleId, ...positionData }))
+    const onMouseDown = useDragAndDrop(
+        circleId,
+        wordRef,
+        { parentDistance: wordCircle.parentDistance, angle: wordCircle.angle },
+        (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
     );
 
     return (
-        <Group x={translation.x} y={translation.y} isHovered={isHovered} isSelected={isSelected} className="group-word">
+        <Group
+            angle={wordCircle.angle}
+            parentDistance={wordCircle.parentDistance}
+            anglePlacement={AnglePlacement.Absolute}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-word"
+        >
             <mask id={`mask_${circleId}`}>
                 <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
                 {letters

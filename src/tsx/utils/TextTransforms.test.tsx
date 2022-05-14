@@ -99,14 +99,14 @@ describe('Text Transforms', () => {
                     ])
                 )
                 .forEach(([vocalPlacement, consonantPlacement]) => {
-                    it(`should have angle of 90 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
+                    it(`should have angle of 0 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
                         const result = calculateInitialNestedVocalPositionData(
                             vocalPlacement,
                             consonantPlacement,
                             { angle: 90, parentDistance: 10 },
                             100
                         ).angle;
-                        expect(result).toBe(90);
+                        expect(result).toBe(0);
                     });
                 });
 
@@ -116,30 +116,30 @@ describe('Text Transforms', () => {
                     consonantPlacement,
                 ])
                 .forEach(([vocalPlacement, consonantPlacement]) => {
-                    it(`should have angle of 90 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
+                    it(`should have angle of 180 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
                         const result = calculateInitialNestedVocalPositionData(
                             vocalPlacement,
                             consonantPlacement,
                             { angle: 90, parentDistance: 10 },
                             100
                         ).angle;
-                        expect(result).toBe(-90);
+                        expect(result).toBe(180);
                     });
                 });
         });
 
         it('should have correct dot angles', () => {
-            const result = calculateInitialDotPositionDatas(10, 0, 4).map((it) => it.angle);
+            const result = calculateInitialDotPositionDatas(10, 4).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, -157.5, -112.5]);
         });
 
         it('should have correct line slot angles', () => {
-            const result = calculateInitialLineSlotPositionDatas(10, 0, 4, false).map((it) => it.angle);
+            const result = calculateInitialLineSlotPositionDatas(10, 4, false).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, -157.5, -112.5]);
         });
 
         it('should have correct line slot angles pointing outside', () => {
-            const result = calculateInitialLineSlotPositionDatas(10, 0, 4, true).map((it) => it.angle);
+            const result = calculateInitialLineSlotPositionDatas(10, 4, true).map((it) => it.angle);
             expect(result).toEqual([-67.5, -22.5, 22.5, 67.5]);
         });
     });

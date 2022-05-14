@@ -1,13 +1,12 @@
 import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useRedux } from '../hooks/useRedux';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { Sentence } from '../state/ImageTypes';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
-import { calculateTranslation } from '../utils/TextTransforms';
-import Group from './Group';
+import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';
-import { useDispatch } from 'react-redux';
 
 interface SentenceProps extends Sentence {}
 
@@ -17,10 +16,15 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
 
-    const { x, y } = calculateTranslation(sentenceCircle.angle, sentenceCircle.parentDistance);
-
     return (
-        <Group x={x} y={y} isHovered={isHovered} isSelected={isSelected} className="group-sentence">
+        <Group
+            angle={sentenceCircle.angle}
+            parentDistance={sentenceCircle.parentDistance}
+            anglePlacement={AnglePlacement.Absolute}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-sentence"
+        >
             <SVGCircle
                 r={sentenceCircle.r}
                 filled={sentenceCircle.filled}

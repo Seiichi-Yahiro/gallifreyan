@@ -1,36 +1,51 @@
 import React, { useCallback, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { updateCircleData } from '../state/ImageState';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
-import { calculateTranslation } from '../utils/TextTransforms';
-import Group from './Group';
+import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
-import { useDispatch } from 'react-redux';
 
 interface DotProps {
     id: UUID;
+    parentAngle: number;
 }
 
 const lineSlots: UUID[] = [];
 
-const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
+const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
     const dotCircle = useRedux((state) => state.image.circles[id]);
     const dispatch = useDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);
     const dotRef = useRef<SVGCircleElement>(null);
 
-    const translation = calculateTranslation(dotCircle.angle, dotCircle.parentDistance);
-
-    const onMouseDown = useDragAndDrop(id, dotRef, translation, (positionData) =>
-        dispatch(updateCircleData({ id, ...positionData }))
+    const onMouseDown = useDragAndDrop(
+        id,
+        dotRef,
+        { parentDistance: dotCircle.parentDistance, angle: dotCircle.angle, parentAngle },
+        (positionData) =>
+            dispatch(
+                updateCircleData({
+                    id,
+                    angle: positionData.angle,
+                    parentDistance: positionData.parentDistance,
+                })
+            )
     );
 
     return (
-        <Group x={translation.x} y={translation.y} isHovered={isHovered} isSelected={isSelected} className="group-dot">
+        <Group
+            angle={dotCircle.angle}
+            parentDistance={dotCircle.parentDistance}
+            anglePlacement={AnglePlacement.Absolute}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-dot"
+        >
             <SVGCircle
                 ref={dotRef}
                 r={dotCircle.r}

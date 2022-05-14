@@ -2,14 +2,15 @@ import React, { useCallback, useState } from 'react';
 import { PositionData, UUID } from '../state/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
 import { calculateAngle, calculateParentDistance, calculateParentPos } from '../utils/DragAndDrop';
-import { Position, Vector2 } from '../utils/LinearAlgebra';
+import { Position } from '../utils/LinearAlgebra';
+import { calculateTranslation } from '../utils/TextTransforms';
 import useEventListener from './useEventListener';
 import { useRedux } from './useRedux';
 
 export const useDragAndDrop = (
     id: UUID,
     element: React.RefObject<Element>,
-    translation: Vector2,
+    positionData: PositionData & { parentAngle?: number },
     onMouseMove: (positionData: PositionData) => void
 ): (() => void) => {
     const viewPortScale = useRedux((state) => state.svgPanZoom.value.a);
@@ -26,11 +27,14 @@ export const useDragAndDrop = (
             event.preventDefault();
 
             if (element.current) {
+                const parentAngle = positionData.parentAngle ?? 0;
+                const translation = calculateTranslation(positionData.angle + parentAngle, positionData.parentDistance);
                 const parentPos = calculateParentPos(element.current, translation, viewPortScale);
                 const mousePos: Position = { x: event.clientX, y: event.clientY };
-                const parentDistance = calculateParentDistance(mousePos, parentPos, viewPortScale);
-                const angle = calculateAngle(mousePos, parentPos);
-                onMouseMove({ parentDistance, angle });
+                onMouseMove({
+                    parentDistance: calculateParentDistance(mousePos, parentPos, viewPortScale),
+                    angle: calculateAngle(mousePos, parentPos) - parentAngle,
+                });
             }
         },
         eventTarget

@@ -1,12 +1,18 @@
 import React from 'react';
 import { render } from '../utils/TestUtils';
-import Group, { hoverColor, selectedColor } from './Group';
+import Group, { AnglePlacement, hoverColor, selectedColor } from './Group';
 
 describe('SVG Group', () => {
     it('should use selected color when selected and not hovered', () => {
         const { container } = render(
             <svg>
-                <Group x={0} y={0} isSelected={true} isHovered={false} />
+                <Group
+                    angle={0}
+                    parentDistance={0}
+                    anglePlacement={AnglePlacement.Absolute}
+                    isSelected={true}
+                    isHovered={false}
+                />
             </svg>
         );
 
@@ -18,7 +24,13 @@ describe('SVG Group', () => {
     it('should use selected color when selected and hovered', () => {
         const { container } = render(
             <svg>
-                <Group x={0} y={0} isSelected={true} isHovered={true} />
+                <Group
+                    angle={0}
+                    parentDistance={0}
+                    anglePlacement={AnglePlacement.Absolute}
+                    isSelected={true}
+                    isHovered={true}
+                />
             </svg>
         );
 
@@ -30,7 +42,13 @@ describe('SVG Group', () => {
     it('should use hovered color when hovered and not selected', () => {
         const { container } = render(
             <svg>
-                <Group x={0} y={0} isSelected={false} isHovered={true} />
+                <Group
+                    angle={0}
+                    parentDistance={0}
+                    anglePlacement={AnglePlacement.Absolute}
+                    isSelected={false}
+                    isHovered={true}
+                />
             </svg>
         );
 
@@ -42,7 +60,13 @@ describe('SVG Group', () => {
     it('should inherit color when not hovered and not selected', () => {
         const { container } = render(
             <svg>
-                <Group x={0} y={0} isSelected={false} isHovered={false} />
+                <Group
+                    angle={0}
+                    parentDistance={0}
+                    anglePlacement={AnglePlacement.Absolute}
+                    isSelected={false}
+                    isHovered={false}
+                />
             </svg>
         );
 

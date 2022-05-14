@@ -68,34 +68,30 @@ export const calculateInitialNestedVocalPositionData = (
         case VocalPlacement.OnLine:
             if (parentConsonantPlacement === ConsonantPlacement.ShallowCut) {
                 return {
-                    angle: consonantPositionData.angle,
+                    angle: 0,
                     parentDistance: wordRadius - consonantPositionData.parentDistance,
                 };
             } else {
                 return {
-                    angle: consonantPositionData.angle,
+                    angle: 0,
                     parentDistance: 0,
                 };
             }
         case VocalPlacement.Outside:
             return {
-                angle: consonantPositionData.angle,
+                angle: 0,
                 parentDistance: wordRadius - consonantPositionData.parentDistance + DEFAULT_VOCAL_RADIUS + 5,
             };
         case VocalPlacement.Inside:
             return {
-                angle: adjustAngle(consonantPositionData.angle + 180),
+                angle: 180,
                 parentDistance: DEFAULT_CONSONANT_RADIUS,
             };
     }
 };
 
-export const calculateInitialDotPositionDatas = (
-    letterRadius: number,
-    letterAngle: number,
-    numberOfDots: number
-): PositionData[] => {
-    const letterSideAngle = letterAngle + 180;
+export const calculateInitialDotPositionDatas = (letterRadius: number, numberOfDots: number): PositionData[] => {
+    const letterSideAngle = 180;
     const dotDistanceAngle = 45;
     const centerDotsOnLetterSideAngle = ((numberOfDots - 1) * dotDistanceAngle) / 2;
 
@@ -107,11 +103,10 @@ export const calculateInitialDotPositionDatas = (
 
 export const calculateInitialLineSlotPositionDatas = (
     letterRadius: number,
-    letterAngle: number,
     numberOfLines: number,
     pointOutside: boolean
 ): PositionData[] => {
-    const letterSideAngle = letterAngle + (pointOutside ? 0 : 180);
+    const letterSideAngle = pointOutside ? 0 : 180;
     const lineDistanceAngle = 45;
     const centerLinesOnLetterSideAngle = ((numberOfLines - 1) * lineDistanceAngle) / 2;
 
@@ -167,7 +162,6 @@ const resetVocalPositionData = (state: ImageState, vocal: Vocal, vocalPositionDa
 
     const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
         vocalCircle.r,
-        vocalPositionData.angle,
         vocal.lineSlots.length,
         vocal.decoration === VocalDecoration.LineOutside
     );
@@ -194,7 +188,6 @@ const resetConsonantPositionData = (
 
     const lineSlotPositionDatas = calculateInitialLineSlotPositionDatas(
         consonantCircle.r,
-        consonantPositionData.angle,
         consonant.lineSlots.length,
         false
     );
@@ -207,11 +200,7 @@ const resetConsonantPositionData = (
         slot.parentDistance = lineSlotPositionData.parentDistance;
     });
 
-    const dotPositionDatas = calculateInitialDotPositionDatas(
-        consonantCircle.r,
-        consonantPositionData.angle,
-        consonant.dots.length
-    );
+    const dotPositionDatas = calculateInitialDotPositionDatas(consonantCircle.r, consonant.dots.length);
 
     consonant.dots.forEach((dot, index) => {
         const dotCircle = state.circles[dot];

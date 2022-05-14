@@ -1,21 +1,22 @@
 import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import useHover from '../hooks/useHover';
 import { useRedux } from '../hooks/useRedux';
 import { updateLineSlotData } from '../state/ImageState';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { UUID } from '../state/ImageTypes';
+import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
 import { add, mul, normalize, Position, Vector2 } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
-import Group from './Group';
-import { useDispatch } from 'react-redux';
-import useHover from '../hooks/useHover';
+import Group, { AnglePlacement } from './Group';
 
 interface SVGLineSlotProps {
     id: UUID;
+    parentAngle: number;
 }
 
-const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
+const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngle }) => {
     const { angle, parentDistance } = useRedux((state) => state.image.lineSlots[id]);
     const dispatch = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
@@ -30,14 +31,15 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const direction: Vector2 = mul(normalize(translation), lineLength);
     const lineEnd: Position = add(translation, direction);
 
-    const onMouseDown = useDragAndDrop(id, slotCircleRef, translation, (positionData) =>
+    const onMouseDown = useDragAndDrop(id, slotCircleRef, { parentDistance, angle, parentAngle }, (positionData) =>
         dispatch(updateLineSlotData({ id, ...positionData }))
     );
 
     return (
         <Group
-            x={0}
-            y={0}
+            angle={0}
+            parentDistance={0}
+            anglePlacement={AnglePlacement.Absolute}
             isHovered={isHoveredSlot || isHoveredConnection}
             isSelected={isSelectedSlot}
             className="group-line-slot"
