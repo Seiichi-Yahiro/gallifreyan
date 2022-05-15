@@ -3,7 +3,7 @@ import { PositionData, UUID } from '../state/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
 import { calculateAngle, calculateParentDistance, calculateParentPos } from '../utils/DragAndDrop';
 import { Position } from '../utils/LinearAlgebra';
-import { calculateTranslation } from '../utils/TextTransforms';
+import { adjustAngle, calculateTranslation } from '../utils/TextTransforms';
 import useEventListener from './useEventListener';
 import { useRedux } from './useRedux';
 
@@ -33,7 +33,7 @@ export const useDragAndDrop = (
                 const mousePos: Position = { x: event.clientX, y: event.clientY };
                 onMouseMove({
                     parentDistance: calculateParentDistance(mousePos, parentPos, viewPortScale),
-                    angle: calculateAngle(mousePos, parentPos) - parentAngle,
+                    angle: adjustAngle(calculateAngle(mousePos, parentPos) - parentAngle),
                 });
             }
         },

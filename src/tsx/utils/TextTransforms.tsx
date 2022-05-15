@@ -18,10 +18,7 @@ import Maybe from './Maybe';
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;
 
-export const adjustAngle = (angle: Degree): Degree => {
-    const newAngle = angle % 360;
-    return newAngle > 180 ? newAngle - 360 : newAngle;
-};
+export const adjustAngle = (angle: Degree): Degree => ((angle % 360) + 360) % 360;
 
 export const calculateTranslation = (angle: number, parentDistance: number): Vector2 =>
     rotate({ x: 0, y: parentDistance }, toRadian(-angle));
