@@ -87,13 +87,8 @@ export enum VocalDecoration {
     LineOutside = 'LineOutside',
 }
 
-export interface CircleData extends Referencable {
-    r?: number;
-    angle?: number;
-    parentDistance?: number;
+export interface CircleData extends PositionData {
+    r: number;
 }
 
-export interface LineSlotData extends Referencable {
-    angle?: number;
-    parentDistance?: number;
-}
+export interface LineSlotData extends PositionData {}

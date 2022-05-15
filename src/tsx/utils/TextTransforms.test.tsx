@@ -2,11 +2,11 @@ import { range } from 'lodash';
 import { ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
 import {
     adjustAngle,
-    calculateInitialDotPositionDatas,
-    calculateInitialLetterPositionDatas,
-    calculateInitialLineSlotPositionDatas,
-    calculateInitialNestedVocalPositionData,
-    calculateInitialWordPositionDatas,
+    calculateInitialDotCircleDatas,
+    calculateInitialLetterCircleDatas,
+    calculateInitialLineSlotDatas,
+    calculateInitialNestedVocalCircleData,
+    calculateInitialWordCircleData,
     calculateTranslation,
 } from './TextTransforms';
 
@@ -67,7 +67,7 @@ describe('Text Transforms', () => {
 
     describe('Initial position angles', () => {
         it('should have correct word angles', () => {
-            const result = calculateInitialWordPositionDatas(10, 4).map((it) => it.angle);
+            const result = calculateInitialWordCircleData(10, 4).map((it) => it.angle);
             expect(result).toEqual([0, 90, 180, -90]);
         });
 
@@ -79,7 +79,7 @@ describe('Text Transforms', () => {
                 decoration: VocalDecoration.None,
                 placement: VocalPlacement.OnLine,
             }));
-            const result = calculateInitialLetterPositionDatas(letters, 10).map((it) => it.angle);
+            const result = calculateInitialLetterCircleDatas(letters, 10).map((it) => it.angle);
             expect(result).toEqual([0, 90, 180, -90]);
         });
 
@@ -100,10 +100,10 @@ describe('Text Transforms', () => {
                 )
                 .forEach(([vocalPlacement, consonantPlacement]) => {
                     it(`should have angle of 0 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
-                        const result = calculateInitialNestedVocalPositionData(
+                        const result = calculateInitialNestedVocalCircleData(
                             vocalPlacement,
                             consonantPlacement,
-                            { angle: 90, parentDistance: 10 },
+                            { angle: 90, parentDistance: 10, r: 10 },
                             100
                         ).angle;
                         expect(result).toBe(0);
@@ -117,10 +117,10 @@ describe('Text Transforms', () => {
                 ])
                 .forEach(([vocalPlacement, consonantPlacement]) => {
                     it(`should have angle of 180 for vocal: ${vocalPlacement}, consonant: ${consonantPlacement}`, () => {
-                        const result = calculateInitialNestedVocalPositionData(
+                        const result = calculateInitialNestedVocalCircleData(
                             vocalPlacement,
                             consonantPlacement,
-                            { angle: 90, parentDistance: 10 },
+                            { angle: 90, parentDistance: 10, r: 10 },
                             100
                         ).angle;
                         expect(result).toBe(180);
@@ -129,17 +129,17 @@ describe('Text Transforms', () => {
         });
 
         it('should have correct dot angles', () => {
-            const result = calculateInitialDotPositionDatas(10, 4).map((it) => it.angle);
+            const result = calculateInitialDotCircleDatas(10, 4).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, -157.5, -112.5]);
         });
 
         it('should have correct line slot angles', () => {
-            const result = calculateInitialLineSlotPositionDatas(10, 4, false).map((it) => it.angle);
+            const result = calculateInitialLineSlotDatas(10, 4, false).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, -157.5, -112.5]);
         });
 
         it('should have correct line slot angles pointing outside', () => {
-            const result = calculateInitialLineSlotPositionDatas(10, 4, true).map((it) => it.angle);
+            const result = calculateInitialLineSlotDatas(10, 4, true).map((it) => it.angle);
             expect(result).toEqual([-67.5, -22.5, 22.5, 67.5]);
         });
     });

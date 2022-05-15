@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isValidLetter } from '../utils/LetterGroups';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
-import { resetPositionDatas } from '../utils/TextTransforms';
-import { Circle, CircleData, LineConnection, LineSlot, LineSlotData, Sentence } from './ImageTypes';
+import { resetCircleDatas } from '../utils/TextTransforms';
+import { Circle, CircleData, LineConnection, LineSlot, LineSlotData, Referencable, Sentence } from './ImageTypes';
 
 export interface ImageState {
     circles: { [key: string]: Circle };
@@ -53,15 +53,15 @@ export const imageSlice = createSlice({
             circles.forEach((circle) => (state.circles[circle.id] = circle));
             lineSlots.forEach((slot) => (state.lineSlots[slot.id] = slot));
 
-            resetPositionDatas(state as ImageState);
+            resetCircleDatas(state as ImageState);
         },
-        updateCircleData: (state, { payload }: PayloadAction<CircleData>) => {
+        updateCircleData: (state, { payload }: PayloadAction<Referencable & Partial<CircleData>>) => {
             state.circles[payload.id] = {
                 ...state.circles[payload.id],
                 ...payload,
             };
         },
-        updateLineSlotData: (state, { payload }: PayloadAction<LineSlotData>) => {
+        updateLineSlotData: (state, { payload }: PayloadAction<Referencable & Partial<LineSlotData>>) => {
             state.lineSlots[payload.id] = {
                 ...state.lineSlots[payload.id],
                 ...payload,
