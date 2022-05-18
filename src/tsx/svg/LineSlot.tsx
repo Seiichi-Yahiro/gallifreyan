@@ -17,28 +17,28 @@ interface SVGLineSlotProps {
 }
 
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngle }) => {
-    const { angle, parentDistance } = useRedux((state) => state.image.lineSlots[id]);
+    const { angle, distance } = useRedux((state) => state.image.lineSlots[id]);
     const dispatch = useDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
     const slotCircleRef = useRef<SVGCircleElement>(null);
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
-    const translation = calculateTranslation(angle, parentDistance);
+    const translation = calculateTranslation(angle, distance);
 
     const lineLength = 10;
     const lineStart: Position = translation;
     const direction: Vector2 = mul(normalize(translation), lineLength);
     const lineEnd: Position = add(translation, direction);
 
-    const onMouseDown = useDragAndDrop(id, slotCircleRef, { parentDistance, angle, parentAngle }, (positionData) =>
+    const onMouseDown = useDragAndDrop(id, slotCircleRef, { distance, angle, parentAngle }, (positionData) =>
         dispatch(updateLineSlotData({ id, ...positionData }))
     );
 
     return (
         <Group
             angle={0}
-            parentDistance={0}
+            distance={0}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHoveredSlot || isHoveredConnection}
             isSelected={isSelectedSlot}

@@ -26,13 +26,13 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
     const onMouseDown = useDragAndDrop(
         id,
         dotRef,
-        { parentDistance: dotCircle.parentDistance, angle: dotCircle.angle, parentAngle },
+        { distance: dotCircle.distance, angle: dotCircle.angle, parentAngle },
         (positionData) =>
             dispatch(
                 updateCircleData({
                     id,
                     angle: positionData.angle,
-                    parentDistance: positionData.parentDistance,
+                    distance: positionData.distance,
                 })
             )
     );
@@ -40,7 +40,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
     return (
         <Group
             angle={dotCircle.angle}
-            parentDistance={dotCircle.parentDistance}
+            distance={dotCircle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}

@@ -39,9 +39,9 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
             };
 
             const changeDistance = (event: React.ChangeEvent<HTMLInputElement>) => {
-                const parentDistance = Number(event.currentTarget.value);
+                const distance = Number(event.currentTarget.value);
                 if (isCircle) {
-                    dispatch(updateCircleData({ id, parentDistance }));
+                    dispatch(updateCircleData({ id, distance }));
                 }
             };
 
@@ -69,7 +69,7 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
                         type="number"
                         label="Distance"
                         variant="outlined"
-                        value={selected.parentDistance}
+                        value={selected.distance}
                         onChange={changeDistance}
                         disabled={!isCircle}
                     />

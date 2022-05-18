@@ -8,7 +8,7 @@ describe('SVG Group', () => {
             <svg>
                 <Group
                     angle={0}
-                    parentDistance={0}
+                    distance={0}
                     anglePlacement={AnglePlacement.Absolute}
                     isSelected={true}
                     isHovered={false}
@@ -26,7 +26,7 @@ describe('SVG Group', () => {
             <svg>
                 <Group
                     angle={0}
-                    parentDistance={0}
+                    distance={0}
                     anglePlacement={AnglePlacement.Absolute}
                     isSelected={true}
                     isHovered={true}
@@ -44,7 +44,7 @@ describe('SVG Group', () => {
             <svg>
                 <Group
                     angle={0}
-                    parentDistance={0}
+                    distance={0}
                     anglePlacement={AnglePlacement.Absolute}
                     isSelected={false}
                     isHovered={true}
@@ -62,7 +62,7 @@ describe('SVG Group', () => {
             <svg>
                 <Group
                     angle={0}
-                    parentDistance={0}
+                    distance={0}
                     anglePlacement={AnglePlacement.Absolute}
                     isSelected={false}
                     isHovered={false}

@@ -11,7 +11,7 @@ export enum AnglePlacement {
 
 interface GroupProps extends React.SVGProps<SVGGElement> {
     angle: number;
-    parentDistance: number;
+    distance: number;
     anglePlacement: AnglePlacement;
     reverse?: boolean;
     isHovered?: boolean;
@@ -20,7 +20,7 @@ interface GroupProps extends React.SVGProps<SVGGElement> {
 
 const Group: React.FunctionComponent<GroupProps> = ({
     angle,
-    parentDistance,
+    distance,
     anglePlacement,
     reverse = false,
     isHovered = false,
@@ -33,12 +33,12 @@ const Group: React.FunctionComponent<GroupProps> = ({
     const createTransform = () => {
         switch (anglePlacement) {
             case AnglePlacement.Absolute:
-                const { x, y } = calculateTranslation(angle, parentDistance);
+                const { x, y } = calculateTranslation(angle, distance);
                 return reverse ? `translate(${-x}px, ${-y}px)` : `translate(${x}px, ${y}px)`;
             case AnglePlacement.Relative:
                 return reverse
-                    ? `translateY(${-parentDistance}px) rotate(${angle}deg)`
-                    : `rotate(${-angle}deg) translateY(${parentDistance}px)`;
+                    ? `translateY(${-distance}px) rotate(${angle}deg)`
+                    : `rotate(${-angle}deg) translateY(${distance}px)`;
         }
     };
 

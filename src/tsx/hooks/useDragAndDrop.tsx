@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { PositionData, UUID } from '../state/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
-import { calculateAngle, calculateParentDistance, calculateParentPos } from '../utils/DragAndDrop';
+import { calculateAngle, calculatedistance, calculateParentPos } from '../utils/DragAndDrop';
 import { Position } from '../utils/LinearAlgebra';
 import { adjustAngle, calculateTranslation } from '../utils/TextTransforms';
 import useEventListener from './useEventListener';
@@ -28,11 +28,11 @@ export const useDragAndDrop = (
 
             if (element.current) {
                 const parentAngle = positionData.parentAngle ?? 0;
-                const translation = calculateTranslation(positionData.angle + parentAngle, positionData.parentDistance);
+                const translation = calculateTranslation(positionData.angle + parentAngle, positionData.distance);
                 const parentPos = calculateParentPos(element.current, translation, viewPortScale);
                 const mousePos: Position = { x: event.clientX, y: event.clientY };
                 onMouseMove({
-                    parentDistance: calculateParentDistance(mousePos, parentPos, viewPortScale),
+                    distance: calculatedistance(mousePos, parentPos, viewPortScale),
                     angle: adjustAngle(calculateAngle(mousePos, parentPos) - parentAngle),
                 });
             }

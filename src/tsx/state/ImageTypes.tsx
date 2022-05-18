@@ -6,7 +6,7 @@ export interface Referencable {
 
 export interface PositionData {
     angle: number;
-    parentDistance: number;
+    distance: number;
 }
 
 export interface Circle extends Referencable, PositionData {

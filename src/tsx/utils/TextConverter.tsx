@@ -55,7 +55,7 @@ export const convertTextToSentence = (text: string): TextData<Sentence> => {
     const sentenceCircle: Circle = {
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
         r: DEFAULT_SENTENCE_RADIUS,
         filled: false,
     };
@@ -83,7 +83,7 @@ const convertTextToWord = (text: string): TextData<Word> => {
     const wordCircle: Circle = {
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
         r: DEFAULT_WORD_RADIUS,
         filled: false,
     };
@@ -128,7 +128,7 @@ const convertTextToVocal = (text: string): TextData<Vocal> => {
     const vocalCircle: Circle = {
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
         r: DEFAULT_VOCAL_RADIUS,
         filled: false,
     };
@@ -155,7 +155,7 @@ const convertTextToConsonant = (text: string): TextData<Consonant> => {
     const consonantCircle: Circle = {
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
         r: DEFAULT_CONSONANT_RADIUS,
         filled: false,
     };
@@ -200,7 +200,7 @@ const createDots = (letterId: UUID, decoration: ConsonantDecoration): Circle[] =
     return range(numberOfDots()).map((_i) => ({
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
         r: DEFAULT_DOT_RADIUS,
         filled: true,
     }));
@@ -225,6 +225,6 @@ const createLineSlots = (letterId: UUID, decoration: ConsonantDecoration | Vocal
     return range(numberOfLineSlots()).map((_i) => ({
         id: v4(),
         angle: 0,
-        parentDistance: 0,
+        distance: 0,
     }));
 };

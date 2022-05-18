@@ -11,7 +11,7 @@ const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
     y: top + height / 2,
 });
 
-export const calculateParentDistance = (mousePos: Position, parentPos: Position, viewPortScale: number): number => {
+export const calculatedistance = (mousePos: Position, parentPos: Position, viewPortScale: number): number => {
     const mouseVec = sub(mousePos, parentPos);
     return length(mouseVec) / viewPortScale;
 };

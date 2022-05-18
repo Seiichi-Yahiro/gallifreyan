@@ -13,7 +13,7 @@ export interface ImageState {
 }
 
 const createInitialState = (): ImageState => ({
-    circles: { uuid: { id: 'uuid', angle: 0, parentDistance: 0, r: 0, filled: false } },
+    circles: { uuid: { id: 'uuid', angle: 0, distance: 0, r: 0, filled: false } },
     lineConnections: {},
     lineSlots: {},
     sentence: {

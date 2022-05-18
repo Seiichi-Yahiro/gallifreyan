@@ -42,13 +42,13 @@ describe('Text Transforms', () => {
             expect(result.y).toBeCloseTo(0);
         });
 
-        it('should calculate translation from 90 angle and negative parentDistance', () => {
+        it('should calculate translation from 90 angle and negative distance', () => {
             const result = calculateTranslation(90, -10);
             expect(result.x).toBeCloseTo(-10);
             expect(result.y).toBeCloseTo(0);
         });
 
-        it('should calculate translation from -90 angle and negative parentDistance', () => {
+        it('should calculate translation from -90 angle and negative distance', () => {
             const result = calculateTranslation(-90, -10);
             expect(result.x).toBeCloseTo(10);
             expect(result.y).toBeCloseTo(0);
@@ -93,7 +93,7 @@ describe('Text Transforms', () => {
                         const result = calculateInitialNestedVocalCircleData(
                             vocalPlacement,
                             consonantPlacement,
-                            { angle: 90, parentDistance: 10, r: 10 },
+                            { angle: 90, distance: 10, r: 10 },
                             100
                         ).angle;
                         expect(result).toBe(0);
@@ -110,7 +110,7 @@ describe('Text Transforms', () => {
                         const result = calculateInitialNestedVocalCircleData(
                             vocalPlacement,
                             consonantPlacement,
-                            { angle: 90, parentDistance: 10, r: 10 },
+                            { angle: 90, distance: 10, r: 10 },
                             100
                         ).angle;
                         expect(result).toBe(180);

@@ -19,7 +19,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, 
     return (
         <Group
             angle={sentenceCircle.angle}
-            parentDistance={sentenceCircle.parentDistance}
+            distance={sentenceCircle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}

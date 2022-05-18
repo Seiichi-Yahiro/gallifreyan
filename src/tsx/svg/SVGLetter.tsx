@@ -29,14 +29,14 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     const onMouseDown = useDragAndDrop(
         circleId,
         consonantRef,
-        { parentDistance: consonantCircle.parentDistance, angle: consonantCircle.angle },
+        { distance: consonantCircle.distance, angle: consonantCircle.angle },
         (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
     );
 
     return (
         <Group
             angle={consonantCircle.angle}
-            parentDistance={consonantCircle.parentDistance}
+            distance={consonantCircle.distance}
             anglePlacement={AnglePlacement.Relative}
             isHovered={isHovered}
             isSelected={isSelected}
@@ -67,7 +67,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             {isCut && (
                 <Group
                     angle={consonantCircle.angle}
-                    parentDistance={consonantCircle.parentDistance}
+                    distance={consonantCircle.distance}
                     anglePlacement={AnglePlacement.Relative}
                     reverse={true}
                     className="group-consonant__arc"
@@ -106,14 +106,14 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
     const onMouseDown = useDragAndDrop(
         circleId,
         vocalRef,
-        { parentDistance: vocalCircle.parentDistance, angle: vocalCircle.angle, parentAngle },
+        { distance: vocalCircle.distance, angle: vocalCircle.angle, parentAngle },
         (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
     );
 
     return (
         <Group
             angle={vocalCircle.angle}
-            parentDistance={vocalCircle.parentDistance}
+            distance={vocalCircle.distance}
             anglePlacement={parentAngle ? AnglePlacement.Absolute : AnglePlacement.Relative}
             isHovered={isHovered}
             isSelected={isSelected}
@@ -153,7 +153,7 @@ export const SVGConsonantCutMask: React.FunctionComponent<ConsonantCutMaskProps>
     ({ circleId, fill, stroke }) => {
         const letterCircle = useRedux((state) => state.image.circles[circleId]);
 
-        const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.parentDistance);
+        const { x, y } = calculateTranslation(letterCircle.angle, letterCircle.distance);
 
         return <circle cx={x} cy={y} r={letterCircle.r} fill={fill} stroke={stroke} />;
     }

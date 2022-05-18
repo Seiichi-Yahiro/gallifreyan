@@ -23,14 +23,14 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const onMouseDown = useDragAndDrop(
         circleId,
         wordRef,
-        { parentDistance: wordCircle.parentDistance, angle: wordCircle.angle },
+        { distance: wordCircle.distance, angle: wordCircle.angle },
         (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
     );
 
     return (
         <Group
             angle={wordCircle.angle}
-            parentDistance={wordCircle.parentDistance}
+            distance={wordCircle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}
