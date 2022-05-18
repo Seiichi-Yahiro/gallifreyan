@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, Dispatch, ThunkDispatch } from '@reduxjs/toolkit';
 import imageReducer, { ImageState } from './ImageState';
 import svgPanZoomReducer, { SvgPanZoomState } from './SvgPanZoomState';
 import workReducer, { WorkState } from './WorkState';
@@ -18,3 +18,5 @@ export const createStore = (preloadedState?: AppState) =>
         },
         preloadedState,
     });
+
+export type AppDispatch = ThunkDispatch<AppState, null | undefined, AnyAction> & Dispatch<AnyAction>;

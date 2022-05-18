@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
 import { Sentence } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
@@ -12,7 +12,7 @@ interface SentenceProps extends Sentence {}
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, lineSlots }) => {
     const sentenceCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { updateCircleData } from '../state/ImageState';
@@ -18,7 +18,7 @@ const lineSlots: UUID[] = [];
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
     const dotCircle = useRedux((state) => state.image.circles[id]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);
     const dotRef = useRef<SVGCircleElement>(null);

@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import React, { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
 import { AppState } from '../state/AppState';
 import { createSelector } from 'reselect';
@@ -25,7 +25,7 @@ const createSelectedSelector = () =>
     );
 
 const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const selectedSelector = useMemo(createSelectedSelector, []);
     const selected = useRedux((state) => selectedSelector(state));
 

@@ -1,7 +1,7 @@
 import { alpha, TextField, styled, Typography } from '@mui/material';
 import { TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem } from '@mui/lab';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { updateSentence } from '../state/ImageState';
 import { UUID } from '../state/ImageTypes';
 import { setHovering, setSelection } from '../state/WorkState';
@@ -35,7 +35,7 @@ const createTreeItemContent =
         ref: React.Ref<HTMLDivElement>
     ) => {
         const { handleExpansion, handleSelection, expanded, selected, focused, disabled } = useTreeItem(nodeId);
-        const dispatch = useDispatch();
+        const dispatch = useAppDispatch();
 
         const handleExpansionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             handleExpansion(event);
@@ -98,7 +98,7 @@ const TreeItemWrapper: React.FunctionComponent<TreeItemWrapperProps> = ({
     editable,
     children,
 }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const hasChildren = React.Children.toArray(children).length > 0 || lineSlots.length > 0;
 
     return (

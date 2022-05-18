@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
 import { updateSentence } from '../state/ImageState';
 import { render } from '../utils/TestUtils';
@@ -7,7 +7,7 @@ import SVGWord from './SVGWord';
 
 describe('SVG Word', () => {
     const SetWord: React.FunctionComponent<{ text: string }> = ({ text }) => {
-        const dispatch = useDispatch();
+        const dispatch = useAppDispatch();
         const word = useRedux((state) => state.image.sentence.words.at(0));
         useEffect(() => {
             dispatch(updateSentence(text));

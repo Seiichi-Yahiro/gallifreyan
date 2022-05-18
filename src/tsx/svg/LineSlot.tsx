@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import useHover from '../hooks/useHover';
 import { useRedux } from '../hooks/useRedux';
@@ -18,7 +18,7 @@ interface SVGLineSlotProps {
 
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngle }) => {
     const { angle, distance } = useRedux((state) => state.image.lineSlots[id]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
     const slotCircleRef = useRef<SVGCircleElement>(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
 import { useRedux } from '../hooks/useRedux';
@@ -40,7 +40,7 @@ interface SVGProps {
 }
 
 const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { value, tool } = useRedux((state) => state.svgPanZoom);
 
     const viewerRef = useRef<ReactSVGPanZoom>(null);

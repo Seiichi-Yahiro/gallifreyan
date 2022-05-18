@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { updateCircleData } from '../state/ImageState';
@@ -19,7 +19,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
     const { circleId, dots, parentRadius, lineSlots, vocal, placement } = props;
 
     const consonantCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
     const consonantRef = useRef<SVGCircleElement>(null);
@@ -98,7 +98,7 @@ interface VocalProps extends Vocal {
 
 export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circleId, lineSlots, parentAngle }) => {
     const vocalCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
     const vocalRef = useRef<SVGCircleElement>(null);

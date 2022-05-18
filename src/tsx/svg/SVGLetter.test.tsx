@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
 import { updateSentence } from '../state/ImageState';
 import { Consonant, Vocal } from '../state/ImageTypes';
@@ -9,7 +9,7 @@ import { SVGVocal, SVGConsonant } from './SVGLetter';
 describe('SVG Letter', () => {
     describe('SVG Vocal', () => {
         const SetVocal: React.FunctionComponent<{ text: string }> = ({ text }) => {
-            const dispatch = useDispatch();
+            const dispatch = useAppDispatch();
             const vocal = useRedux((state) => state.image.sentence.words.at(0)?.letters.at(0) as Vocal);
             useEffect(() => {
                 dispatch(updateSentence(text));
@@ -44,7 +44,7 @@ describe('SVG Letter', () => {
 
     describe('SVG Consonant', () => {
         const SetConsonant: React.FunctionComponent<{ text: string }> = ({ text }) => {
-            const dispatch = useDispatch();
+            const dispatch = useAppDispatch();
             const consonant = useRedux((state) => state.image.sentence.words.at(0)?.letters.at(0) as Consonant);
             useEffect(() => {
                 dispatch(updateSentence(text));

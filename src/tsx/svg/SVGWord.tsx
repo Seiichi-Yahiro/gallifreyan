@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { updateCircleData } from '../state/ImageState';
@@ -15,7 +15,7 @@ interface WordProps extends Word {}
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
     const wordCircle = useRedux((state) => state.image.circles[circleId]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(circleId);
     const isSelected = useIsSelectedSelector(circleId);
     const wordRef = useRef<SVGCircleElement>(null);
