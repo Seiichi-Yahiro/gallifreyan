@@ -114,7 +114,7 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
         <Group
             angle={vocalCircle.angle}
             distance={vocalCircle.distance}
-            anglePlacement={parentAngle ? AnglePlacement.Absolute : AnglePlacement.Relative}
+            anglePlacement={parentAngle === undefined ? AnglePlacement.Relative : AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}
             className="group-vocal"
