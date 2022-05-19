@@ -1,4 +1,3 @@
-import { AppState } from '../state/AppState';
 import { PositionData } from '../state/ImageTypes';
 import { angleBetween, Degree, length, mul, Position, sub, toDegree, Vector2 } from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
@@ -25,14 +24,12 @@ export const calculateAngle = (mousePos: Position, parentPos: Position): Degree 
 };
 
 export const calculatePositionData = (
-    state: AppState,
     mousePos: Position,
+    viewPortScale: number,
     childDomRect: DOMRect,
     childPositionData: PositionData,
     parentAngle = 0
 ): PositionData => {
-    const viewPortScale = state.svgPanZoom.value.a;
-
     const translation = calculateTranslation(childPositionData.angle + parentAngle, childPositionData.distance);
     const parentPos = calculateParentPos(childDomRect, translation, viewPortScale);
 

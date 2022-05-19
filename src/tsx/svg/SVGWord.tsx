@@ -26,7 +26,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = wordRef.current.getBoundingClientRect();
 
-            dispatch(moveWord(mousePos, { id: circleId, domRect, positionData: wordCircle }));
+            dispatch(moveWord(mousePos, { id: circleId, domRect }));
         }
     });
 

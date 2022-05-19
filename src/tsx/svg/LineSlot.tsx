@@ -36,7 +36,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngl
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = slotCircleRef.current.getBoundingClientRect();
 
-            dispatch(moveLineSlot(mousePos, { id, domRect, positionData: lineSlot }, { angle: parentAngle }));
+            dispatch(moveLineSlot(mousePos, { id, domRect }, { angle: parentAngle }));
         }
     });
 

@@ -32,7 +32,7 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = consonantRef.current.getBoundingClientRect();
 
-            dispatch(moveConsonant(mousePos, { id: circleId, domRect, positionData: consonantCircle }));
+            dispatch(moveConsonant(mousePos, { id: circleId, domRect }));
         }
     });
 
@@ -111,7 +111,7 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = vocalRef.current.getBoundingClientRect();
 
-            dispatch(moveVocal(mousePos, { id: circleId, domRect, positionData: vocalCircle }, { angle: parentAngle }));
+            dispatch(moveVocal(mousePos, { id: circleId, domRect }, { angle: parentAngle }));
         }
     });
 

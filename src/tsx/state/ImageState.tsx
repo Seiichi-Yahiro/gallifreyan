@@ -5,17 +5,7 @@ import { Position } from '../utils/LinearAlgebra';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
 import { resetCircleDatas } from '../utils/TextTransforms';
 import { AppThunkAction } from './AppState';
-import {
-    Circle,
-    CircleData,
-    LineConnection,
-    LineSlot,
-    LineSlotData,
-    PositionData,
-    Referencable,
-    Sentence,
-    UUID,
-} from './ImageTypes';
+import { Circle, CircleData, LineConnection, LineSlot, LineSlotData, Referencable, Sentence, UUID } from './ImageTypes';
 
 export interface ImageState {
     circles: { [key: string]: Circle };
@@ -44,14 +34,15 @@ export const updateLineSlotData = createAction<Referencable & Partial<LineSlotDa
 interface MovableData {
     id: UUID;
     domRect: DOMRect;
-    positionData: PositionData;
 }
 
 export const moveWord =
     (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, wordData.domRect, wordData.positionData);
+        const viewPortScale = state.svgPanZoom.value.a;
+        const wordCircle = state.image.circles[wordData.id];
+        const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, wordCircle);
         dispatch(updateCircleData({ id: wordData.id, ...positionData }));
     };
 
@@ -59,7 +50,9 @@ export const moveConsonant =
     (mousePos: Position, consonantData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, consonantData.domRect, consonantData.positionData);
+        const viewPortScale = state.svgPanZoom.value.a;
+        const consonantCircle = state.image.circles[consonantData.id];
+        const positionData = calculatePositionData(mousePos, viewPortScale, consonantData.domRect, consonantCircle);
         dispatch(updateCircleData({ id: consonantData.id, ...positionData }));
     };
 
@@ -67,11 +60,13 @@ export const moveVocal =
     (mousePos: Position, vocalData: MovableData, parentData: { angle?: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const viewPortScale = state.svgPanZoom.value.a;
+        const vocalCircle = state.image.circles[vocalData.id];
         const positionData = calculatePositionData(
-            state,
             mousePos,
+            viewPortScale,
             vocalData.domRect,
-            vocalData.positionData,
+            vocalCircle,
             parentData.angle
         );
         dispatch(updateCircleData({ id: vocalData.id, ...positionData }));
@@ -81,11 +76,13 @@ export const moveDot =
     (mousePos: Position, dotData: MovableData, parentData: { angle: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const viewPortScale = state.svgPanZoom.value.a;
+        const dotCircle = state.image.circles[dotData.id];
         const positionData = calculatePositionData(
-            state,
             mousePos,
+            viewPortScale,
             dotData.domRect,
-            dotData.positionData,
+            dotCircle,
             parentData.angle
         );
         dispatch(updateCircleData({ id: dotData.id, ...positionData }));
@@ -95,11 +92,13 @@ export const moveLineSlot =
     (mousePos: Position, lineSlotData: MovableData, parentData: { angle: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const viewPortScale = state.svgPanZoom.value.a;
+        const lineSlot = state.image.lineSlots[lineSlotData.id];
         const positionData = calculatePositionData(
-            state,
             mousePos,
+            viewPortScale,
             lineSlotData.domRect,
-            lineSlotData.positionData,
+            lineSlot,
             parentData.angle
         );
         dispatch(updateLineSlotData({ id: lineSlotData.id, ...positionData }));
