@@ -29,7 +29,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = dotRef.current.getBoundingClientRect();
 
-            dispatch(moveDot(id, mousePos, domRect, dotCircle, parentAngle));
+            dispatch(moveDot(mousePos, { id, domRect, positionData: dotCircle }, { angle: parentAngle }));
         }
     });
 

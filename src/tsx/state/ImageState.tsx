@@ -41,62 +41,68 @@ const createInitialState = (): ImageState => ({
 export const updateCircleData = createAction<Referencable & Partial<CircleData>>('image/updateCircleData');
 export const updateLineSlotData = createAction<Referencable & Partial<LineSlotData>>('image/updateLineSlotData');
 
+interface MovableData {
+    id: UUID;
+    domRect: DOMRect;
+    positionData: PositionData;
+}
+
 export const moveWord =
-    (id: UUID, mousePos: Position, childDomRect: DOMRect, childPositionData: PositionData): AppThunkAction =>
+    (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, childDomRect, childPositionData);
-        dispatch(updateCircleData({ id, ...positionData }));
+        const positionData = calculatePositionData(state, mousePos, wordData.domRect, wordData.positionData);
+        dispatch(updateCircleData({ id: wordData.id, ...positionData }));
     };
 
 export const moveConsonant =
-    (id: UUID, mousePos: Position, childDomRect: DOMRect, childPositionData: PositionData): AppThunkAction =>
+    (mousePos: Position, consonantData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, childDomRect, childPositionData);
-        dispatch(updateCircleData({ id, ...positionData }));
+        const positionData = calculatePositionData(state, mousePos, consonantData.domRect, consonantData.positionData);
+        dispatch(updateCircleData({ id: consonantData.id, ...positionData }));
     };
 
 export const moveVocal =
-    (
-        id: UUID,
-        mousePos: Position,
-        childDomRect: DOMRect,
-        childPositionData: PositionData,
-        parentAngle?: number
-    ): AppThunkAction =>
+    (mousePos: Position, vocalData: MovableData, parentData: { angle?: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, childDomRect, childPositionData, parentAngle);
-        dispatch(updateCircleData({ id, ...positionData }));
+        const positionData = calculatePositionData(
+            state,
+            mousePos,
+            vocalData.domRect,
+            vocalData.positionData,
+            parentData.angle
+        );
+        dispatch(updateCircleData({ id: vocalData.id, ...positionData }));
     };
 
 export const moveDot =
-    (
-        id: UUID,
-        mousePos: Position,
-        childDomRect: DOMRect,
-        childPositionData: PositionData,
-        parentAngle: number
-    ): AppThunkAction =>
+    (mousePos: Position, dotData: MovableData, parentData: { angle: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, childDomRect, childPositionData, parentAngle);
-        dispatch(updateCircleData({ id, ...positionData }));
+        const positionData = calculatePositionData(
+            state,
+            mousePos,
+            dotData.domRect,
+            dotData.positionData,
+            parentData.angle
+        );
+        dispatch(updateCircleData({ id: dotData.id, ...positionData }));
     };
 
 export const moveLineSlot =
-    (
-        id: UUID,
-        mousePos: Position,
-        childDomRect: DOMRect,
-        childPositionData: PositionData,
-        parentAngle: number
-    ): AppThunkAction =>
+    (mousePos: Position, lineSlotData: MovableData, parentData: { angle: number }): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const positionData = calculatePositionData(state, mousePos, childDomRect, childPositionData, parentAngle);
-        dispatch(updateLineSlotData({ id, ...positionData }));
+        const positionData = calculatePositionData(
+            state,
+            mousePos,
+            lineSlotData.domRect,
+            lineSlotData.positionData,
+            parentData.angle
+        );
+        dispatch(updateLineSlotData({ id: lineSlotData.id, ...positionData }));
     };
 
 export const imageSlice = createSlice({
