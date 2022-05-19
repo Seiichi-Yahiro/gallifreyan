@@ -1,8 +1,10 @@
+import { AppState } from '../state/AppState';
+import { PositionData } from '../state/ImageTypes';
 import { angleBetween, Degree, length, mul, Position, sub, toDegree, Vector2 } from './LinearAlgebra';
+import { adjustAngle, calculateTranslation } from './TextTransforms';
 
-export const calculateParentPos = (element: Element, translation: Vector2, viewPortScale: number) => {
-    const domRect = element.getBoundingClientRect();
-    const elementPos = centerOfDOMRect(domRect);
+export const calculateParentPos = (childDomRect: DOMRect, translation: Vector2, viewPortScale: number) => {
+    const elementPos = centerOfDOMRect(childDomRect);
     return sub(elementPos, mul(translation, viewPortScale));
 };
 
@@ -11,7 +13,7 @@ const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
     y: top + height / 2,
 });
 
-export const calculatedistance = (mousePos: Position, parentPos: Position, viewPortScale: number): number => {
+export const calculateDistance = (mousePos: Position, parentPos: Position, viewPortScale: number): number => {
     const mouseVec = sub(mousePos, parentPos);
     return length(mouseVec) / viewPortScale;
 };
@@ -20,4 +22,22 @@ export const calculateAngle = (mousePos: Position, parentPos: Position): Degree 
     const mouseVec = sub(mousePos, parentPos);
     const zeroDegreeVec: Vector2 = { x: 0, y: 1 };
     return toDegree(angleBetween(mouseVec, zeroDegreeVec));
+};
+
+export const calculatePositionData = (
+    state: AppState,
+    mousePos: Position,
+    childDomRect: DOMRect,
+    childPositionData: PositionData,
+    parentAngle = 0
+): PositionData => {
+    const viewPortScale = state.svgPanZoom.value.a;
+
+    const translation = calculateTranslation(childPositionData.angle + parentAngle, childPositionData.distance);
+    const parentPos = calculateParentPos(childDomRect, translation, viewPortScale);
+
+    return {
+        distance: calculateDistance(mousePos, parentPos, viewPortScale),
+        angle: adjustAngle(calculateAngle(mousePos, parentPos) - parentAngle),
+    };
 };

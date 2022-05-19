@@ -2,11 +2,12 @@ import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
-import { updateCircleData } from '../state/ImageState';
+import { moveWord } from '../state/ImageState';
 import { ConsonantPlacement, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
 import { isLetterConsonant, isPlacement } from '../utils/LetterGroups';
+import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import { SVGConsonant, SVGConsonantCutMask, SVGVocal } from './SVGLetter';
@@ -20,12 +21,14 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
     const isSelected = useIsSelectedSelector(circleId);
     const wordRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(
-        circleId,
-        wordRef,
-        { distance: wordCircle.distance, angle: wordCircle.angle },
-        (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
-    );
+    const onMouseDown = useDragAndDrop(circleId, (event) => {
+        if (wordRef.current) {
+            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const domRect = wordRef.current.getBoundingClientRect();
+
+            dispatch(moveWord(circleId, mousePos, domRect, wordCircle));
+        }
+    });
 
     return (
         <Group

@@ -2,10 +2,11 @@ import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
-import { updateCircleData } from '../state/ImageState';
+import { moveConsonant, moveVocal } from '../state/ImageState';
 import { Consonant, ConsonantPlacement, UUID, Vocal } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
+import { Position } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -26,12 +27,14 @@ export const SVGConsonant: React.FunctionComponent<ConsonantProps> = React.memo(
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(placement);
 
-    const onMouseDown = useDragAndDrop(
-        circleId,
-        consonantRef,
-        { distance: consonantCircle.distance, angle: consonantCircle.angle },
-        (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
-    );
+    const onMouseDown = useDragAndDrop(circleId, (event) => {
+        if (consonantRef.current) {
+            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const domRect = consonantRef.current.getBoundingClientRect();
+
+            dispatch(moveConsonant(circleId, mousePos, domRect, consonantCircle));
+        }
+    });
 
     return (
         <Group
@@ -103,12 +106,14 @@ export const SVGVocal: React.FunctionComponent<VocalProps> = React.memo(({ circl
     const isSelected = useIsSelectedSelector(circleId);
     const vocalRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(
-        circleId,
-        vocalRef,
-        { distance: vocalCircle.distance, angle: vocalCircle.angle, parentAngle },
-        (positionData) => dispatch(updateCircleData({ id: circleId, ...positionData }))
-    );
+    const onMouseDown = useDragAndDrop(circleId, (event) => {
+        if (vocalRef.current) {
+            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const domRect = vocalRef.current.getBoundingClientRect();
+
+            dispatch(moveVocal(circleId, mousePos, domRect, vocalCircle, parentAngle));
+        }
+    });
 
     return (
         <Group

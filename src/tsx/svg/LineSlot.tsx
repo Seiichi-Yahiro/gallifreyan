@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import useHover from '../hooks/useHover';
 import { useRedux } from '../hooks/useRedux';
-import { updateLineSlotData } from '../state/ImageState';
+import { moveLineSlot } from '../state/ImageState';
 import { UUID } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
@@ -17,23 +17,28 @@ interface SVGLineSlotProps {
 }
 
 const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngle }) => {
-    const { angle, distance } = useRedux((state) => state.image.lineSlots[id]);
+    const lineSlot = useRedux((state) => state.image.lineSlots[id]);
     const dispatch = useAppDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
     const slotCircleRef = useRef<SVGCircleElement>(null);
     const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
 
-    const translation = calculateTranslation(angle, distance);
+    const translation = calculateTranslation(lineSlot.angle, lineSlot.distance);
 
     const lineLength = 10;
     const lineStart: Position = translation;
     const direction: Vector2 = mul(normalize(translation), lineLength);
     const lineEnd: Position = add(translation, direction);
 
-    const onMouseDown = useDragAndDrop(id, slotCircleRef, { distance, angle, parentAngle }, (positionData) =>
-        dispatch(updateLineSlotData({ id, ...positionData }))
-    );
+    const onMouseDown = useDragAndDrop(id, (event) => {
+        if (slotCircleRef.current) {
+            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const domRect = slotCircleRef.current.getBoundingClientRect();
+
+            dispatch(moveLineSlot(id, mousePos, domRect, lineSlot, parentAngle));
+        }
+    });
 
     return (
         <Group
