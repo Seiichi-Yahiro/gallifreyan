@@ -6,6 +6,7 @@ import {
     ConsonantDecoration,
     Letter,
     LineSlot,
+    Referencable,
     Sentence,
     UUID,
     Vocal,
@@ -33,8 +34,8 @@ import {
 
 interface TextData<T> {
     textPart: T;
-    circles: Circle[];
-    lineSlots: LineSlot[];
+    circles: (Referencable & Circle)[];
+    lineSlots: (Referencable & LineSlot)[];
 }
 
 export const splitWordToChars = (word: string): string[] => {
@@ -52,12 +53,11 @@ export const splitWordToChars = (word: string): string[] => {
 };
 
 export const convertTextToSentence = (text: string): TextData<Sentence> => {
-    const sentenceCircle: Circle = {
+    const sentenceCircle: Referencable & Circle = {
         id: v4(),
         angle: 0,
         distance: 0,
         r: DEFAULT_SENTENCE_RADIUS,
-        filled: false,
     };
 
     const wordData = text
@@ -80,12 +80,11 @@ export const convertTextToSentence = (text: string): TextData<Sentence> => {
 };
 
 const convertTextToWord = (text: string): TextData<Word> => {
-    const wordCircle: Circle = {
+    const wordCircle: Referencable & Circle = {
         id: v4(),
         angle: 0,
         distance: 0,
         r: DEFAULT_WORD_RADIUS,
-        filled: false,
     };
 
     const letterData = splitWordToChars(text)
@@ -125,12 +124,11 @@ const convertTextToLetter = (text: string): TextData<Letter> =>
     isVocal(text) ? convertTextToVocal(text) : convertTextToConsonant(text);
 
 const convertTextToVocal = (text: string): TextData<Vocal> => {
-    const vocalCircle: Circle = {
+    const vocalCircle: Referencable & Circle = {
         id: v4(),
         angle: 0,
         distance: 0,
         r: DEFAULT_VOCAL_RADIUS,
-        filled: false,
     };
 
     const decoration = assignVocalDecoration(text).unwrap();
@@ -152,12 +150,11 @@ const convertTextToVocal = (text: string): TextData<Vocal> => {
 };
 
 const convertTextToConsonant = (text: string): TextData<Consonant> => {
-    const consonantCircle: Circle = {
+    const consonantCircle: Referencable & Circle = {
         id: v4(),
         angle: 0,
         distance: 0,
         r: DEFAULT_CONSONANT_RADIUS,
-        filled: false,
     };
 
     const decoration = assignConsonantDecoration(text).unwrap();
@@ -181,7 +178,7 @@ const convertTextToConsonant = (text: string): TextData<Consonant> => {
     };
 };
 
-const createDots = (letterId: UUID, decoration: ConsonantDecoration): Circle[] => {
+const createDots = (letterId: UUID, decoration: ConsonantDecoration): (Referencable & Circle)[] => {
     const numberOfDots = () => {
         switch (decoration) {
             case ConsonantDecoration.SingleDot:
@@ -202,11 +199,13 @@ const createDots = (letterId: UUID, decoration: ConsonantDecoration): Circle[] =
         angle: 0,
         distance: 0,
         r: DEFAULT_DOT_RADIUS,
-        filled: true,
     }));
 };
 
-const createLineSlots = (letterId: UUID, decoration: ConsonantDecoration | VocalDecoration): LineSlot[] => {
+const createLineSlots = (
+    letterId: UUID,
+    decoration: ConsonantDecoration | VocalDecoration
+): (Referencable & LineSlot)[] => {
     const numberOfLineSlots = () => {
         switch (decoration) {
             case ConsonantDecoration.SingleLine:

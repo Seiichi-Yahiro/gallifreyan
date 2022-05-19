@@ -5,18 +5,18 @@ import { Position } from '../utils/LinearAlgebra';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
 import { resetCircleDatas } from '../utils/TextTransforms';
 import { AppThunkAction } from './AppState';
-import { Circle, CircleData, LineConnection, LineSlot, LineSlotData, Referencable, Sentence, UUID } from './ImageTypes';
+import { Circle, LineConnection, LineSlot, Referencable, Sentence, UUID } from './ImageTypes';
 
 export interface ImageState {
-    circles: { [key: string]: Circle };
-    lineConnections: { [key: string]: LineConnection };
-    lineSlots: { [key: string]: LineSlot };
+    circles: Record<UUID, Referencable & Circle>;
+    lineConnections: Record<UUID, Referencable & LineConnection>;
+    lineSlots: Record<UUID, Referencable & LineSlot>;
     sentence: Sentence;
     svgSize: number;
 }
 
 const createInitialState = (): ImageState => ({
-    circles: { uuid: { id: 'uuid', angle: 0, distance: 0, r: 0, filled: false } },
+    circles: { uuid: { id: 'uuid', angle: 0, distance: 0, r: 0 } },
     lineConnections: {},
     lineSlots: {},
     sentence: {
@@ -28,8 +28,8 @@ const createInitialState = (): ImageState => ({
     svgSize: 1000,
 });
 
-export const updateCircleData = createAction<Referencable & Partial<CircleData>>('image/updateCircleData');
-export const updateLineSlotData = createAction<Referencable & Partial<LineSlotData>>('image/updateLineSlotData');
+export const updateCircleData = createAction<Referencable & Partial<Circle>>('image/updateCircleData');
+export const updateLineSlotData = createAction<Referencable & Partial<LineSlot>>('image/updateLineSlotData');
 
 interface MovableData {
     id: UUID;

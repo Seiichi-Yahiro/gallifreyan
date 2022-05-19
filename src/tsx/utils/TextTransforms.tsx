@@ -1,11 +1,11 @@
 import { range, zip } from 'lodash';
 import { ImageState } from '../state/ImageState';
 import {
-    CircleData,
+    Circle,
     Consonant,
     ConsonantPlacement,
     Letter,
-    LineSlotData,
+    LineSlot,
     Sentence,
     Vocal,
     VocalDecoration,
@@ -23,7 +23,7 @@ export const adjustAngle = (angle: Degree): Degree => ((angle % 360) + 360) % 36
 export const calculateTranslation = (angle: number, distance: number): Vector2 =>
     rotate({ x: 0, y: distance }, toRadian(-angle));
 
-export const calculateInitialWordCircleData = (sentenceRadius: number, numberOfWords: number): CircleData[] => {
+export const calculateInitialWordCircleData = (sentenceRadius: number, numberOfWords: number): Circle[] => {
     const wordAngle = 360 / numberOfWords;
     const r = (sentenceRadius * 0.75) / (1 + numberOfWords / 2);
     const distance = numberOfWords > 1 ? sentenceRadius - r * 1.5 : 0;
@@ -35,7 +35,7 @@ export const calculateInitialWordCircleData = (sentenceRadius: number, numberOfW
     }));
 };
 
-export const calculateInitialLetterCircleDatas = (letters: Letter[], wordRadius: number): CircleData[] => {
+export const calculateInitialLetterCircleDatas = (letters: Letter[], wordRadius: number): Circle[] => {
     const letterAngle = 360 / letters.length;
 
     return letters.map((letter, i) => {
@@ -76,9 +76,9 @@ export const calculateInitialLetterCircleDatas = (letters: Letter[], wordRadius:
 export const calculateInitialNestedVocalCircleData = (
     vocalPlacement: VocalPlacement,
     parentConsonantPlacement: ConsonantPlacement,
-    consonantCircleData: CircleData,
+    consonantCircleData: Circle,
     wordRadius: number
-): CircleData => {
+): Circle => {
     const r = consonantCircleData.r * 0.4;
 
     switch (vocalPlacement) {
@@ -111,7 +111,7 @@ export const calculateInitialNestedVocalCircleData = (
     }
 };
 
-export const calculateInitialDotCircleDatas = (letterRadius: number, numberOfDots: number): CircleData[] => {
+export const calculateInitialDotCircleDatas = (letterRadius: number, numberOfDots: number): Circle[] => {
     const letterSideAngle = 180;
     const dotDistanceAngle = 45;
     const centerDotsOnLetterSideAngle = ((numberOfDots - 1) * dotDistanceAngle) / 2;
@@ -130,7 +130,7 @@ export const calculateInitialLineSlotDatas = (
     letterRadius: number,
     numberOfLines: number,
     pointOutside: boolean
-): LineSlotData[] => {
+): LineSlot[] => {
     const letterSideAngle = pointOutside ? 0 : 180;
     const lineDistanceAngle = 45;
     const centerLinesOnLetterSideAngle = ((numberOfLines - 1) * lineDistanceAngle) / 2;
@@ -153,7 +153,7 @@ export const resetSentenceCircleData = (state: ImageState, sentence: Sentence) =
     );
 };
 
-export const resetWordCircleData = (state: ImageState, word: Word, wordCircleData: CircleData) => {
+export const resetWordCircleData = (state: ImageState, word: Word, wordCircleData: Circle) => {
     const wordCircle = state.circles[word.circleId];
 
     wordCircle.angle = wordCircleData.angle;
@@ -167,7 +167,7 @@ export const resetWordCircleData = (state: ImageState, word: Word, wordCircleDat
     );
 };
 
-const resetLetterCircleData = (state: ImageState, letter: Letter, letterCircleData: CircleData, wordRadius: number) => {
+const resetLetterCircleData = (state: ImageState, letter: Letter, letterCircleData: Circle, wordRadius: number) => {
     if (isLetterConsonant(letter)) {
         resetConsonantCircleData(state, letter, letterCircleData, wordRadius);
     } else {
@@ -175,7 +175,7 @@ const resetLetterCircleData = (state: ImageState, letter: Letter, letterCircleDa
     }
 };
 
-const resetVocalCircleData = (state: ImageState, vocal: Vocal, vocalCircleData: CircleData) => {
+const resetVocalCircleData = (state: ImageState, vocal: Vocal, vocalCircleData: Circle) => {
     const vocalCircle = state.circles[vocal.circleId];
 
     vocalCircle.angle = vocalCircleData.angle;
@@ -200,7 +200,7 @@ const resetVocalCircleData = (state: ImageState, vocal: Vocal, vocalCircleData: 
 const resetConsonantCircleData = (
     state: ImageState,
     consonant: Consonant,
-    consonantCircleData: CircleData,
+    consonantCircleData: Circle,
     wordRadius: number
 ) => {
     const consonantCircle = state.circles[consonant.circleId];

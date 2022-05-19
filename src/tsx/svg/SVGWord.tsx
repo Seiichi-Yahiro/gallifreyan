@@ -53,6 +53,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSl
                 ref={wordRef}
                 r={wordCircle.r}
                 lineSlots={lineSlots}
+                filled={false}
                 fill="transparent"
                 stroke="inherit"
                 mask={`url(#mask_${circleId})`}

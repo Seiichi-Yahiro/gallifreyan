@@ -9,17 +9,16 @@ export interface PositionData {
     distance: number;
 }
 
-export interface Circle extends Referencable, PositionData {
+export interface Circle extends PositionData {
     r: number;
-    filled: boolean;
 }
 
-export interface LineConnection extends Referencable {
+export interface LineConnection {
     a: UUID;
     b: UUID;
 }
 
-export interface LineSlot extends Referencable, PositionData {
+export interface LineSlot extends PositionData {
     connection?: LineConnection;
 }
 
@@ -86,9 +85,3 @@ export enum VocalDecoration {
     LineInside = 'LineInside',
     LineOutside = 'LineOutside',
 }
-
-export interface CircleData extends PositionData {
-    r: number;
-}
-
-export interface LineSlotData extends PositionData {}

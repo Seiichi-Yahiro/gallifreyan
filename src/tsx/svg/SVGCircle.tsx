@@ -5,13 +5,13 @@ import SVGLineSlot from './LineSlot';
 interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {
     r: number;
     lineSlots: UUID[];
+    filled: boolean;
     parentAngle?: number;
-    filled?: boolean;
 }
 
 export const SVGCircle: React.FunctionComponent<SVGCircleProps> = React.memo(
     React.forwardRef(
-        ({ r, lineSlots, parentAngle = 0, filled = false, stroke = 'inherit', fill = 'inherit', ...props }, ref) => (
+        ({ r, lineSlots, filled, parentAngle = 0, stroke = 'inherit', fill = 'inherit', ...props }, ref) => (
             <>
                 <circle ref={ref} {...props} cx={0} cy={0} r={r} stroke={stroke} fill={filled ? fill : 'transparent'} />
                 {lineSlots.map((slot) => (
