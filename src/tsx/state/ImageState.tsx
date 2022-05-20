@@ -5,18 +5,18 @@ import { Position } from '../utils/LinearAlgebra';
 import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
 import { resetCircleDatas } from '../utils/TextTransforms';
 import { AppThunkAction } from './AppState';
-import { Circle, LineConnection, LineSlot, Referencable, Sentence, UUID } from './ImageTypes';
+import { Circle, LineConnection, LineSlot, Parented, Referencable, Sentence, UUID } from './ImageTypes';
 
 export interface ImageState {
-    circles: Record<UUID, Referencable & Circle>;
+    circles: Record<UUID, Referencable & Parented & Circle>;
     lineConnections: Record<UUID, Referencable & LineConnection>;
-    lineSlots: Record<UUID, Referencable & LineSlot>;
+    lineSlots: Record<UUID, Referencable & Parented & LineSlot>;
     sentence: Sentence;
     svgSize: number;
 }
 
 const createInitialState = (): ImageState => ({
-    circles: { uuid: { id: 'uuid', angle: 0, distance: 0, r: 0 } },
+    circles: { uuid: { id: 'uuid', parentId: '', angle: 0, distance: 0, r: 0 } },
     lineConnections: {},
     lineSlots: {},
     sentence: {

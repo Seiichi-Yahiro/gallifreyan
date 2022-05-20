@@ -4,6 +4,10 @@ export interface Referencable {
     readonly id: UUID;
 }
 
+export interface Parented {
+    parentId: UUID;
+}
+
 export interface PositionData {
     angle: number;
     distance: number;

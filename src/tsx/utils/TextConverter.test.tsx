@@ -176,6 +176,72 @@ describe('TextConverter', () => {
         expect(fmsng.letters.length).toBe(4);
     });
 
+    it('should not parent sentences', () => {
+        const textData = convertTextToSentence('no parents');
+        const parentId = textData.circles.find((circle) => circle.id === textData.textPart.circleId)?.parentId;
+        expect(parentId).toBe('');
+    });
+
+    it('should parent words', () => {
+        const textData = convertTextToSentence('parent all words');
+        const parentId = textData.textPart.circleId;
+        textData.textPart.words
+            .map((word) => word.circleId)
+            .map((id) => textData.circles.find((circle) => circle.id === id))
+            .map((circle) => circle?.parentId)
+            .forEach((wordParentId) => expect(wordParentId).toBe(parentId));
+    });
+
+    it('should parent all letters', () => {
+        const textData = convertTextToSentence('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
+        textData.textPart.words.forEach((word) => {
+            const parentId = word.circleId;
+            word.letters
+                .map((letter) => letter.circleId)
+                .map((id) => textData.circles.find((circle) => circle.id === id))
+                .map((circle) => circle?.parentId)
+                .forEach((letterParentId) => expect(letterParentId).toBe(parentId));
+        });
+    });
+
+    it('should parent nested vocals', () => {
+        const textData = convertTextToSentence('ja ji ju je jo');
+        textData.textPart.words.forEach((word) =>
+            word.letters.forEach((consonant: Consonant) => {
+                const parentId = consonant.circleId;
+                const vocalId = consonant.vocal?.circleId;
+                const vocalParentId = textData.circles.find((circle) => circle.id === vocalId)?.parentId;
+                expect(vocalParentId).toBe(parentId);
+            })
+        );
+    });
+
+    it('should parent all dots', () => {
+        const textData = convertTextToSentence('phwhgh chkshy dlrz');
+        textData.textPart.words.forEach((word) =>
+            word.letters.forEach((consonant: Consonant) => {
+                const parentId = consonant.circleId;
+                consonant.dots
+                    .map((id) => textData.circles.find((dot) => dot.id === id))
+                    .map((circle) => circle?.parentId)
+                    .forEach((dotParentId) => expect(dotParentId).toBe(parentId));
+            })
+        );
+    });
+
+    it('should parent all lineSlots', () => {
+        const textData = convertTextToSentence('iu gnvqu hpwx fmsng');
+        textData.textPart.words.forEach((word) =>
+            word.letters.forEach((letter) => {
+                const parentId = letter.circleId;
+                letter.lineSlots
+                    .map((id) => textData.lineSlots.find((lineSlot) => lineSlot.id === id))
+                    .map((lineSlot) => lineSlot?.parentId)
+                    .forEach((lineSlotParentId) => expect(lineSlotParentId).toBe(parentId));
+            })
+        );
+    });
+
     interface VocalExpectations {
         lineSlots: number;
         placement: VocalPlacement;
