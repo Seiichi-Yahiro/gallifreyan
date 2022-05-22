@@ -3,82 +3,92 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { moveWord } from '../state/ImageState';
-import { ConsonantPlacement, Word } from '../state/ImageTypes';
+import { CircleType, ConsonantPlacement, Letter, UUID, Word } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
-import { isLetterConsonant, isPlacement } from '../utils/LetterGroups';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
-import { SVGConsonant, SVGConsonantCutMask, SVGVocal } from './SVGLetter';
+import SVGLetter, { SVGConsonantCutMask } from './SVGLetter';
 
-interface WordProps extends Word {}
+interface WordProps {
+    id: UUID;
+}
 
-const SVGWord: React.FunctionComponent<WordProps> = ({ circleId, letters, lineSlots }) => {
-    const wordCircle = useRedux((state) => state.image.circles[circleId]);
+const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
+    const word = useRedux((state) => state.image.circles[id]) as Word;
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(circleId);
-    const isSelected = useIsSelectedSelector(circleId);
+    const isHovered = useIsHoveredSelector(id);
+    const isSelected = useIsSelectedSelector(id);
     const wordRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(circleId, (event) => {
+    const onMouseDown = useDragAndDrop(id, (event) => {
         if (wordRef.current) {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = wordRef.current.getBoundingClientRect();
 
-            dispatch(moveWord(mousePos, { id: circleId, domRect }));
+            dispatch(moveWord(mousePos, { id, domRect }));
         }
     });
 
     return (
         <Group
-            angle={wordCircle.angle}
-            distance={wordCircle.distance}
+            angle={word.circle.angle}
+            distance={word.circle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}
             className="group-word"
         >
-            <mask id={`mask_${circleId}`}>
-                <circle r={wordCircle.r} fill="#000000" stroke="#ffffff" />
-                {letters
-                    .filter((letter) =>
-                        isPlacement(letter.placement, [ConsonantPlacement.ShallowCut, ConsonantPlacement.DeepCut])
-                    )
-                    .map((letter) => (
-                        <SVGConsonantCutMask key={letter.circleId} {...letter} fill="#000000" stroke="#000000" />
-                    ))}
+            <mask id={`mask_${id}`}>
+                <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
+                {word.letters.map((letterId) => (
+                    <SVGLetterCutMask key={letterId} id={letterId} />
+                ))}
             </mask>
             <SVGCircle
                 ref={wordRef}
-                r={wordCircle.r}
-                lineSlots={lineSlots}
+                r={word.circle.r}
+                lineSlots={word.lineSlots}
                 filled={false}
                 fill="transparent"
                 stroke="inherit"
-                mask={`url(#mask_${circleId})`}
+                mask={`url(#mask_${id})`}
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(circleId));
+                            dispatch(setSelection(id));
                         }
                         event.stopPropagation();
                     },
-                    [circleId, isSelected]
+                    [id, isSelected]
                 )}
                 onMouseDown={onMouseDown}
-                onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
-            {letters.map((letter) =>
-                isLetterConsonant(letter) ? (
-                    <SVGConsonant key={letter.circleId} {...letter} parentRadius={wordCircle.r} />
-                ) : (
-                    <SVGVocal key={letter.circleId} {...letter} />
-                )
-            )}
+            {word.letters.map((letterId) => (
+                <SVGLetter key={letterId} id={letterId} />
+            ))}
         </Group>
     );
+};
+
+interface SVGLetterCutMaskProps {
+    id: UUID;
+}
+
+const SVGLetterCutMask: React.FunctionComponent<SVGLetterCutMaskProps> = ({ id }) => {
+    const consonant = useRedux((state) => state.image.circles[id]) as Letter;
+
+    if (
+        consonant.type === CircleType.Consonant &&
+        [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement)
+    ) {
+        return <SVGConsonantCutMask circle={consonant.circle} fill="#000000" stroke="#000000" />;
+    } else {
+        return null;
+    }
 };
 
 export default React.memo(SVGWord);

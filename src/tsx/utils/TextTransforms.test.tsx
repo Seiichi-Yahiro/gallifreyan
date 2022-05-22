@@ -1,10 +1,10 @@
 import { range } from 'lodash';
-import { ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
+import { CircleType, ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
 import {
     adjustAngle,
-    calculateInitialDotCircleDatas,
-    calculateInitialLetterCircleDatas,
-    calculateInitialLineSlotDatas,
+    calculateInitialDotCircleData,
+    calculateInitialLetterCircleData,
+    calculateInitialLineSlotPositionData,
     calculateInitialNestedVocalCircleData,
     calculateInitialWordCircleData,
     calculateTranslation,
@@ -63,13 +63,20 @@ describe('Text Transforms', () => {
 
         it('should have correct letter angles', () => {
             const letters = range(4).map<Letter>(() => ({
+                id: '',
+                parentId: '',
                 text: '',
-                circleId: '',
+                type: CircleType.Vocal,
+                circle: {
+                    angle: 0,
+                    distance: 0,
+                    r: 0,
+                },
                 lineSlots: [],
                 decoration: VocalDecoration.None,
                 placement: VocalPlacement.OnLine,
             }));
-            const result = calculateInitialLetterCircleDatas(letters, 10).map((it) => it.angle);
+            const result = calculateInitialLetterCircleData(letters, 10).map((it) => it.angle);
             expect(result).toEqual([0, 90, 180, 270]);
         });
 
@@ -119,17 +126,17 @@ describe('Text Transforms', () => {
         });
 
         it('should have correct dot angles', () => {
-            const result = calculateInitialDotCircleDatas(10, 4).map((it) => it.angle);
+            const result = calculateInitialDotCircleData(10, 4).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, 202.5, 247.5]);
         });
 
         it('should have correct line slot angles', () => {
-            const result = calculateInitialLineSlotDatas(10, 4, false).map((it) => it.angle);
+            const result = calculateInitialLineSlotPositionData(10, 4, false).map((it) => it.angle);
             expect(result).toEqual([112.5, 157.5, 202.5, 247.5]);
         });
 
         it('should have correct line slot angles pointing outside', () => {
-            const result = calculateInitialLineSlotDatas(10, 4, true).map((it) => it.angle);
+            const result = calculateInitialLineSlotPositionData(10, 4, true).map((it) => it.angle);
             expect(result).toEqual([292.5, 337.5, 22.5, 67.5]);
         });
     });

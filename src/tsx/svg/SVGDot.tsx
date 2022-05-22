@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { moveDot } from '../state/ImageState';
-import { UUID } from '../state/ImageTypes';
+import { Dot, UUID } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
 import { Position } from '../utils/LinearAlgebra';
@@ -12,13 +12,12 @@ import { SVGCircle } from './SVGCircle';
 
 interface DotProps {
     id: UUID;
-    parentAngle: number;
 }
 
 const lineSlots: UUID[] = [];
 
-const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
-    const dotCircle = useRedux((state) => state.image.circles[id]);
+const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
+    const dot = useRedux((state) => state.image.circles[id]) as Dot;
     const dispatch = useAppDispatch();
     const isHovered = useIsHoveredSelector(id);
     const isSelected = useIsSelectedSelector(id);
@@ -29,14 +28,14 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = dotRef.current.getBoundingClientRect();
 
-            dispatch(moveDot(mousePos, { id, domRect }, { angle: parentAngle }));
+            dispatch(moveDot(mousePos, { id, domRect }));
         }
     });
 
     return (
         <Group
-            angle={dotCircle.angle}
-            distance={dotCircle.distance}
+            angle={dot.circle.angle}
+            distance={dot.circle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}
@@ -44,7 +43,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id, parentAngle }) => {
         >
             <SVGCircle
                 ref={dotRef}
-                r={dotCircle.r}
+                r={dot.circle.r}
                 lineSlots={lineSlots}
                 fill="inherit"
                 stroke="inherit"

@@ -1,13 +1,13 @@
-import { last, range } from 'lodash';
+import { range } from 'lodash';
 import { v4 } from 'uuid';
 import {
-    Circle,
+    CircleShape,
+    CircleType,
     Consonant,
     ConsonantDecoration,
-    Letter,
+    Dot,
     LineSlot,
-    Parented,
-    Referencable,
+    LineType,
     Sentence,
     UUID,
     Vocal,
@@ -20,23 +20,13 @@ import {
     assignVocalDecoration,
     assignVocalPlacement,
     DOUBLE_LETTER,
-    isLetterConsonant,
-    isLetterVocal,
     isVocal,
 } from './LetterGroups';
-import Maybe from './Maybe';
-import {
-    DEFAULT_CONSONANT_RADIUS,
-    DEFAULT_DOT_RADIUS,
-    DEFAULT_SENTENCE_RADIUS,
-    DEFAULT_VOCAL_RADIUS,
-    DEFAULT_WORD_RADIUS,
-} from './TextDefaultValues';
 
-interface TextData<T> {
-    textPart: T;
-    circles: (Referencable & Parented & Circle)[];
-    lineSlots: (Referencable & Parented & LineSlot)[];
+interface TextData {
+    id: UUID;
+    circles: Partial<Record<UUID, CircleShape>>;
+    lineSlots: Partial<Record<UUID, LineSlot>>;
 }
 
 export const splitWordToChars = (word: string): string[] => {
@@ -53,141 +43,149 @@ export const splitWordToChars = (word: string): string[] => {
     }
 };
 
-export const convertTextToSentence = (text: string): TextData<Sentence> => {
-    const sentenceCircle: Referencable & Parented & Circle = {
-        id: v4(),
-        parentId: '',
-        angle: 0,
-        distance: 0,
-        r: DEFAULT_SENTENCE_RADIUS,
-    };
+export const convertTextToSentence = (text: string): TextData => {
+    const id = v4();
 
-    const wordData = text
-        .split(' ')
-        .filter((word) => word.length > 0)
-        .map((word) => convertTextToWord(word, sentenceCircle.id));
+    const words: UUID[] = [];
+    const circles: Record<UUID, CircleShape> = {};
+    const lineSlots: Record<UUID, LineSlot> = {};
+
+    for (const word of text.split(' ').filter((word) => word.length > 0)) {
+        const textData = convertTextToWord(word, id);
+
+        words.push(textData.id);
+        Object.assign(circles, textData.circles);
+        Object.assign(lineSlots, textData.lineSlots);
+    }
 
     const sentence: Sentence = {
+        type: CircleType.Sentence,
         text,
-        circleId: sentenceCircle.id,
-        words: wordData.map((it) => it.textPart),
+        id,
+        circle: {
+            angle: 0,
+            distance: 0,
+            r: 0,
+        },
+        words,
         lineSlots: [],
     };
 
+    Object.assign(circles, { [id]: sentence });
+
     return {
-        textPart: sentence,
-        circles: wordData.flatMap((it) => it.circles).concat(sentenceCircle),
-        lineSlots: wordData.flatMap((it) => it.lineSlots),
+        id,
+        circles,
+        lineSlots,
     };
 };
 
-const convertTextToWord = (text: string, parentId: UUID): TextData<Word> => {
-    const wordCircle: Referencable & Parented & Circle = {
-        id: v4(),
-        parentId,
-        angle: 0,
-        distance: 0,
-        r: DEFAULT_WORD_RADIUS,
-    };
+const convertTextToWord = (text: string, parentId: UUID): TextData => {
+    const id = v4();
 
-    const letterData = splitWordToChars(text)
-        .map((letter) => convertTextToLetter(letter, wordCircle.id))
-        .reduce<TextData<Letter>[]>((acc, textData) => {
-            const prevTextData = Maybe.of(last(acc));
-            const isPrevConsonantWithoutNestedVocal = prevTextData
-                .map((it) => isLetterConsonant(it.textPart) && !it.textPart.vocal)
-                .unwrapOr(false);
+    const letters: UUID[] = [];
+    const circles: Record<UUID, CircleShape> = {};
+    const lineSlots: Record<UUID, LineSlot> = {};
 
-            if (isPrevConsonantWithoutNestedVocal && isLetterVocal(textData.textPart)) {
-                const consonant = prevTextData.unwrap() as TextData<Consonant>;
-                consonant.textPart.vocal = textData.textPart;
-                consonant.circles = consonant.circles.concat(textData.circles);
-                consonant.lineSlots = consonant.lineSlots.concat(textData.lineSlots);
+    for (const letter of splitWordToChars(text)) {
+        let textData;
 
-                const vocalCircle = textData.circles.find((circle) => circle.id === textData.textPart.circleId)!;
-                vocalCircle.parentId = consonant.textPart.circleId;
+        if (isVocal(letter)) {
+            textData = convertTextToVocal(letter, id);
+        } else {
+            textData = convertTextToConsonant(letter, id);
+        }
 
-                return acc.slice(0, acc.length - 1).concat(consonant);
-            } else {
-                return acc.concat(textData);
-            }
-        }, []);
+        letters.push(textData.id);
+        Object.assign(circles, textData.circles);
+        Object.assign(lineSlots, textData.lineSlots);
+    }
 
     const word: Word = {
+        type: CircleType.Word,
         text,
-        circleId: wordCircle.id,
-        letters: letterData.map((it) => it.textPart),
+        id,
+        parentId,
+        circle: {
+            angle: 0,
+            distance: 0,
+            r: 0,
+        },
+        letters,
         lineSlots: [],
     };
 
+    Object.assign(circles, { [id]: word });
+
     return {
-        textPart: word,
-        circles: letterData.flatMap((it) => it.circles).concat(wordCircle),
-        lineSlots: letterData.flatMap((it) => it.lineSlots),
+        id,
+        circles,
+        lineSlots,
     };
 };
 
-const convertTextToLetter = (text: string, parentId: UUID): TextData<Letter> =>
-    isVocal(text) ? convertTextToVocal(text, parentId) : convertTextToConsonant(text, parentId);
-
-const convertTextToVocal = (text: string, parentId: UUID): TextData<Vocal> => {
-    const vocalCircle: Referencable & Parented & Circle = {
-        id: v4(),
-        parentId,
-        angle: 0,
-        distance: 0,
-        r: DEFAULT_VOCAL_RADIUS,
-    };
+const convertTextToVocal = (text: string, parentId: UUID): TextData => {
+    const id = v4();
 
     const decoration = assignVocalDecoration(text).unwrap();
-    const lineSlots = createLineSlots(vocalCircle.id, decoration);
+    const placement = assignVocalPlacement(text).unwrap();
+    const lineSlots = createLineSlots(id, decoration);
 
     const vocal: Vocal = {
+        type: CircleType.Vocal,
         text,
-        circleId: vocalCircle.id,
+        id,
+        parentId,
+        circle: {
+            angle: 0,
+            distance: 0,
+            r: 0,
+        },
         lineSlots: lineSlots.map((slot) => slot.id),
-        placement: assignVocalPlacement(text).unwrap(),
+        placement,
         decoration,
     };
 
     return {
-        textPart: vocal,
-        circles: [vocalCircle],
-        lineSlots,
+        id,
+        circles: { [id]: vocal },
+        lineSlots: lineSlots.reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
     };
 };
 
-const convertTextToConsonant = (text: string, parentId: UUID): TextData<Consonant> => {
-    const consonantCircle: Referencable & Parented & Circle = {
-        id: v4(),
-        parentId,
-        angle: 0,
-        distance: 0,
-        r: DEFAULT_CONSONANT_RADIUS,
-    };
+const convertTextToConsonant = (text: string, parentId: UUID): TextData => {
+    const id = v4();
 
     const decoration = assignConsonantDecoration(text).unwrap();
+    const placement = assignConsonantPlacement(text).unwrap();
 
-    const lineSlots = createLineSlots(consonantCircle.id, decoration);
-    const dots = createDots(consonantCircle.id, decoration);
+    const lineSlots = createLineSlots(id, decoration);
+    const dots = createDots(id, decoration);
 
     const consonant: Consonant = {
-        text: text,
-        circleId: consonantCircle.id,
+        type: CircleType.Consonant,
+        text,
+        id,
+        parentId,
+        circle: {
+            angle: 0,
+            distance: 0,
+            r: 0,
+        },
         lineSlots: lineSlots.map((slot) => slot.id),
         dots: dots.map((dot) => dot.id),
-        placement: assignConsonantPlacement(text).unwrap(),
+        placement,
         decoration,
     };
 
     return {
-        textPart: consonant,
-        circles: dots.concat(consonantCircle),
-        lineSlots,
+        id,
+        circles: [consonant, ...dots].reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
+        lineSlots: lineSlots.reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
     };
 };
 
-const createDots = (parentId: UUID, decoration: ConsonantDecoration): (Referencable & Parented & Circle)[] => {
+const createDots = (parentId: UUID, decoration: ConsonantDecoration): Dot[] => {
     const numberOfDots = () => {
         switch (decoration) {
             case ConsonantDecoration.SingleDot:
@@ -204,18 +202,18 @@ const createDots = (parentId: UUID, decoration: ConsonantDecoration): (Referenca
     };
 
     return range(numberOfDots()).map((_i) => ({
+        type: CircleType.Dot,
         id: v4(),
         parentId,
-        angle: 0,
-        distance: 0,
-        r: DEFAULT_DOT_RADIUS,
+        circle: {
+            angle: 0,
+            distance: 0,
+            r: 0,
+        },
     }));
 };
 
-const createLineSlots = (
-    parentId: UUID,
-    decoration: ConsonantDecoration | VocalDecoration
-): (Referencable & Parented & LineSlot)[] => {
+const createLineSlots = (parentId: UUID, decoration: ConsonantDecoration | VocalDecoration): LineSlot[] => {
     const numberOfLineSlots = () => {
         switch (decoration) {
             case ConsonantDecoration.SingleLine:
@@ -232,6 +230,7 @@ const createLineSlots = (
     };
 
     return range(numberOfLineSlots()).map((_i) => ({
+        type: LineType.LineSlot,
         id: v4(),
         parentId,
         angle: 0,

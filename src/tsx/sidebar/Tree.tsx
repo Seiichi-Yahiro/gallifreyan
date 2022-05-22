@@ -2,9 +2,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
 import { TreeView } from '@mui/lab';
 import { useRedux } from '../hooks/useRedux';
-import { isLetterConsonant } from '../utils/LetterGroups';
-import Maybe from '../utils/Maybe';
-import TreeItemWrapper from './TreeItemWrapper';
+import SentenceTreeItem from './SentenceTreeItem';
 
 const MinusSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: SvgIconProps) => (
     <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
@@ -29,7 +27,6 @@ interface TreeProps {
 }
 
 const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
-    const sentence = useRedux((state) => state.image.sentence);
     const selection = useRedux((state) => state.work.selection);
 
     return (
@@ -40,55 +37,7 @@ const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
             selected={selection ?? ''}
             className={className}
         >
-            <TreeItemWrapper
-                text={sentence.text}
-                circleId={sentence.circleId}
-                lineSlots={sentence.lineSlots}
-                editable={true}
-            >
-                {sentence.words.map((word) => (
-                    <TreeItemWrapper
-                        key={word.circleId}
-                        text={word.text}
-                        circleId={word.circleId}
-                        lineSlots={word.lineSlots}
-                    >
-                        {word.letters.map((letter) =>
-                            isLetterConsonant(letter) ? (
-                                <TreeItemWrapper
-                                    key={letter.circleId}
-                                    text={Maybe.of(letter.vocal)
-                                        .map((vocal) => letter.text + vocal.text)
-                                        .unwrapOr(letter.text)}
-                                    circleId={letter.circleId}
-                                    lineSlots={letter.lineSlots}
-                                >
-                                    {letter.dots.map((dot) => (
-                                        <TreeItemWrapper key={dot} text="DOT" circleId={dot} lineSlots={[]} />
-                                    ))}
-                                    {Maybe.of(letter.vocal)
-                                        .map((vocal) => (
-                                            <TreeItemWrapper
-                                                key={vocal.circleId}
-                                                text={vocal.text}
-                                                circleId={vocal.circleId}
-                                                lineSlots={vocal.lineSlots}
-                                            />
-                                        ))
-                                        .asNullable()}
-                                </TreeItemWrapper>
-                            ) : (
-                                <TreeItemWrapper
-                                    key={letter.circleId}
-                                    text={letter.text}
-                                    circleId={letter.circleId}
-                                    lineSlots={letter.lineSlots}
-                                />
-                            )
-                        )}
-                    </TreeItemWrapper>
-                ))}
-            </TreeItemWrapper>
+            <SentenceTreeItem />
         </TreeView>
     );
 };

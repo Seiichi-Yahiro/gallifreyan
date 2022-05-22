@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { updateSentence } from '../state/ImageState';
+import { setSentence } from '../state/ImageState';
+import { Sentence } from '../state/ImageTypes';
 import { render } from '../utils/TestUtils';
 import SVGWord from './SVGWord';
 
 describe('SVG Word', () => {
     const SetWord: React.FunctionComponent<{ text: string }> = ({ text }) => {
         const dispatch = useAppDispatch();
-        const word = useRedux((state) => state.image.sentence.words.at(0));
+        const wordId = useRedux((state) => {
+            const sentence = state.image.circles[state.image.rootCircleId] as Sentence | undefined;
+            return state.image.circles[sentence?.words[0] ?? '']?.id;
+        });
         useEffect(() => {
-            dispatch(updateSentence(text));
+            dispatch(setSentence(text));
         }, []);
 
-        return <svg>{word && <SVGWord {...word} />}</svg>;
+        return <svg>{wordId && <SVGWord id={wordId} />}</svg>;
     };
 
     interface Expectations {

@@ -1,48 +1,50 @@
 import React, { useCallback } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { Sentence } from '../state/ImageTypes';
+import { Sentence, UUID } from '../state/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/WorkState';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';
 
-interface SentenceProps extends Sentence {}
+interface SentenceProps {
+    id: UUID;
+}
 
-const SVGSentence: React.FunctionComponent<SentenceProps> = ({ circleId, words, lineSlots }) => {
-    const sentenceCircle = useRedux((state) => state.image.circles[circleId]);
+const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
+    const sentence = useRedux((state) => state.image.circles[id]) as Sentence;
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(circleId);
-    const isSelected = useIsSelectedSelector(circleId);
+    const isHovered = useIsHoveredSelector(id);
+    const isSelected = useIsSelectedSelector(id);
 
     return (
         <Group
-            angle={sentenceCircle.angle}
-            distance={sentenceCircle.distance}
+            angle={sentence.circle.angle}
+            distance={sentence.circle.distance}
             anglePlacement={AnglePlacement.Absolute}
             isHovered={isHovered}
             isSelected={isSelected}
             className="group-sentence"
         >
             <SVGCircle
-                r={sentenceCircle.r}
-                lineSlots={lineSlots}
+                r={sentence.circle.r}
+                lineSlots={sentence.lineSlots}
                 filled={false}
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(circleId));
+                            dispatch(setSelection(id));
                         }
                         event.stopPropagation();
                     },
-                    [circleId, isSelected]
+                    [id, isSelected]
                 )}
-                onMouseEnter={useCallback(() => dispatch(setHovering(circleId)), [circleId])}
+                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
-            {words.map((word) => (
-                <SVGWord key={word.circleId} {...word} />
+            {sentence.words.map((wordId) => (
+                <SVGWord key={wordId} id={wordId} />
             ))}
         </Group>
     );

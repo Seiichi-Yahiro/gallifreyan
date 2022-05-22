@@ -45,8 +45,8 @@ const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
 
     const viewerRef = useRef<ReactSVGPanZoom>(null);
 
+    const rootCircleId = useRedux((state) => state.image.rootCircleId);
     const size = useRedux((state) => state.image.svgSize);
-    const sentence = useRedux((state) => state.image.sentence);
 
     useEffect(() => {
         if (viewerRef.current) {
@@ -80,7 +80,7 @@ const SVG: React.FunctionComponent<SVGProps> = ({ width, height }) => {
         >
             <svg width={size} height={size}>
                 <g style={{ transform: `translate(${size / 2}px, ${size / 2}px)` }} stroke="#000000" fill="#000000">
-                    <SVGSentence key={sentence.circleId} {...sentence} />
+                    {rootCircleId && <SVGSentence id={rootCircleId} />}
                 </g>
             </svg>
         </ReactSVGPanZoom>

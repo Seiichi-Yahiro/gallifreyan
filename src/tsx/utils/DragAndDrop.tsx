@@ -28,13 +28,13 @@ export const calculatePositionData = (
     viewPortScale: number,
     childDomRect: DOMRect,
     childPositionData: PositionData,
-    parentAngle = 0
+    relativeAngle = 0
 ): PositionData => {
-    const translation = calculateTranslation(childPositionData.angle + parentAngle, childPositionData.distance);
+    const translation = calculateTranslation(childPositionData.angle + relativeAngle, childPositionData.distance);
     const parentPos = calculateParentPos(childDomRect, translation, viewPortScale);
 
     return {
         distance: calculateDistance(mousePos, parentPos, viewPortScale),
-        angle: adjustAngle(calculateAngle(mousePos, parentPos) - parentAngle),
+        angle: adjustAngle(calculateAngle(mousePos, parentPos) - relativeAngle),
     };
 };

@@ -1,18 +1,5 @@
-import {
-    Consonant,
-    Letter,
-    Vocal,
-    ConsonantDecoration,
-    ConsonantPlacement,
-    VocalPlacement,
-    VocalDecoration,
-} from '../state/ImageTypes';
+import { ConsonantDecoration, ConsonantPlacement, VocalPlacement, VocalDecoration } from '../state/ImageTypes';
 import Maybe from './Maybe';
-
-export const isPlacement = (
-    placement: ConsonantPlacement | VocalPlacement,
-    placements: (ConsonantPlacement | VocalPlacement)[]
-) => placements.includes(placement);
 
 type RegexTest = (text: string) => boolean;
 
@@ -119,9 +106,6 @@ const letterGroupsCombination =
     (...fns: Array<RegexTest>) =>
     (text: string) =>
         fns.some((fn) => fn(text));
-
-export const isLetterVocal = (letter: Letter): letter is Vocal => (letter as Consonant).dots === undefined;
-export const isLetterConsonant = (letter: Letter): letter is Consonant => !isLetterVocal(letter);
 
 export const isValidLetter = letterGroupsCombination(
     isDeepCut,

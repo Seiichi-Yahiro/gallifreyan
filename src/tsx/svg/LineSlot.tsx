@@ -13,11 +13,10 @@ import Group, { AnglePlacement } from './Group';
 
 interface SVGLineSlotProps {
     id: UUID;
-    parentAngle: number;
 }
 
-const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngle }) => {
-    const lineSlot = useRedux((state) => state.image.lineSlots[id]);
+const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
+    const lineSlot = useRedux((state) => state.image.lineSlots[id])!;
     const dispatch = useAppDispatch();
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
@@ -36,7 +35,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id, parentAngl
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = slotCircleRef.current.getBoundingClientRect();
 
-            dispatch(moveLineSlot(mousePos, { id, domRect }, { angle: parentAngle }));
+            dispatch(moveLineSlot(mousePos, { id, domRect }));
         }
     });
 
