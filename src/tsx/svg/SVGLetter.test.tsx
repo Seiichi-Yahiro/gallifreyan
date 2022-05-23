@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { setSentence } from '../state/ImageState';
-import { Sentence, Word } from '../state/ImageTypes';
+import { setSentence } from '../state/image/ImageThunks';
+import { Sentence, Word } from '../state/image/ImageTypes';
 import { render } from '../utils/TestUtils';
 import { SVGLetter } from './SVGLetter';
 

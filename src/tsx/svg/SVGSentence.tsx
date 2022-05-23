@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { Sentence, UUID } from '../state/ImageTypes';
+import { Sentence, UUID } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHovering, setSelection } from '../state/WorkState';
+import { setHovering, setSelection } from '../state/work/WorkActions';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';

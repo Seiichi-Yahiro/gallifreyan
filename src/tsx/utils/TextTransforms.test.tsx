@@ -1,5 +1,5 @@
 import { range } from 'lodash';
-import { CircleType, ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/ImageTypes';
+import { CircleType, ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/image/ImageTypes';
 import {
     adjustAngle,
     calculateInitialDotCircleData,

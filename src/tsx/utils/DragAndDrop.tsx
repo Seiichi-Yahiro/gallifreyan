@@ -1,4 +1,4 @@
-import { PositionData } from '../state/ImageTypes';
+import { PositionData } from '../state/image/ImageTypes';
 import { angleBetween, Degree, length, mul, Position, sub, toDegree, Vector2 } from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 

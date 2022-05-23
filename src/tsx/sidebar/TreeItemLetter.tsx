@@ -1,8 +1,8 @@
 import React from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { CircleType, Consonant, Letter, UUID, Vocal } from '../state/ImageTypes';
-import { setHovering } from '../state/WorkState';
+import { CircleType, Consonant, Letter, UUID, Vocal } from '../state/image/ImageTypes';
+import { setHovering } from '../state/work/WorkActions';
 import DotTreeItem from './DotTreeItem';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';

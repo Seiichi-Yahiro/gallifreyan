@@ -14,7 +14,7 @@ import {
     Vocal,
     VocalDecoration,
     Word,
-} from '../state/ImageTypes';
+} from '../state/image/ImageTypes';
 import {
     assignConsonantDecoration,
     assignConsonantPlacement,

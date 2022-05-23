@@ -1,8 +1,8 @@
 import React from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { Sentence } from '../state/ImageTypes';
-import { setHovering } from '../state/WorkState';
+import { Sentence } from '../state/image/ImageTypes';
+import { setHovering } from '../state/work/WorkActions';
 import TreeItem from './TreeItem';
 import { EditableTreeItemContent } from './TreeItemContent';
 import WordTreeItem from './WordTreeItem';

@@ -2,8 +2,8 @@ import { TextField } from '@mui/material';
 import React from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { updateCircleData, updateLineSlotData } from '../state/ImageState';
-import { Circle, UUID } from '../state/ImageTypes';
+import { updateCircleData, updateLineSlotData } from '../state/image/ImageActions';
+import { Circle, UUID } from '../state/image/ImageTypes';
 
 interface SettingsProps {
     className?: string;

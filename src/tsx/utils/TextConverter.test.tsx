@@ -10,7 +10,7 @@ import {
     VocalDecoration,
     VocalPlacement,
     Word,
-} from '../state/ImageTypes';
+} from '../state/image/ImageTypes';
 import { convertTextToSentence, nestWordVocals, splitWordToChars } from './TextConverter';
 
 describe('TextConverter', () => {

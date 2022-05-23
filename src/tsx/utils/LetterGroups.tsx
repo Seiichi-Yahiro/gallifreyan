@@ -1,4 +1,4 @@
-import { ConsonantDecoration, ConsonantPlacement, VocalPlacement, VocalDecoration } from '../state/ImageTypes';
+import { ConsonantDecoration, ConsonantPlacement, VocalPlacement, VocalDecoration } from '../state/image/ImageTypes';
 import Maybe from './Maybe';
 
 type RegexTest = (text: string) => boolean;

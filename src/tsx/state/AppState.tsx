@@ -1,7 +1,7 @@
 import { AnyAction, configureStore, Dispatch, ThunkAction, ThunkDispatch } from '@reduxjs/toolkit';
-import imageReducer, { ImageState } from './ImageState';
-import svgPanZoomReducer, { SvgPanZoomState } from './SvgPanZoomState';
-import workReducer, { WorkState } from './WorkState';
+import imageReducer, { ImageState } from './image/ImageReducer';
+import svgPanZoomReducer, { SvgPanZoomState } from './svgPanZoom/SvgPanZoomReducer';
+import workReducer, { WorkState } from './work/WorkReducer';
 
 export interface AppState {
     svgPanZoom: SvgPanZoomState;

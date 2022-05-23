@@ -1,5 +1,5 @@
 import { range, zip } from 'lodash';
-import { ImageState } from '../state/ImageState';
+import { ImageState } from '../state/image/ImageReducer';
 import {
     Circle,
     CircleType,
@@ -14,7 +14,7 @@ import {
     VocalDecoration,
     VocalPlacement,
     Word,
-} from '../state/ImageTypes';
+} from '../state/image/ImageTypes';
 import { Degree, rotate, toRadian, Vector2 } from './LinearAlgebra';
 
 const zipEqual: <T1, T2>(array1: T1[], array2: T2[]) => [T1, T2][] = zip;

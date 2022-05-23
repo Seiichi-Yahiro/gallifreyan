@@ -1,5 +1,5 @@
 import React from 'react';
-import { UUID } from '../state/ImageTypes';
+import { UUID } from '../state/image/ImageTypes';
 import SVGLineSlot from './LineSlot';
 
 interface SVGCircleProps extends React.SVGProps<SVGCircleElement> {

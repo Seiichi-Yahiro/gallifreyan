@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { createSelector } from 'reselect';
 import { useRedux } from '../hooks/useRedux';
 import { AppState } from './AppState';
-import { UUID } from './ImageTypes';
+import { UUID } from './image/ImageTypes';
 
 const createIsHoveredSelector = () =>
     createSelector(

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { UUID } from '../state/ImageTypes';
+import { UUID } from '../state/image/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
 import useEventListener from './useEventListener';
 

@@ -3,8 +3,8 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import useComplexState from '../hooks/useComplexState';
 import useEventListener from '../hooks/useEventListener';
 import { useRedux } from '../hooks/useRedux';
-import { updateSvgPanZoomTool, updateSvgPanZoomValue } from '../state/SvgPanZoomState';
-import { setSelection } from '../state/WorkState';
+import { updateSvgPanZoomTool, updateSvgPanZoomValue } from '../state/svgPanZoom/SvgPanZoomActions';
+import { setSelection } from '../state/work/WorkActions';
 import SVGSentence from './SVGSentence';
 import { ReactSVGPanZoom, POSITION_LEFT, Value, Tool } from 'react-svg-pan-zoom';
 

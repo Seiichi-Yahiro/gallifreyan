@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createReducer } from '@reduxjs/toolkit';
 import { Tool, Value, TOOL_NONE, MODE_IDLE } from 'react-svg-pan-zoom';
+import { updateSvgPanZoomTool, updateSvgPanZoomValue } from './SvgPanZoomActions';
 
 export interface SvgPanZoomState {
     value: Value;
@@ -30,19 +31,14 @@ const createInitialState = (): SvgPanZoomState => ({
     tool: TOOL_NONE,
 });
 
-export const svgPanZoomSlice = createSlice({
-    name: 'svgPanZoom',
-    initialState: createInitialState,
-    reducers: {
-        updateSvgPanZoomValue: (state, { payload }: PayloadAction<Value>) => {
+const reducer = createReducer(createInitialState, (builder) =>
+    builder
+        .addCase(updateSvgPanZoomValue, (state, { payload }) => {
             state.value = payload;
-        },
-        updateSvgPanZoomTool: (state, { payload }: PayloadAction<Tool>) => {
+        })
+        .addCase(updateSvgPanZoomTool, (state, { payload }) => {
             state.tool = payload;
-        },
-    },
-});
+        })
+);
 
-export const { updateSvgPanZoomValue, updateSvgPanZoomTool } = svgPanZoomSlice.actions;
-
-export default svgPanZoomSlice.reducer;
+export default reducer;
