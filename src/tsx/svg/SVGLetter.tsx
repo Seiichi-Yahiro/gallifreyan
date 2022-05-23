@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { moveConsonant, moveVocal } from '../state/image/ImageThunks';
-import { Circle, CircleType, Consonant, ConsonantPlacement, Letter, UUID, Vocal } from '../state/image/ImageTypes';
+import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
 import { Position } from '../utils/LinearAlgebra';
@@ -19,10 +19,10 @@ interface LetterProps {
 export const SVGLetter: React.FunctionComponent<LetterProps> = ({ id }) => {
     const letter = useRedux((state) => state.image.circles[id]) as Letter;
 
-    if (letter.type === CircleType.Consonant) {
+    if (letter.type === ImageType.Consonant) {
         return <SVGConsonant id={letter.id} />;
     } else {
-        return <SVGVocal id={letter.id} parentType={CircleType.Word} />;
+        return <SVGVocal id={letter.id} parentType={ImageType.Word} />;
     }
 };
 
@@ -103,14 +103,14 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
             {consonant.dots.map((dotId) => (
                 <SVGDot key={dotId} id={dotId} />
             ))}
-            {consonant.vocal && <SVGVocal id={consonant.vocal} parentType={CircleType.Consonant} />}
+            {consonant.vocal && <SVGVocal id={consonant.vocal} parentType={ImageType.Consonant} />}
         </Group>
     );
 };
 
 interface VocalProps {
     id: UUID;
-    parentType: CircleType.Word | CircleType.Consonant;
+    parentType: ImageType.Word | ImageType.Consonant;
 }
 
 const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
@@ -133,7 +133,7 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
         <Group
             angle={vocal.circle.angle}
             distance={vocal.circle.distance}
-            anglePlacement={parentType === CircleType.Consonant ? AnglePlacement.Absolute : AnglePlacement.Relative}
+            anglePlacement={parentType === ImageType.Consonant ? AnglePlacement.Absolute : AnglePlacement.Relative}
             isHovered={isHovered}
             isSelected={isSelected}
             className="group-vocal"

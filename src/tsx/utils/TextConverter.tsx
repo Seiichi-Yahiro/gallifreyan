@@ -2,13 +2,12 @@ import { range } from 'lodash';
 import { v4 } from 'uuid';
 import {
     CircleShape,
-    CircleType,
+    ImageType,
     Consonant,
     ConsonantDecoration,
     Dot,
     Letter,
     LineSlot,
-    LineType,
     Sentence,
     UUID,
     Vocal,
@@ -61,7 +60,7 @@ export const convertTextToSentence = (text: string): TextData => {
     }
 
     const sentence: Sentence = {
-        type: CircleType.Sentence,
+        type: ImageType.Sentence,
         text,
         id,
         circle: {
@@ -104,7 +103,7 @@ const convertTextToWord = (text: string, parentId: UUID): TextData => {
     }
 
     const word: Word = {
-        type: CircleType.Word,
+        type: ImageType.Word,
         text,
         id,
         parentId,
@@ -134,7 +133,7 @@ const convertTextToVocal = (text: string, parentId: UUID): TextData => {
     const lineSlots = createLineSlots(id, decoration);
 
     const vocal: Vocal = {
-        type: CircleType.Vocal,
+        type: ImageType.Vocal,
         text,
         id,
         parentId,
@@ -165,7 +164,7 @@ const convertTextToConsonant = (text: string, parentId: UUID): TextData => {
     const dots = createDots(id, decoration);
 
     const consonant: Consonant = {
-        type: CircleType.Consonant,
+        type: ImageType.Consonant,
         text,
         id,
         parentId,
@@ -204,7 +203,7 @@ const createDots = (parentId: UUID, decoration: ConsonantDecoration): Dot[] => {
     };
 
     return range(numberOfDots()).map((_i) => ({
-        type: CircleType.Dot,
+        type: ImageType.Dot,
         id: v4(),
         parentId,
         circle: {
@@ -232,7 +231,7 @@ const createLineSlots = (parentId: UUID, decoration: ConsonantDecoration | Vocal
     };
 
     return range(numberOfLineSlots()).map((_i) => ({
-        type: LineType.LineSlot,
+        type: ImageType.LineSlot,
         id: v4(),
         parentId,
         angle: 0,
@@ -247,10 +246,10 @@ export const nestWordVocals = (word: Word, letters: Letter[]): { word: Word; let
     for (let index = 0; index < letters.length; index++) {
         const letter = letters[index];
 
-        if (letter.type === CircleType.Consonant) {
+        if (letter.type === ImageType.Consonant) {
             const nextLetter = letters.at(index + 1);
 
-            if (nextLetter?.type === CircleType.Vocal) {
+            if (nextLetter?.type === ImageType.Vocal) {
                 newLetters.push({ ...letter, vocal: nextLetter.id });
                 newWordLetters.push(letter.id);
 

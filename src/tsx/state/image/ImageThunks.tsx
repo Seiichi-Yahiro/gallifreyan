@@ -8,7 +8,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { CircleType, Consonant, Dot, Sentence, UUID, Vocal, Word } from './ImageTypes';
+import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word } from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -60,7 +60,7 @@ export const moveVocal =
 
         let relativeAngle;
 
-        if (parent.type === CircleType.Consonant) {
+        if (parent.type === ImageType.Consonant) {
             relativeAngle = parent.circle.angle;
         }
 
@@ -101,13 +101,13 @@ export const moveLineSlot =
 
         let relativeAngle;
 
-        if (parent.type === CircleType.Consonant) {
+        if (parent.type === ImageType.Consonant) {
             relativeAngle = parent.circle.angle;
-        } else if (parent.type === CircleType.Vocal) {
+        } else if (parent.type === ImageType.Vocal) {
             const parentParent = state.image.circles[parent.parentId]!;
 
             // if nested vocal
-            if (parentParent.type === CircleType.Consonant) {
+            if (parentParent.type === ImageType.Consonant) {
                 relativeAngle = parentParent.circle.angle;
             } else {
                 relativeAngle = parent.circle.angle;

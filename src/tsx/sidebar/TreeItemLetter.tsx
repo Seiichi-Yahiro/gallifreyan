@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
-import { CircleType, Consonant, Letter, UUID, Vocal } from '../state/image/ImageTypes';
+import { ImageType, Consonant, Letter, UUID, Vocal } from '../state/image/ImageTypes';
 import { setHovering } from '../state/work/WorkActions';
 import DotTreeItem from './DotTreeItem';
 import LineSlotTreeItem from './LineSlotTreeItem';
@@ -15,7 +15,7 @@ interface LetterTreeItemProps {
 const LetterTreeItem: React.FunctionComponent<LetterTreeItemProps> = ({ id }) => {
     const letter = useRedux((state) => state.image.circles[id]) as Letter;
 
-    if (letter.type === CircleType.Consonant) {
+    if (letter.type === ImageType.Consonant) {
         return <ConsonantTreeItem id={letter.id} />;
     } else {
         return <VocalTreeItem id={letter.id} />;

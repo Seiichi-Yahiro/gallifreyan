@@ -1,5 +1,5 @@
 import { range } from 'lodash';
-import { CircleType, ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/image/ImageTypes';
+import { ImageType, ConsonantPlacement, Letter, VocalDecoration, VocalPlacement } from '../state/image/ImageTypes';
 import {
     adjustAngle,
     calculateInitialDotCircleData,
@@ -66,7 +66,7 @@ describe('Text Transforms', () => {
                 id: '',
                 parentId: '',
                 text: '',
-                type: CircleType.Vocal,
+                type: ImageType.Vocal,
                 circle: {
                     angle: 0,
                     distance: 0,

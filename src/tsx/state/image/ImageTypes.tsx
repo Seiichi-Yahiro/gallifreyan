@@ -18,25 +18,20 @@ export interface Circle extends PositionData {
 }
 
 export interface LineConnection extends Referencable {
-    type: LineType.LineConnection;
+    type: ImageType.LineConnection;
     a: UUID;
     b: UUID;
 }
 
 export interface LineSlot extends Referencable, Parented, PositionData {
-    type: LineType.LineSlot;
+    type: ImageType.LineSlot;
     connection?: LineConnection;
-}
-
-export enum LineType {
-    LineSlot = 'LineSlot',
-    LineConnection = 'LineConnection',
 }
 
 export type CircleShape = Sentence | Word | Letter | Dot;
 
 export interface Sentence extends Referencable {
-    type: CircleType.Sentence;
+    type: ImageType.Sentence;
     text: string;
     circle: Circle;
     words: UUID[];
@@ -44,7 +39,7 @@ export interface Sentence extends Referencable {
 }
 
 export interface Word extends Referencable, Parented {
-    type: CircleType.Word;
+    type: ImageType.Word;
     text: string;
     circle: Circle;
     letters: UUID[];
@@ -54,7 +49,7 @@ export interface Word extends Referencable, Parented {
 export type Letter = Vocal | Consonant;
 
 export interface Vocal extends Referencable, Parented {
-    type: CircleType.Vocal;
+    type: ImageType.Vocal;
     text: string;
     circle: Circle;
     lineSlots: UUID[];
@@ -63,7 +58,7 @@ export interface Vocal extends Referencable, Parented {
 }
 
 export interface Consonant extends Referencable, Parented {
-    type: CircleType.Consonant;
+    type: ImageType.Consonant;
     text: string;
     circle: Circle;
     lineSlots: UUID[];
@@ -74,16 +69,18 @@ export interface Consonant extends Referencable, Parented {
 }
 
 export interface Dot extends Referencable, Parented {
-    type: CircleType.Dot;
+    type: ImageType.Dot;
     circle: Circle;
 }
 
-export enum CircleType {
+export enum ImageType {
     Sentence = 'Sentence',
     Word = 'Word',
     Consonant = 'Consonant',
     Vocal = 'Vocal',
     Dot = 'Dot',
+    LineSlot = 'LineSlot',
+    LineConnection = 'LineConnection',
 }
 
 export enum ConsonantPlacement {

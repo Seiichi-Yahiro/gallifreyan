@@ -2,7 +2,7 @@ import { range, zip } from 'lodash';
 import { ImageState } from '../state/image/ImageReducer';
 import {
     Circle,
-    CircleType,
+    ImageType,
     Consonant,
     ConsonantPlacement,
     Dot,
@@ -48,7 +48,7 @@ export const calculateInitialLetterCircleData = (letters: Letter[], wordRadius: 
     return letters.map((letter, i) => {
         const angle = adjustAngle(i * letterAngle);
         const r =
-            letter.type === CircleType.Vocal
+            letter.type === ImageType.Vocal
                 ? (wordRadius * 0.75 * 0.4) / (1 + letters.length / 2)
                 : (wordRadius * 0.75) / (1 + letters.length / 2);
         let distance;
@@ -176,7 +176,7 @@ const resetWordCircleData = (state: ImageState, id: UUID, wordCircleData: Circle
 };
 
 const resetLetterCircleData = (state: ImageState, letter: Letter, circleData: Circle) => {
-    if (letter.type === CircleType.Consonant) {
+    if (letter.type === ImageType.Consonant) {
         resetConsonantCircleData(state, letter, circleData);
     } else {
         resetVocalCircleData(state, letter, circleData);

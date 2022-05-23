@@ -1,5 +1,5 @@
 import {
-    CircleType,
+    ImageType,
     Consonant,
     ConsonantDecoration,
     ConsonantPlacement,
@@ -141,7 +141,7 @@ describe('TextConverter', () => {
         const sentence = circles[sentenceId] as Sentence;
 
         expect(sentence.text).toBe('aeiou bjtth phwhgh chkshy dlrz cq gnvqu hpwx fmsng');
-        expect(sentence.type).toBe(CircleType.Sentence);
+        expect(sentence.type).toBe(ImageType.Sentence);
         expect(sentence.lineSlots.length).toBe(0);
         expect(sentence.words.length).toBe(9);
 
@@ -149,47 +149,47 @@ describe('TextConverter', () => {
         const [aeiou, bjtth, phwhgh, chkshy, dlrz, cq, gnvqu, hpwx, fmsng] = words;
 
         expect(aeiou.text).toBe('aeiou');
-        expect(aeiou.type).toBe(CircleType.Word);
+        expect(aeiou.type).toBe(ImageType.Word);
         expect(aeiou.lineSlots.length).toBe(0);
         expect(aeiou.letters.length).toBe(5);
 
         expect(bjtth.text).toBe('bjtth');
-        expect(bjtth.type).toBe(CircleType.Word);
+        expect(bjtth.type).toBe(ImageType.Word);
         expect(bjtth.lineSlots.length).toBe(0);
         expect(bjtth.letters.length).toBe(4);
 
         expect(phwhgh.text).toBe('phwhgh');
-        expect(phwhgh.type).toBe(CircleType.Word);
+        expect(phwhgh.type).toBe(ImageType.Word);
         expect(phwhgh.lineSlots.length).toBe(0);
         expect(phwhgh.letters.length).toBe(3);
 
         expect(chkshy.text).toBe('chkshy');
-        expect(chkshy.type).toBe(CircleType.Word);
+        expect(chkshy.type).toBe(ImageType.Word);
         expect(chkshy.lineSlots.length).toBe(0);
         expect(chkshy.letters.length).toBe(4);
 
         expect(dlrz.text).toBe('dlrz');
-        expect(dlrz.type).toBe(CircleType.Word);
+        expect(dlrz.type).toBe(ImageType.Word);
         expect(dlrz.lineSlots.length).toBe(0);
         expect(dlrz.letters.length).toBe(4);
 
         expect(cq.text).toBe('cq');
-        expect(cq.type).toBe(CircleType.Word);
+        expect(cq.type).toBe(ImageType.Word);
         expect(cq.lineSlots.length).toBe(0);
         expect(cq.letters.length).toBe(2);
 
         expect(gnvqu.text).toBe('gnvqu');
-        expect(gnvqu.type).toBe(CircleType.Word);
+        expect(gnvqu.type).toBe(ImageType.Word);
         expect(gnvqu.lineSlots.length).toBe(0);
         expect(gnvqu.letters.length).toBe(4);
 
         expect(hpwx.text).toBe('hpwx');
-        expect(hpwx.type).toBe(CircleType.Word);
+        expect(hpwx.type).toBe(ImageType.Word);
         expect(hpwx.lineSlots.length).toBe(0);
         expect(hpwx.letters.length).toBe(4);
 
         expect(fmsng.text).toBe('fmsng');
-        expect(fmsng.type).toBe(CircleType.Word);
+        expect(fmsng.type).toBe(ImageType.Word);
         expect(fmsng.lineSlots.length).toBe(0);
         expect(fmsng.letters.length).toBe(4);
     });
@@ -275,7 +275,7 @@ describe('TextConverter', () => {
             const vocal = circles[word.letters[0]] as Vocal;
 
             expect(vocal.text).toBe(text);
-            expect(vocal.type).toBe(CircleType.Vocal);
+            expect(vocal.type).toBe(ImageType.Vocal);
             expect(vocal.lineSlots.length).toBe(expectations.lineSlots);
             expect(vocal.placement).toBe(expectations.placement);
             expect(vocal.decoration).toBe(expectations.decoration);
@@ -324,7 +324,7 @@ describe('TextConverter', () => {
             const consonant = circles[word.letters[0]] as Consonant;
 
             expect(consonant.text).toBe(text);
-            expect(consonant.type).toBe(CircleType.Consonant);
+            expect(consonant.type).toBe(ImageType.Consonant);
             expect(consonant.lineSlots.length).toBe(expectations.lineSlots);
             expect(consonant.dots.length).toBe(expectations.dots);
             expect(consonant.vocal).not.toBeDefined();
@@ -584,7 +584,7 @@ describe('TextConverter', () => {
             const consonant: Consonant = {
                 id: '2',
                 text: '',
-                type: CircleType.Consonant,
+                type: ImageType.Consonant,
                 parentId: '1',
                 circle: {
                     angle: 90,
@@ -600,7 +600,7 @@ describe('TextConverter', () => {
             const vocal: Vocal = {
                 id: '3',
                 text: '',
-                type: CircleType.Vocal,
+                type: ImageType.Vocal,
                 parentId: '1',
                 circle: {
                     angle: 180,
@@ -618,7 +618,7 @@ describe('TextConverter', () => {
                 lineSlots: [],
                 parentId: '0',
                 text: '',
-                type: CircleType.Word,
+                type: ImageType.Word,
                 id: '1',
             });
 

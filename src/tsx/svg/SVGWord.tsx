@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { moveWord } from '../state/image/ImageThunks';
-import { CircleType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
+import { ImageType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
 import { Position } from '../utils/LinearAlgebra';
@@ -82,7 +82,7 @@ const SVGLetterCutMask: React.FunctionComponent<SVGLetterCutMaskProps> = ({ id }
     const consonant = useRedux((state) => state.image.circles[id]) as Letter;
 
     if (
-        consonant.type === CircleType.Consonant &&
+        consonant.type === ImageType.Consonant &&
         [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement)
     ) {
         return <SVGConsonantCutMask circle={consonant.circle} fill="#000000" stroke="#000000" />;
