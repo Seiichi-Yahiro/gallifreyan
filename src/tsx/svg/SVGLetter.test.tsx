@@ -174,8 +174,7 @@ describe('SVG Letter', () => {
                 expectConsonant('ng', { arcs: 0, dots: 0, lineSlots: 3, vocals: 0, stroke: 'inherit' }));
         });
 
-        // TODO implement nested vocals again
-        describe.skip('Nested vocal', () => {
+        describe('Nested vocal', () => {
             it('should render "ba', () =>
                 expectConsonant('ba', { arcs: 1, dots: 0, lineSlots: 0, vocals: 1, stroke: 'none' }));
             it('should render "ke', () =>

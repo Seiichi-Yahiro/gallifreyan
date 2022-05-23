@@ -6,6 +6,7 @@ import {
     Consonant,
     ConsonantDecoration,
     Dot,
+    Letter,
     LineSlot,
     LineType,
     Sentence,
@@ -22,6 +23,7 @@ import {
     DOUBLE_LETTER,
     isVocal,
 } from './LetterGroups';
+import { calculateInitialNestedVocalCircleData } from './TextTransforms';
 
 interface TextData {
     id: UUID;
@@ -236,4 +238,43 @@ const createLineSlots = (parentId: UUID, decoration: ConsonantDecoration | Vocal
         angle: 0,
         distance: 0,
     }));
+};
+
+export const nestWordVocals = (word: Word, letters: Letter[]): { word: Word; letters: Letter[] } => {
+    const newLetters = [];
+    const newWordLetters = [];
+
+    for (let index = 0; index < letters.length; index++) {
+        const letter = letters[index];
+
+        if (letter.type === CircleType.Consonant) {
+            const nextLetter = letters.at(index + 1);
+
+            if (nextLetter?.type === CircleType.Vocal) {
+                newLetters.push({ ...letter, vocal: nextLetter.id });
+                newWordLetters.push(letter.id);
+
+                const vocalCircle = calculateInitialNestedVocalCircleData(
+                    nextLetter.placement,
+                    letter.placement,
+                    letter.circle,
+                    word.circle.r
+                );
+
+                newLetters.push({ ...nextLetter, circle: vocalCircle, parentId: letter.id });
+
+                index++;
+            } else {
+                newLetters.push({ ...letter });
+                newWordLetters.push(letter.id);
+            }
+        } else {
+            newLetters.push({ ...letter });
+            newWordLetters.push(letter.id);
+        }
+    }
+
+    const newWord: Word = { ...word, letters: newWordLetters };
+
+    return { word: newWord, letters: newLetters };
 };

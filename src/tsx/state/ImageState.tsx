@@ -1,8 +1,8 @@
-import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { calculatePositionData } from '../utils/DragAndDrop';
 import { isValidLetter } from '../utils/LetterGroups';
 import { Position } from '../utils/LinearAlgebra';
-import { convertTextToSentence, splitWordToChars } from '../utils/TextConverter';
+import { convertTextToSentence, nestWordVocals as nestVocals, splitWordToChars } from '../utils/TextConverter';
 import { resetCircleAndLineSlotData } from '../utils/TextTransforms';
 import { AppThunkAction } from './AppState';
 import {
@@ -11,6 +11,7 @@ import {
     CircleType,
     Consonant,
     Dot,
+    Letter,
     LineConnection,
     LineSlot,
     PositionData,
@@ -37,10 +38,29 @@ const createInitialState = (): ImageState => ({
     svgSize: 1000,
 });
 
+const convertSentenceText = createAction<string>('image/convertSentenceText');
+const nestWordVocals = createAction<UUID>('image/nestWordVocals');
+const resetAllPositionsAndRadii = createAction('image/resetAllPositionsAndRadii');
+
 export const updateCircleData = createAction<Referencable & { circle: Partial<Circle> }>('image/updateCircleData');
 export const updateLineSlotData = createAction<Referencable & { positionData: Partial<PositionData> }>(
     'image/updateLineSlotData'
 );
+
+export const setSentence =
+    (sentenceText: string): AppThunkAction =>
+    (dispatch, getState) => {
+        dispatch(convertSentenceText(sentenceText));
+
+        const state = getState();
+        const sentence = state.image.circles[state.image.rootCircleId] as Sentence;
+
+        sentence.words.forEach((wordId) => {
+            dispatch(nestWordVocals(wordId));
+        });
+
+        dispatch(resetAllPositionsAndRadii());
+    };
 
 interface MovableData {
     id: UUID;
@@ -144,33 +164,40 @@ export const moveLineSlot =
 export const imageSlice = createSlice({
     name: 'image',
     initialState: createInitialState,
-    reducers: {
-        setSentence: (state, action: PayloadAction<string>) => {
-            const sentenceText = action.payload;
-
-            const text = sentenceText
-                .split(' ')
-                .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
-                .filter((word) => word.length > 0)
-                .join(' ');
-
-            const textData = convertTextToSentence(text);
-
-            state.rootCircleId = textData.id;
-            state.circles = textData.circles;
-            state.lineSlots = textData.lineSlots;
-
-            //TODO space then invalid letter deletes space
-            if (sentenceText.endsWith(' ')) {
-                const sentence = state.circles[textData.id] as Sentence;
-                sentence.text += ' ';
-            }
-
-            resetCircleAndLineSlotData(state);
-        },
-    },
+    reducers: {},
     extraReducers: (builder) =>
         builder
+            .addCase(convertSentenceText, (state, { payload: sentenceText }) => {
+                const text = sentenceText
+                    .split(' ')
+                    .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
+                    .filter((word) => word.length > 0)
+                    .join(' ');
+
+                const textData = convertTextToSentence(text);
+
+                state.rootCircleId = textData.id;
+                state.circles = textData.circles;
+                state.lineSlots = textData.lineSlots;
+
+                //TODO space then invalid letter deletes space
+                if (sentenceText.endsWith(' ')) {
+                    const sentence = state.circles[textData.id] as Sentence;
+                    sentence.text += ' ';
+                }
+            })
+            .addCase(nestWordVocals, (state, { payload: wordId }) => {
+                const word = state.circles[wordId] as Word;
+                const letters = word.letters.map((letterId) => state.circles[letterId] as Letter);
+
+                const { word: newWord, letters: newLetters } = nestVocals(word, letters);
+
+                state.circles[wordId] = newWord;
+                newLetters.forEach((letter) => (state.circles[letter.id] = letter));
+            })
+            .addCase(resetAllPositionsAndRadii, (state) => {
+                resetCircleAndLineSlotData(state);
+            })
             .addCase(updateCircleData, (state, { payload }) => {
                 state.circles[payload.id]!.circle = {
                     ...state.circles[payload.id]!.circle,
@@ -184,7 +211,5 @@ export const imageSlice = createSlice({
                 };
             }),
 });
-
-export const { setSentence } = imageSlice.actions;
 
 export default imageSlice.reducer;

@@ -11,7 +11,7 @@ import {
     VocalPlacement,
     Word,
 } from '../state/ImageTypes';
-import { convertTextToSentence, splitWordToChars } from './TextConverter';
+import { convertTextToSentence, nestWordVocals, splitWordToChars } from './TextConverter';
 
 describe('TextConverter', () => {
     it('should split lower case word', () => {
@@ -219,24 +219,6 @@ describe('TextConverter', () => {
                     .map((letter) => letter.parentId)
                     .forEach((letterParentId) => expect(letterParentId).toBe(parentId));
             });
-    });
-
-    // TODO implement vocal nesting
-    it.skip('should parent nested vocals', () => {
-        const { id: sentenceId, circles } = convertTextToSentence('ja ji ju je jo');
-        const sentence = circles[sentenceId] as Sentence;
-
-        sentence.words
-            .map((wordId) => circles[wordId] as Word)
-            .forEach((word) =>
-                word.letters
-                    .map((letterId) => circles[letterId] as Consonant)
-                    .forEach((consonant) => {
-                        const parentId = consonant.id;
-                        const vocal = circles[consonant.vocal!] as Vocal;
-                        expect(vocal.parentId).toBe(parentId);
-                    })
-            );
     });
 
     it('should parent all dots', () => {
@@ -598,100 +580,123 @@ describe('TextConverter', () => {
                 }));
         });
 
-        // TODO implement nested vocals
-        describe.skip('Nested vocal', () => {
-            const expectNested = (
-                consonantText: string,
-                consonantExpectations: ConsonantExpectations,
-                vocalText: string,
-                vocalExpectations: VocalExpectations
-            ) => {
-                const { id: sentenceId, circles } = convertTextToSentence(consonantText + vocalText);
-                const sentence = circles[sentenceId] as Sentence;
-                const word = circles[sentence.words[0]] as Word;
-                const consonant = circles[word.letters[0]] as Consonant;
-
-                expect(consonant.text).toBe(consonantText);
-                expect(consonant.type).toBe(CircleType.Consonant);
-                expect(consonant.lineSlots.length).toBe(consonantExpectations.lineSlots);
-                expect(consonant.dots.length).toBe(consonantExpectations.dots);
-                expect(consonant.placement).toBe(consonantExpectations.placement);
-                expect(consonant.decoration).toBe(consonantExpectations.decoration);
-                expect(consonant.vocal).toBeDefined();
-
-                const vocal = circles[consonant.vocal!] as Vocal;
-
-                expect(vocal.text).toBe(vocalText);
-                expect(vocal.type).toBe(CircleType.Vocal);
-                expect(vocal.lineSlots.length).toBe(vocalExpectations.lineSlots);
-                expect(vocal.placement).toBe(vocalExpectations.placement);
-                expect(vocal.decoration).toBe(vocalExpectations.decoration);
+        describe('Vocal nesting', () => {
+            const consonant: Consonant = {
+                id: '2',
+                text: '',
+                type: CircleType.Consonant,
+                parentId: '1',
+                circle: {
+                    angle: 90,
+                    distance: 100,
+                    r: 50,
+                },
+                placement: ConsonantPlacement.ShallowCut,
+                decoration: ConsonantDecoration.None,
+                lineSlots: [],
+                dots: [],
             };
 
-            it('should convert "ba"', () =>
-                expectNested(
-                    'b',
-                    {
-                        dots: 0,
-                        lineSlots: 0,
-                        placement: ConsonantPlacement.DeepCut,
-                        decoration: ConsonantDecoration.None,
-                    },
-                    'a',
-                    { lineSlots: 0, placement: VocalPlacement.Outside, decoration: VocalDecoration.None }
-                ));
+            const vocal: Vocal = {
+                id: '3',
+                text: '',
+                type: CircleType.Vocal,
+                parentId: '1',
+                circle: {
+                    angle: 180,
+                    distance: 100,
+                    r: 50,
+                },
+                placement: VocalPlacement.Outside,
+                decoration: VocalDecoration.None,
+                lineSlots: [],
+            };
 
-            it('should convert "ke"', () =>
-                expectNested(
-                    'k',
-                    {
-                        dots: 2,
-                        lineSlots: 0,
-                        placement: ConsonantPlacement.Inside,
-                        decoration: ConsonantDecoration.DoubleDot,
-                    },
-                    'e',
-                    { lineSlots: 0, placement: VocalPlacement.OnLine, decoration: VocalDecoration.None }
-                ));
+            const createWord = (letters: Letter[]): Word => ({
+                circle: { angle: 0, distance: 100, r: 50 },
+                letters: letters.map((letter) => letter.id),
+                lineSlots: [],
+                parentId: '0',
+                text: '',
+                type: CircleType.Word,
+                id: '1',
+            });
 
-            it('should convert "ri"', () =>
-                expectNested(
-                    'r',
-                    {
-                        dots: 3,
-                        lineSlots: 0,
-                        placement: ConsonantPlacement.ShallowCut,
-                        decoration: ConsonantDecoration.TripleDot,
-                    },
-                    'i',
-                    { lineSlots: 1, placement: VocalPlacement.OnLine, decoration: VocalDecoration.LineInside }
-                ));
+            it('should nest vocals', () => {
+                const letters: Letter[] = [consonant, vocal, { ...consonant, id: '4' }, { ...vocal, id: '5' }];
+                const word = createWord(letters);
 
-            it('should convert "quu"', () =>
-                expectNested(
-                    'qu',
-                    {
-                        dots: 0,
-                        lineSlots: 1,
-                        placement: ConsonantPlacement.OnLine,
-                        decoration: ConsonantDecoration.SingleLine,
-                    },
-                    'u',
-                    { lineSlots: 1, placement: VocalPlacement.OnLine, decoration: VocalDecoration.LineOutside }
-                ));
+                const { word: newWord, letters: newLetters } = nestWordVocals(word, letters);
 
-            it('should convert "wo"', () =>
-                expectNested(
-                    'w',
-                    {
-                        dots: 0,
-                        lineSlots: 2,
-                        placement: ConsonantPlacement.ShallowCut,
-                        decoration: ConsonantDecoration.DoubleLine,
-                    },
-                    'o',
-                    { lineSlots: 0, placement: VocalPlacement.Inside, decoration: VocalDecoration.None }
-                ));
+                expect(newWord).not.toBe(word);
+                expect(newLetters).not.toBe(letters);
+                newLetters.forEach((letter, i) => expect(letter).not.toBe(letters[i]));
+
+                expect(newWord).toMatchObject({ letters: ['2', '4'] });
+
+                expect(newLetters).toEqual([
+                    expect.objectContaining({ id: '2', parentId: '1', vocal: '3', circle: consonant.circle }),
+                    expect.objectContaining({
+                        id: '3',
+                        parentId: '2',
+                        circle: expect.not.objectContaining(vocal.circle),
+                    }),
+                    expect.objectContaining({ id: '4', parentId: '1', vocal: '5', circle: consonant.circle }),
+                    expect.objectContaining({
+                        id: '5',
+                        parentId: '4',
+                        circle: expect.not.objectContaining(vocal.circle),
+                    }),
+                ]);
+            });
+
+            it('should not nest 2 vocals in a row', () => {
+                const letters: Letter[] = [consonant, vocal, { ...vocal, id: '4' }];
+                const word = createWord(letters);
+
+                const { word: newWord, letters: newLetters } = nestWordVocals(word, letters);
+
+                expect(newWord).not.toBe(word);
+                expect(newLetters).not.toBe(letters);
+                newLetters.forEach((letter, i) => expect(letter).not.toBe(letters[i]));
+
+                expect(newWord).toMatchObject({ letters: ['2', '4'] });
+
+                expect(newLetters).toEqual([
+                    expect.objectContaining({ id: '2', parentId: '1', vocal: '3', circle: consonant.circle }),
+                    expect.objectContaining({
+                        id: '3',
+                        parentId: '2',
+                        circle: expect.not.objectContaining(vocal.circle),
+                    }),
+                    expect.objectContaining({ id: '4', parentId: '1', circle: vocal.circle }),
+                ]);
+            });
+
+            it('should not nest vocals', () => {
+                const letters: Letter[] = [
+                    { ...vocal, id: '2' },
+                    { ...vocal, id: '3' },
+                    { ...consonant, id: '4' },
+                ];
+                const word = createWord(letters);
+
+                const { word: newWord, letters: newLetters } = nestWordVocals(word, letters);
+
+                expect(newWord).not.toBe(word);
+                expect(newLetters).not.toBe(letters);
+                newLetters.forEach((letter, i) => expect(letter).not.toBe(letters[i]));
+
+                expect(newWord).toMatchObject({ letters: ['2', '3', '4'] });
+
+                expect(newLetters).toEqual([
+                    expect.objectContaining({ id: '2', parentId: '1', circle: vocal.circle }),
+                    expect.objectContaining({ id: '3', parentId: '1', circle: vocal.circle }),
+                    expect.objectContaining({ id: '4', parentId: '1', circle: consonant.circle }),
+                ]);
+
+                expect(newLetters.at(-1)).not.toMatchObject({ vocal: expect.anything() });
+            });
         });
     });
 });

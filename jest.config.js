@@ -13,7 +13,7 @@ module.exports = {
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1',
     },
-    transformIgnorePatterns: ['/node_modules/(?!uuid)'],
+    transformIgnorePatterns: ['/node_modules/(?!uuid|react)'],
     testEnvironment: 'jsdom',
     coverageReporters: ['html'],
     collectCoverageFrom: ['src/**/*.{ts,tsx}'],
