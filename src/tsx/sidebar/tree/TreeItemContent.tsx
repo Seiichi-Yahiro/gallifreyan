@@ -1,10 +1,10 @@
 import { TextField, Typography } from '@mui/material';
 import { TreeItemContentProps, useTreeItem } from '@mui/lab';
 import React from 'react';
-import { useAppDispatch } from '../hooks/useAppDispatch';
-import { setSentence } from '../state/image/ImageThunks';
-import { setSelection } from '../state/work/WorkActions';
-import createClassName from '../utils/createClassName';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { setSentence } from '../../state/image/ImageThunks';
+import { setSelection } from '../../state/work/WorkActions';
+import createClassName from '../../utils/createClassName';
 
 const createTreeItemContent =
     (editable: boolean) =>

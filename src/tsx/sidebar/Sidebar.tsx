@@ -1,6 +1,6 @@
 import React from 'react';
 import Settings from './Settings';
-import Tree from './Tree';
+import Tree from './tree/Tree';
 
 interface SidebarProps {}
 

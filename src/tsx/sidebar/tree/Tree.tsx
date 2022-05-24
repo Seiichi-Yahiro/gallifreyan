@@ -1,7 +1,7 @@
 import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
 import { TreeView } from '@mui/lab';
-import { useRedux } from '../hooks/useRedux';
+import { useRedux } from '../../hooks/useRedux';
 import SentenceTreeItem from './SentenceTreeItem';
 
 const MinusSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: SvgIconProps) => (
