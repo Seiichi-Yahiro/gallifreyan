@@ -1,6 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { isValidLetter } from '../../utils/LetterGroups';
-import { convertTextToSentence, nestWordVocals as nestVocals, splitWordToChars } from '../../utils/TextConverter';
+import { convertTextToSentence, nestWordVocals as nestVocals } from '../../utils/TextConverter';
 import { resetCircleAndLineSlotData } from '../../utils/TextTransforms';
 import {
     convertSentenceText,
@@ -9,7 +8,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { CircleShape, Letter, LineConnection, LineSlot, Sentence, UUID, Word } from './ImageTypes';
+import { CircleShape, Letter, LineConnection, LineSlot, UUID, Word } from './ImageTypes';
 
 export interface ImageState {
     rootCircleId: UUID;
@@ -30,22 +29,17 @@ const createInitialState = (): ImageState => ({
 const reducer = createReducer(createInitialState, (builder) =>
     builder
         .addCase(convertSentenceText, (state, { payload: sentenceText }) => {
-            const text = sentenceText
-                .split(' ')
-                .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
-                .filter((word) => word.length > 0)
-                .join(' ');
+            if (sentenceText === '') {
+                state.rootCircleId = '';
+                state.circles = {};
+                state.lineSlots = {};
+                state.lineConnections = {};
+            } else {
+                const textData = convertTextToSentence(sentenceText);
 
-            const textData = convertTextToSentence(text);
-
-            state.rootCircleId = textData.id;
-            state.circles = textData.circles;
-            state.lineSlots = textData.lineSlots;
-
-            //TODO space then invalid letter deletes space
-            if (sentenceText.endsWith(' ')) {
-                const sentence = state.circles[textData.id] as Sentence;
-                sentence.text += ' ';
+                state.rootCircleId = textData.id;
+                state.circles = textData.circles;
+                state.lineSlots = textData.lineSlots;
             }
         })
         .addCase(nestWordVocals, (state, { payload: wordId }) => {

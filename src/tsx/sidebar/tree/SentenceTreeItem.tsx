@@ -1,27 +1,29 @@
 import React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
-import { Sentence } from '../../state/image/ImageTypes';
+import { Sentence, UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import { EditableTreeItemContent } from './TreeItemContent';
+import TreeItemContent from './TreeItemContent';
 import WordTreeItem from './WordTreeItem';
 
-interface SentenceTreeItemProps {}
+interface SentenceTreeItemProps {
+    id: UUID;
+}
 
-const SentenceTreeItem: React.FunctionComponent<SentenceTreeItemProps> = () => {
+const SentenceTreeItem: React.FunctionComponent<SentenceTreeItemProps> = ({ id }) => {
     const dispatch = useAppDispatch();
-    const sentence = useRedux((state) => state.image.circles[state.image.rootCircleId]) as Sentence | undefined;
+    const sentence = useRedux((state) => state.image.circles[id]) as Sentence;
 
     return (
         <TreeItem
-            nodeId={sentence?.id ?? ''}
-            label={sentence?.text ?? ''}
-            ContentComponent={EditableTreeItemContent}
-            onMouseEnter={() => dispatch(setHovering(sentence?.id))}
+            nodeId={sentence.id}
+            label={sentence.text}
+            ContentComponent={TreeItemContent}
+            onMouseEnter={() => dispatch(setHovering(sentence.id))}
             onMouseLeave={() => dispatch(setHovering())}
         >
-            {sentence?.words.map((wordId) => (
+            {sentence.words.map((wordId) => (
                 <WordTreeItem key={wordId} id={wordId} />
             ))}
         </TreeItem>

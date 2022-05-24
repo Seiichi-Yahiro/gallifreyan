@@ -4,7 +4,7 @@ import { useRedux } from '../../hooks/useRedux';
 import { UUID, Word } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import { TreeItemContent } from './TreeItemContent';
+import TreeItemContent from './TreeItemContent';
 import LetterTreeItem from './TreeItemLetter';
 
 interface WordTreeItemProps {

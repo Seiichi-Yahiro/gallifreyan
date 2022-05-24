@@ -4,7 +4,7 @@ import { useRedux } from '../../hooks/useRedux';
 import { UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import { TreeItemContent } from './TreeItemContent';
+import TreeItemContent from './TreeItemContent';
 
 interface LineSlotTreeItemProps {
     id: UUID;

@@ -15,6 +15,10 @@ export const setSentence =
     (dispatch, getState) => {
         dispatch(convertSentenceText(sentenceText));
 
+        if (sentenceText === '') {
+            return;
+        }
+
         const state = getState();
         const sentence = state.image.circles[state.image.rootCircleId] as Sentence;
 
