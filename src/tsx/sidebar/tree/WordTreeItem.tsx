@@ -6,7 +6,7 @@ import { setHovering } from '../../state/work/WorkActions';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';
-import LetterTreeItem from './TreeItemLetter';
+import LetterTreeItem from './LetterTreeItem';
 
 interface WordTreeItemProps {
     id: UUID;
