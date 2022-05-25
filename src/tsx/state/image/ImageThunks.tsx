@@ -45,6 +45,16 @@ interface MovableData {
     domRect: DOMRect;
 }
 
+export const dragSentence =
+    (mousePos: Position, wordData: MovableData): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const viewPortScale = state.svgPanZoom.value.a;
+        const word = state.image.circles[wordData.id] as Sentence;
+        const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, word.circle);
+        dispatch(updateCircleData({ id: wordData.id, circle: positionData }));
+    };
+
 export const dragWord =
     (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
