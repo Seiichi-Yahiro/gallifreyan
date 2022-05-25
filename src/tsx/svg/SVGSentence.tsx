@@ -34,7 +34,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(id));
+                            dispatch(setSelection({ id, type: sentence.type }));
                         }
                         event.stopPropagation();
                     },

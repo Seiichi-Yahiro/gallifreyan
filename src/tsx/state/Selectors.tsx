@@ -19,7 +19,7 @@ const createIsSelectedSelector = () =>
     createSelector(
         (state: AppState) => state.work.selection,
         (_state: AppState, id: UUID) => id,
-        (selection, id) => selection === id
+        (selection, id) => selection?.id === id
     );
 export const useIsSelectedSelector = (id: UUID) => {
     const selector = useMemo(createIsSelectedSelector, []);

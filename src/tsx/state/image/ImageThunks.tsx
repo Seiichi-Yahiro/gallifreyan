@@ -1,6 +1,7 @@
 import { calculatePositionData } from '../../utils/DragAndDrop';
 import { Position } from '../../utils/LinearAlgebra';
 import { AppThunkAction } from '../AppState';
+import { setHovering, setSelection } from '../work/WorkActions';
 import {
     convertSentenceText,
     nestWordVocals,
@@ -13,13 +14,23 @@ import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word } from './ImageT
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
     (dispatch, getState) => {
+        let state = getState();
+
+        if (state.work.selection) {
+            dispatch(setSelection());
+        }
+
+        if (state.work.hovering) {
+            dispatch(setHovering());
+        }
+
         dispatch(convertSentenceText(sentenceText));
 
         if (sentenceText === '') {
             return;
         }
 
-        const state = getState();
+        state = getState();
         const sentence = state.image.circles[state.image.rootCircleId] as Sentence;
 
         sentence.words.forEach((wordId) => {

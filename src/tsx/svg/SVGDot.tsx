@@ -51,7 +51,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(id));
+                            dispatch(setSelection({ id, type: dot.type }));
                         }
                         event.stopPropagation();
                     },

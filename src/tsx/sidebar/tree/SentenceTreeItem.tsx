@@ -4,7 +4,7 @@ import { useRedux } from '../../hooks/useRedux';
 import { Sentence, UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import TreeItemContent from './TreeItemContent';
+import { createTreeItemContent } from './TreeItemContent';
 import WordTreeItem from './WordTreeItem';
 
 interface SentenceTreeItemProps {
@@ -19,7 +19,7 @@ const SentenceTreeItem: React.FunctionComponent<SentenceTreeItemProps> = ({ id }
         <TreeItem
             nodeId={sentence.id}
             label={sentence.text}
-            ContentComponent={TreeItemContent}
+            ContentComponent={createTreeItemContent(sentence.type)}
             onMouseEnter={() => dispatch(setHovering(sentence.id))}
             onMouseLeave={() => dispatch(setHovering())}
         >

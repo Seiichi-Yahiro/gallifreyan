@@ -58,7 +58,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
                 onClick={(event) => {
                     if (!isSelectedSlot) {
-                        dispatch(setSelection(id));
+                        dispatch(setSelection({ id, type: lineSlot.type }));
                     }
                     event.stopPropagation();
                 }}

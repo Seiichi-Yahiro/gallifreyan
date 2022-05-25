@@ -3,39 +3,49 @@ import React from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useRedux } from '../hooks/useRedux';
 import { updateCircleData, updateLineSlotData } from '../state/image/ImageActions';
-import { Circle, UUID } from '../state/image/ImageTypes';
+import { ImageType, UUID } from '../state/image/ImageTypes';
 
 interface SettingsProps {
     className?: string;
 }
 
 const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
-    const circle = useRedux((state) => state.image.circles[state.work.selection ?? '']);
-    const lineSlot = useRedux((state) => state.image.lineSlots[state.work.selection ?? '']);
+    const selection = useRedux((state) => state.work.selection);
 
-    if (circle) {
-        return (
-            <div className={className}>
-                <CircleSettings id={circle.id} circle={circle.circle} />
-            </div>
-        );
-    } else if (lineSlot) {
-        return (
-            <div className={className}>
-                <LineSlotSettings id={lineSlot.id} angle={lineSlot.angle} distance={lineSlot.distance} />
-            </div>
-        );
-    } else {
+    if (!selection) {
         return null;
+    }
+
+    switch (selection.type) {
+        case ImageType.Sentence:
+        case ImageType.Word:
+        case ImageType.Consonant:
+        case ImageType.Vocal:
+        case ImageType.Dot:
+            return (
+                <div className={className}>
+                    <CircleSettings id={selection.id} />
+                </div>
+            );
+        case ImageType.LineSlot:
+            return (
+                <div className={className}>
+                    <LineSlotSettings id={selection.id} />
+                </div>
+            );
+        case ImageType.LineConnection:
+            return null;
+        default:
+            return null;
     }
 };
 
 interface CircleSettingsProps {
     id: UUID;
-    circle: Circle;
 }
 
-const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({ id, circle }) => {
+const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({ id }) => {
+    const { circle } = useRedux((state) => state.image.circles[id])!;
     const dispatch = useAppDispatch();
 
     const changeRadius = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,11 +80,10 @@ const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({ id, circ
 
 interface LineSlotSettingsProps {
     id: UUID;
-    distance: number;
-    angle: number;
 }
 
-const LineSlotSettings: React.FunctionComponent<LineSlotSettingsProps> = ({ id, distance, angle }) => {
+const LineSlotSettings: React.FunctionComponent<LineSlotSettingsProps> = ({ id }) => {
+    const { distance, angle } = useRedux((state) => state.image.lineSlots[id])!;
     const dispatch = useAppDispatch();
 
     const changeAngle = (event: React.ChangeEvent<HTMLInputElement>) => {

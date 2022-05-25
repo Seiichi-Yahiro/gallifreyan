@@ -27,7 +27,7 @@ interface TreeProps {
 }
 
 const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
-    const selection = useRedux((state) => state.work.selection);
+    const selectionId = useRedux((state) => state.work.selection?.id);
     const sentenceId = useRedux((state) => state.image.rootCircleId);
 
     return (
@@ -35,7 +35,7 @@ const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
-            selected={selection ?? ''}
+            selected={selectionId ?? ''}
             className={className}
         >
             {sentenceId && <SentenceTreeItem id={sentenceId} />}

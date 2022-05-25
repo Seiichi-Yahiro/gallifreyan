@@ -4,7 +4,7 @@ import { useRedux } from '../../hooks/useRedux';
 import { Dot, UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import TreeItemContent from './TreeItemContent';
+import { createTreeItemContent } from './TreeItemContent';
 
 interface DotTreeItemProps {
     id: UUID;
@@ -18,7 +18,7 @@ const DotTreeItem: React.FunctionComponent<DotTreeItemProps> = ({ id }) => {
         <TreeItem
             nodeId={dot.id}
             label="DOT"
-            ContentComponent={TreeItemContent}
+            ContentComponent={createTreeItemContent(dot.type)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         />

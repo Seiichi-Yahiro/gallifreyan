@@ -57,7 +57,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(id));
+                            dispatch(setSelection({ id, type: word.type }));
                         }
                         event.stopPropagation();
                     },

@@ -69,7 +69,7 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(id));
+                            dispatch(setSelection({ id, type: consonant.type }));
                         }
                         event.stopPropagation();
                     },
@@ -148,7 +148,7 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection(id));
+                            dispatch(setSelection({ id, type: vocal.type }));
                         }
                         event.stopPropagation();
                     },

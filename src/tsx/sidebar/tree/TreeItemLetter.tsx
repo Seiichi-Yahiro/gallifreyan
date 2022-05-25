@@ -6,7 +6,7 @@ import { setHovering } from '../../state/work/WorkActions';
 import DotTreeItem from './DotTreeItem';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
-import TreeItemContent from './TreeItemContent';
+import { createTreeItemContent } from './TreeItemContent';
 
 interface LetterTreeItemProps {
     id: UUID;
@@ -36,7 +36,7 @@ const ConsonantTreeItem: React.FunctionComponent<ConsonantTreeItemProps> = ({ id
         <TreeItem
             nodeId={consonant.id}
             label={consonant.text}
-            ContentComponent={TreeItemContent}
+            ContentComponent={createTreeItemContent(consonant.type)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         >
@@ -66,7 +66,7 @@ const VocalTreeItem: React.FunctionComponent<VocalTreeItemProps> = ({ id }) => {
         <TreeItem
             nodeId={vocal.id}
             label={vocal.text}
-            ContentComponent={TreeItemContent}
+            ContentComponent={createTreeItemContent(vocal.type)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         >

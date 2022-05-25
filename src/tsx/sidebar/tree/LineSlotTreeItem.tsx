@@ -4,7 +4,7 @@ import { useRedux } from '../../hooks/useRedux';
 import { UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
 import TreeItem from './TreeItem';
-import TreeItemContent from './TreeItemContent';
+import { createTreeItemContent } from './TreeItemContent';
 
 interface LineSlotTreeItemProps {
     id: UUID;
@@ -18,7 +18,7 @@ const LineSlotTreeItemProps: React.FunctionComponent<LineSlotTreeItemProps> = ({
         <TreeItem
             nodeId={lineSlot.id}
             label="LINE"
-            ContentComponent={TreeItemContent}
+            ContentComponent={createTreeItemContent(lineSlot.type)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         />
