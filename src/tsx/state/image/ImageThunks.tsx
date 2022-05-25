@@ -45,7 +45,7 @@ interface MovableData {
     domRect: DOMRect;
 }
 
-export const moveWord =
+export const dragWord =
     (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -55,7 +55,7 @@ export const moveWord =
         dispatch(updateCircleData({ id: wordData.id, circle: positionData }));
     };
 
-export const moveConsonant =
+export const dragConsonant =
     (mousePos: Position, consonantData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -65,7 +65,7 @@ export const moveConsonant =
         dispatch(updateCircleData({ id: consonantData.id, circle: positionData }));
     };
 
-export const moveVocal =
+export const dragVocal =
     (mousePos: Position, vocalData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -89,7 +89,7 @@ export const moveVocal =
         dispatch(updateCircleData({ id: vocalData.id, circle: positionData }));
     };
 
-export const moveDot =
+export const dragDot =
     (mousePos: Position, dotData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -106,7 +106,7 @@ export const moveDot =
         dispatch(updateCircleData({ id: dotData.id, circle: positionData }));
     };
 
-export const moveLineSlot =
+export const dragLineSlot =
     (mousePos: Position, lineSlotData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();

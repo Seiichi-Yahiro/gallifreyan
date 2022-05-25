@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
-import { moveWord } from '../state/image/ImageThunks';
+import { dragWord } from '../state/image/ImageThunks';
 import { ImageType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
@@ -27,7 +27,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = wordRef.current.getBoundingClientRect();
 
-            dispatch(moveWord(mousePos, { id, domRect }));
+            dispatch(dragWord(mousePos, { id, domRect }));
         }
     });
 

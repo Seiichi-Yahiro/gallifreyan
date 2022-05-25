@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
-import { moveDot } from '../state/image/ImageThunks';
+import { dragDot } from '../state/image/ImageThunks';
 import { Dot, UUID } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
@@ -28,7 +28,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = dotRef.current.getBoundingClientRect();
 
-            dispatch(moveDot(mousePos, { id, domRect }));
+            dispatch(dragDot(mousePos, { id, domRect }));
         }
     });
 

@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import useHover from '../hooks/useHover';
 import { useRedux } from '../hooks/useRedux';
-import { moveLineSlot } from '../state/image/ImageThunks';
+import { dragLineSlot } from '../state/image/ImageThunks';
 import { UUID } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
@@ -35,7 +35,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = slotCircleRef.current.getBoundingClientRect();
 
-            dispatch(moveLineSlot(mousePos, { id, domRect }));
+            dispatch(dragLineSlot(mousePos, { id, domRect }));
         }
     });
 

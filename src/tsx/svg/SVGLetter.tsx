@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
-import { moveConsonant, moveVocal } from '../state/image/ImageThunks';
+import { dragConsonant, dragVocal } from '../state/image/ImageThunks';
 import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
 import { setHovering, setSelection } from '../state/work/WorkActions';
@@ -45,7 +45,7 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = consonantRef.current.getBoundingClientRect();
 
-            dispatch(moveConsonant(mousePos, { id, domRect }));
+            dispatch(dragConsonant(mousePos, { id, domRect }));
         }
     });
 
@@ -125,7 +125,7 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const domRect = vocalRef.current.getBoundingClientRect();
 
-            dispatch(moveVocal(mousePos, { id: id, domRect }));
+            dispatch(dragVocal(mousePos, { id: id, domRect }));
         }
     });
 
