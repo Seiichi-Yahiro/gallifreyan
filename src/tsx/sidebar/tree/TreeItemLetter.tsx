@@ -30,7 +30,7 @@ const ConsonantTreeItem: React.FunctionComponent<ConsonantTreeItemProps> = ({ id
     const dispatch = useAppDispatch();
     const consonant = useRedux((state) => state.image.circles[id]) as Consonant;
 
-    const hasChildren = consonant.dots.length + consonant.lineSlots.length > 0;
+    const hasChildren = consonant.dots.length + consonant.lineSlots.length > 0 || consonant.vocal;
 
     return (
         <TreeItem
@@ -48,6 +48,7 @@ const ConsonantTreeItem: React.FunctionComponent<ConsonantTreeItemProps> = ({ id
                     {consonant.lineSlots.map((lineSlotId) => (
                         <LineSlotTreeItem key={lineSlotId} id={lineSlotId} />
                     ))}
+                    {consonant.vocal && <VocalTreeItem id={consonant.vocal} />}
                 </>
             )}
         </TreeItem>
