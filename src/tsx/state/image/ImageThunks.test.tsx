@@ -1,6 +1,6 @@
 import { createStore } from '../AppState';
-import { moveSentence } from './ImageThunks';
-import { ImageType, Sentence } from './ImageTypes';
+import { moveDot, moveSentence } from './ImageThunks';
+import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence } from './ImageTypes';
 
 describe('ImageThunks', () => {
     describe('Move Sentence', () => {
@@ -83,6 +83,101 @@ describe('ImageThunks', () => {
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 180 });
+        });
+    });
+
+    describe('Move Dot', () => {
+        const setup = () => {
+            const consonant: Consonant = {
+                circle: { r: 100, angle: 180, distance: 50 },
+                decoration: ConsonantDecoration.SingleDot,
+                dots: [],
+                id: '10',
+                lineSlots: [],
+                parentId: '',
+                placement: ConsonantPlacement.Inside,
+                text: '',
+                type: ImageType.Consonant,
+            };
+
+            const dot: Dot = {
+                circle: { angle: 90, distance: 0, r: 10 },
+                id: '100',
+                parentId: consonant.id,
+                type: ImageType.Dot,
+            };
+
+            const store = createStore({
+                image: {
+                    rootCircleId: '',
+                    circles: { [dot.id]: dot, [consonant.id]: consonant },
+                    lineSlots: {},
+                    lineConnections: {},
+                    svgSize: 1000,
+                },
+            });
+
+            return { dot, store };
+        };
+
+        it('should adjust dot being outside of consonant', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { distance: 2000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 100 });
+        });
+
+        it('should not adjust dot on consonant line', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 100 });
+        });
+
+        it('should not adjust dot inside of consonant', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { distance: 1 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 1 });
+        });
+
+        it('should adjust dot angle being greater 360 degrees', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { angle: 370 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 0 });
+        });
+
+        it('should adjust dot angle being less than 0 degrees', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { angle: -10 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 360 });
+        });
+
+        it('should not adjust dot angle being between 0 and 360 degrees', () => {
+            const { store, dot } = setup();
+            store.dispatch(moveDot(dot.id, { angle: 180 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[dot.id]!.circle;
 
             expect(circle).toMatchObject({ angle: 180 });
         });
