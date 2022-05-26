@@ -1,4 +1,4 @@
-import { angleBetween, rotate, Vector2 } from './LinearAlgebra';
+import { angleBetween, clamp, clampAngle, rotate, Vector2 } from './LinearAlgebra';
 
 describe('Linear Algebra', () => {
     it('should calculate negative angle between 2 vectors', () => {
@@ -31,5 +31,35 @@ describe('Linear Algebra', () => {
         const { x, y } = rotate({ x: 10, y: 0 }, Math.PI);
         expect(x).toBeCloseTo(-10);
         expect(y).toBeCloseTo(0);
+    });
+
+    it('should clamp values bigger than max', () => {
+        const result = clamp(180, -90, 90);
+        expect(result).toBe(90);
+    });
+
+    it('should clamp values smaller than min', () => {
+        const result = clamp(-180, -90, 90);
+        expect(result).toBe(-90);
+    });
+
+    it('should not clamp values in range', () => {
+        const result = clamp(0, -90, 90);
+        expect(result).toBe(0);
+    });
+
+    it('should clamp angles closer to max', () => {
+        const result = clampAngle(90, 270, 360);
+        expect(result).toBe(360);
+    });
+
+    it('should clamp angles closer to min', () => {
+        const result = clampAngle(270, 0, 90);
+        expect(result).toBe(0);
+    });
+
+    it('should not clamp angles in range', () => {
+        const result = clampAngle(180, 90, 270);
+        expect(result).toBe(180);
     });
 });

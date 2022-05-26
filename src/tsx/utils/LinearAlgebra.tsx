@@ -50,3 +50,23 @@ export const clamp = (value: number, min: number, max: number): number => {
         return value;
     }
 };
+
+/**
+ * Clamp angles between 0 and 360 degrees
+ * @param angle - positive angle between 0 and 360
+ * @param min - positive angle between 0 and 360
+ * @param max - positive angle between 0 and 360
+ */
+export const clampAngle = (angle: Degree, min: Degree, max: Degree): Degree => {
+    if (angle < min || angle > max) {
+        const minDiff = Math.abs(angle - min);
+        const minDistance = Math.min(minDiff, 360 - minDiff);
+
+        const maxDiff = Math.abs(angle - max);
+        const maxDistance = Math.min(maxDiff, 360 - maxDiff);
+
+        return minDistance < maxDistance ? min : max;
+    } else {
+        return angle;
+    }
+};
