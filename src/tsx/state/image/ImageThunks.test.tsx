@@ -1,6 +1,6 @@
 import { createStore } from '../AppState';
-import { moveDot, moveSentence } from './ImageThunks';
-import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence } from './ImageTypes';
+import { moveDot, moveSentence, moveWord } from './ImageThunks';
+import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence, Word } from './ImageTypes';
 
 describe('ImageThunks', () => {
     describe('Move Sentence', () => {
@@ -85,6 +85,116 @@ describe('ImageThunks', () => {
             const circle = state.image.circles[sentence.id]!.circle;
 
             expect(circle).toMatchObject({ angle: 180 });
+        });
+    });
+
+    describe('Move Word', () => {
+        const setup = () => {
+            const sentence: Sentence = {
+                circle: { angle: 0, distance: 0, r: 500 },
+                id: '0',
+                lineSlots: [],
+                text: '',
+                type: ImageType.Sentence,
+                words: ['1', '2', '3'],
+            };
+
+            const words = [90, 180, 270].map<Word>((angle, i) => ({
+                circle: { distance: 250, angle, r: 100 },
+                id: (i + 1).toString(),
+                letters: [],
+                lineSlots: [],
+                parentId: sentence.id,
+                text: '',
+                type: ImageType.Word,
+            }));
+
+            const store = createStore({
+                image: {
+                    rootCircleId: '',
+                    circles: {
+                        [words[0].id]: words[0],
+                        [words[1].id]: words[1],
+                        [words[2].id]: words[2],
+                        [sentence.id]: sentence,
+                    },
+                    lineSlots: {},
+                    lineConnections: {},
+                    svgSize: 1000,
+                },
+            });
+
+            return { store, words };
+        };
+
+        it('should adjust word being outside of sentence', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[0].id, { distance: 2000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[0].id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 400 });
+        });
+
+        it('should not adjust word on sentence line', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[0].id, { distance: 500 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[0].id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 400 });
+        });
+
+        it('should not adjust word inside of sentence', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[0].id, { distance: 1 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[0].id]!.circle;
+
+            expect(circle).toMatchObject({ distance: 1 });
+        });
+
+        it('should adjust first word angle if less than 0 degrees', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[0].id, { angle: -10 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[0].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 0 });
+        });
+
+        it('should adjust word angle to stay after lesser angle word', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[1].id, { angle: 80 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[1].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 90 });
+        });
+
+        it('should adjust word angle to stay before greater angle word', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[1].id, { angle: 280 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[1].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 270 });
+        });
+
+        it('should adjust last word angle if greater than 360 degrees', () => {
+            const { store, words } = setup();
+            store.dispatch(moveWord(words[2].id, { angle: 370 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[words[2].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 360 });
         });
     });
 
