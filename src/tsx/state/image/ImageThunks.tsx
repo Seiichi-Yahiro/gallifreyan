@@ -1,5 +1,5 @@
 import { calculatePositionData } from '../../utils/DragAndDrop';
-import { Position } from '../../utils/LinearAlgebra';
+import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
 import {
@@ -54,9 +54,15 @@ export const updateSentenceRadius =
 
 export const moveSentence =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, _getState) => {
-        // TODO validation
-        dispatch(updateCircleData({ id, circle: positionData }));
+    (dispatch, getState) => {
+        const state = getState();
+        const sentence = state.image.circles[id] as Sentence;
+        const svgSize = state.image.svgSize;
+
+        const distance = clamp(positionData.distance ?? sentence.circle.distance, 0, svgSize / 2 - sentence.circle.r);
+        const angle = clampAngle(positionData.angle ?? sentence.circle.angle, 0, 360);
+
+        dispatch(updateCircleData({ id, circle: { distance, angle } }));
     };
 
 export const dragSentence =
@@ -66,7 +72,7 @@ export const dragSentence =
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[wordData.id] as Sentence;
         const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, word.circle);
-        dispatch(updateCircleData({ id: wordData.id, circle: positionData }));
+        dispatch(moveSentence(wordData.id, positionData));
     };
 
 export const updateWordRadius =
