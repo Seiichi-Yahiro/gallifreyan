@@ -9,7 +9,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word } from './ImageTypes';
+import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData } from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -45,6 +45,20 @@ interface MovableData {
     domRect: DOMRect;
 }
 
+export const updateSentenceRadius =
+    (id: UUID, r: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: { r } }));
+    };
+
+export const moveSentence =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: positionData }));
+    };
+
 export const dragSentence =
     (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
@@ -55,6 +69,20 @@ export const dragSentence =
         dispatch(updateCircleData({ id: wordData.id, circle: positionData }));
     };
 
+export const updateWordRadius =
+    (id: UUID, r: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: { r } }));
+    };
+
+export const moveWord =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: positionData }));
+    };
+
 export const dragWord =
     (mousePos: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
@@ -62,7 +90,21 @@ export const dragWord =
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[wordData.id] as Word;
         const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, word.circle);
-        dispatch(updateCircleData({ id: wordData.id, circle: positionData }));
+        dispatch(moveWord(wordData.id, positionData));
+    };
+
+export const updateConsonantRadius =
+    (id: UUID, r: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: { r } }));
+    };
+
+export const moveConsonant =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: positionData }));
     };
 
 export const dragConsonant =
@@ -72,7 +114,21 @@ export const dragConsonant =
         const viewPortScale = state.svgPanZoom.value.a;
         const consonant = state.image.circles[consonantData.id] as Consonant;
         const positionData = calculatePositionData(mousePos, viewPortScale, consonantData.domRect, consonant.circle);
-        dispatch(updateCircleData({ id: consonantData.id, circle: positionData }));
+        dispatch(moveConsonant(consonantData.id, positionData));
+    };
+
+export const updateVocalRadius =
+    (id: UUID, r: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: { r } }));
+    };
+
+export const moveVocal =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: positionData }));
     };
 
 export const dragVocal =
@@ -96,7 +152,21 @@ export const dragVocal =
             vocal.circle,
             relativeAngle
         );
-        dispatch(updateCircleData({ id: vocalData.id, circle: positionData }));
+        dispatch(moveVocal(vocalData.id, positionData));
+    };
+
+export const updateDotRadius =
+    (id: UUID, r: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: { r } }));
+    };
+
+export const moveDot =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO validation
+        dispatch(updateCircleData({ id, circle: positionData }));
     };
 
 export const dragDot =
@@ -113,7 +183,7 @@ export const dragDot =
             dot.circle,
             consonantAngle
         );
-        dispatch(updateCircleData({ id: dotData.id, circle: positionData }));
+        dispatch(moveDot(dotData.id, positionData));
     };
 
 export const dragLineSlot =
