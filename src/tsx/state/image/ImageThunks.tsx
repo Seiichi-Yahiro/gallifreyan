@@ -189,9 +189,15 @@ export const updateDotRadius =
 
 export const moveDot =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, _getState) => {
-        // TODO validation
-        dispatch(updateCircleData({ id, circle: positionData }));
+    (dispatch, getState) => {
+        const state = getState();
+        const dot = state.image.circles[id] as Dot;
+        const consonant = state.image.circles[dot.parentId] as Consonant;
+
+        const distance = clamp(positionData.distance ?? dot.circle.distance, 0, consonant.circle.r);
+        const angle = clampAngle(positionData.angle ?? dot.circle.angle, 0, 360);
+
+        dispatch(updateCircleData({ id, circle: { distance, angle } }));
     };
 
 export const dragDot =
