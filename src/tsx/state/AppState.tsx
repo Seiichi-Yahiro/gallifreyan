@@ -9,7 +9,7 @@ export interface AppState {
     work: WorkState;
 }
 
-export const createStore = (preloadedState?: AppState) =>
+export const createStore = (preloadedState?: Partial<AppState>) =>
     configureStore<AppState>({
         reducer: {
             svgPanZoom: svgPanZoomReducer,

@@ -13,7 +13,10 @@ const createWrapper =
     ({ children }) =>
         <Provider store={store}>{children}</Provider>;
 
-const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'> & { preloadedState?: AppState }) => {
+const customRender = (
+    ui: ReactElement,
+    options?: Omit<RenderOptions, 'wrapper'> & { preloadedState?: Partial<AppState> }
+) => {
     const store = createStore(options?.preloadedState);
     return render(ui, { wrapper: createWrapper(store), ...options });
 };
