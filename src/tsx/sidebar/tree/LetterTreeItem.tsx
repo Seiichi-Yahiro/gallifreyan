@@ -29,13 +29,20 @@ interface ConsonantTreeItemProps {
 const ConsonantTreeItem: React.FunctionComponent<ConsonantTreeItemProps> = ({ id }) => {
     const dispatch = useAppDispatch();
     const consonant = useRedux((state) => state.image.circles[id]) as Consonant;
+    const vocalText = useRedux((state) => {
+        if (consonant.vocal) {
+            return (state.image.circles[consonant.vocal] as Vocal).text;
+        } else {
+            return '';
+        }
+    });
 
     const hasChildren = consonant.dots.length + consonant.lineSlots.length > 0 || consonant.vocal;
 
     return (
         <TreeItem
             nodeId={consonant.id}
-            label={consonant.text}
+            label={consonant.text + vocalText}
             ContentComponent={createTreeItemContent(consonant.type)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
