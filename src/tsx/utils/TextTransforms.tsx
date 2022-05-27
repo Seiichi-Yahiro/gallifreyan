@@ -47,34 +47,41 @@ export const calculateInitialLetterCircleData = (letters: Letter[], wordRadius: 
 
     return letters.map((letter, i) => {
         const angle = adjustAngle(i * letterAngle);
-        const r =
-            letter.type === ImageType.Vocal
-                ? (wordRadius * 0.75 * 0.4) / (1 + letters.length / 2)
-                : (wordRadius * 0.75) / (1 + letters.length / 2);
+
+        let r;
         let distance;
 
-        switch (letter.placement) {
-            case ConsonantPlacement.DeepCut:
-                distance = wordRadius - r * 0.75;
-                break;
-            case ConsonantPlacement.ShallowCut:
-                distance = wordRadius;
-                break;
-            case ConsonantPlacement.Inside:
-                distance = letters.length > 1 ? wordRadius - r * 1.5 : 0;
-                break;
-            case VocalPlacement.Outside:
-                distance = wordRadius + r * 1.5;
-                break;
-            case VocalPlacement.Inside:
-                distance = wordRadius - r * 1.5;
-                break;
-            case ConsonantPlacement.OnLine:
-                distance = wordRadius;
-                break;
-            case VocalPlacement.OnLine:
-                distance = wordRadius;
-                break;
+        if (letter.type === ImageType.Vocal) {
+            r = (wordRadius * 0.75 * 0.4) / (1 + letters.length / 2);
+
+            switch (letter.placement) {
+                case VocalPlacement.OnLine:
+                    distance = wordRadius;
+                    break;
+                case VocalPlacement.Outside:
+                    distance = wordRadius + r * 1.5;
+                    break;
+                case VocalPlacement.Inside:
+                    distance = letters.length > 1 ? wordRadius - r * 1.5 : 0;
+                    break;
+            }
+        } else {
+            r = (wordRadius * 0.75) / (1 + letters.length / 2);
+
+            switch (letter.placement) {
+                case ConsonantPlacement.DeepCut:
+                    distance = wordRadius - r * 0.75;
+                    break;
+                case ConsonantPlacement.Inside:
+                    distance = letters.length > 1 ? wordRadius - r * 1.5 : 0;
+                    break;
+                case ConsonantPlacement.ShallowCut:
+                    distance = wordRadius;
+                    break;
+                case ConsonantPlacement.OnLine:
+                    distance = wordRadius;
+                    break;
+            }
         }
 
         return { angle, distance, r };
