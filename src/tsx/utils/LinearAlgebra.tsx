@@ -1,3 +1,5 @@
+import Maybe from './Maybe';
+
 export interface Dimension2 {
     x: number;
     y: number;
@@ -69,4 +71,74 @@ export const clampAngle = (angle: Degree, min: Degree, max: Degree): Degree => {
     } else {
         return angle;
     }
+};
+
+interface Circle {
+    r: number;
+    pos: Position;
+}
+
+/**
+ * Calculate the 2 Intersection points of 2 circles.
+ *
+ * The calculation is done in a different coordinate system with the following 2 assumptions:
+ * - Circle a is assumed to be placed at the origin.
+ * - Circle b is assumed to be placed on the x-Axis.
+ *
+ * x and y are the positions of the intersections
+ * c is the distance between the circles
+ * x² + y² = r_a²
+ * (c - x)² + y² = r_b²
+ *
+ * x = (r_a² + c² - b²) / 2 * c
+ * y_1,2 = +-sqrt(r_a² - x²)
+ *
+ *
+ * Translate x and y back into the original coordinate system
+ * unit_x = normalize(b_pos - a_pos)
+ * unit_y = rotate(unit_x, 90° counter clockwise)
+ *
+ * q1,2 = a_pos + x * unit_x +- y * unit_y
+ *
+ * Based on
+ * http://walter.bislins.ch/blog/index.asp?page=Schnittpunkte+zweier+Kreise+berechnen+%28JavaScript%29
+ *
+ * @param a - Circle a
+ * @param b - Circle b
+ * @returns Maybe<[Position, Position]> - An optional tuple with the 2 intersections
+ */
+export const circleIntersections = (a: Circle, b: Circle): Maybe<[Position, Position]> => {
+    const aToB = sub(b.pos, a.pos);
+    const distance = length(aToB);
+
+    // circles have the same position
+    // which means they have 0 or infinity intersections
+    if (distance === 0) {
+        return Maybe.none();
+    }
+
+    const radiusASquared = a.r * a.r;
+    const x = (radiusASquared + distance * distance - b.r * b.r) / (2 * distance);
+    const determinant = radiusASquared - x * x;
+
+    // circles have 0 or 1 intersections
+    if (determinant <= 0) {
+        return Maybe.none();
+    }
+
+    const y = Math.sqrt(determinant);
+
+    // translate intersection points x and y back into the original coordinate system
+    const xUnit = div(aToB, distance); // normalize
+    const yUnit = rotate(xUnit, Math.PI / 2); // rotate 90° left
+
+    const xTranslation = mul(xUnit, x);
+    const yTranslation = mul(yUnit, y);
+
+    // q1,2 = a_pos + x * unit_x +- y * unit_y
+    const qx = add(a.pos, xTranslation);
+    const q1 = add(qx, yTranslation);
+    const q2 = sub(qx, yTranslation);
+
+    return Maybe.some([q1, q2]);
 };

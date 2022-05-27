@@ -1,4 +1,4 @@
-import { angleBetween, clamp, clampAngle, rotate, Vector2 } from './LinearAlgebra';
+import { angleBetween, circleIntersections, clamp, clampAngle, rotate, Vector2 } from './LinearAlgebra';
 
 describe('Linear Algebra', () => {
     it('should calculate negative angle between 2 vectors', () => {
@@ -61,5 +61,48 @@ describe('Linear Algebra', () => {
     it('should not clamp angles in range', () => {
         const result = clampAngle(180, 90, 270);
         expect(result).toBe(180);
+    });
+
+    it('should return null for circles with 1 intersection', () => {
+        const result = circleIntersections(
+            { r: 10, pos: { x: 0, y: 0 } },
+            { r: 10, pos: { x: 20, y: 0 } }
+        ).asNullable();
+        expect(result).toBeNull();
+    });
+
+    it('should return null for circles with 0 intersections', () => {
+        const result = circleIntersections({ r: 10, pos: { x: 0, y: 0 } }, { r: 5, pos: { x: 0, y: 0 } }).asNullable();
+        expect(result).toBeNull();
+    });
+
+    it('should return null for circles with infinity intersections', () => {
+        const result = circleIntersections({ r: 10, pos: { x: 0, y: 0 } }, { r: 10, pos: { x: 0, y: 0 } }).asNullable();
+        expect(result).toBeNull();
+    });
+
+    it('should calculate 2 circle intersections', () => {
+        const result = circleIntersections({ r: 10, pos: { x: 0, y: 0 } }, { r: 5, pos: { x: 5, y: 2 } }).asNullable();
+        const a = result?.at(0);
+        const b = result?.at(1);
+
+        expect(a?.x).toBeCloseTo(8);
+        expect(a?.y).toBeCloseTo(6);
+        expect(b?.x).toBeCloseTo(9.93);
+        expect(b?.y).toBeCloseTo(1.17);
+    });
+
+    it('should calculate 2 circle intersections again', () => {
+        const result = circleIntersections(
+            { r: 10, pos: { x: 10, y: 1 } },
+            { r: 10, pos: { x: 0, y: 10 } }
+        ).asNullable();
+        const a = result?.at(0);
+        const b = result?.at(1);
+
+        expect(a?.x).toBeCloseTo(0.05);
+        expect(a?.y).toBeCloseTo(0);
+        expect(b?.x).toBeCloseTo(9.949);
+        expect(b?.y).toBeCloseTo(10.999);
     });
 });
