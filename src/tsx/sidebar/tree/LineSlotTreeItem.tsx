@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
+import { selectLineSlot } from '../../state/work/WorkThunks';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';
 
@@ -18,7 +19,7 @@ const LineSlotTreeItemProps: React.FunctionComponent<LineSlotTreeItemProps> = ({
         <TreeItem
             nodeId={lineSlot.id}
             label="LINE"
-            ContentComponent={createTreeItemContent(lineSlot.type)}
+            ContentComponent={createTreeItemContent(selectLineSlot)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         />

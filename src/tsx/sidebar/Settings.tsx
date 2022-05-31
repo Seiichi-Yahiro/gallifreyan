@@ -74,8 +74,6 @@ const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
                 return <CircleSettings id={selection.id} updateRadius={updateDotRadius} updatePositionData={moveDot} />;
             case ImageType.LineSlot:
                 return <LineSlotSettings id={selection.id} />;
-            case ImageType.LineConnection:
-                return null;
         }
     };
 

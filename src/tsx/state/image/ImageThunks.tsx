@@ -1,8 +1,8 @@
 import { calculatePositionData } from '../../utils/DragAndDrop';
 import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
-import Maybe from '../../utils/Maybe';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
+import { WordSelection } from '../work/WorkTypes';
 import {
     convertSentenceText,
     nestWordVocals,
@@ -89,18 +89,7 @@ export const moveWord =
         const state = getState();
         const word = state.image.circles[id] as Word;
         const sentence = state.image.circles[word.parentId] as Sentence;
-
-        const wordIndex = sentence.words.findIndex((wordId) => wordId === word.id);
-
-        const minAngle = Maybe.of(sentence.words[wordIndex - 1])
-            .map((wordId) => state.image.circles[wordId])
-            .map((word) => word.circle.angle)
-            .unwrapOr(0);
-
-        const maxAngle = Maybe.of(sentence.words[wordIndex + 1])
-            .map((wordId) => state.image.circles[wordId])
-            .map((word) => word.circle.angle)
-            .unwrapOr(360);
+        const { minAngle, maxAngle } = state.work.selection as WordSelection;
 
         const distance = clamp(positionData.distance ?? word.circle.distance, 0, sentence.circle.r - word.circle.r);
         const angle = clampAngle(positionData.angle ?? word.circle.angle, minAngle, maxAngle);

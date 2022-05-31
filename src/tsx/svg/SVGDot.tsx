@@ -5,7 +5,8 @@ import { useRedux } from '../hooks/useRedux';
 import { dragDot } from '../state/image/ImageThunks';
 import { Dot, UUID } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHovering, setSelection } from '../state/work/WorkActions';
+import { setHovering } from '../state/work/WorkActions';
+import { selectDot } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -51,7 +52,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection({ id, type: dot.type }));
+                            dispatch(selectDot(id));
                         }
                         event.stopPropagation();
                     },

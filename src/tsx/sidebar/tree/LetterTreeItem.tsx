@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { ImageType, Consonant, Letter, UUID, Vocal } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
+import { selectConsonant, selectVocal } from '../../state/work/WorkThunks';
 import DotTreeItem from './DotTreeItem';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
@@ -43,7 +44,7 @@ const ConsonantTreeItem: React.FunctionComponent<ConsonantTreeItemProps> = ({ id
         <TreeItem
             nodeId={consonant.id}
             label={consonant.text + vocalText}
-            ContentComponent={createTreeItemContent(consonant.type)}
+            ContentComponent={createTreeItemContent(selectConsonant)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         >
@@ -74,7 +75,7 @@ const VocalTreeItem: React.FunctionComponent<VocalTreeItemProps> = ({ id }) => {
         <TreeItem
             nodeId={vocal.id}
             label={vocal.text}
-            ContentComponent={createTreeItemContent(vocal.type)}
+            ContentComponent={createTreeItemContent(selectVocal)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         >

@@ -2,11 +2,11 @@ import { Typography } from '@mui/material';
 import { TreeItemContentProps, useTreeItem } from '@mui/lab';
 import React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { ImageType } from '../../state/image/ImageTypes';
-import { setSelection } from '../../state/work/WorkActions';
+import { AppThunkAction } from '../../state/AppState';
+import { UUID } from '../../state/image/ImageTypes';
 import createClassName from '../../utils/createClassName';
 
-export const createTreeItemContent = (type: ImageType): React.FunctionComponent =>
+export const createTreeItemContent = (select: (id: UUID) => AppThunkAction): React.FunctionComponent =>
     React.forwardRef(
         (
             { icon, expansionIcon, displayIcon, className, classes, nodeId, label }: TreeItemContentProps,
@@ -21,7 +21,7 @@ export const createTreeItemContent = (type: ImageType): React.FunctionComponent 
 
             const handleSelectionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 handleSelection(event);
-                dispatch(setSelection({ id: nodeId, type }));
+                dispatch(select(nodeId));
             };
 
             const classNames = createClassName(className, classes.root, {

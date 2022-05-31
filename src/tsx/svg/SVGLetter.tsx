@@ -5,7 +5,8 @@ import { useRedux } from '../hooks/useRedux';
 import { dragConsonant, dragVocal } from '../state/image/ImageThunks';
 import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHovering, setSelection } from '../state/work/WorkActions';
+import { setHovering } from '../state/work/WorkActions';
+import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
 import Group, { AnglePlacement } from './Group';
@@ -69,7 +70,7 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection({ id, type: consonant.type }));
+                            dispatch(selectConsonant(id));
                         }
                         event.stopPropagation();
                     },
@@ -148,7 +149,7 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection({ id, type: vocal.type }));
+                            dispatch(selectVocal(id));
                         }
                         event.stopPropagation();
                     },

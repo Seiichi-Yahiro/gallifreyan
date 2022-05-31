@@ -5,7 +5,8 @@ import { useRedux } from '../hooks/useRedux';
 import { dragWord } from '../state/image/ImageThunks';
 import { ImageType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHovering, setSelection } from '../state/work/WorkActions';
+import { setHovering } from '../state/work/WorkActions';
+import { selectWord } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -57,7 +58,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection({ id, type: word.type }));
+                            dispatch(selectWord(id));
                         }
                         event.stopPropagation();
                     },

@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { Sentence, UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
+import { selectSentence } from '../../state/work/WorkThunks';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';
@@ -22,7 +23,7 @@ const SentenceTreeItem: React.FunctionComponent<SentenceTreeItemProps> = ({ id }
         <TreeItem
             nodeId={sentence.id}
             label={sentence.text}
-            ContentComponent={createTreeItemContent(sentence.type)}
+            ContentComponent={createTreeItemContent(selectSentence)}
             onMouseEnter={() => dispatch(setHovering(sentence.id))}
             onMouseLeave={() => dispatch(setHovering())}
         >

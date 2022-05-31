@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { UUID, Word } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
+import { selectWord } from '../../state/work/WorkThunks';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';
@@ -22,7 +23,7 @@ const WordTreeItemProps: React.FunctionComponent<WordTreeItemProps> = ({ id }) =
         <TreeItem
             nodeId={word.id}
             label={word.text}
-            ContentComponent={createTreeItemContent(word.type)}
+            ContentComponent={createTreeItemContent(selectWord)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         >

@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { Dot, UUID } from '../../state/image/ImageTypes';
 import { setHovering } from '../../state/work/WorkActions';
+import { selectDot } from '../../state/work/WorkThunks';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';
 
@@ -18,7 +19,7 @@ const DotTreeItem: React.FunctionComponent<DotTreeItemProps> = ({ id }) => {
         <TreeItem
             nodeId={dot.id}
             label="DOT"
-            ContentComponent={createTreeItemContent(dot.type)}
+            ContentComponent={createTreeItemContent(selectDot)}
             onMouseEnter={() => dispatch(setHovering(id))}
             onMouseLeave={() => dispatch(setHovering())}
         />

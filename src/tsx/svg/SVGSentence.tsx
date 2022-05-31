@@ -5,7 +5,8 @@ import { useRedux } from '../hooks/useRedux';
 import { dragSentence } from '../state/image/ImageThunks';
 import { Sentence, UUID } from '../state/image/ImageTypes';
 import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
-import { setHovering, setSelection } from '../state/work/WorkActions';
+import { setHovering } from '../state/work/WorkActions';
+import { selectSentence } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -48,7 +49,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
                 onClick={useCallback(
                     (event: React.MouseEvent<SVGCircleElement>) => {
                         if (!isSelected) {
-                            dispatch(setSelection({ id, type: sentence.type }));
+                            dispatch(selectSentence(id));
                         }
                         event.stopPropagation();
                     },
