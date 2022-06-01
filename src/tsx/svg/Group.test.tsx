@@ -1,6 +1,7 @@
 import React from 'react';
+import { hoverColor, selectedColor } from '../utils/colors';
 import { render } from '../utils/TestUtils';
-import Group, { AnglePlacement, hoverColor, selectedColor } from './Group';
+import Group, { AnglePlacement } from './Group';
 
 describe('SVG Group', () => {
     it('should use selected color when selected and not hovered', () => {

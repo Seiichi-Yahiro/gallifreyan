@@ -1,8 +1,6 @@
 import React from 'react';
+import { hoverColor, selectedColor } from '../utils/colors';
 import { calculateTranslation } from '../utils/TextTransforms';
-
-export const hoverColor = '#2196f3';
-export const selectedColor = '#ff1744';
 
 export enum AnglePlacement {
     Absolute = 'Absolute',
