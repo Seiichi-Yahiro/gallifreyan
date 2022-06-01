@@ -1,5 +1,6 @@
-import { calculatePositionData } from '../../utils/DragAndDrop';
+import { calculatePositionData, constrainDistanceOnAngle } from '../../utils/DragAndDrop';
 import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
+import { calculateTranslation } from '../../utils/TextTransforms';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
 import { WordSelection } from '../work/WorkTypes';
@@ -91,10 +92,20 @@ export const moveWord =
         const sentence = state.image.circles[word.parentId] as Sentence;
         const { minAngle, maxAngle } = (state.work.selection as WordSelection).context.angleConstraints;
 
-        const distance = clamp(positionData.distance ?? word.circle.distance, 0, sentence.circle.r - word.circle.r);
-        const angle = clampAngle(positionData.angle ?? word.circle.angle, minAngle, maxAngle);
+        const distance = positionData.distance ?? word.circle.distance;
+        const angle = positionData.angle ?? word.circle.angle;
 
-        dispatch(updateCircleData({ id, circle: { distance, angle } }));
+        const constrainedAngle = clampAngle(angle, minAngle, maxAngle);
+        let constrainedDistance = distance;
+
+        if (angle < minAngle || angle > maxAngle) {
+            const position = calculateTranslation(angle, distance);
+            constrainedDistance = constrainDistanceOnAngle(position, constrainedAngle);
+        }
+
+        constrainedDistance = clamp(constrainedDistance, 0, sentence.circle.r - word.circle.r);
+
+        dispatch(updateCircleData({ id, circle: { distance: constrainedDistance, angle: constrainedAngle } }));
     };
 
 export const dragWord =

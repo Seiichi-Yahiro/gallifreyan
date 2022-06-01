@@ -1,5 +1,18 @@
 import { PositionData } from '../state/image/ImageTypes';
-import { angleBetween, Degree, length, mul, Position, sub, toDegree, Vector2 } from './LinearAlgebra';
+import {
+    angleBetween,
+    Degree,
+    dot,
+    length,
+    lengthSquared,
+    mul,
+    Position,
+    rotate,
+    sub,
+    toDegree,
+    toRadian,
+    Vector2,
+} from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
 export const calculateParentPos = (childDomRect: DOMRect, translation: Vector2, viewPortScale: number) => {
@@ -37,4 +50,16 @@ export const calculatePositionData = (
         distance: calculateDistance(mousePos, parentPos, viewPortScale),
         angle: adjustAngle(calculateAngle(mousePos, parentPos) - relativeAngle),
     };
+};
+
+export const constrainDistanceOnAngle = (mousePos: Position, constrainedAngle: Degree): number => {
+    const constrainedAngleVector = rotate({ x: 0, y: 1 }, -toRadian(constrainedAngle));
+    const lambda = dot(mousePos, constrainedAngleVector) / lengthSquared(constrainedAngleVector);
+
+    if (lambda <= 0) {
+        return 0;
+    } else {
+        const intersection = mul(constrainedAngleVector, lambda);
+        return length(intersection);
+    }
 };
