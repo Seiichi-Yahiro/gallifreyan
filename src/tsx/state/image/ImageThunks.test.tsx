@@ -1,4 +1,5 @@
 import { createStore } from '../AppState';
+import { selectDot, selectSentence, selectWord } from '../work/WorkThunks';
 import { moveDot, moveSentence, moveWord } from './ImageThunks';
 import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence, Word } from './ImageTypes';
 
@@ -29,6 +30,7 @@ describe('ImageThunks', () => {
 
         it('should adjust sentence distance being outside of svg canvas', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { distance: 2000 }));
 
             const state = store.getState();
@@ -39,6 +41,7 @@ describe('ImageThunks', () => {
 
         it('should adjust sentence distance partially being outside of svg canvas', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { distance: 1000 }));
 
             const state = store.getState();
@@ -49,6 +52,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust sentence distance inside of svg canvas', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { distance: 10 }));
 
             const state = store.getState();
@@ -59,6 +63,7 @@ describe('ImageThunks', () => {
 
         it('should adjust sentence angle being greater 360 degrees', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { angle: 370 }));
 
             const state = store.getState();
@@ -69,6 +74,7 @@ describe('ImageThunks', () => {
 
         it('should adjust sentence angle being less than 0 degrees', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { angle: -10 }));
 
             const state = store.getState();
@@ -79,6 +85,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust sentence angle being between 0 and 360 degrees', () => {
             const { store, sentence } = setup();
+            store.dispatch(selectSentence(sentence.id));
             store.dispatch(moveSentence(sentence.id, { angle: 180 }));
 
             const state = store.getState();
@@ -129,6 +136,7 @@ describe('ImageThunks', () => {
 
         it('should adjust word being outside of sentence', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[0].id));
             store.dispatch(moveWord(words[0].id, { distance: 2000 }));
 
             const state = store.getState();
@@ -139,6 +147,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust word on sentence line', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[0].id));
             store.dispatch(moveWord(words[0].id, { distance: 500 }));
 
             const state = store.getState();
@@ -149,6 +158,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust word inside of sentence', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[0].id));
             store.dispatch(moveWord(words[0].id, { distance: 1 }));
 
             const state = store.getState();
@@ -159,6 +169,7 @@ describe('ImageThunks', () => {
 
         it('should adjust first word angle if less than 0 degrees', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[0].id));
             store.dispatch(moveWord(words[0].id, { angle: -10 }));
 
             const state = store.getState();
@@ -169,6 +180,7 @@ describe('ImageThunks', () => {
 
         it('should adjust word angle to stay after lesser angle word', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[1].id));
             store.dispatch(moveWord(words[1].id, { angle: 80 }));
 
             const state = store.getState();
@@ -179,6 +191,7 @@ describe('ImageThunks', () => {
 
         it('should adjust word angle to stay before greater angle word', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[1].id));
             store.dispatch(moveWord(words[1].id, { angle: 280 }));
 
             const state = store.getState();
@@ -189,6 +202,7 @@ describe('ImageThunks', () => {
 
         it('should adjust last word angle if greater than 360 degrees', () => {
             const { store, words } = setup();
+            store.dispatch(selectWord(words[2].id));
             store.dispatch(moveWord(words[2].id, { angle: 370 }));
 
             const state = store.getState();
@@ -234,6 +248,7 @@ describe('ImageThunks', () => {
 
         it('should adjust dot being outside of consonant', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { distance: 2000 }));
 
             const state = store.getState();
@@ -244,6 +259,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust dot on consonant line', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { distance: 100 }));
 
             const state = store.getState();
@@ -254,6 +270,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust dot inside of consonant', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { distance: 1 }));
 
             const state = store.getState();
@@ -264,6 +281,7 @@ describe('ImageThunks', () => {
 
         it('should adjust dot angle being greater 360 degrees', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { angle: 370 }));
 
             const state = store.getState();
@@ -274,6 +292,7 @@ describe('ImageThunks', () => {
 
         it('should adjust dot angle being less than 0 degrees', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { angle: -10 }));
 
             const state = store.getState();
@@ -284,6 +303,7 @@ describe('ImageThunks', () => {
 
         it('should not adjust dot angle being between 0 and 360 degrees', () => {
             const { store, dot } = setup();
+            store.dispatch(selectDot(dot.id));
             store.dispatch(moveDot(dot.id, { angle: 180 }));
 
             const state = store.getState();
