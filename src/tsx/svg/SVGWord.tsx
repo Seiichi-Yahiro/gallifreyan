@@ -3,7 +3,7 @@ import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragWord } from '../state/image/ImageThunks';
-import { ImageType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
+import { ConsonantPlacement, ImageType, Letter, UUID, Word } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectWord } from '../state/work/WorkThunks';

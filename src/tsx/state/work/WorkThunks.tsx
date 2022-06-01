@@ -1,3 +1,4 @@
+import { rotate, toRadian, Vector2 } from '../../utils/LinearAlgebra';
 import Maybe from '../../utils/Maybe';
 import { AppThunkAction } from '../AppState';
 import { ImageType, Sentence, UUID, Word } from '../image/ImageTypes';
@@ -6,7 +7,7 @@ import { setSelection } from './WorkActions';
 export const selectSentence =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Sentence }));
+        dispatch(setSelection({ id, type: ImageType.Sentence, context: undefined }));
     };
 
 export const selectWord =
@@ -28,29 +29,44 @@ export const selectWord =
             .map((word) => word.circle.angle)
             .unwrapOr(360);
 
-        dispatch(setSelection({ id, type: ImageType.Word, minAngle, maxAngle }));
+        const zeroDegreeVector: Vector2 = { x: 0, y: sentence.circle.r };
+
+        dispatch(
+            setSelection({
+                id,
+                type: ImageType.Word,
+                context: {
+                    angleConstraints: {
+                        minAngle,
+                        maxAngle,
+                        minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
+                        maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
+                    },
+                },
+            })
+        );
     };
 
 export const selectConsonant =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Consonant }));
+        dispatch(setSelection({ id, type: ImageType.Consonant, context: undefined }));
     };
 
 export const selectVocal =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Vocal }));
+        dispatch(setSelection({ id, type: ImageType.Vocal, context: undefined }));
     };
 
 export const selectDot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Dot }));
+        dispatch(setSelection({ id, type: ImageType.Dot, context: undefined }));
     };
 
 export const selectLineSlot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.LineSlot }));
+        dispatch(setSelection({ id, type: ImageType.LineSlot, context: undefined }));
     };

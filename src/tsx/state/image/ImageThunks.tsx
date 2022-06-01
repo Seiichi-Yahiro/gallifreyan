@@ -89,7 +89,7 @@ export const moveWord =
         const state = getState();
         const word = state.image.circles[id] as Word;
         const sentence = state.image.circles[word.parentId] as Sentence;
-        const { minAngle, maxAngle } = state.work.selection as WordSelection;
+        const { minAngle, maxAngle } = (state.work.selection as WordSelection).context.angleConstraints;
 
         const distance = clamp(positionData.distance ?? word.circle.distance, 0, sentence.circle.r - word.circle.r);
         const angle = clampAngle(positionData.angle ?? word.circle.angle, minAngle, maxAngle);

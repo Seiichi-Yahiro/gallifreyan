@@ -1,9 +1,12 @@
 import { useCallback, useState } from 'react';
 import { UUID } from '../state/image/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
+import { useAppDispatch } from './useAppDispatch';
 import useEventListener from './useEventListener';
+import { setIsDragging as reduxSetIsDragging } from '../state/work/WorkActions';
 
 export const useDragAndDrop = (id: UUID, onMouseMove: (event: MouseEvent) => void): (() => void) => {
+    const dispatch = useAppDispatch();
     const isSelected = useIsSelectedSelector(id);
 
     // can't use redux state here as the svg miniature would also trigger the events below
@@ -24,6 +27,7 @@ export const useDragAndDrop = (id: UUID, onMouseMove: (event: MouseEvent) => voi
         'mouseup',
         () => {
             setIsDragging(false);
+            dispatch(reduxSetIsDragging(false));
         },
         eventTarget
     );
@@ -31,6 +35,7 @@ export const useDragAndDrop = (id: UUID, onMouseMove: (event: MouseEvent) => voi
     return useCallback(() => {
         if (isSelected) {
             setIsDragging(true);
+            dispatch(reduxSetIsDragging(true));
         }
     }, [isSelected]);
 };

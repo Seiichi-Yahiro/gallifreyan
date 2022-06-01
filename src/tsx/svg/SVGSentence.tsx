@@ -1,11 +1,13 @@
 import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { useRedux } from '../hooks/useRedux';
 import { dragSentence } from '../state/image/ImageThunks';
-import { Sentence, UUID } from '../state/image/ImageTypes';
+import { ImageType, Sentence, UUID } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectSentence } from '../state/work/WorkThunks';
+import { angleConstraintColor } from '../utils/colors';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -17,6 +19,11 @@ interface SentenceProps {
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
     const { circle: sentence, isSelected, isHovered } = useCircleSelector<Sentence>(id);
+    const wordAngleConstraints = useRedux((state) =>
+        state.work.selection?.type === ImageType.Word && state.work.selection.isDragging
+            ? state.work.selection.context.angleConstraints
+            : undefined
+    );
     const dispatch = useAppDispatch();
     const sentenceRef = useRef<SVGCircleElement>(null);
 
@@ -56,6 +63,22 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
+            {wordAngleConstraints && (
+                <g stroke={angleConstraintColor} strokeLinecap="round">
+                    <line
+                        x1={0}
+                        y1={0}
+                        x2={wordAngleConstraints.minAngleVector.x}
+                        y2={wordAngleConstraints.minAngleVector.y}
+                    />
+                    <line
+                        x1={0}
+                        y1={0}
+                        x2={wordAngleConstraints.maxAngleVector.x}
+                        y2={wordAngleConstraints.maxAngleVector.y}
+                    />
+                </g>
+            )}
             {sentence.words.map((wordId) => (
                 <SVGWord key={wordId} id={wordId} />
             ))}
