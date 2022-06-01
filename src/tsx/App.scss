@@ -17,15 +17,6 @@ body,
     padding: 5px;
     height: 100%;
 
-    &__sidebar,
-    &__svg-view {
-        border: {
-            style: solid;
-            color: #000000;
-            width: 1px;
-        }
-    }
-
     &__sidebar {
         padding: 5px;
         overflow-y: auto;

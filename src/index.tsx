@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './tsx/App';
 import { createStore } from './tsx/state/AppState';
+import Theme from './tsx/Theme';
 
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load);
@@ -13,7 +14,9 @@ window.addEventListener('load', function load() {
 
     root.render(
         <Provider store={store}>
-            <App />
+            <Theme>
+                <App />
+            </Theme>
         </Provider>
     );
 });

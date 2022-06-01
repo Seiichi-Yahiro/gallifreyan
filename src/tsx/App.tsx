@@ -1,13 +1,14 @@
+import { Paper } from '@mui/material';
 import React from 'react';
 import './App.scss';
 import SVGView from './svg/SVGView';
 import Sidebar from './sidebar/Sidebar';
 
 const App: React.FunctionComponent = () => (
-    <div className="app">
+    <Paper square={true} className="app">
         <Sidebar />
         <SVGView />
-    </div>
+    </Paper>
 );
 
 export default App;

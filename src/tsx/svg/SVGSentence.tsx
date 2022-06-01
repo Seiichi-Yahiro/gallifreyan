@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
@@ -7,7 +8,6 @@ import { ImageType, Sentence, UUID } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectSentence } from '../state/work/WorkThunks';
-import { angleConstraintColor } from '../utils/colors';
 import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -18,6 +18,7 @@ interface SentenceProps {
 }
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
+    const theme = useTheme();
     const { circle: sentence, isSelected, isHovered } = useCircleSelector<Sentence>(id);
     const wordAngleConstraints = useRedux((state) =>
         state.work.selection?.type === ImageType.Word && state.work.selection.isDragging
@@ -64,7 +65,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
             {wordAngleConstraints && (
-                <g stroke={angleConstraintColor} strokeLinecap="round">
+                <g stroke={theme.palette.error.main} strokeLinecap="round">
                     <line
                         x1={0}
                         y1={0}

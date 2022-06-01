@@ -1,5 +1,5 @@
+import { useTheme } from '@mui/material';
 import React from 'react';
-import { hoverColor, selectedColor } from '../utils/colors';
 import { calculateTranslation } from '../utils/TextTransforms';
 
 export enum AnglePlacement {
@@ -26,7 +26,8 @@ const Group: React.FunctionComponent<GroupProps> = ({
     children,
     ...props
 }) => {
-    const color = isSelected ? selectedColor : isHovered ? hoverColor : 'inherit';
+    const theme = useTheme();
+    const color = isSelected ? theme.palette.primary.main : isHovered ? theme.palette.secondary.main : 'inherit';
 
     const createTransform = () => {
         switch (anglePlacement) {
