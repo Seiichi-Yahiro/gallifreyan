@@ -4,7 +4,7 @@ import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragWord } from '../state/image/ImageThunks';
 import { ImageType, ConsonantPlacement, Letter, UUID, Word } from '../state/image/ImageTypes';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
+import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectWord } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
@@ -17,10 +17,8 @@ interface WordProps {
 }
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
-    const word = useRedux((state) => state.image.circles[id]) as Word;
+    const { circle: word, isHovered, isSelected } = useCircleSelector<Word>(id);
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(id);
-    const isSelected = useIsSelectedSelector(id);
     const wordRef = useRef<SVGCircleElement>(null);
 
     const onMouseDown = useDragAndDrop(id, (event) => {

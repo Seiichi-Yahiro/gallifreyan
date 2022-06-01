@@ -1,10 +1,9 @@
 import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
-import { useRedux } from '../hooks/useRedux';
 import { dragDot } from '../state/image/ImageThunks';
 import { Dot, UUID } from '../state/image/ImageTypes';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
+import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectDot } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
@@ -18,10 +17,8 @@ interface DotProps {
 const lineSlots: UUID[] = [];
 
 const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
-    const dot = useRedux((state) => state.image.circles[id]) as Dot;
+    const { circle: dot, isSelected, isHovered } = useCircleSelector<Dot>(id);
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(id);
-    const isSelected = useIsSelectedSelector(id);
     const dotRef = useRef<SVGCircleElement>(null);
 
     const onMouseDown = useDragAndDrop(id, (event) => {

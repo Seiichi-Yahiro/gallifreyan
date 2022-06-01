@@ -4,7 +4,7 @@ import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragConsonant, dragVocal } from '../state/image/ImageThunks';
 import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal } from '../state/image/ImageTypes';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
+import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
@@ -32,11 +32,9 @@ interface ConsonantProps {
 }
 
 const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
-    const consonant = useRedux((state) => state.image.circles[id]) as Consonant;
+    const { circle: consonant, isSelected, isHovered } = useCircleSelector<Consonant>(id);
     const wordRadius = useRedux((state) => state.image.circles[consonant.parentId]!.circle.r);
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(id);
-    const isSelected = useIsSelectedSelector(id);
     const consonantRef = useRef<SVGCircleElement>(null);
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);
@@ -115,10 +113,8 @@ interface VocalProps {
 }
 
 const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
-    const vocal = useRedux((state) => state.image.circles[id]) as Vocal;
+    const { circle: vocal, isHovered, isSelected } = useCircleSelector<Vocal>(id);
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(id);
-    const isSelected = useIsSelectedSelector(id);
     const vocalRef = useRef<SVGCircleElement>(null);
 
     const onMouseDown = useDragAndDrop(id, (event) => {

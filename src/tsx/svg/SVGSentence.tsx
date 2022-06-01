@@ -1,10 +1,9 @@
 import React, { useCallback, useRef } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
-import { useRedux } from '../hooks/useRedux';
 import { dragSentence } from '../state/image/ImageThunks';
 import { Sentence, UUID } from '../state/image/ImageTypes';
-import { useIsHoveredSelector, useIsSelectedSelector } from '../state/Selectors';
+import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectSentence } from '../state/work/WorkThunks';
 import { Position } from '../utils/LinearAlgebra';
@@ -17,10 +16,8 @@ interface SentenceProps {
 }
 
 const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
-    const sentence = useRedux((state) => state.image.circles[id]) as Sentence;
+    const { circle: sentence, isSelected, isHovered } = useCircleSelector<Sentence>(id);
     const dispatch = useAppDispatch();
-    const isHovered = useIsHoveredSelector(id);
-    const isSelected = useIsSelectedSelector(id);
     const sentenceRef = useRef<SVGCircleElement>(null);
 
     const onMouseDown = useDragAndDrop(id, (event) => {
