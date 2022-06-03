@@ -7,8 +7,10 @@ import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal }
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
+import { ConsonantSelection } from '../state/work/WorkTypes';
 import { Position } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
+import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
@@ -36,6 +38,11 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
     const wordRadius = useRedux((state) => state.image.circles[consonant.parentId]!.circle.r);
     const dispatch = useAppDispatch();
     const consonantRef = useRef<SVGCircleElement>(null);
+    const consonantAngleConstraints = useRedux((state) =>
+        isSelected && state.work.selection!.isDragging
+            ? (state.work.selection as ConsonantSelection).context.angleConstraints
+            : undefined
+    );
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);
 
@@ -49,61 +56,64 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
     });
 
     return (
-        <Group
-            angle={consonant.circle.angle}
-            distance={consonant.circle.distance}
-            anglePlacement={AnglePlacement.Relative}
-            isHovered={isHovered}
-            isSelected={isSelected}
-            className="group-consonant"
-        >
-            {/*This will be invisible if isCut but it is still used to handle mouse events*/}
-            <SVGCircle
-                ref={consonantRef}
-                r={consonant.circle.r}
-                lineSlots={consonant.lineSlots}
-                filled={false}
-                fill="transparent"
-                stroke={isCut ? 'none' : 'inherit'}
-                onClick={useCallback(
-                    (event: React.MouseEvent<SVGCircleElement>) => {
-                        if (!isSelected) {
-                            dispatch(selectConsonant(id));
-                        }
-                        event.stopPropagation();
-                    },
-                    [id, isSelected]
+        <>
+            <Group
+                angle={consonant.circle.angle}
+                distance={consonant.circle.distance}
+                anglePlacement={AnglePlacement.Relative}
+                isHovered={isHovered}
+                isSelected={isSelected}
+                className="group-consonant"
+            >
+                {/*This will be invisible if isCut but it is still used to handle mouse events*/}
+                <SVGCircle
+                    ref={consonantRef}
+                    r={consonant.circle.r}
+                    lineSlots={consonant.lineSlots}
+                    filled={false}
+                    fill="transparent"
+                    stroke={isCut ? 'none' : 'inherit'}
+                    onClick={useCallback(
+                        (event: React.MouseEvent<SVGCircleElement>) => {
+                            if (!isSelected) {
+                                dispatch(selectConsonant(id));
+                            }
+                            event.stopPropagation();
+                        },
+                        [id, isSelected]
+                    )}
+                    onMouseDown={onMouseDown}
+                    onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
+                    onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
+                />
+                {/*This will render the circle arc cutting into the word circle*/}
+                {isCut && (
+                    <Group
+                        angle={consonant.circle.angle}
+                        distance={consonant.circle.distance}
+                        anglePlacement={AnglePlacement.Relative}
+                        reverse={true}
+                        className="group-consonant__arc"
+                    >
+                        <mask id={`mask_${id}`}>
+                            <SVGConsonantCutMask circle={consonant.circle} fill="#000000" stroke="#ffffff" />
+                        </mask>
+                        <circle
+                            r={wordRadius}
+                            fill="inherit"
+                            stroke="inherit"
+                            mask={`url(#mask_${id})`}
+                            style={{ pointerEvents: 'none' }}
+                        />
+                    </Group>
                 )}
-                onMouseDown={onMouseDown}
-                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
-            />
-            {/*This will render the circle arc cutting into the word circle*/}
-            {isCut && (
-                <Group
-                    angle={consonant.circle.angle}
-                    distance={consonant.circle.distance}
-                    anglePlacement={AnglePlacement.Relative}
-                    reverse={true}
-                    className="group-consonant__arc"
-                >
-                    <mask id={`mask_${id}`}>
-                        <SVGConsonantCutMask circle={consonant.circle} fill="#000000" stroke="#ffffff" />
-                    </mask>
-                    <circle
-                        r={wordRadius}
-                        fill="inherit"
-                        stroke="inherit"
-                        mask={`url(#mask_${id})`}
-                        style={{ pointerEvents: 'none' }}
-                    />
-                </Group>
-            )}
-            {consonant.dots.map((dotId) => (
-                <SVGDot key={dotId} id={dotId} />
-            ))}
-            {consonant.vocal && <SVGVocal id={consonant.vocal} parentType={ImageType.Consonant} />}
-        </Group>
+                {consonant.dots.map((dotId) => (
+                    <SVGDot key={dotId} id={dotId} />
+                ))}
+                {consonant.vocal && <SVGVocal id={consonant.vocal} parentType={ImageType.Consonant} />}
+            </Group>
+            {consonantAngleConstraints && <AngleConstraints angleConstraints={consonantAngleConstraints} />}
+        </>
     );
 };
 

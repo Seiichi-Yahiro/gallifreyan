@@ -7,7 +7,9 @@ import { ConsonantPlacement, ImageType, Letter, UUID, Word } from '../state/imag
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectWord } from '../state/work/WorkThunks';
+import { WordSelection } from '../state/work/WorkTypes';
 import { Position } from '../utils/LinearAlgebra';
+import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGLetter, { SVGConsonantCutMask } from './SVGLetter';
@@ -20,6 +22,11 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
     const { circle: word, isHovered, isSelected } = useCircleSelector<Word>(id);
     const dispatch = useAppDispatch();
     const wordRef = useRef<SVGCircleElement>(null);
+    const wordAngleConstraints = useRedux((state) =>
+        isSelected && state.work.selection!.isDragging
+            ? (state.work.selection as WordSelection).context.angleConstraints
+            : undefined
+    );
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (wordRef.current) {
@@ -31,45 +38,48 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
     });
 
     return (
-        <Group
-            angle={word.circle.angle}
-            distance={word.circle.distance}
-            anglePlacement={AnglePlacement.Absolute}
-            isHovered={isHovered}
-            isSelected={isSelected}
-            className="group-word"
-        >
-            <mask id={`mask_${id}`}>
-                <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
+        <>
+            <Group
+                angle={word.circle.angle}
+                distance={word.circle.distance}
+                anglePlacement={AnglePlacement.Absolute}
+                isHovered={isHovered}
+                isSelected={isSelected}
+                className="group-word"
+            >
+                <mask id={`mask_${id}`}>
+                    <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
+                    {word.letters.map((letterId) => (
+                        <SVGLetterCutMask key={letterId} id={letterId} />
+                    ))}
+                </mask>
+                <SVGCircle
+                    ref={wordRef}
+                    r={word.circle.r}
+                    lineSlots={word.lineSlots}
+                    filled={false}
+                    fill="transparent"
+                    stroke="inherit"
+                    mask={`url(#mask_${id})`}
+                    onClick={useCallback(
+                        (event: React.MouseEvent<SVGCircleElement>) => {
+                            if (!isSelected) {
+                                dispatch(selectWord(id));
+                            }
+                            event.stopPropagation();
+                        },
+                        [id, isSelected]
+                    )}
+                    onMouseDown={onMouseDown}
+                    onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
+                    onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
+                />
                 {word.letters.map((letterId) => (
-                    <SVGLetterCutMask key={letterId} id={letterId} />
+                    <SVGLetter key={letterId} id={letterId} />
                 ))}
-            </mask>
-            <SVGCircle
-                ref={wordRef}
-                r={word.circle.r}
-                lineSlots={word.lineSlots}
-                filled={false}
-                fill="transparent"
-                stroke="inherit"
-                mask={`url(#mask_${id})`}
-                onClick={useCallback(
-                    (event: React.MouseEvent<SVGCircleElement>) => {
-                        if (!isSelected) {
-                            dispatch(selectWord(id));
-                        }
-                        event.stopPropagation();
-                    },
-                    [id, isSelected]
-                )}
-                onMouseDown={onMouseDown}
-                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
-            />
-            {word.letters.map((letterId) => (
-                <SVGLetter key={letterId} id={letterId} />
-            ))}
-        </Group>
+            </Group>
+            {wordAngleConstraints && <AngleConstraints angleConstraints={wordAngleConstraints} />}
+        </>
     );
 };
 

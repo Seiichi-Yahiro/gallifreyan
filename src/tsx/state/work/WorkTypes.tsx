@@ -18,12 +18,7 @@ export interface SentenceSelection extends Referencable, Draggable, Context {
 }
 
 export type WordContext = Context<{
-    angleConstraints: {
-        minAngle: number;
-        minAngleVector: Vector2;
-        maxAngle: number;
-        maxAngleVector: Vector2;
-    };
+    angleConstraints: AngleConstraints;
 }>;
 
 export interface WordSelection extends Referencable, Draggable, WordContext {
@@ -32,7 +27,11 @@ export interface WordSelection extends Referencable, Draggable, WordContext {
 
 export type LetterSelection = ConsonantSelection | VocalSelection;
 
-export interface ConsonantSelection extends Referencable, Draggable, Context {
+export type ConsonantContext = Context<{
+    angleConstraints: AngleConstraints;
+}>;
+
+export interface ConsonantSelection extends Referencable, Draggable, ConsonantContext {
     type: ImageType.Consonant;
 }
 
@@ -46,4 +45,11 @@ export interface DotSelection extends Referencable, Draggable, Context {
 
 export interface LineSlotSelection extends Referencable, Draggable, Context {
     type: ImageType.LineSlot;
+}
+
+export interface AngleConstraints {
+    minAngle: number;
+    minAngleVector: Vector2;
+    maxAngle: number;
+    maxAngleVector: Vector2;
 }
