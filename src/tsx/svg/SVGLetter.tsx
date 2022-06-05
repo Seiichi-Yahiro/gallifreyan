@@ -7,7 +7,6 @@ import { Circle, ImageType, Consonant, ConsonantPlacement, Letter, UUID, Vocal }
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
-import { ConsonantSelection } from '../state/work/WorkTypes';
 import { Position } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
 import AngleConstraints from './AngleConstraints';
@@ -39,9 +38,7 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
     const dispatch = useAppDispatch();
     const consonantRef = useRef<SVGCircleElement>(null);
     const consonantAngleConstraints = useRedux((state) =>
-        isSelected && state.work.selection!.isDragging
-            ? (state.work.selection as ConsonantSelection).context.angleConstraints
-            : undefined
+        isSelected && state.work.selection!.isDragging ? state.work.selection!.angleConstraints : undefined
     );
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);

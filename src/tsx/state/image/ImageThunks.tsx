@@ -3,7 +3,6 @@ import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
 import { calculateTranslation } from '../../utils/TextTransforms';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
-import { WordSelection } from '../work/WorkTypes';
 import {
     convertSentenceText,
     nestWordVocals,
@@ -90,7 +89,7 @@ export const moveWord =
         const state = getState();
         const word = state.image.circles[id] as Word;
         const sentence = state.image.circles[word.parentId] as Sentence;
-        const { minAngle, maxAngle } = (state.work.selection as WordSelection).context.angleConstraints;
+        const { minAngle, maxAngle } = state.work.selection!.angleConstraints!;
 
         const distance = positionData.distance ?? word.circle.distance;
         const angle = positionData.angle ?? word.circle.angle;

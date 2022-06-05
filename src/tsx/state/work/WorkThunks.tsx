@@ -7,7 +7,7 @@ import { setSelection } from './WorkActions';
 export const selectSentence =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Sentence, context: undefined }));
+        dispatch(setSelection({ id, type: ImageType.Sentence }));
     };
 
 export const selectWord =
@@ -35,13 +35,11 @@ export const selectWord =
             setSelection({
                 id,
                 type: ImageType.Word,
-                context: {
-                    angleConstraints: {
-                        minAngle,
-                        maxAngle,
-                        minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
-                        maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
-                    },
+                angleConstraints: {
+                    minAngle,
+                    maxAngle,
+                    minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
+                    maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
                 },
             })
         );
@@ -53,6 +51,7 @@ export const selectConsonant =
         const state = getState();
         const consonant = state.image.circles[id] as Consonant;
         const word = state.image.circles[consonant.parentId] as Word;
+
         const consonantIndex = word.letters.findIndex((letterId) => letterId === consonant.id);
 
         const minAngle = Maybe.of(word.letters[consonantIndex - 1])
@@ -71,13 +70,11 @@ export const selectConsonant =
             setSelection({
                 id,
                 type: ImageType.Consonant,
-                context: {
-                    angleConstraints: {
-                        minAngle,
-                        maxAngle,
-                        minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
-                        maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
-                    },
+                angleConstraints: {
+                    minAngle,
+                    maxAngle,
+                    minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
+                    maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
                 },
             })
         );
@@ -86,17 +83,17 @@ export const selectConsonant =
 export const selectVocal =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Vocal, context: undefined }));
+        dispatch(setSelection({ id, type: ImageType.Vocal }));
     };
 
 export const selectDot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Dot, context: undefined }));
+        dispatch(setSelection({ id, type: ImageType.Dot }));
     };
 
 export const selectLineSlot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.LineSlot, context: undefined }));
+        dispatch(setSelection({ id, type: ImageType.LineSlot }));
     };

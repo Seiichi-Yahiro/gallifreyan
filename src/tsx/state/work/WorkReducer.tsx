@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { UUID } from '../image/ImageTypes';
-import { setHovering, setIsDragging, setSelection } from './WorkActions';
+import { setHovering, setSelection, setIsDragging } from './WorkActions';
 import { Selection } from './WorkTypes';
 
 export interface WorkState {
@@ -15,9 +15,11 @@ const reducer = createReducer(createInitialState, (builder) =>
         .addCase(setSelection, (state, { payload }) => {
             if (payload) {
                 state.selection = {
-                    ...payload,
+                    id: payload.id,
+                    type: payload.type,
                     isDragging: false,
-                } as Selection;
+                    angleConstraints: payload.angleConstraints,
+                };
             } else {
                 state.selection = undefined;
             }
