@@ -123,6 +123,9 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
     const { circle: vocal, isHovered, isSelected } = useCircleSelector<Vocal>(id);
     const dispatch = useAppDispatch();
     const vocalRef = useRef<SVGCircleElement>(null);
+    const vocalAngleConstraints = useRedux((state) =>
+        isSelected && state.work.selection!.isDragging ? state.work.selection!.angleConstraints : undefined
+    );
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (vocalRef.current) {
@@ -134,35 +137,38 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
     });
 
     return (
-        <Group
-            angle={vocal.circle.angle}
-            distance={vocal.circle.distance}
-            anglePlacement={parentType === ImageType.Consonant ? AnglePlacement.Absolute : AnglePlacement.Relative}
-            isHovered={isHovered}
-            isSelected={isSelected}
-            className="group-vocal"
-        >
-            <SVGCircle
-                ref={vocalRef}
-                r={vocal.circle.r}
-                lineSlots={vocal.lineSlots}
-                filled={false}
-                fill="transparent"
-                stroke="inherit"
-                onClick={useCallback(
-                    (event: React.MouseEvent<SVGCircleElement>) => {
-                        if (!isSelected) {
-                            dispatch(selectVocal(id));
-                        }
-                        event.stopPropagation();
-                    },
-                    [id, isSelected]
-                )}
-                onMouseDown={onMouseDown}
-                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
-            />
-        </Group>
+        <>
+            <Group
+                angle={vocal.circle.angle}
+                distance={vocal.circle.distance}
+                anglePlacement={parentType === ImageType.Consonant ? AnglePlacement.Absolute : AnglePlacement.Relative}
+                isHovered={isHovered}
+                isSelected={isSelected}
+                className="group-vocal"
+            >
+                <SVGCircle
+                    ref={vocalRef}
+                    r={vocal.circle.r}
+                    lineSlots={vocal.lineSlots}
+                    filled={false}
+                    fill="transparent"
+                    stroke="inherit"
+                    onClick={useCallback(
+                        (event: React.MouseEvent<SVGCircleElement>) => {
+                            if (!isSelected) {
+                                dispatch(selectVocal(id));
+                            }
+                            event.stopPropagation();
+                        },
+                        [id, isSelected]
+                    )}
+                    onMouseDown={onMouseDown}
+                    onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
+                    onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
+                />
+            </Group>
+            {vocalAngleConstraints && <AngleConstraints angleConstraints={vocalAngleConstraints} />}
+        </>
     );
 };
 
