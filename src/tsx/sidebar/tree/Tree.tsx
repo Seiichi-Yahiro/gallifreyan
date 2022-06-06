@@ -1,5 +1,5 @@
 import { SvgIcon, SvgIconProps } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TreeView } from '@mui/lab';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
@@ -34,6 +34,11 @@ const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
     const selectionId = useRedux((state) => state.work.selection?.id);
     const sentenceId = useRedux((state) => state.image.rootCircleId);
     const expanded = useRedux((state) => state.work.expandedTreeNodes);
+    const rootNodeId = useRedux((state) => state.image.rootCircleId);
+
+    useEffect(() => {
+        dispatch(setExpandedTreeNodes([rootNodeId]));
+    }, [rootNodeId]);
 
     const onNodeToggle = (_event: React.SyntheticEvent, nodeIds: UUID[]) => {
         dispatch(setExpandedTreeNodes(nodeIds));
