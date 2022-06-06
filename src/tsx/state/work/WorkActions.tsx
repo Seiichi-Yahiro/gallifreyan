@@ -8,3 +8,7 @@ export const setSelection = createAction<
 export const setIsDragging = createAction<boolean>('work/isDragging');
 
 export const setHovering = createAction<UUID | undefined>('work/setHovering');
+
+export const setInputText = createAction<string>('work/setInputText');
+
+export const setExpandedTreeNodes = createAction<UUID[]>('work/setExpandedTreeNodes');

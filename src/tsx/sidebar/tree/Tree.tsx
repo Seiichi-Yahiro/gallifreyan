@@ -1,7 +1,10 @@
 import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
 import { TreeView } from '@mui/lab';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
+import { UUID } from '../../state/image/ImageTypes';
+import { setExpandedTreeNodes } from '../../state/work/WorkActions';
 import SentenceTreeItem from './SentenceTreeItem';
 
 const MinusSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: SvgIconProps) => (
@@ -27,8 +30,14 @@ interface TreeProps {
 }
 
 const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
+    const dispatch = useAppDispatch();
     const selectionId = useRedux((state) => state.work.selection?.id);
     const sentenceId = useRedux((state) => state.image.rootCircleId);
+    const expanded = useRedux((state) => state.work.expandedTreeNodes);
+
+    const onNodeToggle = (_event: React.SyntheticEvent, nodeIds: UUID[]) => {
+        dispatch(setExpandedTreeNodes(nodeIds));
+    };
 
     return (
         <TreeView
@@ -37,6 +46,8 @@ const Tree: React.FunctionComponent<TreeProps> = ({ className }) => {
             defaultEndIcon={<CloseSquare />}
             selected={selectionId ?? ''}
             className={className}
+            expanded={expanded}
+            onNodeToggle={onNodeToggle}
         >
             {sentenceId && <SentenceTreeItem id={sentenceId} />}
         </TreeView>
