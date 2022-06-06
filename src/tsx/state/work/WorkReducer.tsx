@@ -1,16 +1,19 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { UUID } from '../image/ImageTypes';
-import { setHovering, setSelection, setIsDragging, setInputText, setExpandedTreeNodes } from './WorkActions';
+import { setHovering, setSelection, setIsDragging, setExpandedTreeNodes, setTextInput } from './WorkActions';
 import { Selection } from './WorkTypes';
 
 export interface WorkState {
     selection?: Selection;
     hovering?: UUID;
-    inputText: string;
+    textInput: {
+        text: string;
+        sanitizedText: string;
+    };
     expandedTreeNodes: UUID[];
 }
 
-const createInitialState = (): WorkState => ({ inputText: '', expandedTreeNodes: [] });
+const createInitialState = (): WorkState => ({ textInput: { text: '', sanitizedText: '' }, expandedTreeNodes: [] });
 
 const reducer = createReducer(createInitialState, (builder) =>
     builder
@@ -34,8 +37,8 @@ const reducer = createReducer(createInitialState, (builder) =>
                 state.selection.isDragging = payload;
             }
         })
-        .addCase(setInputText, (state, { payload }) => {
-            state.inputText = payload;
+        .addCase(setTextInput, (state, { payload }) => {
+            state.textInput = payload;
         })
         .addCase(setExpandedTreeNodes, (state, { payload }) => {
             state.expandedTreeNodes = payload;

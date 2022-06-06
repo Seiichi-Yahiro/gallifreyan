@@ -1,9 +1,30 @@
+import { isValidLetter } from '../../utils/LetterGroups';
 import { rotate, toRadian, Vector2 } from '../../utils/LinearAlgebra';
 import Maybe from '../../utils/Maybe';
+import { splitWordToChars } from '../../utils/TextConverter';
 import { AppThunkAction } from '../AppState';
+import { setSentence } from '../image/ImageThunks';
 import { CircleShape, Consonant, ImageType, Sentence, UUID, Vocal, Word } from '../image/ImageTypes';
-import { setSelection } from './WorkActions';
+import { setSelection, setTextInput } from './WorkActions';
 import { AngleConstraints } from './WorkTypes';
+
+export const setInputText =
+    (text: string): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const sanitizedText = text
+            .split(' ')
+            .map((word) => splitWordToChars(word).filter(isValidLetter).join(''))
+            .filter((word) => word.length > 0)
+            .join(' ');
+
+        dispatch(setTextInput({ text, sanitizedText }));
+
+        if (state.work.textInput.sanitizedText !== sanitizedText) {
+            dispatch(setSentence(sanitizedText));
+        }
+    };
 
 export const selectSentence =
     (id: UUID): AppThunkAction =>
