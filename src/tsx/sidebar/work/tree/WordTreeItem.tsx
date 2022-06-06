@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useRedux } from '../../hooks/useRedux';
-import { UUID, Word } from '../../state/image/ImageTypes';
-import { setHovering } from '../../state/work/WorkActions';
-import { selectWord } from '../../state/work/WorkThunks';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { useRedux } from '../../../hooks/useRedux';
+import { UUID, Word } from '../../../state/image/ImageTypes';
+import { setHovering } from '../../../state/work/WorkActions';
+import { selectWord } from '../../../state/work/WorkThunks';
 import LineSlotTreeItem from './LineSlotTreeItem';
 import TreeItem from './TreeItem';
 import { createTreeItemContent } from './TreeItemContent';

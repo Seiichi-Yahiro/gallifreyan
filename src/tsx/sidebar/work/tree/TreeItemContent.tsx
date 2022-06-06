@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import { TreeItemContentProps, useTreeItem } from '@mui/lab';
 import React from 'react';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { AppThunkAction } from '../../state/AppState';
-import { UUID } from '../../state/image/ImageTypes';
-import createClassName from '../../utils/createClassName';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { AppThunkAction } from '../../../state/AppState';
+import { UUID } from '../../../state/image/ImageTypes';
+import createClassName from '../../../utils/createClassName';
 
 export const createTreeItemContent = (select: (id: UUID) => AppThunkAction): React.FunctionComponent =>
     React.forwardRef(

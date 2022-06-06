@@ -1,17 +1,43 @@
-import { Paper } from '@mui/material';
-import React from 'react';
-import Settings from './Settings';
-import TextInput from './TextInput';
-import Tree from './tree/Tree';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Paper, Tab } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
+import React, { useState } from 'react';
+import SettingsTab from './settings/SettingsTab';
+import WorkTab from './work/WorkTab';
 
 interface SidebarProps {}
 
-const Sidebar: React.FunctionComponent<SidebarProps> = ({}) => (
-    <Paper variant="outlined" className="app__sidebar">
-        <TextInput />
-        <Tree className="sidebar__tree" />
-        <Settings className="sidebar__settings" />
-    </Paper>
-);
+enum TabValue {
+    Work = 'Work',
+    Settings = 'Settings',
+}
+
+const Sidebar: React.FunctionComponent<SidebarProps> = ({}) => {
+    const [tab, setTabValue] = useState(TabValue.Work);
+
+    const onTabChange = (_event: React.SyntheticEvent, value: TabValue) => {
+        setTabValue(value);
+    };
+
+    return (
+        <Paper variant="outlined" className="app__sidebar">
+            <TabContext value={tab}>
+                <TabList variant="fullWidth" onChange={onTabChange}>
+                    <Tab icon={<EditIcon />} value={TabValue.Work} />
+                    <Tab icon={<SettingsIcon />} value={TabValue.Settings} />
+                </TabList>
+                <div className="sidebar__panels">
+                    <TabPanel value={TabValue.Work} className="sidebar__panel">
+                        <WorkTab />
+                    </TabPanel>
+                    <TabPanel value={TabValue.Settings} className="sidebar__panel">
+                        <SettingsTab />
+                    </TabPanel>
+                </div>
+            </TabContext>
+        </Paper>
+    );
+};
 
 export default Sidebar;

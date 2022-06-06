@@ -21,9 +21,7 @@ body,
         padding: 5px;
         overflow-y: auto;
         display: grid;
-        grid-template-rows: min-content auto min-content;
-        grid-template-columns: 100%;
-        grid-row-gap: 5px;
+        grid-template-rows: min-content auto;
     }
 
     &__svg-view {
@@ -32,12 +30,37 @@ body,
 }
 
 .sidebar {
-    &__tree {
+    &__panels {
+        margin-top: 10px;
         overflow-y: auto;
     }
 
-    &__settings {
+    &__panel {
+        padding: 0 !important;
+        height: 100%;
+    }
+
+    &-work {
+        height: 100%;
         display: grid;
-        grid-row-gap: 8px;
+        grid-template-rows: min-content auto min-content;
+        grid-template-columns: 100%;
+        grid-row-gap: 5px;
+
+        &__tree {
+            overflow-y: auto;
+            min-height: 100px;
+        }
+
+        &__settings {
+            display: grid;
+            grid-row-gap: 8px;
+        }
+    }
+
+    &-settings {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }

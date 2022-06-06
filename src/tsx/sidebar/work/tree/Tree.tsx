@@ -1,10 +1,10 @@
 import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
 import { TreeView } from '@mui/lab';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useRedux } from '../../hooks/useRedux';
-import { UUID } from '../../state/image/ImageTypes';
-import { setExpandedTreeNodes } from '../../state/work/WorkActions';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { useRedux } from '../../../hooks/useRedux';
+import { UUID } from '../../../state/image/ImageTypes';
+import { setExpandedTreeNodes } from '../../../state/work/WorkActions';
 import SentenceTreeItem from './SentenceTreeItem';
 
 const MinusSquare: React.FunctionComponent<SvgIconProps> = React.memo((props: SvgIconProps) => (

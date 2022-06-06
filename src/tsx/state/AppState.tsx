@@ -1,14 +1,14 @@
 import { AnyAction, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import imageReducer from './image/ImageReducer';
 import svgPanZoomReducer from './svgPanZoom/SvgPanZoomReducer';
-import themeReducer from './theme/ThemeReducer';
+import settingsReducer from './settings/SettingsReducer';
 import workReducer from './work/WorkReducer';
 
 export const reducer = {
     svgPanZoom: svgPanZoomReducer,
     image: imageReducer,
     work: workReducer,
-    theme: themeReducer,
+    settings: settingsReducer,
 };
 
 export const store = configureStore({

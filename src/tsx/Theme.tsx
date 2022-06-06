@@ -7,7 +7,7 @@ interface ThemeProps {
 }
 
 const Theme: React.FunctionComponent<ThemeProps> = ({ children }) => {
-    const mode = useRedux((state) => state.theme.mode);
+    const mode = useRedux((state) => state.settings.mode);
 
     const options: ThemeOptions = {
         palette: {

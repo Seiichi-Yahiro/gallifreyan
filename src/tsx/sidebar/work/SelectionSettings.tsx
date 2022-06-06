@@ -1,9 +1,9 @@
 import { TextField } from '@mui/material';
 import React from 'react';
-import { useAppDispatch } from '../hooks/useAppDispatch';
-import { useRedux } from '../hooks/useRedux';
-import { AppThunkAction } from '../state/AppState';
-import { updateLineSlotData } from '../state/image/ImageActions';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useRedux } from '../../hooks/useRedux';
+import { AppThunkAction } from '../../state/AppState';
+import { updateLineSlotData } from '../../state/image/ImageActions';
 import {
     moveConsonant,
     moveDot,
@@ -15,7 +15,7 @@ import {
     updateSentenceRadius,
     updateVocalRadius,
     updateWordRadius,
-} from '../state/image/ImageThunks';
+} from '../../state/image/ImageThunks';
 import {
     CircleShape,
     Consonant,
@@ -25,13 +25,13 @@ import {
     UUID,
     Vocal,
     VocalPlacement,
-} from '../state/image/ImageTypes';
+} from '../../state/image/ImageTypes';
 
 interface SettingsProps {
     className?: string;
 }
 
-const Settings: React.FunctionComponent<SettingsProps> = ({ className }) => {
+const SelectionSettings: React.FunctionComponent<SettingsProps> = ({ className }) => {
     const selection = useRedux((state) => state.work.selection);
 
     if (!selection) {
@@ -162,4 +162,4 @@ const LineSlotSettings: React.FunctionComponent<LineSlotSettingsProps> = ({ id }
     );
 };
 
-export default React.memo(Settings);
+export default React.memo(SelectionSettings);
