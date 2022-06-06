@@ -35,6 +35,7 @@ const TextInput: React.FunctionComponent = () => {
             value={text}
             onChange={onChange}
             autoComplete="off"
+            spellCheck={false}
         />
     );
 };
