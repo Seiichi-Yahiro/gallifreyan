@@ -26,7 +26,15 @@ const TextInput: React.FunctionComponent = () => {
         setText(inputValue);
     };
 
-    return <TextField variant="standard" placeholder="Type a sentence..." value={text} onChange={onChange} />;
+    return (
+        <TextField
+            variant="standard"
+            placeholder="Type a sentence..."
+            value={text}
+            onChange={onChange}
+            autoComplete="off"
+        />
+    );
 };
 
 export default TextInput;
