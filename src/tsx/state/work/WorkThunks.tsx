@@ -5,13 +5,13 @@ import { splitWordToChars } from '../../utils/TextConverter';
 import { AppThunkAction } from '../AppState';
 import { setSentence } from '../image/ImageThunks';
 import { CircleShape, Consonant, ImageType, Sentence, UUID, Vocal, Word } from '../image/ImageTypes';
-import { setSelection, setTextInput } from './WorkActions';
+import { setExpandedTreeNodes, setSelection, setTextInput } from './WorkActions';
 import { AngleConstraints } from './WorkTypes';
 
 export const setInputText =
     (text: string): AppThunkAction =>
     (dispatch, getState) => {
-        const state = getState();
+        let state = getState();
 
         const sanitizedText = text
             .split(' ')
@@ -23,6 +23,10 @@ export const setInputText =
 
         if (state.work.textInput.sanitizedText !== sanitizedText) {
             dispatch(setSentence(sanitizedText));
+
+            state = getState();
+
+            dispatch(setExpandedTreeNodes([state.image.rootCircleId]));
         }
     };
 
