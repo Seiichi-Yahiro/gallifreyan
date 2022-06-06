@@ -1,4 +1,4 @@
-import { createStore } from '../AppState';
+import { createTestStore } from '../../utils/TestUtils';
 import { selectDot, selectSentence, selectWord } from '../work/WorkThunks';
 import { moveDot, moveSentence, moveWord } from './ImageThunks';
 import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence, Word } from './ImageTypes';
@@ -15,7 +15,7 @@ describe('ImageThunks', () => {
                 words: [],
             };
 
-            const store = createStore({
+            const store = createTestStore({
                 image: {
                     rootCircleId: sentence.id,
                     circles: { [sentence.id]: sentence },
@@ -116,7 +116,7 @@ describe('ImageThunks', () => {
                 type: ImageType.Word,
             }));
 
-            const store = createStore({
+            const store = createTestStore({
                 image: {
                     rootCircleId: '',
                     circles: {
@@ -233,7 +233,7 @@ describe('ImageThunks', () => {
                 type: ImageType.Dot,
             };
 
-            const store = createStore({
+            const store = createTestStore({
                 image: {
                     rootCircleId: '',
                     circles: { [dot.id]: dot, [consonant.id]: consonant },

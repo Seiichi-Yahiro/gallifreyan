@@ -1,8 +1,10 @@
-import { Store } from '@reduxjs/toolkit';
+import { configureStore, Store } from '@reduxjs/toolkit';
 import { render, RenderOptions } from '@testing-library/react';
 import React, { ReactElement } from 'react';
 import { Provider } from 'react-redux';
-import { AppState, createStore } from '../state/AppState';
+import { AppState, reducer } from '../state/AppState';
+
+export const createTestStore = (preloadedState?: Partial<AppState>) => configureStore({ reducer, preloadedState });
 
 interface WrapperProps {
     children: React.ReactNode;
@@ -17,7 +19,7 @@ const customRender = (
     ui: ReactElement,
     options?: Omit<RenderOptions, 'wrapper'> & { preloadedState?: Partial<AppState> }
 ) => {
-    const store = createStore(options?.preloadedState);
+    const store = createTestStore(options?.preloadedState);
     return render(ui, { wrapper: createWrapper(store), ...options });
 };
 
