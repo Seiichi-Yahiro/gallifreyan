@@ -1,7 +1,9 @@
 import { PositionData } from '../state/image/ImageTypes';
 import {
+    add,
     angleBetween,
     Degree,
+    div,
     dot,
     length,
     lengthSquared,
@@ -15,40 +17,40 @@ import {
 } from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
-export const calculateParentPos = (childDomRect: DOMRect, translation: Vector2, viewPortScale: number) => {
-    const elementPos = centerOfDOMRect(childDomRect);
-    return sub(elementPos, mul(translation, viewPortScale));
-};
-
 const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
     x: left + width / 2,
     y: top + height / 2,
 });
 
-export const calculateDistance = (mousePos: Position, parentPos: Position, viewPortScale: number): number => {
-    const mouseVec = sub(mousePos, parentPos);
-    return length(mouseVec) / viewPortScale;
+const calculateDistance = (newPosition: Position, parentPos: Position): number => {
+    const mouseVec = sub(newPosition, parentPos);
+    return length(mouseVec);
 };
 
-export const calculateAngle = (mousePos: Position, parentPos: Position): Degree => {
-    const mouseVec = sub(mousePos, parentPos);
+const calculateAngle = (newPosition: Position, parentPos: Position): Degree => {
+    const mouseVec = sub(newPosition, parentPos);
     const zeroDegreeVec: Vector2 = { x: 0, y: 1 };
     return toDegree(angleBetween(mouseVec, zeroDegreeVec));
 };
 
 export const calculatePositionData = (
-    mousePos: Position,
+    mouseOffset: Position,
     viewPortScale: number,
-    childDomRect: DOMRect,
-    childPositionData: PositionData,
+    domRect: DOMRect,
+    positionData: PositionData,
     relativeAngle = 0
 ): PositionData => {
-    const translation = calculateTranslation(childPositionData.angle + relativeAngle, childPositionData.distance);
-    const parentPos = calculateParentPos(childDomRect, translation, viewPortScale);
+    const scaledMouseOffset = div(mouseOffset, viewPortScale);
+    const elementPos = div(centerOfDOMRect(domRect), viewPortScale);
+
+    const newPosition = add(elementPos, scaledMouseOffset);
+
+    const translation = calculateTranslation(positionData.angle + relativeAngle, positionData.distance);
+    const parentPos = sub(elementPos, translation);
 
     return {
-        distance: calculateDistance(mousePos, parentPos, viewPortScale),
-        angle: adjustAngle(calculateAngle(mousePos, parentPos) - relativeAngle),
+        distance: calculateDistance(newPosition, parentPos),
+        angle: adjustAngle(calculateAngle(newPosition, parentPos) - relativeAngle),
     };
 };
 

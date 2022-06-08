@@ -67,12 +67,12 @@ export const moveSentence =
     };
 
 export const dragSentence =
-    (mousePos: Position, wordData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[wordData.id] as Sentence;
-        const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, word.circle);
+        const positionData = calculatePositionData(mouseOffset, viewPortScale, wordData.domRect, word.circle);
         dispatch(moveSentence(wordData.id, positionData));
     };
 
@@ -108,12 +108,12 @@ export const moveWord =
     };
 
 export const dragWord =
-    (mousePos: Position, wordData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, wordData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[wordData.id] as Word;
-        const positionData = calculatePositionData(mousePos, viewPortScale, wordData.domRect, word.circle);
+        const positionData = calculatePositionData(mouseOffset, viewPortScale, wordData.domRect, word.circle);
         dispatch(moveWord(wordData.id, positionData));
     };
 
@@ -132,12 +132,12 @@ export const moveConsonant =
     };
 
 export const dragConsonant =
-    (mousePos: Position, consonantData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, consonantData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const consonant = state.image.circles[consonantData.id] as Consonant;
-        const positionData = calculatePositionData(mousePos, viewPortScale, consonantData.domRect, consonant.circle);
+        const positionData = calculatePositionData(mouseOffset, viewPortScale, consonantData.domRect, consonant.circle);
         dispatch(moveConsonant(consonantData.id, positionData));
     };
 
@@ -156,7 +156,7 @@ export const moveVocal =
     };
 
 export const dragVocal =
-    (mousePos: Position, vocalData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, vocalData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
@@ -170,7 +170,7 @@ export const dragVocal =
         }
 
         const positionData = calculatePositionData(
-            mousePos,
+            mouseOffset,
             viewPortScale,
             vocalData.domRect,
             vocal.circle,
@@ -200,14 +200,14 @@ export const moveDot =
     };
 
 export const dragDot =
-    (mousePos: Position, dotData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, dotData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const dot = state.image.circles[dotData.id] as Dot;
         const consonantAngle = state.image.circles[dot.parentId]!.circle.angle;
         const positionData = calculatePositionData(
-            mousePos,
+            mouseOffset,
             viewPortScale,
             dotData.domRect,
             dot.circle,
@@ -217,7 +217,7 @@ export const dragDot =
     };
 
 export const dragLineSlot =
-    (mousePos: Position, lineSlotData: MovableData): AppThunkAction =>
+    (mouseOffset: Position, lineSlotData: MovableData): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
@@ -240,7 +240,7 @@ export const dragLineSlot =
         }
 
         const positionData = calculatePositionData(
-            mousePos,
+            mouseOffset,
             viewPortScale,
             lineSlotData.domRect,
             lineSlot,

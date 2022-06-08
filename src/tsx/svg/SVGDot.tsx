@@ -23,10 +23,10 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (dotRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = dotRef.current.getBoundingClientRect();
 
-            dispatch(dragDot(mousePos, { id, domRect }));
+            dispatch(dragDot(mouseOffset, { id, domRect }));
         }
     });
 

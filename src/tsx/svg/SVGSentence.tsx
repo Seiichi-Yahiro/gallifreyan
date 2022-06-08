@@ -22,10 +22,10 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (sentenceRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = sentenceRef.current.getBoundingClientRect();
 
-            dispatch(dragSentence(mousePos, { id, domRect }));
+            dispatch(dragSentence(mouseOffset, { id, domRect }));
         }
     });
 

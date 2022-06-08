@@ -27,10 +27,10 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (wordRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = wordRef.current.getBoundingClientRect();
 
-            dispatch(dragWord(mousePos, { id, domRect }));
+            dispatch(dragWord(mouseOffset, { id, domRect }));
         }
     });
 

@@ -33,10 +33,10 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (slotCircleRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = slotCircleRef.current.getBoundingClientRect();
 
-            dispatch(dragLineSlot(mousePos, { id, domRect }));
+            dispatch(dragLineSlot(mouseOffset, { id, domRect }));
         }
     });
 

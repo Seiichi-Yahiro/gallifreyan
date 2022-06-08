@@ -52,10 +52,10 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (consonantRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = consonantRef.current.getBoundingClientRect();
 
-            dispatch(dragConsonant(mousePos, { id, domRect }));
+            dispatch(dragConsonant(mouseOffset, { id, domRect }));
         }
     });
 
@@ -130,10 +130,10 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
 
     const onMouseDown = useDragAndDrop(id, (event) => {
         if (vocalRef.current) {
-            const mousePos: Position = { x: event.clientX, y: event.clientY };
+            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             const domRect = vocalRef.current.getBoundingClientRect();
 
-            dispatch(dragVocal(mousePos, { id: id, domRect }));
+            dispatch(dragVocal(mouseOffset, { id: id, domRect }));
         }
     });
 
