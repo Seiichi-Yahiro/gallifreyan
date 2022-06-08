@@ -6,7 +6,6 @@ import { Dot, UUID } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectDot } from '../state/work/WorkThunks';
-import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 
@@ -21,14 +20,7 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
     const dispatch = useAppDispatch();
     const dotRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (dotRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = dotRef.current.getBoundingClientRect();
-
-            dispatch(dragDot(mouseOffset, { id, domRect }));
-        }
-    });
+    useDragAndDrop(id, dotRef.current, dragDot);
 
     return (
         <Group
@@ -55,7 +47,6 @@ const SVGDot: React.FunctionComponent<DotProps> = ({ id }) => {
                     },
                     [id, isSelected]
                 )}
-                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />

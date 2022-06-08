@@ -7,7 +7,6 @@ import { ConsonantPlacement, ImageType, Letter, UUID, Word } from '../state/imag
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectWord } from '../state/work/WorkThunks';
-import { Position } from '../utils/LinearAlgebra';
 import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
@@ -25,14 +24,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
         isSelected && state.work.selection!.isDragging ? state.work.selection!.angleConstraints : undefined
     );
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (wordRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = wordRef.current.getBoundingClientRect();
-
-            dispatch(dragWord(mouseOffset, { id, domRect }));
-        }
-    });
+    useDragAndDrop(id, wordRef.current, dragWord);
 
     return (
         <>
@@ -67,7 +59,6 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
                         },
                         [id, isSelected]
                     )}
-                    onMouseDown={onMouseDown}
                     onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                     onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
                 />

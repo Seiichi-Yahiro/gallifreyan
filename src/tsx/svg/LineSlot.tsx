@@ -31,14 +31,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const direction: Vector2 = mul(normalize(translation), lineLength);
     const lineEnd: Position = add(translation, direction);
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (slotCircleRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = slotCircleRef.current.getBoundingClientRect();
-
-            dispatch(dragLineSlot(mouseOffset, { id, domRect }));
-        }
-    });
+    useDragAndDrop(id, slotCircleRef.current, dragLineSlot);
 
     return (
         <Group
@@ -63,7 +56,6 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                     }
                     event.stopPropagation();
                 }}
-                onMouseDown={onMouseDown}
                 onMouseEnter={() => dispatch(setHovering(id))}
                 onMouseLeave={() => dispatch(setHovering())}
             />

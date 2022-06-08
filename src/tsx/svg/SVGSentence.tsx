@@ -6,7 +6,6 @@ import { Sentence, UUID } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectSentence } from '../state/work/WorkThunks';
-import { Position } from '../utils/LinearAlgebra';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';
@@ -20,14 +19,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
     const dispatch = useAppDispatch();
     const sentenceRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (sentenceRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = sentenceRef.current.getBoundingClientRect();
-
-            dispatch(dragSentence(mouseOffset, { id, domRect }));
-        }
-    });
+    useDragAndDrop(id, sentenceRef.current, dragSentence);
 
     return (
         <Group
@@ -52,7 +44,6 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
                     },
                     [id, isSelected]
                 )}
-                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />

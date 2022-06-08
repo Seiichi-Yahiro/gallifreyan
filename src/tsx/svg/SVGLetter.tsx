@@ -7,7 +7,6 @@ import { Circle, Consonant, ConsonantPlacement, ImageType, Letter, UUID, Vocal }
 import { useCircleSelector } from '../state/Selectors';
 import { setHovering } from '../state/work/WorkActions';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
-import { Position } from '../utils/LinearAlgebra';
 import { calculateTranslation } from '../utils/TextTransforms';
 import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
@@ -50,14 +49,7 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (consonantRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = consonantRef.current.getBoundingClientRect();
-
-            dispatch(dragConsonant(mouseOffset, { id, domRect }));
-        }
-    });
+    useDragAndDrop(id, consonantRef.current, dragConsonant);
 
     return (
         <Group
@@ -85,7 +77,6 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
                     },
                     [id, isSelected]
                 )}
-                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
@@ -128,14 +119,7 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
     const dispatch = useAppDispatch();
     const vocalRef = useRef<SVGCircleElement>(null);
 
-    const onMouseDown = useDragAndDrop(id, (event) => {
-        if (vocalRef.current) {
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            const domRect = vocalRef.current.getBoundingClientRect();
-
-            dispatch(dragVocal(mouseOffset, { id: id, domRect }));
-        }
-    });
+    useDragAndDrop(id, vocalRef.current, dragVocal);
 
     return (
         <Group
@@ -162,7 +146,6 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
                     },
                     [id, isSelected]
                 )}
-                onMouseDown={onMouseDown}
                 onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
                 onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
