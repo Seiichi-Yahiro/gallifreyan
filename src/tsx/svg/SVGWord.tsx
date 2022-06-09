@@ -1,11 +1,9 @@
-import React, { useCallback, useRef } from 'react';
-import { useAppDispatch } from '../hooks/useAppDispatch';
+import React, { useRef } from 'react';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragWord } from '../state/image/ImageThunks';
 import { ConsonantPlacement, ImageType, Letter, UUID, Word } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
-import { setHovering } from '../state/work/WorkActions';
 import { selectWord } from '../state/work/WorkThunks';
 import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
@@ -17,8 +15,7 @@ interface WordProps {
 }
 
 const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
-    const { circle: word, isHovered, isSelected } = useCircleSelector<Word>(id);
-    const dispatch = useAppDispatch();
+    const { circle: word, isSelected, isHovered } = useCircleSelector<Word>(id);
     const wordRef = useRef<SVGCircleElement>(null);
     const wordAngleConstraints = useRedux((state) =>
         isSelected && state.work.selection!.isDragging ? state.work.selection!.angleConstraints : undefined
@@ -43,6 +40,8 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
                     ))}
                 </mask>
                 <SVGCircle
+                    id={id}
+                    select={selectWord}
                     ref={wordRef}
                     r={word.circle.r}
                     lineSlots={word.lineSlots}
@@ -50,17 +49,6 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
                     fill="transparent"
                     stroke="inherit"
                     mask={`url(#mask_${id})`}
-                    onClick={useCallback(
-                        (event: React.MouseEvent<SVGCircleElement>) => {
-                            if (!isSelected) {
-                                dispatch(selectWord(id));
-                            }
-                            event.stopPropagation();
-                        },
-                        [id, isSelected]
-                    )}
-                    onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                    onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
                 />
                 {word.letters.map((letterId) => (
                     <SVGLetter key={letterId} id={letterId} />

@@ -1,11 +1,9 @@
-import React, { useCallback, useRef } from 'react';
-import { useAppDispatch } from '../hooks/useAppDispatch';
+import React, { useRef } from 'react';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragConsonant, dragVocal } from '../state/image/ImageThunks';
 import { Circle, Consonant, ConsonantPlacement, ImageType, Letter, UUID, Vocal } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
-import { setHovering } from '../state/work/WorkActions';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
 import { calculateTranslation } from '../utils/TextTransforms';
 import AngleConstraints from './AngleConstraints';
@@ -44,7 +42,6 @@ interface ConsonantProps {
 const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
     const { circle: consonant, isSelected, isHovered } = useCircleSelector<Consonant>(id);
     const wordRadius = useRedux((state) => state.image.circles[consonant.parentId]!.circle.r);
-    const dispatch = useAppDispatch();
     const consonantRef = useRef<SVGCircleElement>(null);
 
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);
@@ -62,23 +59,14 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
         >
             {/*This will be invisible if isCut but it is still used to handle mouse events*/}
             <SVGCircle
+                id={id}
+                select={selectConsonant}
                 ref={consonantRef}
                 r={consonant.circle.r}
                 lineSlots={consonant.lineSlots}
                 filled={false}
                 fill="transparent"
                 stroke={isCut ? 'none' : 'inherit'}
-                onClick={useCallback(
-                    (event: React.MouseEvent<SVGCircleElement>) => {
-                        if (!isSelected) {
-                            dispatch(selectConsonant(id));
-                        }
-                        event.stopPropagation();
-                    },
-                    [id, isSelected]
-                )}
-                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
             {/*This will render the circle arc cutting into the word circle*/}
             {isCut && (
@@ -115,8 +103,7 @@ interface VocalProps {
 }
 
 const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
-    const { circle: vocal, isHovered, isSelected } = useCircleSelector<Vocal>(id);
-    const dispatch = useAppDispatch();
+    const { circle: vocal, isSelected, isHovered } = useCircleSelector<Vocal>(id);
     const vocalRef = useRef<SVGCircleElement>(null);
 
     useDragAndDrop(id, vocalRef.current, dragVocal);
@@ -131,23 +118,14 @@ const SVGVocal: React.FunctionComponent<VocalProps> = ({ id, parentType }) => {
             className="group-vocal"
         >
             <SVGCircle
+                id={id}
+                select={selectVocal}
                 ref={vocalRef}
                 r={vocal.circle.r}
                 lineSlots={vocal.lineSlots}
                 filled={false}
                 fill="transparent"
                 stroke="inherit"
-                onClick={useCallback(
-                    (event: React.MouseEvent<SVGCircleElement>) => {
-                        if (!isSelected) {
-                            dispatch(selectVocal(id));
-                        }
-                        event.stopPropagation();
-                    },
-                    [id, isSelected]
-                )}
-                onMouseEnter={useCallback(() => dispatch(setHovering(id)), [id])}
-                onMouseLeave={useCallback(() => dispatch(setHovering()), [])}
             />
         </Group>
     );

@@ -1,7 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
-import useHover from '../hooks/useHover';
 import { useRedux } from '../hooks/useRedux';
 import { dragLineSlot } from '../state/image/ImageThunks';
 import { UUID } from '../state/image/ImageTypes';
@@ -22,7 +21,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
     const isHoveredSlot = useIsHoveredSelector(id);
     const isSelectedSlot = useIsSelectedSelector(id);
     const slotCircleRef = useRef<SVGCircleElement>(null);
-    const { isHovered: isHoveredConnection, toggleHover: toggleConnectionHover } = useHover();
+    const [isHoveredConnection, setIsHoveredConnection] = useState(false);
 
     const translation = calculateTranslation(lineSlot.angle, lineSlot.distance);
 
@@ -51,9 +50,7 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 fill="transparent"
                 stroke={isHoveredSlot || isSelectedSlot ? 'inherit' : 'none'}
                 onClick={(event) => {
-                    if (!isSelectedSlot) {
-                        dispatch(selectLineSlot(id));
-                    }
+                    dispatch(selectLineSlot(id));
                     event.stopPropagation();
                 }}
                 onMouseEnter={() => dispatch(setHovering(id))}
@@ -65,8 +62,8 @@ const SVGLineSlot: React.FunctionComponent<SVGLineSlotProps> = ({ id }) => {
                 r={5}
                 fill="transparent"
                 stroke={isHoveredConnection ? 'inherit' : 'none'}
-                onMouseEnter={toggleConnectionHover(true)}
-                onMouseLeave={toggleConnectionHover(false)}
+                onMouseEnter={() => setIsHoveredConnection(true)}
+                onMouseLeave={() => setIsHoveredConnection(false)}
             />
         </Group>
     );

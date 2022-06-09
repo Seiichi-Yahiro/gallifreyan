@@ -30,7 +30,11 @@ const reducer = createReducer(createInitialState, (builder) =>
             }
         })
         .addCase(setHovering, (state, { payload }) => {
-            state.hovering = payload;
+            if (state.selection?.isDragging) {
+                state.hovering = undefined;
+            } else {
+                state.hovering = payload;
+            }
         })
         .addCase(setIsDragging, (state, { payload }) => {
             if (state.selection) {
