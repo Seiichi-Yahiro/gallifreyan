@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AppThunkAction } from '../state/AppState';
 import { UUID } from '../state/image/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
-import { Position } from '../utils/LinearAlgebra';
+import { Position, sub } from '../utils/LinearAlgebra';
 import { useAppDispatch } from './useAppDispatch';
 import useEventListener from './useEventListener';
 import { setIsDragging as reduxSetIsDragging } from '../state/work/WorkActions';
@@ -19,8 +19,8 @@ export const useDragAndDrop = (
     const [isDragging, setIsDragging] = useState(false);
 
     useEventListener(
-        'mousedown',
-        () => {
+        'mousedown touchstart',
+        (_event: MouseEvent | TouchEvent) => {
             if (isSelected) {
                 setIsDragging(true);
                 dispatch(reduxSetIsDragging(true));
@@ -35,6 +35,7 @@ export const useDragAndDrop = (
         'mousemove',
         (event: MouseEvent) => {
             event.preventDefault();
+
             const domRect = target!.getBoundingClientRect();
             const mouseOffset: Position = { x: event.movementX, y: event.movementY };
             dispatch(dragAction(id, domRect, mouseOffset));
@@ -42,11 +43,33 @@ export const useDragAndDrop = (
         eventTarget
     );
 
+    const previousTouchPositionRef = useRef<Position>();
+
     useEventListener(
-        'mouseup',
-        () => {
+        'touchmove',
+        (event: TouchEvent) => {
+            event.preventDefault();
+
+            const domRect = target!.getBoundingClientRect();
+
+            const touch = event.touches[0];
+            const touchPosition = { x: touch.clientX, y: touch.clientY };
+            const previousTouchPosition = previousTouchPositionRef.current ?? touchPosition;
+
+            const touchOffset: Position = sub(touchPosition, previousTouchPosition);
+            dispatch(dragAction(id, domRect, touchOffset));
+
+            previousTouchPositionRef.current = { x: touch.clientX, y: touch.clientY };
+        },
+        eventTarget
+    );
+
+    useEventListener(
+        'mouseup touchend',
+        (_event: MouseEvent | TouchEvent) => {
             setIsDragging(false);
             dispatch(reduxSetIsDragging(false));
+            previousTouchPositionRef.current = undefined;
         },
         eventTarget
     );
