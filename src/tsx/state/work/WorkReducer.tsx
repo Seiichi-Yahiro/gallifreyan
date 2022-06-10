@@ -1,6 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { UUID } from '../image/ImageTypes';
-import { setHovering, setSelection, setIsDragging, setExpandedTreeNodes, setTextInput } from './WorkActions';
+import {
+    setHovering,
+    setSelection,
+    setIsDragging,
+    setExpandedTreeNodes,
+    setTextInput,
+    setJustDragged,
+} from './WorkActions';
 import { Selection } from './WorkTypes';
 
 export interface WorkState {
@@ -23,9 +30,10 @@ const reducer = createReducer(createInitialState, (builder) =>
                     id: payload.id,
                     type: payload.type,
                     isDragging: false,
+                    justDragged: false,
                     angleConstraints: payload.angleConstraints,
                 };
-            } else {
+            } else if (!state.selection?.justDragged) {
                 state.selection = undefined;
             }
         })
@@ -39,6 +47,11 @@ const reducer = createReducer(createInitialState, (builder) =>
         .addCase(setIsDragging, (state, { payload }) => {
             if (state.selection) {
                 state.selection.isDragging = payload;
+            }
+        })
+        .addCase(setJustDragged, (state, { payload }) => {
+            if (state.selection) {
+                state.selection.justDragged = payload;
             }
         })
         .addCase(setTextInput, (state, { payload }) => {

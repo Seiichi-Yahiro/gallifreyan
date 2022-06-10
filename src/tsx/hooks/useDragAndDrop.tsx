@@ -5,7 +5,7 @@ import { useIsSelectedSelector } from '../state/Selectors';
 import { Position, sub } from '../utils/LinearAlgebra';
 import { useAppDispatch } from './useAppDispatch';
 import useEventListener from './useEventListener';
-import { setIsDragging as reduxSetIsDragging } from '../state/work/WorkActions';
+import { setIsDragging as reduxSetIsDragging, setJustDragged } from '../state/work/WorkActions';
 
 export const useDragAndDrop = (
     id: UUID,
@@ -69,6 +69,14 @@ export const useDragAndDrop = (
         (_event: MouseEvent | TouchEvent) => {
             setIsDragging(false);
             dispatch(reduxSetIsDragging(false));
+
+            // this is used to prevent deselect after dragging
+            // it works but it's not 100% reliable
+            dispatch(setJustDragged(true));
+            setTimeout(() => {
+                dispatch(setJustDragged(false));
+            }, 100);
+
             previousTouchPositionRef.current = undefined;
         },
         eventTarget

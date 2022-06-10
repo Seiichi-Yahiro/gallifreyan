@@ -5,6 +5,7 @@ export interface Selection {
     id: UUID;
     type: ImageType;
     isDragging: boolean;
+    justDragged: boolean;
     angleConstraints?: AngleConstraints;
 }
 
