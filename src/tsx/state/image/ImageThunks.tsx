@@ -10,7 +10,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData } from './ImageTypes';
+import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData, ConsonantPlacement } from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -121,9 +121,47 @@ export const updateConsonantRadius =
 
 export const moveConsonant =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, _getState) => {
-        // TODO validation
-        dispatch(updateCircleData({ id, circle: positionData }));
+    (dispatch, getState) => {
+        const state = getState();
+        const consonant = state.image.circles[id] as Consonant;
+        const word = state.image.circles[consonant.parentId] as Word;
+        const { minAngle, maxAngle } = state.work.selection!.angleConstraints!;
+
+        const angle = clampAngle(positionData.angle ?? consonant.circle.angle, minAngle, maxAngle);
+
+        let distance = positionData.distance ?? consonant.circle.distance;
+
+        switch (consonant.placement) {
+            case ConsonantPlacement.DeepCut:
+                {
+                    distance = clamp(
+                        distance,
+                        word.circle.r - consonant.circle.r * 0.95,
+                        word.circle.r - consonant.circle.r * 0.5
+                    );
+                }
+                break;
+            case ConsonantPlacement.ShallowCut:
+                {
+                    distance = clamp(distance, word.circle.r, word.circle.r + consonant.circle.r * 0.95);
+                }
+                break;
+            case ConsonantPlacement.Inside:
+                {
+                    distance = clamp(distance, 0, word.circle.r - consonant.circle.r);
+                }
+                break;
+            case ConsonantPlacement.OnLine:
+                distance = consonant.circle.distance;
+                break;
+        }
+
+        dispatch(updateCircleData({ id, circle: { distance, angle } }));
+
+        if (consonant.vocal) {
+            // TODO update nested vocal
+            //dispatch(moveVocal(consonant.vocal, {}));
+        }
     };
 
 export const dragConsonant =

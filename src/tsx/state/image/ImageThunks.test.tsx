@@ -1,6 +1,6 @@
 import { createTestStore } from '../../utils/TestUtils';
-import { selectDot, selectSentence, selectWord } from '../work/WorkThunks';
-import { moveDot, moveSentence, moveWord } from './ImageThunks';
+import { selectConsonant, selectDot, selectSentence, selectWord } from '../work/WorkThunks';
+import { moveConsonant, moveDot, moveSentence, moveWord } from './ImageThunks';
 import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence, Word } from './ImageTypes';
 
 describe('ImageThunks', () => {
@@ -207,6 +207,209 @@ describe('ImageThunks', () => {
 
             const state = store.getState();
             const circle = state.image.circles[words[2].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 360 });
+        });
+    });
+
+    describe('Move consonant', () => {
+        const setup = () => {
+            const word: Word = {
+                id: '0',
+                circle: { distance: 0, angle: 0, r: 100 },
+                letters: ['1', '2', '3', '4'],
+                lineSlots: [],
+                parentId: '',
+                text: '',
+                type: ImageType.Word,
+            };
+
+            const consonants = [
+                ConsonantPlacement.DeepCut,
+                ConsonantPlacement.Inside,
+                ConsonantPlacement.ShallowCut,
+                ConsonantPlacement.OnLine,
+            ].map<Consonant>((placement, i) => ({
+                circle: { distance: 250, angle: i * 90, r: 10 },
+                id: (i + 1).toString(),
+                dots: [],
+                lineSlots: [],
+                parentId: word.id,
+                text: '',
+                type: ImageType.Consonant,
+                placement,
+                decoration: ConsonantDecoration.None,
+            }));
+
+            const store = createTestStore({
+                image: {
+                    rootCircleId: '',
+                    circles: {
+                        [consonants[0].id]: consonants[0],
+                        [consonants[1].id]: consonants[1],
+                        [consonants[2].id]: consonants[2],
+                        [consonants[3].id]: consonants[3],
+                        [word.id]: word,
+                    },
+                    lineSlots: {},
+                    lineConnections: {},
+                    svgSize: 1000,
+                },
+            });
+
+            return { store, consonants };
+        };
+
+        it('should adjust deep cut consonant being outside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[0].id));
+            store.dispatch(moveConsonant(consonants[0].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[0].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(100);
+        });
+
+        it('should adjust deep cut consonant being inside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[0].id));
+            store.dispatch(moveConsonant(consonants[0].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[0].id]!.circle;
+
+            expect(circle.distance).toBeGreaterThan(90);
+        });
+
+        it('should adjust inside consonant being outside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[1].id));
+            store.dispatch(moveConsonant(consonants[1].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[1].id]!.circle;
+
+            expect(circle.distance).toBe(90);
+        });
+
+        it('should adjust inside consonant on word line', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[1].id));
+            store.dispatch(moveConsonant(consonants[1].id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[1].id]!.circle;
+
+            expect(circle.distance).toBe(90);
+        });
+
+        it('should not adjust inside consonant being inside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[1].id));
+            store.dispatch(moveConsonant(consonants[1].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[1].id]!.circle;
+
+            expect(circle.distance).toBe(0);
+        });
+
+        it('should adjust shallow cut consonant being outside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[2].id));
+            store.dispatch(moveConsonant(consonants[2].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[2].id]!.circle;
+
+            expect(circle.distance).toBeLessThan(110);
+        });
+
+        it('should adjust shallow cut consonant being inside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[2].id));
+            store.dispatch(moveConsonant(consonants[2].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[2].id]!.circle;
+
+            expect(circle.distance).toBeGreaterThanOrEqual(100);
+        });
+
+        it('should adjust online consonant being outside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[3].id));
+            store.dispatch(moveConsonant(consonants[3].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[3].id]!.circle;
+
+            expect(circle.distance).toBeGreaterThanOrEqual(100);
+        });
+
+        it('should not adjust online consonant on word line', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[3].id));
+            store.dispatch(moveConsonant(consonants[3].id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[3].id]!.circle;
+
+            expect(circle.distance).toBeGreaterThanOrEqual(100);
+        });
+
+        it('should adjust online consonant being inside of word', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[3].id));
+            store.dispatch(moveConsonant(consonants[3].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[3].id]!.circle;
+
+            expect(circle.distance).toBeGreaterThanOrEqual(100);
+        });
+
+        it('should adjust first consonant angle if less than 0 degrees', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[0].id));
+            store.dispatch(moveConsonant(consonants[0].id, { angle: -10 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[0].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 0 });
+        });
+
+        it('should adjust consonant angle to stay after lesser angle consonant', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[2].id));
+            store.dispatch(moveConsonant(consonants[2].id, { angle: 80 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[2].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 90 });
+        });
+
+        it('should adjust consonant angle to stay before greater angle consonant', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[2].id));
+            store.dispatch(moveConsonant(consonants[2].id, { angle: 280 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[2].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 270 });
+        });
+
+        it('should adjust last consonant angle if greater than 360 degrees', () => {
+            const { store, consonants } = setup();
+            store.dispatch(selectConsonant(consonants[3].id));
+            store.dispatch(moveConsonant(consonants[3].id, { angle: 370 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[consonants[3].id]!.circle;
 
             expect(circle).toMatchObject({ angle: 360 });
         });
