@@ -3,7 +3,8 @@ import { useEffect, useRef } from 'react';
 const useEventListener = <E extends Event>(
     eventNames: string,
     handler: (event: E) => void,
-    element: EventTarget | undefined | null
+    element: EventTarget | undefined | null,
+    options?: AddEventListenerOptions
 ) => {
     const savedHandler = useRef(handler);
 
@@ -23,7 +24,7 @@ const useEventListener = <E extends Event>(
         }
 
         events.forEach((eventName) => {
-            element.addEventListener(eventName, eventListener);
+            element.addEventListener(eventName, eventListener, options);
         });
 
         return () => {

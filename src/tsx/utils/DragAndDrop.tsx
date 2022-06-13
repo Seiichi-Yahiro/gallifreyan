@@ -17,12 +17,12 @@ import {
 } from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
-const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
+export const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
     x: left + width / 2,
     y: top + height / 2,
 });
 
-const calculateDistance = (newPosition: Position, parentPos: Position): number => {
+export const calculateDistance = (newPosition: Position, parentPos: Position): number => {
     const vec = sub(newPosition, parentPos);
     return length(vec);
 };

@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Slider, TextField } from '@mui/material';
 import React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
@@ -26,6 +26,7 @@ import {
     Vocal,
     VocalPlacement,
 } from '../../state/image/ImageTypes';
+import CircularSlider from './CircularSlider';
 
 interface SettingsProps {
     className?: string;
@@ -103,13 +104,11 @@ const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({
         dispatch(updateRadius(id, r));
     };
 
-    const changeDistance = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const distance = Number(event.currentTarget.value);
+    const changeDistance = (event: Event, distance: number) => {
         dispatch(updatePositionData(id, { distance }));
     };
 
-    const changeAngle = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const angle = Number(event.currentTarget.value);
+    const changeAngle = (angle: number) => {
         dispatch(updatePositionData(id, { angle }));
     };
 
@@ -122,21 +121,31 @@ const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({
                 value={circleShape.circle.r}
                 onChange={changeRadius}
             />
-            <TextField
+            <Slider
+                valueLabelDisplay="auto"
+                value={circleShape.circle.distance}
+                min={0}
+                max={500}
+                onChange={changeDistance}
+                disabled={disableDistance(circleShape)}
+                track={false}
+            />
+            <CircularSlider radius={50} value={circleShape.circle.angle} onChange={changeAngle} />
+            {/*<TextField
                 type="number"
                 label="Distance"
                 variant="outlined"
                 value={circleShape.circle.distance}
                 onChange={changeDistance}
                 disabled={disableDistance(circleShape)}
-            />
-            <TextField
+            />*/}
+            {/*<TextField
                 type="number"
                 label="Angle"
                 variant="outlined"
                 value={circleShape.circle.angle}
                 onChange={changeAngle}
-            />
+            />*/}
         </>
     );
 };
