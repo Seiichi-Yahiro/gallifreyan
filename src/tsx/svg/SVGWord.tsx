@@ -29,6 +29,7 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
             isSelected={isSelected}
             className="group-word"
         >
+            <AngleConstraints radius={word.circle.r} renderFor={word.letters} />
             <mask id={`mask_${id}`}>
                 <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
                 {word.letters.map((letterId) => (
@@ -49,7 +50,6 @@ const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
             {word.letters.map((letterId) => (
                 <SVGLetter key={letterId} id={letterId} />
             ))}
-            <AngleConstraints radius={word.circle.r} renderFor={word.letters} />
         </Group>
     );
 };

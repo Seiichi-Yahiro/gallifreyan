@@ -28,6 +28,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
             isSelected={isSelected}
             className="group-sentence"
         >
+            <AngleConstraints radius={sentence.circle.r} renderFor={sentence.words} />
             <SVGCircle
                 id={id}
                 select={selectSentence}
@@ -39,7 +40,6 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
             {sentence.words.map((wordId) => (
                 <SVGWord key={wordId} id={wordId} />
             ))}
-            <AngleConstraints radius={sentence.circle.r} renderFor={sentence.words} />
         </Group>
     );
 };
