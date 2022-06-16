@@ -43,13 +43,6 @@ export const setSentenceConstraints =
         );
     };
 
-export const selectSentence =
-    (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Sentence }));
-        dispatch(setSentenceConstraints(id));
-    };
-
 export const setWordConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
@@ -72,13 +65,6 @@ export const setWordConstraints =
         );
     };
 
-export const selectWord =
-    (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Word }));
-        dispatch(setWordConstraints(id));
-    };
-
 export const setConsonantConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
@@ -96,13 +82,6 @@ export const setConsonantConstraints =
         const distanceConstraints = calculateConsonantDistanceConstraints(consonant, word);
 
         dispatch(setConstraints({ angle: angleConstraints, distance: distanceConstraints }));
-    };
-
-export const selectConsonant =
-    (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Consonant }));
-        dispatch(setConsonantConstraints(id));
     };
 
 export const setVocalConstraints =
@@ -129,13 +108,6 @@ export const setVocalConstraints =
         }
     };
 
-export const selectVocal =
-    (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Vocal }));
-        dispatch(setVocalConstraints(id));
-    };
-
 export const setDotConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
@@ -151,13 +123,6 @@ export const setDotConstraints =
         );
     };
 
-export const selectDot =
-    (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.Dot }));
-        dispatch(setDotConstraints(id));
-    };
-
 export const setLineSlotConstraints =
     (_id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
@@ -168,9 +133,23 @@ export const setLineSlotConstraints =
         dispatch(setConstraints({}));
     };
 
-export const selectLineSlot =
+const createSelectThunk =
+    (type: ImageType, setConstraints: (id: UUID) => AppThunkAction) =>
     (id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(setSelection({ id, type: ImageType.LineSlot }));
-        dispatch(setLineSlotConstraints(id));
+    (dispatch, getState) => {
+        const state = getState();
+
+        if (state.work.selection?.id === id) {
+            return;
+        }
+
+        dispatch(setSelection({ id, type }));
+        dispatch(setConstraints(id));
     };
+
+export const selectSentence = createSelectThunk(ImageType.Sentence, setSentenceConstraints);
+export const selectWord = createSelectThunk(ImageType.Word, setWordConstraints);
+export const selectConsonant = createSelectThunk(ImageType.Consonant, setConsonantConstraints);
+export const selectVocal = createSelectThunk(ImageType.Vocal, setVocalConstraints);
+export const selectDot = createSelectThunk(ImageType.Dot, setDotConstraints);
+export const selectLineSlot = createSelectThunk(ImageType.LineSlot, setLineSlotConstraints);
