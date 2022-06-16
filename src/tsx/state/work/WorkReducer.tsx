@@ -7,6 +7,7 @@ import {
     setExpandedTreeNodes,
     setTextInput,
     setJustDragged,
+    setConstraints,
 } from './WorkActions';
 import { Selection } from './WorkTypes';
 
@@ -31,10 +32,27 @@ const reducer = createReducer(createInitialState, (builder) =>
                     type: payload.type,
                     isDragging: false,
                     justDragged: false,
-                    angleConstraints: payload.angleConstraints,
+                    constraints: {
+                        angle: {
+                            minAngle: 0,
+                            maxAngle: 360,
+                        },
+                        distance: {
+                            minDistance: 0,
+                            maxDistance: Infinity,
+                        },
+                    },
                 };
             } else if (!state.selection?.justDragged) {
                 state.selection = undefined;
+            }
+        })
+        .addCase(setConstraints, (state, { payload }) => {
+            if (state.selection) {
+                state.selection.constraints = {
+                    ...state.selection.constraints,
+                    ...payload,
+                };
             }
         })
         .addCase(setHovering, (state, { payload }) => {

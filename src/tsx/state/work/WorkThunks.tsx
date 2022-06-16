@@ -1,11 +1,10 @@
+import { calculateConsonantDistanceConstraints, calculateNeighborAngleConstraints } from '../../utils/Constraints';
 import { isValidLetter } from '../../utils/LetterGroups';
-import Maybe from '../../utils/Maybe';
 import { splitWordToChars } from '../../utils/TextConverter';
 import { AppThunkAction } from '../AppState';
 import { setSentence } from '../image/ImageThunks';
-import { CircleShape, Consonant, ImageType, Sentence, UUID, Vocal, Word } from '../image/ImageTypes';
-import { setExpandedTreeNodes, setSelection, setTextInput } from './WorkActions';
-import { AngleConstraints } from './WorkTypes';
+import { Consonant, Dot, ImageType, Sentence, UUID, Vocal, Word } from '../image/ImageTypes';
+import { setConstraints, setExpandedTreeNodes, setSelection, setTextInput } from './WorkActions';
 
 export const setInputText =
     (text: string): AppThunkAction =>
@@ -29,49 +28,84 @@ export const setInputText =
         }
     };
 
+export const setSentenceConstraints =
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const sentence = state.image.circles[id] as Sentence;
+        const svgSize = state.image.svgSize;
+
+        dispatch(
+            setConstraints({
+                angle: { minAngle: 0, maxAngle: 360 },
+                distance: { minDistance: 0, maxDistance: svgSize / 2 - sentence.circle.r },
+            })
+        );
+    };
+
 export const selectSentence =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
         dispatch(setSelection({ id, type: ImageType.Sentence }));
+        dispatch(setSentenceConstraints(id));
     };
 
-export const selectWord =
+export const setWordConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const word = state.image.circles[id] as Word;
         const sentence = state.image.circles[word.parentId] as Sentence;
 
-        const angleConstraints = calculateAngleConstraints(id, sentence.circle.r, sentence.words, state.image.circles);
+        const angleConstraints = calculateNeighborAngleConstraints(
+            id,
+            sentence.circle.r,
+            sentence.words,
+            state.image.circles
+        );
 
         dispatch(
-            setSelection({
-                id,
-                type: ImageType.Word,
-                angleConstraints,
+            setConstraints({
+                angle: angleConstraints,
+                distance: { minDistance: 0, maxDistance: sentence.circle.r - word.circle.r },
             })
         );
     };
 
-export const selectConsonant =
+export const selectWord =
+    (id: UUID): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(setSelection({ id, type: ImageType.Word }));
+        dispatch(setWordConstraints(id));
+    };
+
+export const setConsonantConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const consonant = state.image.circles[id] as Consonant;
         const word = state.image.circles[consonant.parentId] as Word;
 
-        const angleConstraints = calculateAngleConstraints(id, word.circle.r, word.letters, state.image.circles);
-
-        dispatch(
-            setSelection({
-                id,
-                type: ImageType.Consonant,
-                angleConstraints,
-            })
+        const angleConstraints = calculateNeighborAngleConstraints(
+            id,
+            word.circle.r,
+            word.letters,
+            state.image.circles
         );
+
+        const distanceConstraints = calculateConsonantDistanceConstraints(consonant, word);
+
+        dispatch(setConstraints({ angle: angleConstraints, distance: distanceConstraints }));
     };
 
-export const selectVocal =
+export const selectConsonant =
+    (id: UUID): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(setSelection({ id, type: ImageType.Consonant }));
+        dispatch(setConsonantConstraints(id));
+    };
+
+export const setVocalConstraints =
     (id: UUID): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -80,46 +114,63 @@ export const selectVocal =
 
         // if nested vocal
         if (parent.type === ImageType.Consonant) {
-            dispatch(setSelection({ id, type: ImageType.Vocal }));
+            // TODO nested vocal constraints
+            dispatch(setConstraints({}));
         } else {
             const word = parent;
-            const angleConstraints = calculateAngleConstraints(id, word.circle.r, word.letters, state.image.circles);
-            dispatch(setSelection({ id, type: ImageType.Vocal, angleConstraints }));
+            const angleConstraints = calculateNeighborAngleConstraints(
+                id,
+                word.circle.r,
+                word.letters,
+                state.image.circles
+            );
+            // TODO distance constraints
+            dispatch(setConstraints({ angle: angleConstraints }));
         }
+    };
+
+export const selectVocal =
+    (id: UUID): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(setSelection({ id, type: ImageType.Vocal }));
+        dispatch(setVocalConstraints(id));
+    };
+
+export const setDotConstraints =
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const dot = state.image.circles[id] as Dot;
+        const consonant = state.image.circles[dot.parentId] as Consonant;
+
+        dispatch(
+            setConstraints({
+                angle: { minAngle: 0, maxAngle: 360 },
+                distance: { minDistance: 0, maxDistance: consonant.circle.r },
+            })
+        );
     };
 
 export const selectDot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
         dispatch(setSelection({ id, type: ImageType.Dot }));
+        dispatch(setDotConstraints(id));
+    };
+
+export const setLineSlotConstraints =
+    (_id: UUID): AppThunkAction =>
+    (dispatch, _getState) => {
+        // TODO
+        //const state = getState();
+        //const lineSlot = state.image.lineSlots[id]!;
+
+        dispatch(setConstraints({}));
     };
 
 export const selectLineSlot =
     (id: UUID): AppThunkAction =>
     (dispatch, _getState) => {
         dispatch(setSelection({ id, type: ImageType.LineSlot }));
+        dispatch(setLineSlotConstraints(id));
     };
-
-const calculateAngleConstraints = (
-    id: UUID,
-    parentRadius: number,
-    siblings: UUID[],
-    circles: Partial<Record<UUID, CircleShape>>
-): AngleConstraints => {
-    const index = siblings.findIndex((siblingId) => siblingId === id);
-
-    const minAngle = Maybe.of(siblings[index - 1])
-        .map((siblingId) => circles[siblingId])
-        .map((sibling) => sibling.circle.angle)
-        .unwrapOr(0);
-
-    const maxAngle = Maybe.of(siblings[index + 1])
-        .map((siblingId) => circles[siblingId])
-        .map((letter) => letter.circle.angle)
-        .unwrapOr(360);
-
-    return {
-        minAngle,
-        maxAngle,
-    };
-};

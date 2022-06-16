@@ -1,10 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
 import { UUID } from '../image/ImageTypes';
-import { Selection } from './WorkTypes';
+import { Constraints, Selection } from './WorkTypes';
 
-export const setSelection = createAction<
-    (Pick<Selection, 'id' | 'type'> & Partial<Pick<Selection, 'angleConstraints'>>) | undefined
->('work/setSelection');
+export const setSelection = createAction<Pick<Selection, 'id' | 'type'> | undefined>('work/setSelection');
+
+export const setConstraints = createAction<Partial<Constraints>>('work/setConstraints');
 
 export const setIsDragging = createAction<boolean>('work/isDragging');
 export const setJustDragged = createAction<boolean>('work/setJustDragged');

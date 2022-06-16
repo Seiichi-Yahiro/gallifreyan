@@ -1,6 +1,5 @@
-import { calculatePositionData, constrainDistanceOnAngle } from '../../utils/DragAndDrop';
+import { calculatePositionData } from '../../utils/DragAndDrop';
 import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
-import { calculateTranslation } from '../../utils/TextTransforms';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
 import {
@@ -10,7 +9,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData, ConsonantPlacement } from './ImageTypes';
+import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData } from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -53,10 +52,19 @@ export const moveSentence =
     (dispatch, getState) => {
         const state = getState();
         const sentence = state.image.circles[id] as Sentence;
-        const svgSize = state.image.svgSize;
+        const constraints = state.work.selection!.constraints;
 
-        const distance = clamp(positionData.distance ?? sentence.circle.distance, 0, svgSize / 2 - sentence.circle.r);
-        const angle = clampAngle(positionData.angle ?? sentence.circle.angle, 0, 360);
+        const distance = clamp(
+            positionData.distance ?? sentence.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
+
+        const angle = clampAngle(
+            positionData.angle ?? sentence.circle.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
     };
@@ -83,23 +91,21 @@ export const moveWord =
     (dispatch, getState) => {
         const state = getState();
         const word = state.image.circles[id] as Word;
-        const sentence = state.image.circles[word.parentId] as Sentence;
-        const { minAngle, maxAngle } = state.work.selection!.angleConstraints!;
+        const constraints = state.work.selection!.constraints;
 
-        const distance = positionData.distance ?? word.circle.distance;
-        const angle = positionData.angle ?? word.circle.angle;
+        const angle = clampAngle(
+            positionData.angle ?? word.circle.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
 
-        const constrainedAngle = clampAngle(angle, minAngle, maxAngle);
-        let constrainedDistance = distance;
+        const distance = clamp(
+            positionData.distance ?? word.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
 
-        if (angle < minAngle || angle > maxAngle) {
-            const position = calculateTranslation(angle, distance);
-            constrainedDistance = constrainDistanceOnAngle(position, constrainedAngle);
-        }
-
-        constrainedDistance = clamp(constrainedDistance, 0, sentence.circle.r - word.circle.r);
-
-        dispatch(updateCircleData({ id, circle: { distance: constrainedDistance, angle: constrainedAngle } }));
+        dispatch(updateCircleData({ id, circle: { distance, angle } }));
     };
 
 export const dragWord =
@@ -124,37 +130,19 @@ export const moveConsonant =
     (dispatch, getState) => {
         const state = getState();
         const consonant = state.image.circles[id] as Consonant;
-        const word = state.image.circles[consonant.parentId] as Word;
-        const { minAngle, maxAngle } = state.work.selection!.angleConstraints!;
+        const constraints = state.work.selection!.constraints;
 
-        const angle = clampAngle(positionData.angle ?? consonant.circle.angle, minAngle, maxAngle);
+        const angle = clampAngle(
+            positionData.angle ?? consonant.circle.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
 
-        let distance = positionData.distance ?? consonant.circle.distance;
-
-        switch (consonant.placement) {
-            case ConsonantPlacement.DeepCut:
-                {
-                    distance = clamp(
-                        distance,
-                        word.circle.r - consonant.circle.r * 0.95,
-                        word.circle.r - consonant.circle.r * 0.5
-                    );
-                }
-                break;
-            case ConsonantPlacement.ShallowCut:
-                {
-                    distance = clamp(distance, word.circle.r, word.circle.r + consonant.circle.r * 0.95);
-                }
-                break;
-            case ConsonantPlacement.Inside:
-                {
-                    distance = clamp(distance, 0, word.circle.r - consonant.circle.r);
-                }
-                break;
-            case ConsonantPlacement.OnLine:
-                distance = consonant.circle.distance;
-                break;
-        }
+        const distance = clamp(
+            positionData.distance ?? consonant.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
 
@@ -183,9 +171,24 @@ export const updateVocalRadius =
 
 export const moveVocal =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, _getState) => {
-        // TODO validation
-        dispatch(updateCircleData({ id, circle: positionData }));
+    (dispatch, getState) => {
+        const state = getState();
+        const vocal = state.image.circles[id] as Vocal;
+        const constraints = state.work.selection!.constraints;
+
+        const angle = clampAngle(
+            positionData.angle ?? vocal.circle.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
+
+        const distance = clamp(
+            positionData.distance ?? vocal.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
+
+        dispatch(updateCircleData({ id, circle: { angle, distance } }));
     };
 
 export const dragVocal =
@@ -218,10 +221,20 @@ export const moveDot =
     (dispatch, getState) => {
         const state = getState();
         const dot = state.image.circles[id] as Dot;
-        const consonant = state.image.circles[dot.parentId] as Consonant;
+        const constraints = state.work.selection!.constraints;
 
-        const distance = clamp(positionData.distance ?? dot.circle.distance, 0, consonant.circle.r);
-        const angle = clampAngle(positionData.angle ?? dot.circle.angle, 0, 360);
+        const distance = clamp(
+            positionData.distance ?? dot.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
+
+        const angle = clampAngle(
+            positionData.angle ?? dot.circle.angle,
+
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
     };

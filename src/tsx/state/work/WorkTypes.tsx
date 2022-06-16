@@ -1,3 +1,4 @@
+import { Degree } from '../../utils/LinearAlgebra';
 import { ImageType, UUID } from '../image/ImageTypes';
 
 export interface Selection {
@@ -5,10 +6,20 @@ export interface Selection {
     type: ImageType;
     isDragging: boolean;
     justDragged: boolean;
-    angleConstraints?: AngleConstraints;
+    constraints: Constraints;
+}
+
+export interface Constraints {
+    angle: AngleConstraints;
+    distance: DistanceConstraints;
 }
 
 export interface AngleConstraints {
-    minAngle: number;
-    maxAngle: number;
+    minAngle: Degree;
+    maxAngle: Degree;
+}
+
+export interface DistanceConstraints {
+    minDistance: number;
+    maxDistance: number;
 }
