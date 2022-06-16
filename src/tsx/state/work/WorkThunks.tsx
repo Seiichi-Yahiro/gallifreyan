@@ -1,5 +1,4 @@
 import { isValidLetter } from '../../utils/LetterGroups';
-import { rotate, toRadian, Vector2 } from '../../utils/LinearAlgebra';
 import Maybe from '../../utils/Maybe';
 import { splitWordToChars } from '../../utils/TextConverter';
 import { AppThunkAction } from '../AppState';
@@ -119,12 +118,8 @@ const calculateAngleConstraints = (
         .map((letter) => letter.circle.angle)
         .unwrapOr(360);
 
-    const zeroDegreeVector: Vector2 = { x: 0, y: parentRadius };
-
     return {
         minAngle,
         maxAngle,
-        minAngleVector: rotate(zeroDegreeVector, -toRadian(minAngle)),
-        maxAngleVector: rotate(zeroDegreeVector, -toRadian(maxAngle)),
     };
 };

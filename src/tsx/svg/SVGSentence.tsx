@@ -4,6 +4,7 @@ import { dragSentence } from '../state/image/ImageThunks';
 import { Sentence, UUID } from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { selectSentence } from '../state/work/WorkThunks';
+import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGWord from './SVGWord';
@@ -38,6 +39,7 @@ const SVGSentence: React.FunctionComponent<SentenceProps> = ({ id }) => {
             {sentence.words.map((wordId) => (
                 <SVGWord key={wordId} id={wordId} />
             ))}
+            <AngleConstraints radius={sentence.circle.r} renderFor={sentence.words} />
         </Group>
     );
 };

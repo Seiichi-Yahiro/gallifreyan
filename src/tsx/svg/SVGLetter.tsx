@@ -6,7 +6,6 @@ import { Circle, Consonant, ConsonantPlacement, ImageType, Letter, UUID, Vocal }
 import { useCircleSelector } from '../state/Selectors';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
 import { calculateTranslation } from '../utils/TextTransforms';
-import AngleConstraints from './AngleConstraints';
 import Group, { AnglePlacement } from './Group';
 import { SVGCircle } from './SVGCircle';
 import SVGDot from './SVGDot';
@@ -16,22 +15,15 @@ interface LetterProps {
 }
 
 export const SVGLetter: React.FunctionComponent<LetterProps> = ({ id }) => {
-    const letter = useRedux((state) => state.image.circles[id]) as Letter;
-    const angleConstraints = useRedux((state) =>
-        state.work.selection?.id === id && state.work.selection.isDragging
-            ? state.work.selection.angleConstraints
-            : undefined
+    const letter = useRedux(
+        (state) => state.image.circles[id] as Letter,
+        (left, right) => left.id === right.id && left.type === right.type
     );
 
-    return (
-        <>
-            {letter.type === ImageType.Consonant ? (
-                <SVGConsonant id={letter.id} />
-            ) : (
-                <SVGVocal id={letter.id} parentType={ImageType.Word} />
-            )}
-            {angleConstraints && <AngleConstraints angleConstraints={angleConstraints} />}
-        </>
+    return letter.type === ImageType.Consonant ? (
+        <SVGConsonant id={letter.id} />
+    ) : (
+        <SVGVocal id={letter.id} parentType={ImageType.Word} />
     );
 };
 

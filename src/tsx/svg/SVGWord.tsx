@@ -17,45 +17,40 @@ interface WordProps {
 const SVGWord: React.FunctionComponent<WordProps> = ({ id }) => {
     const { circle: word, isSelected, isHovered } = useCircleSelector<Word>(id);
     const wordRef = useRef<SVGCircleElement>(null);
-    const wordAngleConstraints = useRedux((state) =>
-        isSelected && state.work.selection!.isDragging ? state.work.selection!.angleConstraints : undefined
-    );
 
     useDragAndDrop(id, wordRef.current, dragWord);
 
     return (
-        <>
-            <Group
-                angle={word.circle.angle}
-                distance={word.circle.distance}
-                anglePlacement={AnglePlacement.Absolute}
-                isHovered={isHovered}
-                isSelected={isSelected}
-                className="group-word"
-            >
-                <mask id={`mask_${id}`}>
-                    <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
-                    {word.letters.map((letterId) => (
-                        <SVGLetterCutMask key={letterId} id={letterId} />
-                    ))}
-                </mask>
-                <SVGCircle
-                    id={id}
-                    select={selectWord}
-                    ref={wordRef}
-                    r={word.circle.r}
-                    lineSlots={word.lineSlots}
-                    filled={false}
-                    fill="transparent"
-                    stroke="inherit"
-                    mask={`url(#mask_${id})`}
-                />
+        <Group
+            angle={word.circle.angle}
+            distance={word.circle.distance}
+            anglePlacement={AnglePlacement.Absolute}
+            isHovered={isHovered}
+            isSelected={isSelected}
+            className="group-word"
+        >
+            <mask id={`mask_${id}`}>
+                <circle r={word.circle.r} fill="#000000" stroke="#ffffff" />
                 {word.letters.map((letterId) => (
-                    <SVGLetter key={letterId} id={letterId} />
+                    <SVGLetterCutMask key={letterId} id={letterId} />
                 ))}
-            </Group>
-            {wordAngleConstraints && <AngleConstraints angleConstraints={wordAngleConstraints} />}
-        </>
+            </mask>
+            <SVGCircle
+                id={id}
+                select={selectWord}
+                ref={wordRef}
+                r={word.circle.r}
+                lineSlots={word.lineSlots}
+                filled={false}
+                fill="transparent"
+                stroke="inherit"
+                mask={`url(#mask_${id})`}
+            />
+            {word.letters.map((letterId) => (
+                <SVGLetter key={letterId} id={letterId} />
+            ))}
+            <AngleConstraints radius={word.circle.r} renderFor={word.letters} />
+        </Group>
     );
 };
 
