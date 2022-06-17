@@ -63,6 +63,26 @@ describe('Linear Algebra', () => {
         expect(result).toBe(180);
     });
 
+    it('should clamp angles closer to min when min > max', () => {
+        const result = clampAngle(260, 270, 90);
+        expect(result).toBe(270);
+    });
+
+    it('should clamp angles closer to max when min > max', () => {
+        const result = clampAngle(100, 270, 90);
+        expect(result).toBe(90);
+    });
+
+    it('should not clamp angles in range when min > max 1', () => {
+        const result = clampAngle(10, 270, 90);
+        expect(result).toBe(10);
+    });
+
+    it('should not clamp angles in range when min > max 2', () => {
+        const result = clampAngle(350, 270, 90);
+        expect(result).toBe(350);
+    });
+
     it('should return null for circles with 1 intersection', () => {
         const result = circleIntersections(
             { r: 10, pos: { x: 0, y: 0 } },

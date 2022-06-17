@@ -3,10 +3,10 @@ import React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useRedux } from '../../hooks/useRedux';
 import { AppThunkAction } from '../../state/AppState';
-import { updateLineSlotData } from '../../state/image/ImageActions';
 import {
     moveConsonant,
     moveDot,
+    moveLineSlot,
     moveSentence,
     moveVocal,
     moveWord,
@@ -151,7 +151,7 @@ const LineSlotSettings: React.FunctionComponent<LineSlotSettingsProps> = ({ id }
 
     const changeAngle = (event: React.ChangeEvent<HTMLInputElement>) => {
         const angle = Number(event.currentTarget.value);
-        dispatch(updateLineSlotData({ id, positionData: { angle } }));
+        dispatch(moveLineSlot(id, { angle }));
     };
 
     return (

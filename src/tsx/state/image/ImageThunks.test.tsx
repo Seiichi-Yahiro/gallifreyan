@@ -1,7 +1,20 @@
+import { zip } from 'lodash';
 import { createTestStore } from '../../utils/TestUtils';
-import { selectConsonant, selectDot, selectSentence, selectWord } from '../work/WorkThunks';
-import { moveConsonant, moveDot, moveSentence, moveWord } from './ImageThunks';
-import { Consonant, ConsonantDecoration, ConsonantPlacement, Dot, ImageType, Sentence, Word } from './ImageTypes';
+import { selectConsonant, selectDot, selectLineSlot, selectSentence, selectWord } from '../work/WorkThunks';
+import { moveConsonant, moveDot, moveLineSlot, moveSentence, moveWord } from './ImageThunks';
+import {
+    Consonant,
+    ConsonantDecoration,
+    ConsonantPlacement,
+    Dot,
+    ImageType,
+    LineSlot,
+    Sentence,
+    Vocal,
+    VocalDecoration,
+    VocalPlacement,
+    Word,
+} from './ImageTypes';
 
 describe('ImageThunks', () => {
     describe('Move Sentence', () => {
@@ -513,6 +526,422 @@ describe('ImageThunks', () => {
             const circle = state.image.circles[dot.id]!.circle;
 
             expect(circle).toMatchObject({ angle: 180 });
+        });
+    });
+
+    describe('Move Line Slot', () => {
+        describe('Sentence', () => {
+            const setup = () => {
+                const sentence: Sentence = {
+                    circle: { r: 500, angle: 0, distance: 0 },
+                    id: '0',
+                    lineSlots: ['1'],
+                    text: '',
+                    type: ImageType.Sentence,
+                    words: [],
+                };
+
+                const lineSlot: LineSlot = {
+                    angle: 180,
+                    distance: 500,
+                    id: '1',
+                    parentId: sentence.id,
+                    type: ImageType.LineSlot,
+                };
+
+                const store = createTestStore({
+                    image: {
+                        rootCircleId: '',
+                        circles: { [sentence.id]: sentence },
+                        lineSlots: { [lineSlot.id]: lineSlot },
+                        lineConnections: {},
+                        svgSize: 1000,
+                    },
+                });
+
+                return { lineSlot, store };
+            };
+
+            it('should not change distance', () => {
+                const { lineSlot, store } = setup();
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { distance: 400 }));
+
+                const state = store.getState();
+                const distance = state.image.lineSlots[lineSlot.id]!.distance;
+
+                expect(distance).toBe(500);
+            });
+
+            it('should change angle', () => {
+                const { lineSlot, store } = setup();
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 270 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+
+                expect(angle).toBe(270);
+            });
+        });
+
+        describe('Word', () => {
+            const setup = () => {
+                const word: Word = {
+                    circle: { r: 200, angle: 0, distance: 0 },
+                    id: '0',
+                    lineSlots: ['1'],
+                    parentId: '',
+                    text: '',
+                    type: ImageType.Word,
+                    letters: [],
+                };
+
+                const lineSlot: LineSlot = {
+                    angle: 180,
+                    distance: 200,
+                    id: '1',
+                    parentId: word.id,
+                    type: ImageType.LineSlot,
+                };
+
+                const store = createTestStore({
+                    image: {
+                        rootCircleId: '',
+                        circles: { [word.id]: word },
+                        lineSlots: { [lineSlot.id]: lineSlot },
+                        lineConnections: {},
+                        svgSize: 1000,
+                    },
+                });
+
+                return { lineSlot, store };
+            };
+
+            it('should not change distance', () => {
+                const { lineSlot, store } = setup();
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { distance: 200 }));
+
+                const state = store.getState();
+                const distance = state.image.lineSlots[lineSlot.id]!.distance;
+
+                expect(distance).toBe(200);
+            });
+
+            it('should change angle', () => {
+                const { lineSlot, store } = setup();
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 270 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+
+                expect(angle).toBe(270);
+            });
+        });
+
+        describe('Consonant', () => {
+            const word: Word = {
+                circle: { r: 200, angle: 0, distance: 0 },
+                id: '0',
+                lineSlots: ['1'],
+                parentId: '',
+                text: '',
+                type: ImageType.Word,
+                letters: ['1'],
+            };
+
+            const consonants = [
+                ConsonantPlacement.DeepCut,
+                ConsonantPlacement.Inside,
+                ConsonantPlacement.ShallowCut,
+                ConsonantPlacement.OnLine,
+            ].map<Consonant>((placement, index) => ({
+                circle: {
+                    r: 50,
+                    angle: 0,
+                    distance: {
+                        [ConsonantPlacement.DeepCut]: 225,
+                        [ConsonantPlacement.Inside]: 50,
+                        [ConsonantPlacement.ShallowCut]: 200,
+                        [ConsonantPlacement.OnLine]: 200,
+                    }[placement],
+                },
+                decoration: ConsonantDecoration.SingleLine,
+                dots: [],
+                id: (index + 1).toString(),
+                lineSlots: [],
+                parentId: '0',
+                placement,
+                text: '',
+                type: ImageType.Consonant,
+            }));
+
+            const lineSlots = consonants.map<LineSlot>((consonant, index) => ({
+                angle: 180,
+                distance: 50,
+                id: (index + consonants.length + 1).toString(),
+                parentId: consonant.id,
+                type: ImageType.LineSlot,
+            }));
+
+            const pairs = zip(consonants, lineSlots) as [Consonant, LineSlot][];
+
+            const setupStore = () =>
+                createTestStore({
+                    image: {
+                        rootCircleId: '',
+                        circles: [word, ...consonants].reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
+                        lineSlots: lineSlots.reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
+                        lineConnections: {},
+                        svgSize: 1000,
+                    },
+                });
+
+            pairs.forEach(([consonant, lineSlot]) => {
+                it(`should not change distance for ${consonant.placement}`, () => {
+                    const store = setupStore();
+                    store.dispatch(selectLineSlot(lineSlot.id));
+                    store.dispatch(moveLineSlot(lineSlot.id, { distance: 10 }));
+
+                    const state = store.getState();
+                    const distance = state.image.lineSlots[lineSlot.id]!.distance;
+
+                    expect(distance).toBe(50);
+                });
+            });
+
+            it('should clamp angle to minAngle for DeepCut', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[0];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for DeepCut', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[0];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 350 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
+
+            it('should clamp angle to minAngle for Inside', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[1];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 360 + 10 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for Inside', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[1];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: -360 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
+
+            it('should clamp angle to minAngle for ShallowCut', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[2];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for ShallowCut', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[2];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 350 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
+
+            it('should clamp angle to minAngle for OnLine', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[3];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 360 + 10 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for OnLine', () => {
+                const store = setupStore();
+                const [_consonant, lineSlot] = pairs[3];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: -360 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
+        });
+
+        describe('Vocal', () => {
+            const word: Word = {
+                circle: { r: 200, angle: 0, distance: 0 },
+                id: '0',
+                lineSlots: ['1'],
+                parentId: '',
+                text: '',
+                type: ImageType.Word,
+                letters: ['1'],
+            };
+
+            const vocals = [VocalDecoration.LineInside, VocalDecoration.LineOutside].map<Vocal>(
+                (decoration, index) => ({
+                    circle: { r: 50, angle: 0, distance: 200 },
+                    id: (index + 1).toString(),
+                    lineSlots: [],
+                    parentId: '1',
+                    placement: VocalPlacement.OnLine,
+                    text: '',
+                    type: ImageType.Vocal,
+                    decoration,
+                })
+            );
+
+            const lineSlots = vocals.map<LineSlot>((vocal, index) => ({
+                angle: vocal.decoration === VocalDecoration.LineInside ? 180 : 0,
+                distance: 50,
+                id: (index + vocals.length + 1).toString(),
+                parentId: vocal.id,
+                type: ImageType.LineSlot,
+            }));
+
+            const pairs = zip(vocals, lineSlots) as [Vocal, LineSlot][];
+
+            const setupStore = () =>
+                createTestStore({
+                    image: {
+                        rootCircleId: '',
+                        circles: [word, ...vocals].reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
+                        lineSlots: lineSlots.reduce((acc, it) => ({ ...acc, [it.id]: it }), {}),
+                        lineConnections: {},
+                        svgSize: 1000,
+                    },
+                });
+
+            pairs.forEach(([vocal, lineSlot]) => {
+                it(`should not change distance for ${vocal.decoration}`, () => {
+                    const store = setupStore();
+                    store.dispatch(selectLineSlot(lineSlot.id));
+                    store.dispatch(moveLineSlot(lineSlot.id, { distance: 10 }));
+
+                    const state = store.getState();
+                    const distance = state.image.lineSlots[lineSlot.id]!.distance;
+
+                    expect(distance).toBe(50);
+                });
+            });
+
+            it('should clamp angle to minAngle for LineInside', () => {
+                const store = setupStore();
+                const [_vocal, lineSlot] = pairs[0];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for LineInside', () => {
+                const store = setupStore();
+                const [_vocal, lineSlot] = pairs[0];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 280 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
+
+            it('should clamp angle to minAngle for LineOutside', () => {
+                const store = setupStore();
+                const [_vocal, lineSlot] = pairs[1];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 260 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const minAngle = state.work.selection!.constraints.angle.minAngle;
+
+                expect(angle).toBe(minAngle);
+            });
+
+            it('should clamp angle to maxAngle for LineOutside', () => {
+                const store = setupStore();
+                const [_vocal, lineSlot] = pairs[1];
+
+                store.dispatch(selectLineSlot(lineSlot.id));
+                store.dispatch(moveLineSlot(lineSlot.id, { angle: 100 }));
+
+                const state = store.getState();
+                const angle = state.image.lineSlots[lineSlot.id]!.angle;
+                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+
+                expect(angle).toBe(maxAngle);
+            });
         });
     });
 });

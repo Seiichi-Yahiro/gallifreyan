@@ -61,7 +61,9 @@ export const clamp = (value: number, min: number, max: number): number => {
  * @param max - positive angle between 0 and 360
  */
 export const clampAngle = (angle: Degree, min: Degree, max: Degree): Degree => {
-    if (angle < min || angle > max) {
+    if (min > max && ((angle >= min && angle < 360) || (angle >= 0 && angle <= max))) {
+        return angle;
+    } else if (angle < min || angle > max) {
         const minDiff = Math.abs(angle - min);
         const minDistance = Math.min(minDiff, 360 - minDiff);
 
@@ -118,9 +120,9 @@ export const circleIntersections = (a: Circle, b: Circle): Maybe<[Position, Posi
         return Maybe.none();
     }
 
-    const radiusASquared = a.r * a.r;
-    const x = (radiusASquared + distance * distance - b.r * b.r) / (2 * distance);
-    const determinant = radiusASquared - x * x;
+    const radiusASquared = a.r ** 2;
+    const x = (radiusASquared + distance ** 2 - b.r ** 2) / (2 * distance);
+    const determinant = radiusASquared - x ** 2;
 
     // circles have 0 or 1 intersections
     if (determinant <= 0) {

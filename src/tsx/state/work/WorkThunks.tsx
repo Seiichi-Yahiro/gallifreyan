@@ -1,4 +1,8 @@
-import { calculateConsonantDistanceConstraints, calculateNeighborAngleConstraints } from '../../utils/Constraints';
+import {
+    calculateConsonantDistanceConstraints,
+    calculateLineSlotAngleConstraints,
+    calculateNeighborAngleConstraints,
+} from '../../utils/Constraints';
 import { isValidLetter } from '../../utils/LetterGroups';
 import { splitWordToChars } from '../../utils/TextConverter';
 import { AppThunkAction } from '../AppState';
@@ -124,13 +128,20 @@ export const setDotConstraints =
     };
 
 export const setLineSlotConstraints =
-    (_id: UUID): AppThunkAction =>
-    (dispatch, _getState) => {
-        // TODO
-        //const state = getState();
-        //const lineSlot = state.image.lineSlots[id]!;
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const lineSlot = state.image.lineSlots[id]!;
+        const parentRadius = state.image.circles[lineSlot.parentId]!.circle.r;
 
-        dispatch(setConstraints({}));
+        const angleConstraints = calculateLineSlotAngleConstraints(lineSlot, state.image.circles);
+
+        dispatch(
+            setConstraints({
+                angle: angleConstraints,
+                distance: { minDistance: parentRadius, maxDistance: parentRadius },
+            })
+        );
     };
 
 const createSelectThunk =

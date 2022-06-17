@@ -23,14 +23,14 @@ const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
 });
 
 const calculateDistance = (newPosition: Position, parentPos: Position): number => {
-    const mouseVec = sub(newPosition, parentPos);
-    return length(mouseVec);
+    const vec = sub(newPosition, parentPos);
+    return length(vec);
 };
 
-const calculateAngle = (newPosition: Position, parentPos: Position): Degree => {
-    const mouseVec = sub(newPosition, parentPos);
+export const calculateAngle = (newPosition: Position, parentPos: Position): Degree => {
+    const vec = sub(newPosition, parentPos);
     const zeroDegreeVec: Vector2 = { x: 0, y: 1 };
-    return toDegree(angleBetween(mouseVec, zeroDegreeVec));
+    return toDegree(angleBetween(vec, zeroDegreeVec));
 };
 
 export const calculatePositionData = (
@@ -54,6 +54,7 @@ export const calculatePositionData = (
     };
 };
 
+// TODO remove?
 export const constrainDistanceOnAngle = (mousePos: Position, constrainedAngle: Degree): number => {
     const constrainedAngleVector = rotate({ x: 0, y: 1 }, -toRadian(constrainedAngle));
     const lambda = dot(mousePos, constrainedAngleVector) / lengthSquared(constrainedAngleVector);

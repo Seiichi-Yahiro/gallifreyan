@@ -231,7 +231,6 @@ export const moveDot =
 
         const angle = clampAngle(
             positionData.angle ?? dot.circle.angle,
-
             constraints.angle.minAngle,
             constraints.angle.maxAngle
         );
@@ -248,6 +247,28 @@ export const dragDot =
         const consonantAngle = state.image.circles[dot.parentId]!.circle.angle;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, dot.circle, consonantAngle);
         dispatch(moveDot(id, positionData));
+    };
+
+export const moveLineSlot =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const lineSlot = state.image.lineSlots[id]!;
+        const constraints = state.work.selection!.constraints;
+
+        const distance = clamp(
+            positionData.distance ?? lineSlot.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
+
+        const angle = clampAngle(
+            positionData.angle ?? lineSlot.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
+
+        dispatch(updateLineSlotData({ id, positionData: { distance, angle } }));
     };
 
 export const dragLineSlot =
@@ -274,5 +295,5 @@ export const dragLineSlot =
         }
 
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, lineSlot, relativeAngle);
-        dispatch(updateLineSlotData({ id, positionData }));
+        dispatch(moveLineSlot(id, positionData));
     };
