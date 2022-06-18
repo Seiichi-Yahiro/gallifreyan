@@ -2,6 +2,7 @@ import {
     calculateConsonantDistanceConstraints,
     calculateLineSlotAngleConstraints,
     calculateNeighborAngleConstraints,
+    calculateVocalDistanceConstraints,
 } from '../../utils/Constraints';
 import { isValidLetter } from '../../utils/LetterGroups';
 import { splitWordToChars } from '../../utils/TextConverter';
@@ -122,11 +123,13 @@ export const setVocalConstraints =
                 word.letters,
                 state.image.circles
             );
-            // TODO distance constraints
+
+            const distanceConstraints = calculateVocalDistanceConstraints(vocal, word);
+
             dispatch(
                 setConstraints({
                     id,
-                    constraints: { angle: angleConstraints, distance: { minDistance: 0, maxDistance: Infinity } },
+                    constraints: { angle: angleConstraints, distance: distanceConstraints },
                 })
             );
         }

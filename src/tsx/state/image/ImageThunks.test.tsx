@@ -1,7 +1,14 @@
 import { zip } from 'lodash';
 import { createTestStore } from '../../utils/TestUtils';
-import { selectConsonant, selectDot, selectLineSlot, selectSentence, selectWord } from '../work/WorkThunks';
-import { moveConsonant, moveDot, moveLineSlot, moveSentence, moveWord } from './ImageThunks';
+import {
+    selectConsonant,
+    selectDot,
+    selectLineSlot,
+    selectSentence,
+    selectVocal,
+    selectWord,
+} from '../work/WorkThunks';
+import { moveConsonant, moveDot, moveLineSlot, moveSentence, moveVocal, moveWord } from './ImageThunks';
 import {
     Consonant,
     ConsonantDecoration,
@@ -423,6 +430,202 @@ describe('ImageThunks', () => {
 
             const state = store.getState();
             const circle = state.image.circles[consonants[3].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 360 });
+        });
+    });
+
+    describe('Move Vocal', () => {
+        const setup = () => {
+            const word: Word = {
+                id: '0',
+                circle: { distance: 0, angle: 0, r: 100 },
+                letters: ['1', '2', '3'],
+                lineSlots: [],
+                parentId: '',
+                text: '',
+                type: ImageType.Word,
+            };
+
+            const vocals = [VocalPlacement.OnLine, VocalPlacement.Outside, VocalPlacement.Inside].map<Vocal>(
+                (placement, i) => ({
+                    circle: {
+                        distance: {
+                            [VocalPlacement.OnLine]: 100,
+                            [VocalPlacement.Outside]: 110,
+                            [VocalPlacement.Inside]: 90,
+                        }[placement],
+                        angle: (i + 1) * 90,
+                        r: 10,
+                    },
+                    id: (i + 1).toString(),
+                    dots: [],
+                    lineSlots: [],
+                    parentId: word.id,
+                    text: '',
+                    type: ImageType.Vocal,
+                    placement,
+                    decoration: VocalDecoration.None,
+                })
+            );
+
+            const store = createTestStore({
+                image: {
+                    rootCircleId: '',
+                    circles: {
+                        [vocals[0].id]: vocals[0],
+                        [vocals[1].id]: vocals[1],
+                        [vocals[2].id]: vocals[2],
+                        [word.id]: word,
+                    },
+                    lineSlots: {},
+                    lineConnections: {},
+                    svgSize: 1000,
+                },
+            });
+
+            return { store, vocals };
+        };
+
+        it('should adjust OnLine vocal being outside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[0].id));
+            store.dispatch(moveVocal(vocals[0].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[0].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(100);
+        });
+
+        it('should adjust OnLine vocal being inside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[0].id));
+            store.dispatch(moveVocal(vocals[0].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[0].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(100);
+        });
+
+        it('should not adjust OnLine vocal being on word line', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[0].id));
+            store.dispatch(moveVocal(vocals[0].id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[0].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(100);
+        });
+
+        it('should adjust Outside vocal being inside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[1].id));
+            store.dispatch(moveVocal(vocals[1].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[1].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(110);
+        });
+
+        it('should not adjust Outside vocal being outside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[1].id));
+            store.dispatch(moveVocal(vocals[1].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[1].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(1000);
+        });
+
+        it('should adjust Outside vocal being on word line', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[1].id));
+            store.dispatch(moveVocal(vocals[1].id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[1].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(110);
+        });
+
+        it('should not adjust Inside vocal being inside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[2].id));
+            store.dispatch(moveVocal(vocals[2].id, { distance: 0 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[2].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(0);
+        });
+
+        it('should adjust Inside vocal being outside of word', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[2].id));
+            store.dispatch(moveVocal(vocals[2].id, { distance: 1000 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[2].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(90);
+        });
+
+        it('should adjust Inside vocal being on word line', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[2].id));
+            store.dispatch(moveVocal(vocals[2].id, { distance: 100 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[2].id]!.circle;
+
+            expect(circle.distance).toBeLessThanOrEqual(90);
+        });
+
+        it('should adjust first vocal angle if less than 0 degrees', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[0].id));
+            store.dispatch(moveVocal(vocals[0].id, { angle: -10 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[0].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 0 });
+        });
+
+        it('should adjust vocal angle to stay after lesser angle vocal', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[1].id));
+            store.dispatch(moveVocal(vocals[1].id, { angle: 80 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[1].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 90 });
+        });
+
+        it('should adjust vocal angle to stay before greater angle vocal', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[1].id));
+            store.dispatch(moveVocal(vocals[1].id, { angle: 280 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[1].id]!.circle;
+
+            expect(circle).toMatchObject({ angle: 270 });
+        });
+
+        it('should adjust last vocal angle if greater than 360 degrees', () => {
+            const { store, vocals } = setup();
+            store.dispatch(selectVocal(vocals[2].id));
+            store.dispatch(moveVocal(vocals[2].id, { angle: 370 }));
+
+            const state = store.getState();
+            const circle = state.image.circles[vocals[2].id]!.circle;
 
             expect(circle).toMatchObject({ angle: 360 });
         });

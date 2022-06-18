@@ -8,6 +8,7 @@ import {
     UUID,
     Vocal,
     VocalDecoration,
+    VocalPlacement,
     Word,
 } from '../state/image/ImageTypes';
 import { AngleConstraints, DistanceConstraints } from '../state/work/WorkTypes';
@@ -59,6 +60,17 @@ export const calculateConsonantDistanceConstraints = (consonant: Consonant, word
         }
         case ConsonantPlacement.OnLine:
             return { minDistance: word.circle.r, maxDistance: word.circle.r };
+    }
+};
+
+export const calculateVocalDistanceConstraints = (vocal: Vocal, word: Word): DistanceConstraints => {
+    switch (vocal.placement) {
+        case VocalPlacement.OnLine:
+            return { minDistance: word.circle.r, maxDistance: word.circle.r };
+        case VocalPlacement.Outside:
+            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: Infinity };
+        case VocalPlacement.Inside:
+            return { minDistance: 0, maxDistance: word.circle.r - vocal.circle.r };
     }
 };
 
