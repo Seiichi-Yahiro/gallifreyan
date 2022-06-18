@@ -114,7 +114,15 @@ export const setVocalConstraints =
         // if nested vocal
         if (parent.type === ImageType.Consonant) {
             // TODO nested vocal constraints
-            dispatch(setConstraints({ id }));
+            dispatch(
+                setConstraints({
+                    id,
+                    constraints: {
+                        angle: { minAngle: 0, maxAngle: 360 },
+                        distance: { minDistance: 0, maxDistance: Infinity },
+                    },
+                })
+            );
         } else {
             const word = parent;
             const angleConstraints = calculateNeighborAngleConstraints(

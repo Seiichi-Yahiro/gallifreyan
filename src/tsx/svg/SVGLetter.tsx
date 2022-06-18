@@ -2,7 +2,16 @@ import React, { useRef } from 'react';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useRedux } from '../hooks/useRedux';
 import { dragConsonant, dragVocal } from '../state/image/ImageThunks';
-import { Circle, Consonant, ConsonantPlacement, ImageType, Letter, UUID, Vocal } from '../state/image/ImageTypes';
+import {
+    Circle,
+    Consonant,
+    ConsonantPlacement,
+    ImageType,
+    Letter,
+    UUID,
+    Vocal,
+    VocalPlacement,
+} from '../state/image/ImageTypes';
 import { useCircleSelector } from '../state/Selectors';
 import { selectConsonant, selectVocal } from '../state/work/WorkThunks';
 import { calculateTranslation } from '../utils/TextTransforms';
@@ -39,6 +48,15 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
     const isCut = [ConsonantPlacement.DeepCut, ConsonantPlacement.ShallowCut].includes(consonant.placement);
 
     useDragAndDrop(id, consonantRef.current, dragConsonant);
+
+    const vocalPlacement = useRedux((state) => {
+        if (consonant.vocal) {
+            const vocal = state.image.circles[consonant.vocal] as Vocal;
+            return vocal.placement;
+        }
+
+        return undefined;
+    });
 
     return (
         <Group
@@ -84,7 +102,19 @@ const SVGConsonant: React.FunctionComponent<ConsonantProps> = ({ id }) => {
             {consonant.dots.map((dotId) => (
                 <SVGDot key={dotId} id={dotId} />
             ))}
-            {consonant.vocal && <SVGVocal id={consonant.vocal} parentType={ImageType.Consonant} />}
+            {consonant.vocal &&
+                (vocalPlacement === VocalPlacement.Outside ? (
+                    <Group
+                        angle={0}
+                        distance={consonant.circle.distance}
+                        anglePlacement={AnglePlacement.Relative}
+                        reverse={true}
+                    >
+                        <SVGVocal id={consonant.vocal} parentType={ImageType.Word} />
+                    </Group>
+                ) : (
+                    <SVGVocal id={consonant.vocal} parentType={ImageType.Consonant} />
+                ))}
         </Group>
     );
 };

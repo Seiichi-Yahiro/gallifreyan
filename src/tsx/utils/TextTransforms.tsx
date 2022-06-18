@@ -115,7 +115,7 @@ export const calculateInitialNestedVocalCircleData = (
             return {
                 r,
                 angle: 0,
-                distance: wordRadius - consonantCircleData.distance + r * 1.5,
+                distance: wordRadius + r * 1.5,
             };
         case VocalPlacement.Inside:
             return {
