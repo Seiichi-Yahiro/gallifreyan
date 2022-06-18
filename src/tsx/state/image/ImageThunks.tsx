@@ -2,6 +2,7 @@ import { calculatePositionData } from '../../utils/DragAndDrop';
 import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
+import { setLineSlotConstraints } from '../work/WorkThunks';
 import {
     convertSentenceText,
     nestWordVocals,
@@ -67,6 +68,11 @@ export const moveSentence =
         );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
+
+        sentence.lineSlots.forEach((lineSlotId) => {
+            dispatch(setLineSlotConstraints(lineSlotId));
+            dispatch(moveLineSlot(lineSlotId, {}));
+        });
     };
 
 export const dragSentence =
@@ -106,6 +112,11 @@ export const moveWord =
         );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
+
+        word.lineSlots.forEach((lineSlotId) => {
+            dispatch(setLineSlotConstraints(lineSlotId));
+            dispatch(moveLineSlot(lineSlotId, {}));
+        });
     };
 
 export const dragWord =
@@ -145,6 +156,11 @@ export const moveConsonant =
         );
 
         dispatch(updateCircleData({ id, circle: { distance, angle } }));
+
+        consonant.lineSlots.forEach((lineSlotId) => {
+            dispatch(setLineSlotConstraints(lineSlotId));
+            dispatch(moveLineSlot(lineSlotId, {}));
+        });
 
         if (consonant.vocal) {
             // TODO update nested vocal
@@ -189,6 +205,11 @@ export const moveVocal =
         );
 
         dispatch(updateCircleData({ id, circle: { angle, distance } }));
+
+        vocal.lineSlots.forEach((lineSlotId) => {
+            dispatch(setLineSlotConstraints(lineSlotId));
+            dispatch(moveLineSlot(lineSlotId, {}));
+        });
     };
 
 export const dragVocal =
