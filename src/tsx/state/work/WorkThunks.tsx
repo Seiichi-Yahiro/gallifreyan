@@ -2,6 +2,8 @@ import {
     calculateConsonantDistanceConstraints,
     calculateLineSlotAngleConstraints,
     calculateNeighborAngleConstraints,
+    calculateNestedVocalAngleConstraints,
+    calculateNestedVocalDistanceConstraints,
     calculateVocalDistanceConstraints,
 } from '../../utils/Constraints';
 import { isValidLetter } from '../../utils/LetterGroups';
@@ -113,13 +115,18 @@ export const setVocalConstraints =
 
         // if nested vocal
         if (parent.type === ImageType.Consonant) {
-            // TODO nested vocal constraints
+            const consonant = parent;
+            const word = state.image.circles[consonant.parentId] as Word;
+
+            const angleConstraints = calculateNestedVocalAngleConstraints(vocal, consonant, word);
+            const distanceConstraints = calculateNestedVocalDistanceConstraints(vocal, consonant);
+
             dispatch(
                 setConstraints({
                     id,
                     constraints: {
-                        angle: { minAngle: 0, maxAngle: 360 },
-                        distance: { minDistance: 0, maxDistance: Infinity },
+                        angle: angleConstraints,
+                        distance: distanceConstraints,
                     },
                 })
             );

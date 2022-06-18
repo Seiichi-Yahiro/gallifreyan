@@ -13,7 +13,7 @@ import {
 } from '../state/image/ImageTypes';
 import { AngleConstraints, DistanceConstraints } from '../state/work/WorkTypes';
 import { calculateAngle } from './DragAndDrop';
-import { circleIntersections } from './LinearAlgebra';
+import { circleIntersections, length } from './LinearAlgebra';
 import Maybe from './Maybe';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
@@ -74,6 +74,81 @@ export const calculateVocalDistanceConstraints = (vocal: Vocal, word: Word): Dis
     }
 };
 
+export const calculateNestedVocalAngleConstraints = (
+    vocal: Vocal,
+    consonant: Consonant,
+    word: Word
+): AngleConstraints => {
+    switch (vocal.placement) {
+        case VocalPlacement.OnLine: {
+            return { minAngle: 0, maxAngle: 360 }; // TODO
+        }
+        case VocalPlacement.Outside: {
+            return { minAngle: 0, maxAngle: 360 }; // TODO
+        }
+        case VocalPlacement.Inside: {
+            switch (consonant.placement) {
+                case ConsonantPlacement.DeepCut:
+                case ConsonantPlacement.ShallowCut: {
+                    return calculateConsonantWordIntersectionAngles(consonant, word);
+                }
+                case ConsonantPlacement.Inside: {
+                    return { minAngle: 0, maxAngle: 360 };
+                }
+                case ConsonantPlacement.OnLine: {
+                    const translation = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+
+                    const wordCircle = { r: word.circle.r, pos: { x: 0, y: 0 } };
+
+                    const consonantCircle = {
+                        r: consonant.circle.r,
+                        pos: translation,
+                    };
+
+                    const [angle1, angle2] = circleIntersections(wordCircle, consonantCircle)
+                        .map((intersections) =>
+                            intersections
+                                .map((intersection) => {
+                                    const vocalCircle = { r: vocal.circle.r, pos: intersection };
+
+                                    const [pos1, pos2] = circleIntersections(consonantCircle, vocalCircle).unwrap();
+
+                                    const distanceToWord1 = length(pos1) - wordCircle.r;
+                                    const distanceToWord2 = length(pos2) - wordCircle.r;
+
+                                    return distanceToWord1 < distanceToWord2 ? pos1 : pos2;
+                                })
+                                .map((intersection) => {
+                                    let angle = calculateAngle(intersection, consonantCircle.pos);
+                                    angle -= consonant.circle.angle;
+                                    return adjustAngle(angle);
+                                })
+                        )
+                        .unwrap();
+
+                    return angle1 < angle2
+                        ? { minAngle: angle1, maxAngle: angle2 }
+                        : { minAngle: angle2, maxAngle: angle1 };
+                }
+            }
+        }
+    }
+};
+
+export const calculateNestedVocalDistanceConstraints = (vocal: Vocal, consonant: Consonant): DistanceConstraints => {
+    switch (vocal.placement) {
+        case VocalPlacement.OnLine: {
+            return { minDistance: 0, maxDistance: Infinity }; // TODO
+        }
+        case VocalPlacement.Outside: {
+            return { minDistance: 0, maxDistance: Infinity }; // TODO
+        }
+        case VocalPlacement.Inside: {
+            return { minDistance: consonant.circle.r, maxDistance: consonant.circle.r };
+        }
+    }
+};
+
 export const calculateLineSlotAngleConstraints = (
     lineSlot: LineSlot,
     circles: Partial<Record<UUID, CircleShape>>
@@ -98,22 +173,7 @@ export const calculateLineSlotAngleConstraints = (
                 case ConsonantPlacement.DeepCut:
                 case ConsonantPlacement.ShallowCut: {
                     const word = circles[consonant.parentId] as Word;
-                    const translation = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
-
-                    const [pos1, pos2] = circleIntersections(
-                        { r: word.circle.r, pos: { x: 0, y: 0 } },
-                        {
-                            r: consonant.circle.r,
-                            pos: translation,
-                        }
-                    ).unwrap();
-
-                    const angle1 = adjustAngle(calculateAngle(pos1, translation) - consonant.circle.angle);
-                    const angle2 = adjustAngle(calculateAngle(pos2, translation) - consonant.circle.angle);
-
-                    return angle1 < angle2
-                        ? { minAngle: angle1, maxAngle: angle2 }
-                        : { minAngle: angle2, maxAngle: angle1 };
+                    return calculateConsonantWordIntersectionAngles(consonant, word);
                 }
             }
         }
@@ -133,4 +193,22 @@ export const calculateLineSlotAngleConstraints = (
             }
         }
     }
+};
+
+const calculateConsonantWordIntersectionAngles = (consonant: Consonant, word: Word): AngleConstraints => {
+    const consonantTranslation = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+
+    const wordCircle = { r: word.circle.r, pos: { x: 0, y: 0 } };
+
+    const consonantCircle = {
+        r: consonant.circle.r,
+        pos: consonantTranslation,
+    };
+
+    const [pos1, pos2] = circleIntersections(wordCircle, consonantCircle).unwrap();
+
+    const angle1 = adjustAngle(calculateAngle(pos1, consonantCircle.pos) - consonant.circle.angle);
+    const angle2 = adjustAngle(calculateAngle(pos2, consonantCircle.pos) - consonant.circle.angle);
+
+    return angle1 < angle2 ? { minAngle: angle1, maxAngle: angle2 } : { minAngle: angle2, maxAngle: angle1 };
 };
