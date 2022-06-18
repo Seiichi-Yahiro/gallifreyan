@@ -725,7 +725,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -739,7 +739,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });
@@ -753,7 +753,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -767,7 +767,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });
@@ -781,7 +781,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -795,7 +795,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });
@@ -809,7 +809,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -823,7 +823,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });
@@ -896,7 +896,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -910,7 +910,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });
@@ -924,7 +924,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const minAngle = state.work.selection!.constraints.angle.minAngle;
+                const minAngle = state.work.constraints[lineSlot.id]!.angle.minAngle;
 
                 expect(angle).toBe(minAngle);
             });
@@ -938,7 +938,7 @@ describe('ImageThunks', () => {
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
-                const maxAngle = state.work.selection!.constraints.angle.maxAngle;
+                const maxAngle = state.work.constraints[lineSlot.id]!.angle.maxAngle;
 
                 expect(angle).toBe(maxAngle);
             });

@@ -52,7 +52,7 @@ export const moveSentence =
     (dispatch, getState) => {
         const state = getState();
         const sentence = state.image.circles[id] as Sentence;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const distance = clamp(
             positionData.distance ?? sentence.circle.distance,
@@ -91,7 +91,7 @@ export const moveWord =
     (dispatch, getState) => {
         const state = getState();
         const word = state.image.circles[id] as Word;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const angle = clampAngle(
             positionData.angle ?? word.circle.angle,
@@ -130,7 +130,7 @@ export const moveConsonant =
     (dispatch, getState) => {
         const state = getState();
         const consonant = state.image.circles[id] as Consonant;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const angle = clampAngle(
             positionData.angle ?? consonant.circle.angle,
@@ -174,7 +174,7 @@ export const moveVocal =
     (dispatch, getState) => {
         const state = getState();
         const vocal = state.image.circles[id] as Vocal;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const angle = clampAngle(
             positionData.angle ?? vocal.circle.angle,
@@ -221,7 +221,7 @@ export const moveDot =
     (dispatch, getState) => {
         const state = getState();
         const dot = state.image.circles[id] as Dot;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const distance = clamp(
             positionData.distance ?? dot.circle.distance,
@@ -254,7 +254,7 @@ export const moveLineSlot =
     (dispatch, getState) => {
         const state = getState();
         const lineSlot = state.image.lineSlots[id]!;
-        const constraints = state.work.selection!.constraints;
+        const constraints = state.work.constraints[id]!;
 
         const distance = clamp(
             positionData.distance ?? lineSlot.distance,

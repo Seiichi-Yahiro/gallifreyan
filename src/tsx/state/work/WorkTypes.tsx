@@ -6,7 +6,6 @@ export interface Selection {
     type: ImageType;
     isDragging: boolean;
     justDragged: boolean;
-    constraints: Constraints;
 }
 
 export interface Constraints {

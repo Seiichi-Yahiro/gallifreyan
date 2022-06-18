@@ -41,8 +41,17 @@ export const setSentenceConstraints =
 
         dispatch(
             setConstraints({
-                angle: { minAngle: 0, maxAngle: 360 },
-                distance: { minDistance: 0, maxDistance: svgSize / 2 - sentence.circle.r },
+                id,
+                constraints: {
+                    angle: {
+                        minAngle: 0,
+                        maxAngle: 360,
+                    },
+                    distance: {
+                        minDistance: 0,
+                        maxDistance: svgSize / 2 - sentence.circle.r,
+                    },
+                },
             })
         );
     };
@@ -63,8 +72,14 @@ export const setWordConstraints =
 
         dispatch(
             setConstraints({
-                angle: angleConstraints,
-                distance: { minDistance: 0, maxDistance: sentence.circle.r - word.circle.r },
+                id,
+                constraints: {
+                    angle: angleConstraints,
+                    distance: {
+                        minDistance: 0,
+                        maxDistance: sentence.circle.r - word.circle.r,
+                    },
+                },
             })
         );
     };
@@ -85,7 +100,7 @@ export const setConsonantConstraints =
 
         const distanceConstraints = calculateConsonantDistanceConstraints(consonant, word);
 
-        dispatch(setConstraints({ angle: angleConstraints, distance: distanceConstraints }));
+        dispatch(setConstraints({ id, constraints: { angle: angleConstraints, distance: distanceConstraints } }));
     };
 
 export const setVocalConstraints =
@@ -98,7 +113,7 @@ export const setVocalConstraints =
         // if nested vocal
         if (parent.type === ImageType.Consonant) {
             // TODO nested vocal constraints
-            dispatch(setConstraints({}));
+            dispatch(setConstraints({ id }));
         } else {
             const word = parent;
             const angleConstraints = calculateNeighborAngleConstraints(
@@ -108,7 +123,12 @@ export const setVocalConstraints =
                 state.image.circles
             );
             // TODO distance constraints
-            dispatch(setConstraints({ angle: angleConstraints }));
+            dispatch(
+                setConstraints({
+                    id,
+                    constraints: { angle: angleConstraints, distance: { minDistance: 0, maxDistance: Infinity } },
+                })
+            );
         }
     };
 
@@ -121,8 +141,11 @@ export const setDotConstraints =
 
         dispatch(
             setConstraints({
-                angle: { minAngle: 0, maxAngle: 360 },
-                distance: { minDistance: 0, maxDistance: consonant.circle.r },
+                id,
+                constraints: {
+                    angle: { minAngle: 0, maxAngle: 360 },
+                    distance: { minDistance: 0, maxDistance: consonant.circle.r },
+                },
             })
         );
     };
@@ -138,8 +161,11 @@ export const setLineSlotConstraints =
 
         dispatch(
             setConstraints({
-                angle: angleConstraints,
-                distance: { minDistance: parentRadius, maxDistance: parentRadius },
+                id,
+                constraints: {
+                    angle: angleConstraints,
+                    distance: { minDistance: parentRadius, maxDistance: parentRadius },
+                },
             })
         );
     };

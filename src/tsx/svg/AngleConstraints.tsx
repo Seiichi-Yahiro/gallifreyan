@@ -13,7 +13,7 @@ const AngleConstraints: React.FunctionComponent<AngleConstraintsProps> = ({ rend
 
     const angleConstraints = useRedux((state) =>
         state.work.selection?.isDragging && renderFor.includes(state.work.selection.id)
-            ? state.work.selection.constraints.angle
+            ? state.work.constraints[state.work.selection.id]!.angle
             : undefined
     );
 

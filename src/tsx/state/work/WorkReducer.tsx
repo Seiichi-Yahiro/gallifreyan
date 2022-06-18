@@ -9,11 +9,12 @@ import {
     setJustDragged,
     setConstraints,
 } from './WorkActions';
-import { Selection } from './WorkTypes';
+import { Constraints, Selection } from './WorkTypes';
 
 export interface WorkState {
     selection?: Selection;
     hovering?: UUID;
+    constraints: Partial<Record<UUID, Constraints>>;
     textInput: {
         text: string;
         sanitizedText: string;
@@ -21,7 +22,11 @@ export interface WorkState {
     expandedTreeNodes: UUID[];
 }
 
-const createInitialState = (): WorkState => ({ textInput: { text: '', sanitizedText: '' }, expandedTreeNodes: [] });
+const createInitialState = (): WorkState => ({
+    constraints: {},
+    textInput: { text: '', sanitizedText: '' },
+    expandedTreeNodes: [],
+});
 
 const reducer = createReducer(createInitialState, (builder) =>
     builder
@@ -32,27 +37,19 @@ const reducer = createReducer(createInitialState, (builder) =>
                     type: payload.type,
                     isDragging: false,
                     justDragged: false,
-                    constraints: {
-                        angle: {
-                            minAngle: 0,
-                            maxAngle: 360,
-                        },
-                        distance: {
-                            minDistance: 0,
-                            maxDistance: Infinity,
-                        },
-                    },
                 };
+
+                state.constraints = {};
             } else if (!state.selection?.justDragged) {
                 state.selection = undefined;
+                state.constraints = {};
             }
         })
         .addCase(setConstraints, (state, { payload }) => {
-            if (state.selection) {
-                state.selection.constraints = {
-                    ...state.selection.constraints,
-                    ...payload,
-                };
+            if (payload.constraints) {
+                state.constraints[payload.id] = payload.constraints;
+            } else {
+                delete state.constraints[payload.id];
             }
         })
         .addCase(setHovering, (state, { payload }) => {
