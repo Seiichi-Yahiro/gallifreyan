@@ -837,6 +837,140 @@ describe('ImageThunks', () => {
                     expect(circle.angle).toBeCloseTo(207.134);
                 });
             });
+
+            describe('Outside Vocal distance', () => {
+                const { store, vocals, consonants } = setup(VocalPlacement.Outside);
+
+                zip(vocals, consonants).forEach(([vocal, consonant]) => {
+                    it(`should not adjust Outside vocal being outside of ${consonant!.placement} consonant`, () => {
+                        store.dispatch(selectVocal(vocal!.id));
+                        store.dispatch(moveVocal(vocal!.id, { distance: 1000 }));
+
+                        const state = store.getState();
+                        const circle = state.image.circles[vocal!.id]!.circle;
+
+                        expect(circle.distance).toBe(1000);
+                    });
+
+                    it(`should adjust Outside vocal being inside of ${consonant!.placement} consonant`, () => {
+                        store.dispatch(selectVocal(vocal!.id));
+                        store.dispatch(moveVocal(vocal!.id, { distance: 0 }));
+
+                        const state = store.getState();
+                        const circle = state.image.circles[vocal!.id]!.circle;
+
+                        expect(circle.distance).toBe(110);
+                    });
+
+                    it(`should adjust Outside vocal being on ${consonant!.placement} consonant line`, () => {
+                        store.dispatch(selectVocal(vocal!.id));
+                        store.dispatch(moveVocal(vocal!.id, { distance: 100 }));
+
+                        const state = store.getState();
+                        const circle = state.image.circles[vocal!.id]!.circle;
+
+                        expect(circle.distance).toBe(110);
+                    });
+                });
+            });
+
+            describe('Outside Vocal angle', () => {
+                it('should set angle to minAngle for DeepCut consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[0].id));
+                    store.dispatch(moveVocal(vocals[0].id, { angle: 170 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[0].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(5.092);
+                });
+
+                it('should set angle to maxAngle for DeepCut consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[0].id));
+                    store.dispatch(moveVocal(vocals[0].id, { angle: 190 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[0].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(354.907);
+                });
+
+                it('should set angle to minAngle for Inside consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[1].id));
+                    store.dispatch(moveVocal(vocals[1].id, { angle: 170 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[1].id]!.circle;
+
+                    expect(circle.angle).toBe(0);
+                });
+
+                it('should set angle to maxAngle for Inside consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[1].id));
+                    store.dispatch(moveVocal(vocals[1].id, { angle: 190 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[1].id]!.circle;
+
+                    expect(circle.angle).toBe(0);
+                });
+
+                it('should set angle to minAngle for ShallowCut consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[2].id));
+                    store.dispatch(moveVocal(vocals[2].id, { angle: 170 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[2].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(5.731);
+                });
+
+                it('should set angle to maxAngle for ShallowCut consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[2].id));
+                    store.dispatch(moveVocal(vocals[2].id, { angle: 190 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[2].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(354.268);
+                });
+
+                it('should set angle to minAngle for OnLine consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[3].id));
+                    store.dispatch(moveVocal(vocals[3].id, { angle: 170 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[3].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(5.731);
+                });
+
+                it('should set angle to maxAngle for OnLine consonant', () => {
+                    const { store, vocals } = setup(VocalPlacement.Outside);
+
+                    store.dispatch(selectVocal(vocals[3].id));
+                    store.dispatch(moveVocal(vocals[3].id, { angle: 190 }));
+
+                    const state = store.getState();
+                    const circle = state.image.circles[vocals[3].id]!.circle;
+
+                    expect(circle.angle).toBeCloseTo(354.268);
+                });
+            });
         });
     });
 
