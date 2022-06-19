@@ -119,7 +119,7 @@ export const setVocalConstraints =
             const word = state.image.circles[consonant.parentId] as Word;
 
             const angleConstraints = calculateNestedVocalAngleConstraints(vocal, consonant, word);
-            const distanceConstraints = calculateNestedVocalDistanceConstraints(vocal, consonant);
+            const distanceConstraints = calculateNestedVocalDistanceConstraints(vocal, consonant, word);
 
             dispatch(
                 setConstraints({

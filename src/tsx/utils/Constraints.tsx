@@ -84,7 +84,35 @@ export const calculateNestedVocalAngleConstraints = (
             return { minAngle: 0, maxAngle: 360 }; // TODO
         }
         case VocalPlacement.Outside: {
-            return { minAngle: 0, maxAngle: 360 }; // TODO
+            switch (consonant.placement) {
+                case ConsonantPlacement.DeepCut:
+                case ConsonantPlacement.ShallowCut:
+                case ConsonantPlacement.OnLine: {
+                    const consonantTranslation = calculateTranslation(
+                        consonant.circle.angle,
+                        consonant.circle.distance
+                    );
+
+                    const wordCircle = { r: word.circle.r, pos: { x: 0, y: 0 } };
+
+                    const consonantCircle = {
+                        r: consonant.circle.r,
+                        pos: consonantTranslation,
+                    };
+
+                    const [pos1, pos2] = circleIntersections(wordCircle, consonantCircle).unwrap();
+
+                    const angle1 = adjustAngle(calculateAngle(pos1, wordCircle.pos) - consonant.circle.angle);
+                    const angle2 = adjustAngle(calculateAngle(pos2, wordCircle.pos) - consonant.circle.angle);
+
+                    return angle1 < angle2
+                        ? { minAngle: angle2, maxAngle: angle1 }
+                        : { minAngle: angle1, maxAngle: angle2 };
+                }
+                case ConsonantPlacement.Inside: {
+                    return { minAngle: 0, maxAngle: 0 };
+                }
+            }
         }
         case VocalPlacement.Inside: {
             switch (consonant.placement) {
@@ -135,13 +163,17 @@ export const calculateNestedVocalAngleConstraints = (
     }
 };
 
-export const calculateNestedVocalDistanceConstraints = (vocal: Vocal, consonant: Consonant): DistanceConstraints => {
+export const calculateNestedVocalDistanceConstraints = (
+    vocal: Vocal,
+    consonant: Consonant,
+    word: Word
+): DistanceConstraints => {
     switch (vocal.placement) {
         case VocalPlacement.OnLine: {
             return { minDistance: 0, maxDistance: Infinity }; // TODO
         }
         case VocalPlacement.Outside: {
-            return { minDistance: 0, maxDistance: Infinity }; // TODO
+            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: Infinity };
         }
         case VocalPlacement.Inside: {
             return { minDistance: consonant.circle.r, maxDistance: consonant.circle.r };
