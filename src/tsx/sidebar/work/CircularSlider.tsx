@@ -113,7 +113,20 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
                             ? `0px 0px 0px ${isDragging ? 14 : 8}px rgb(144 202 249 / 16%)`
                             : undefined,
                 }}
-            ></span>
+            >
+                <span
+                    style={{
+                        position: 'absolute',
+                        transform: `rotate(${value}deg)`,
+                        transformOrigin: 'center',
+                        borderRadius: '50%',
+                        width: '100%',
+                        height: '100%',
+                        boxShadow:
+                            '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)',
+                    }}
+                />
+            </span>
         </div>
     );
 };
