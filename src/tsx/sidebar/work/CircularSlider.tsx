@@ -9,9 +9,15 @@ interface CircularSliderProps {
     radius: number;
     value: Degree;
     onChange: (newAngle: Degree) => void;
+    disabled?: boolean;
 }
 
-const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, value, onChange }) => {
+const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
+    radius,
+    value,
+    onChange,
+    disabled = false,
+}) => {
     const theme = useTheme();
 
     const [isHovered, setHovered] = useState(false);
@@ -27,7 +33,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
 
     const circleRef = useRef<SVGCircleElement>(null);
 
-    const target = isDragging ? window : undefined;
+    const target = !disabled && isDragging ? window : undefined;
 
     const updateAngle = (event: MouseEvent | React.MouseEvent | Touch) => {
         if (circleRef.current) {
@@ -66,7 +72,14 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
     );
 
     return (
-        <div style={{ position: 'relative', width: size, height: size }}>
+        <div
+            style={{
+                position: 'relative',
+                width: size,
+                height: size,
+                color: disabled ? theme.palette.grey.A400 : theme.palette.primary.main,
+            }}
+        >
             <svg width={size} height={size}>
                 <g style={{ transform: `translate(${circleCenterOffset}px, ${circleCenterOffset}px)` }}>
                     <circle
@@ -75,7 +88,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
                         cx={0}
                         cy={0}
                         strokeWidth={strokeWidth}
-                        stroke={theme.palette.primary.main}
+                        stroke="currentColor"
                         opacity={0.38}
                         fill="none"
                     />
@@ -86,17 +99,18 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
                         strokeWidth={strokeWidth * 3}
                         stroke="transparent"
                         fill="none"
-                        onClick={updateAngle}
-                        style={{ cursor: 'pointer' }}
+                        onClick={disabled ? undefined : updateAngle}
+                        style={{ cursor: disabled ? 'default' : 'pointer', pointerEvents: disabled ? 'none' : 'auto' }}
                     />
                 </g>
             </svg>
+
             <span
                 className="MuiSlider-thumb"
-                onMouseOver={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-                onMouseDown={() => setDragging(true)}
-                onTouchStart={() => setDragging(true)}
+                onMouseOver={disabled ? undefined : () => setHovered(true)}
+                onMouseLeave={disabled ? undefined : () => setHovered(false)}
+                onMouseDown={disabled ? undefined : () => setDragging(true)}
+                onTouchStart={disabled ? undefined : () => setDragging(true)}
                 style={{
                     width: knobSize,
                     height: knobSize,
@@ -106,8 +120,9 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({ radius, 
                     top: circleCenterOffset - knobCenterOffset,
                     borderRadius: '50%',
                     position: 'absolute',
-                    backgroundColor: theme.palette.primary.main,
-                    cursor: 'pointer',
+                    backgroundColor: 'currentColor',
+                    cursor: disabled ? 'default' : 'pointer',
+                    pointerEvents: disabled ? 'none' : 'auto',
                     boxShadow:
                         isHovered || isDragging
                             ? `0px 0px 0px ${isDragging ? 14 : 8}px rgb(144 202 249 / 16%)`
