@@ -1,5 +1,5 @@
 import React from 'react';
-import SelectionSettings from './SelectionSettings';
+import SelectionSettings from './settings/SelectionSettings';
 import TextInput from './TextInput';
 import Tree from './tree/Tree';
 

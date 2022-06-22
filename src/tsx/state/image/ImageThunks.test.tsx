@@ -8,7 +8,14 @@ import {
     selectVocal,
     selectWord,
 } from '../work/WorkThunks';
-import { moveConsonant, moveDot, moveLineSlot, moveSentence, moveVocal, moveWord } from './ImageThunks';
+import {
+    updateConsonantPositionData,
+    updateDotPositionData,
+    updateLineSlotPositionData,
+    updateSentencePositionData,
+    updateVocalPositionData,
+    updateWordPositionData,
+} from './ImageThunks';
 import {
     Consonant,
     ConsonantDecoration,
@@ -51,7 +58,7 @@ describe('ImageThunks', () => {
         it('should adjust sentence distance being outside of svg canvas', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { distance: 2000 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { distance: 2000 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -62,7 +69,7 @@ describe('ImageThunks', () => {
         it('should adjust sentence distance partially being outside of svg canvas', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { distance: 1000 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { distance: 1000 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -73,7 +80,7 @@ describe('ImageThunks', () => {
         it('should not adjust sentence distance inside of svg canvas', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { distance: 10 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { distance: 10 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -84,7 +91,7 @@ describe('ImageThunks', () => {
         it('should adjust sentence angle being greater 360 degrees', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { angle: 370 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { angle: 370 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -95,7 +102,7 @@ describe('ImageThunks', () => {
         it('should adjust sentence angle being less than 0 degrees', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { angle: -10 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { angle: -10 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -106,7 +113,7 @@ describe('ImageThunks', () => {
         it('should not adjust sentence angle being between 0 and 360 degrees', () => {
             const { store, sentence } = setup();
             store.dispatch(selectSentence(sentence.id));
-            store.dispatch(moveSentence(sentence.id, { angle: 180 }));
+            store.dispatch(updateSentencePositionData(sentence.id, { angle: 180 }));
 
             const state = store.getState();
             const circle = state.image.circles[sentence.id]!.circle;
@@ -157,7 +164,7 @@ describe('ImageThunks', () => {
         it('should adjust word being outside of sentence', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[0].id));
-            store.dispatch(moveWord(words[0].id, { distance: 2000 }));
+            store.dispatch(updateWordPositionData(words[0].id, { distance: 2000 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[0].id]!.circle;
@@ -168,7 +175,7 @@ describe('ImageThunks', () => {
         it('should not adjust word on sentence line', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[0].id));
-            store.dispatch(moveWord(words[0].id, { distance: 500 }));
+            store.dispatch(updateWordPositionData(words[0].id, { distance: 500 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[0].id]!.circle;
@@ -179,7 +186,7 @@ describe('ImageThunks', () => {
         it('should not adjust word inside of sentence', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[0].id));
-            store.dispatch(moveWord(words[0].id, { distance: 1 }));
+            store.dispatch(updateWordPositionData(words[0].id, { distance: 1 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[0].id]!.circle;
@@ -190,7 +197,7 @@ describe('ImageThunks', () => {
         it('should adjust first word angle if less than 0 degrees', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[0].id));
-            store.dispatch(moveWord(words[0].id, { angle: -10 }));
+            store.dispatch(updateWordPositionData(words[0].id, { angle: -10 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[0].id]!.circle;
@@ -201,7 +208,7 @@ describe('ImageThunks', () => {
         it('should adjust word angle to stay after lesser angle word', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[1].id));
-            store.dispatch(moveWord(words[1].id, { angle: 80 }));
+            store.dispatch(updateWordPositionData(words[1].id, { angle: 80 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[1].id]!.circle;
@@ -212,7 +219,7 @@ describe('ImageThunks', () => {
         it('should adjust word angle to stay before greater angle word', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[1].id));
-            store.dispatch(moveWord(words[1].id, { angle: 280 }));
+            store.dispatch(updateWordPositionData(words[1].id, { angle: 280 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[1].id]!.circle;
@@ -223,7 +230,7 @@ describe('ImageThunks', () => {
         it('should adjust last word angle if greater than 360 degrees', () => {
             const { store, words } = setup();
             store.dispatch(selectWord(words[2].id));
-            store.dispatch(moveWord(words[2].id, { angle: 370 }));
+            store.dispatch(updateWordPositionData(words[2].id, { angle: 370 }));
 
             const state = store.getState();
             const circle = state.image.circles[words[2].id]!.circle;
@@ -283,7 +290,7 @@ describe('ImageThunks', () => {
         it('should adjust deep cut consonant being outside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[0].id));
-            store.dispatch(moveConsonant(consonants[0].id, { distance: 1000 }));
+            store.dispatch(updateConsonantPositionData(consonants[0].id, { distance: 1000 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[0].id]!.circle;
@@ -294,7 +301,7 @@ describe('ImageThunks', () => {
         it('should adjust deep cut consonant being inside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[0].id));
-            store.dispatch(moveConsonant(consonants[0].id, { distance: 0 }));
+            store.dispatch(updateConsonantPositionData(consonants[0].id, { distance: 0 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[0].id]!.circle;
@@ -305,7 +312,7 @@ describe('ImageThunks', () => {
         it('should adjust inside consonant being outside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[1].id));
-            store.dispatch(moveConsonant(consonants[1].id, { distance: 1000 }));
+            store.dispatch(updateConsonantPositionData(consonants[1].id, { distance: 1000 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[1].id]!.circle;
@@ -316,7 +323,7 @@ describe('ImageThunks', () => {
         it('should adjust inside consonant on word line', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[1].id));
-            store.dispatch(moveConsonant(consonants[1].id, { distance: 100 }));
+            store.dispatch(updateConsonantPositionData(consonants[1].id, { distance: 100 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[1].id]!.circle;
@@ -327,7 +334,7 @@ describe('ImageThunks', () => {
         it('should not adjust inside consonant being inside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[1].id));
-            store.dispatch(moveConsonant(consonants[1].id, { distance: 0 }));
+            store.dispatch(updateConsonantPositionData(consonants[1].id, { distance: 0 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[1].id]!.circle;
@@ -338,7 +345,7 @@ describe('ImageThunks', () => {
         it('should adjust shallow cut consonant being outside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[2].id));
-            store.dispatch(moveConsonant(consonants[2].id, { distance: 1000 }));
+            store.dispatch(updateConsonantPositionData(consonants[2].id, { distance: 1000 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[2].id]!.circle;
@@ -349,7 +356,7 @@ describe('ImageThunks', () => {
         it('should adjust shallow cut consonant being inside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[2].id));
-            store.dispatch(moveConsonant(consonants[2].id, { distance: 0 }));
+            store.dispatch(updateConsonantPositionData(consonants[2].id, { distance: 0 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[2].id]!.circle;
@@ -360,7 +367,7 @@ describe('ImageThunks', () => {
         it('should adjust online consonant being outside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[3].id));
-            store.dispatch(moveConsonant(consonants[3].id, { distance: 1000 }));
+            store.dispatch(updateConsonantPositionData(consonants[3].id, { distance: 1000 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[3].id]!.circle;
@@ -371,7 +378,7 @@ describe('ImageThunks', () => {
         it('should not adjust online consonant on word line', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[3].id));
-            store.dispatch(moveConsonant(consonants[3].id, { distance: 100 }));
+            store.dispatch(updateConsonantPositionData(consonants[3].id, { distance: 100 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[3].id]!.circle;
@@ -382,7 +389,7 @@ describe('ImageThunks', () => {
         it('should adjust online consonant being inside of word', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[3].id));
-            store.dispatch(moveConsonant(consonants[3].id, { distance: 0 }));
+            store.dispatch(updateConsonantPositionData(consonants[3].id, { distance: 0 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[3].id]!.circle;
@@ -393,7 +400,7 @@ describe('ImageThunks', () => {
         it('should adjust first consonant angle if less than 0 degrees', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[0].id));
-            store.dispatch(moveConsonant(consonants[0].id, { angle: -10 }));
+            store.dispatch(updateConsonantPositionData(consonants[0].id, { angle: -10 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[0].id]!.circle;
@@ -404,7 +411,7 @@ describe('ImageThunks', () => {
         it('should adjust consonant angle to stay after lesser angle consonant', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[2].id));
-            store.dispatch(moveConsonant(consonants[2].id, { angle: 80 }));
+            store.dispatch(updateConsonantPositionData(consonants[2].id, { angle: 80 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[2].id]!.circle;
@@ -415,7 +422,7 @@ describe('ImageThunks', () => {
         it('should adjust consonant angle to stay before greater angle consonant', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[2].id));
-            store.dispatch(moveConsonant(consonants[2].id, { angle: 280 }));
+            store.dispatch(updateConsonantPositionData(consonants[2].id, { angle: 280 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[2].id]!.circle;
@@ -426,7 +433,7 @@ describe('ImageThunks', () => {
         it('should adjust last consonant angle if greater than 360 degrees', () => {
             const { store, consonants } = setup();
             store.dispatch(selectConsonant(consonants[3].id));
-            store.dispatch(moveConsonant(consonants[3].id, { angle: 370 }));
+            store.dispatch(updateConsonantPositionData(consonants[3].id, { angle: 370 }));
 
             const state = store.getState();
             const circle = state.image.circles[consonants[3].id]!.circle;
@@ -491,7 +498,7 @@ describe('ImageThunks', () => {
             it('should adjust OnLine vocal being outside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[0].id));
-                store.dispatch(moveVocal(vocals[0].id, { distance: 1000 }));
+                store.dispatch(updateVocalPositionData(vocals[0].id, { distance: 1000 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[0].id]!.circle;
@@ -502,7 +509,7 @@ describe('ImageThunks', () => {
             it('should adjust OnLine vocal being inside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[0].id));
-                store.dispatch(moveVocal(vocals[0].id, { distance: 0 }));
+                store.dispatch(updateVocalPositionData(vocals[0].id, { distance: 0 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[0].id]!.circle;
@@ -513,7 +520,7 @@ describe('ImageThunks', () => {
             it('should not adjust OnLine vocal being on word line', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[0].id));
-                store.dispatch(moveVocal(vocals[0].id, { distance: 100 }));
+                store.dispatch(updateVocalPositionData(vocals[0].id, { distance: 100 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[0].id]!.circle;
@@ -524,7 +531,7 @@ describe('ImageThunks', () => {
             it('should adjust Outside vocal being inside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[1].id));
-                store.dispatch(moveVocal(vocals[1].id, { distance: 0 }));
+                store.dispatch(updateVocalPositionData(vocals[1].id, { distance: 0 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[1].id]!.circle;
@@ -535,7 +542,7 @@ describe('ImageThunks', () => {
             it('should not adjust Outside vocal being outside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[1].id));
-                store.dispatch(moveVocal(vocals[1].id, { distance: 1000 }));
+                store.dispatch(updateVocalPositionData(vocals[1].id, { distance: 1000 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[1].id]!.circle;
@@ -546,7 +553,7 @@ describe('ImageThunks', () => {
             it('should adjust Outside vocal being on word line', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[1].id));
-                store.dispatch(moveVocal(vocals[1].id, { distance: 100 }));
+                store.dispatch(updateVocalPositionData(vocals[1].id, { distance: 100 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[1].id]!.circle;
@@ -557,7 +564,7 @@ describe('ImageThunks', () => {
             it('should not adjust Inside vocal being inside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[2].id));
-                store.dispatch(moveVocal(vocals[2].id, { distance: 0 }));
+                store.dispatch(updateVocalPositionData(vocals[2].id, { distance: 0 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[2].id]!.circle;
@@ -568,7 +575,7 @@ describe('ImageThunks', () => {
             it('should adjust Inside vocal being outside of word', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[2].id));
-                store.dispatch(moveVocal(vocals[2].id, { distance: 1000 }));
+                store.dispatch(updateVocalPositionData(vocals[2].id, { distance: 1000 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[2].id]!.circle;
@@ -579,7 +586,7 @@ describe('ImageThunks', () => {
             it('should adjust Inside vocal being on word line', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[2].id));
-                store.dispatch(moveVocal(vocals[2].id, { distance: 100 }));
+                store.dispatch(updateVocalPositionData(vocals[2].id, { distance: 100 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[2].id]!.circle;
@@ -590,7 +597,7 @@ describe('ImageThunks', () => {
             it('should adjust first vocal angle if less than 0 degrees', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[0].id));
-                store.dispatch(moveVocal(vocals[0].id, { angle: -10 }));
+                store.dispatch(updateVocalPositionData(vocals[0].id, { angle: -10 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[0].id]!.circle;
@@ -601,7 +608,7 @@ describe('ImageThunks', () => {
             it('should adjust vocal angle to stay after lesser angle vocal', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[1].id));
-                store.dispatch(moveVocal(vocals[1].id, { angle: 80 }));
+                store.dispatch(updateVocalPositionData(vocals[1].id, { angle: 80 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[1].id]!.circle;
@@ -612,7 +619,7 @@ describe('ImageThunks', () => {
             it('should adjust vocal angle to stay before greater angle vocal', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[1].id));
-                store.dispatch(moveVocal(vocals[1].id, { angle: 280 }));
+                store.dispatch(updateVocalPositionData(vocals[1].id, { angle: 280 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[1].id]!.circle;
@@ -623,7 +630,7 @@ describe('ImageThunks', () => {
             it('should adjust last vocal angle if greater than 360 degrees', () => {
                 const { store, vocals } = setup();
                 store.dispatch(selectVocal(vocals[2].id));
-                store.dispatch(moveVocal(vocals[2].id, { angle: 370 }));
+                store.dispatch(updateVocalPositionData(vocals[2].id, { angle: 370 }));
 
                 const state = store.getState();
                 const circle = state.image.circles[vocals[2].id]!.circle;
@@ -710,7 +717,7 @@ describe('ImageThunks', () => {
                 zip(vocals, consonants).forEach(([vocal, consonant]) => {
                     it(`should adjust Inside vocal being outside of ${consonant!.placement} consonant`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: 1000 }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: 1000 }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -720,7 +727,7 @@ describe('ImageThunks', () => {
 
                     it(`should adjust Inside vocal being inside of ${consonant!.placement} consonant`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: 0 }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: 0 }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -730,7 +737,7 @@ describe('ImageThunks', () => {
 
                     it(`should not adjust Inside vocal being on ${consonant!.placement} consonant line`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: consonant!.circle.r }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: consonant!.circle.r }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -745,7 +752,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[0].id));
-                    store.dispatch(moveVocal(vocals[0].id, { angle: 1 }));
+                    store.dispatch(updateVocalPositionData(vocals[0].id, { angle: 1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[0].id]!.circle;
@@ -757,7 +764,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[0].id));
-                    store.dispatch(moveVocal(vocals[0].id, { angle: -1 }));
+                    store.dispatch(updateVocalPositionData(vocals[0].id, { angle: -1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[0].id]!.circle;
@@ -769,7 +776,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[1].id));
-                    store.dispatch(moveVocal(vocals[1].id, { angle: 361 }));
+                    store.dispatch(updateVocalPositionData(vocals[1].id, { angle: 361 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[1].id]!.circle;
@@ -781,7 +788,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[1].id));
-                    store.dispatch(moveVocal(vocals[1].id, { angle: -1 }));
+                    store.dispatch(updateVocalPositionData(vocals[1].id, { angle: -1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[1].id]!.circle;
@@ -793,7 +800,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[2].id));
-                    store.dispatch(moveVocal(vocals[2].id, { angle: 1 }));
+                    store.dispatch(updateVocalPositionData(vocals[2].id, { angle: 1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[2].id]!.circle;
@@ -805,7 +812,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[2].id));
-                    store.dispatch(moveVocal(vocals[2].id, { angle: -1 }));
+                    store.dispatch(updateVocalPositionData(vocals[2].id, { angle: -1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[2].id]!.circle;
@@ -817,7 +824,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[3].id));
-                    store.dispatch(moveVocal(vocals[3].id, { angle: 1 }));
+                    store.dispatch(updateVocalPositionData(vocals[3].id, { angle: 1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[3].id]!.circle;
@@ -829,7 +836,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Inside);
 
                     store.dispatch(selectVocal(vocals[3].id));
-                    store.dispatch(moveVocal(vocals[3].id, { angle: -1 }));
+                    store.dispatch(updateVocalPositionData(vocals[3].id, { angle: -1 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[3].id]!.circle;
@@ -844,7 +851,7 @@ describe('ImageThunks', () => {
                 zip(vocals, consonants).forEach(([vocal, consonant]) => {
                     it(`should not adjust Outside vocal being outside of ${consonant!.placement} consonant`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: 1000 }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: 1000 }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -854,7 +861,7 @@ describe('ImageThunks', () => {
 
                     it(`should adjust Outside vocal being inside of ${consonant!.placement} consonant`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: 0 }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: 0 }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -864,7 +871,7 @@ describe('ImageThunks', () => {
 
                     it(`should adjust Outside vocal being on ${consonant!.placement} consonant line`, () => {
                         store.dispatch(selectVocal(vocal!.id));
-                        store.dispatch(moveVocal(vocal!.id, { distance: 100 }));
+                        store.dispatch(updateVocalPositionData(vocal!.id, { distance: 100 }));
 
                         const state = store.getState();
                         const circle = state.image.circles[vocal!.id]!.circle;
@@ -879,7 +886,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[0].id));
-                    store.dispatch(moveVocal(vocals[0].id, { angle: 170 }));
+                    store.dispatch(updateVocalPositionData(vocals[0].id, { angle: 170 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[0].id]!.circle;
@@ -891,7 +898,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[0].id));
-                    store.dispatch(moveVocal(vocals[0].id, { angle: 190 }));
+                    store.dispatch(updateVocalPositionData(vocals[0].id, { angle: 190 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[0].id]!.circle;
@@ -903,7 +910,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[1].id));
-                    store.dispatch(moveVocal(vocals[1].id, { angle: 170 }));
+                    store.dispatch(updateVocalPositionData(vocals[1].id, { angle: 170 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[1].id]!.circle;
@@ -915,7 +922,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[1].id));
-                    store.dispatch(moveVocal(vocals[1].id, { angle: 190 }));
+                    store.dispatch(updateVocalPositionData(vocals[1].id, { angle: 190 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[1].id]!.circle;
@@ -927,7 +934,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[2].id));
-                    store.dispatch(moveVocal(vocals[2].id, { angle: 170 }));
+                    store.dispatch(updateVocalPositionData(vocals[2].id, { angle: 170 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[2].id]!.circle;
@@ -939,7 +946,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[2].id));
-                    store.dispatch(moveVocal(vocals[2].id, { angle: 190 }));
+                    store.dispatch(updateVocalPositionData(vocals[2].id, { angle: 190 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[2].id]!.circle;
@@ -951,7 +958,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[3].id));
-                    store.dispatch(moveVocal(vocals[3].id, { angle: 170 }));
+                    store.dispatch(updateVocalPositionData(vocals[3].id, { angle: 170 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[3].id]!.circle;
@@ -963,7 +970,7 @@ describe('ImageThunks', () => {
                     const { store, vocals } = setup(VocalPlacement.Outside);
 
                     store.dispatch(selectVocal(vocals[3].id));
-                    store.dispatch(moveVocal(vocals[3].id, { angle: 190 }));
+                    store.dispatch(updateVocalPositionData(vocals[3].id, { angle: 190 }));
 
                     const state = store.getState();
                     const circle = state.image.circles[vocals[3].id]!.circle;
@@ -1011,7 +1018,7 @@ describe('ImageThunks', () => {
         it('should adjust dot being outside of consonant', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { distance: 2000 }));
+            store.dispatch(updateDotPositionData(dot.id, { distance: 2000 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1022,7 +1029,7 @@ describe('ImageThunks', () => {
         it('should not adjust dot on consonant line', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { distance: 100 }));
+            store.dispatch(updateDotPositionData(dot.id, { distance: 100 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1033,7 +1040,7 @@ describe('ImageThunks', () => {
         it('should not adjust dot inside of consonant', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { distance: 1 }));
+            store.dispatch(updateDotPositionData(dot.id, { distance: 1 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1044,7 +1051,7 @@ describe('ImageThunks', () => {
         it('should adjust dot angle being greater 360 degrees', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { angle: 370 }));
+            store.dispatch(updateDotPositionData(dot.id, { angle: 370 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1055,7 +1062,7 @@ describe('ImageThunks', () => {
         it('should adjust dot angle being less than 0 degrees', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { angle: -10 }));
+            store.dispatch(updateDotPositionData(dot.id, { angle: -10 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1066,7 +1073,7 @@ describe('ImageThunks', () => {
         it('should not adjust dot angle being between 0 and 360 degrees', () => {
             const { store, dot } = setup();
             store.dispatch(selectDot(dot.id));
-            store.dispatch(moveDot(dot.id, { angle: 180 }));
+            store.dispatch(updateDotPositionData(dot.id, { angle: 180 }));
 
             const state = store.getState();
             const circle = state.image.circles[dot.id]!.circle;
@@ -1112,7 +1119,7 @@ describe('ImageThunks', () => {
                 const { lineSlot, store } = setup();
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { distance: 400 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { distance: 400 }));
 
                 const state = store.getState();
                 const distance = state.image.lineSlots[lineSlot.id]!.distance;
@@ -1124,7 +1131,7 @@ describe('ImageThunks', () => {
                 const { lineSlot, store } = setup();
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 270 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 270 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1170,7 +1177,7 @@ describe('ImageThunks', () => {
                 const { lineSlot, store } = setup();
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { distance: 200 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { distance: 200 }));
 
                 const state = store.getState();
                 const distance = state.image.lineSlots[lineSlot.id]!.distance;
@@ -1182,7 +1189,7 @@ describe('ImageThunks', () => {
                 const { lineSlot, store } = setup();
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 270 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 270 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1253,7 +1260,7 @@ describe('ImageThunks', () => {
                 it(`should not change distance for ${consonant.placement}`, () => {
                     const store = setupStore();
                     store.dispatch(selectLineSlot(lineSlot.id));
-                    store.dispatch(moveLineSlot(lineSlot.id, { distance: 10 }));
+                    store.dispatch(updateLineSlotPositionData(lineSlot.id, { distance: 10 }));
 
                     const state = store.getState();
                     const distance = state.image.lineSlots[lineSlot.id]!.distance;
@@ -1267,7 +1274,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[0];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 10 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1281,7 +1288,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[0];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 350 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 350 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1295,7 +1302,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[1];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 360 + 10 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 360 + 10 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1309,7 +1316,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[1];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: -360 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: -360 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1323,7 +1330,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[2];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 10 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1337,7 +1344,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[2];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 350 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 350 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1351,7 +1358,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[3];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 360 + 10 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 360 + 10 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1365,7 +1372,7 @@ describe('ImageThunks', () => {
                 const [_consonant, lineSlot] = pairs[3];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: -360 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: -360 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1424,7 +1431,7 @@ describe('ImageThunks', () => {
                 it(`should not change distance for ${vocal.decoration}`, () => {
                     const store = setupStore();
                     store.dispatch(selectLineSlot(lineSlot.id));
-                    store.dispatch(moveLineSlot(lineSlot.id, { distance: 10 }));
+                    store.dispatch(updateLineSlotPositionData(lineSlot.id, { distance: 10 }));
 
                     const state = store.getState();
                     const distance = state.image.lineSlots[lineSlot.id]!.distance;
@@ -1438,7 +1445,7 @@ describe('ImageThunks', () => {
                 const [_vocal, lineSlot] = pairs[0];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 10 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 10 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1452,7 +1459,7 @@ describe('ImageThunks', () => {
                 const [_vocal, lineSlot] = pairs[0];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 280 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 280 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1466,7 +1473,7 @@ describe('ImageThunks', () => {
                 const [_vocal, lineSlot] = pairs[1];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 260 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 260 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;
@@ -1480,7 +1487,7 @@ describe('ImageThunks', () => {
                 const [_vocal, lineSlot] = pairs[1];
 
                 store.dispatch(selectLineSlot(lineSlot.id));
-                store.dispatch(moveLineSlot(lineSlot.id, { angle: 100 }));
+                store.dispatch(updateLineSlotPositionData(lineSlot.id, { angle: 100 }));
 
                 const state = store.getState();
                 const angle = state.image.lineSlots[lineSlot.id]!.angle;

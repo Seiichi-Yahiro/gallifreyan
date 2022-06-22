@@ -1,5 +1,5 @@
 import { calculatePositionData } from '../../utils/DragAndDrop';
-import { clamp, clampAngle, Position } from '../../utils/LinearAlgebra';
+import { clamp, clampAngle, Degree, Position } from '../../utils/LinearAlgebra';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
 import { setLineSlotConstraints } from '../work/WorkThunks';
@@ -10,7 +10,7 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { ImageType, Consonant, Dot, Sentence, UUID, Vocal, Word, PositionData } from './ImageTypes';
+import { Consonant, Dot, ImageType, PositionData, Sentence, UUID, Vocal, Word } from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -41,6 +41,67 @@ export const setSentence =
         dispatch(resetAllPositionsAndRadii());
     };
 
+export const updateCircleDistance =
+    (id: UUID, distance: number): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const constraints = state.work.constraints[id]!;
+
+        const constrainedDistance = clamp(distance, constraints.distance.minDistance, constraints.distance.maxDistance);
+
+        dispatch(updateCircleData({ id, circle: { distance: constrainedDistance } }));
+        dispatch(updateCircleLineSlots(id));
+    };
+
+export const updateCircleAngle =
+    (id: UUID, angle: number): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const constraints = state.work.constraints[id]!;
+
+        const constrainedAngle = clampAngle(angle, constraints.angle.minAngle, constraints.angle.maxAngle);
+
+        dispatch(updateCircleData({ id, circle: { angle: constrainedAngle } }));
+        dispatch(updateCircleLineSlots(id));
+    };
+
+export const updateCirclePositionData =
+    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const circleShape = state.image.circles[id]!;
+        const constraints = state.work.constraints[id]!;
+
+        const constrainedDistance = clamp(
+            positionData.distance ?? circleShape.circle.distance,
+            constraints.distance.minDistance,
+            constraints.distance.maxDistance
+        );
+
+        const constrainedAngle = clampAngle(
+            positionData.angle ?? circleShape.circle.angle,
+            constraints.angle.minAngle,
+            constraints.angle.maxAngle
+        );
+
+        dispatch(updateCircleData({ id, circle: { distance: constrainedDistance, angle: constrainedAngle } }));
+        dispatch(updateCircleLineSlots(id));
+    };
+
+const updateCircleLineSlots =
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const circleShape = state.image.circles[id]!;
+
+        if (circleShape.type !== ImageType.Dot) {
+            circleShape.lineSlots.forEach((lineSlotId) => {
+                dispatch(setLineSlotConstraints(lineSlotId));
+                dispatch(updateLineSlotPositionData(lineSlotId, {}));
+            });
+        }
+    };
+
 export const updateSentenceRadius =
     (id: UUID, r: number): AppThunkAction =>
     (dispatch, _getState) => {
@@ -48,41 +109,19 @@ export const updateSentenceRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const moveSentence =
-    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const sentence = state.image.circles[id] as Sentence;
-        const constraints = state.work.constraints[id]!;
-
-        const distance = clamp(
-            positionData.distance ?? sentence.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        const angle = clampAngle(
-            positionData.angle ?? sentence.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        dispatch(updateCircleData({ id, circle: { distance, angle } }));
-
-        sentence.lineSlots.forEach((lineSlotId) => {
-            dispatch(setLineSlotConstraints(lineSlotId));
-            dispatch(moveLineSlot(lineSlotId, {}));
-        });
-    };
+export const updateSentenceDistance = updateCircleDistance;
+export const updateSentenceAngle = updateCircleAngle;
+export const updateSentencePositionData = updateCirclePositionData;
 
 export const dragSentence =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
-        const word = state.image.circles[id] as Sentence;
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, word.circle);
-        dispatch(moveSentence(id, positionData));
+        const sentence = state.image.circles[id] as Sentence;
+        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, sentence.circle);
+
+        dispatch(updateSentencePositionData(id, positionData));
     };
 
 export const updateWordRadius =
@@ -92,32 +131,9 @@ export const updateWordRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const moveWord =
-    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const word = state.image.circles[id] as Word;
-        const constraints = state.work.constraints[id]!;
-
-        const angle = clampAngle(
-            positionData.angle ?? word.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        const distance = clamp(
-            positionData.distance ?? word.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        dispatch(updateCircleData({ id, circle: { distance, angle } }));
-
-        word.lineSlots.forEach((lineSlotId) => {
-            dispatch(setLineSlotConstraints(lineSlotId));
-            dispatch(moveLineSlot(lineSlotId, {}));
-        });
-    };
+export const updateWordDistance = updateCircleDistance;
+export const updateWordAngle = updateCircleAngle;
+export const updateWordPositionData = updateCirclePositionData;
 
 export const dragWord =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -126,7 +142,8 @@ export const dragWord =
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[id] as Word;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, word.circle);
-        dispatch(moveWord(id, positionData));
+
+        dispatch(updateWordPositionData(id, positionData));
     };
 
 export const updateConsonantRadius =
@@ -136,36 +153,25 @@ export const updateConsonantRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const moveConsonant =
+export const updateConsonantDistance =
+    (id: UUID, distance: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(updateCircleDistance(id, distance));
+        dispatch(updateConsonantNestedVocal(id));
+    };
+
+export const updateConsonantAngle =
+    (id: UUID, angle: Degree): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(updateCircleAngle(id, angle));
+        dispatch(updateConsonantNestedVocal(id));
+    };
+
+export const updateConsonantPositionData =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const consonant = state.image.circles[id] as Consonant;
-        const constraints = state.work.constraints[id]!;
-
-        const angle = clampAngle(
-            positionData.angle ?? consonant.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        const distance = clamp(
-            positionData.distance ?? consonant.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        dispatch(updateCircleData({ id, circle: { distance, angle } }));
-
-        consonant.lineSlots.forEach((lineSlotId) => {
-            dispatch(setLineSlotConstraints(lineSlotId));
-            dispatch(moveLineSlot(lineSlotId, {}));
-        });
-
-        if (consonant.vocal) {
-            // TODO update nested vocal
-            //dispatch(moveVocal(consonant.vocal, {}));
-        }
+    (dispatch, _getState) => {
+        dispatch(updateCirclePositionData(id, positionData));
+        dispatch(updateConsonantNestedVocal(id));
     };
 
 export const dragConsonant =
@@ -175,7 +181,19 @@ export const dragConsonant =
         const viewPortScale = state.svgPanZoom.value.a;
         const consonant = state.image.circles[id] as Consonant;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, consonant.circle);
-        dispatch(moveConsonant(id, positionData));
+        dispatch(updateConsonantPositionData(id, positionData));
+    };
+
+const updateConsonantNestedVocal =
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const consonant = state.image.circles[id] as Consonant;
+
+        if (consonant.vocal) {
+            // TODO update nested vocal
+            //dispatch(updateVocalPositionData(consonant.vocal, {}));
+        }
     };
 
 export const updateVocalRadius =
@@ -185,32 +203,9 @@ export const updateVocalRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const moveVocal =
-    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const vocal = state.image.circles[id] as Vocal;
-        const constraints = state.work.constraints[id]!;
-
-        const angle = clampAngle(
-            positionData.angle ?? vocal.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        const distance = clamp(
-            positionData.distance ?? vocal.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        dispatch(updateCircleData({ id, circle: { angle, distance } }));
-
-        vocal.lineSlots.forEach((lineSlotId) => {
-            dispatch(setLineSlotConstraints(lineSlotId));
-            dispatch(moveLineSlot(lineSlotId, {}));
-        });
-    };
+export const updateVocalDistance = updateCircleDistance;
+export const updateVocalAngle = updateCircleAngle;
+export const updateVocalPositionData = updateCirclePositionData;
 
 export const dragVocal =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -227,7 +222,7 @@ export const dragVocal =
         }
 
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, vocal.circle, relativeAngle);
-        dispatch(moveVocal(id, positionData));
+        dispatch(updateVocalPositionData(id, positionData));
     };
 
 export const updateDotRadius =
@@ -237,27 +232,9 @@ export const updateDotRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const moveDot =
-    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const dot = state.image.circles[id] as Dot;
-        const constraints = state.work.constraints[id]!;
-
-        const distance = clamp(
-            positionData.distance ?? dot.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        const angle = clampAngle(
-            positionData.angle ?? dot.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        dispatch(updateCircleData({ id, circle: { distance, angle } }));
-    };
+export const updateDotDistance = updateCircleDistance;
+export const updateDotAngle = updateCircleAngle;
+export const updateDotPositionData = updateCirclePositionData;
 
 export const dragDot =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -267,10 +244,32 @@ export const dragDot =
         const dot = state.image.circles[id] as Dot;
         const consonantAngle = state.image.circles[dot.parentId]!.circle.angle;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, dot.circle, consonantAngle);
-        dispatch(moveDot(id, positionData));
+        dispatch(updateDotPositionData(id, positionData));
     };
 
-export const moveLineSlot =
+export const updateLineSlotDistance =
+    (id: UUID, distance: number): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const constraints = state.work.constraints[id]!;
+
+        const constrainedDistance = clamp(distance, constraints.distance.minDistance, constraints.distance.maxDistance);
+
+        dispatch(updateLineSlotData({ id, positionData: { distance: constrainedDistance } }));
+    };
+
+export const updateLineSlotAngle =
+    (id: UUID, angle: Degree): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const constraints = state.work.constraints[id]!;
+
+        const constrainedAngle = clampAngle(angle, constraints.angle.minAngle, constraints.angle.maxAngle);
+
+        dispatch(updateLineSlotData({ id, positionData: { angle: constrainedAngle } }));
+    };
+
+export const updateLineSlotPositionData =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
@@ -316,5 +315,5 @@ export const dragLineSlot =
         }
 
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, lineSlot, relativeAngle);
-        dispatch(moveLineSlot(id, positionData));
+        dispatch(updateLineSlotPositionData(id, positionData));
     };

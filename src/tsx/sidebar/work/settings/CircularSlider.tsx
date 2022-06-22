@@ -1,9 +1,9 @@
 import { useTheme } from '@mui/material';
 import React, { useRef, useState } from 'react';
-import useEventListener from '../../hooks/useEventListener';
-import { calculateAngle, centerOfDOMRect } from '../../utils/DragAndDrop';
-import { Degree, Position } from '../../utils/LinearAlgebra';
-import { adjustAngle } from '../../utils/TextTransforms';
+import useEventListener from '../../../hooks/useEventListener';
+import { calculateAngle, centerOfDOMRect } from '../../../utils/DragAndDrop';
+import { Degree, Position } from '../../../utils/LinearAlgebra';
+import { adjustAngle } from '../../../utils/TextTransforms';
 
 interface CircularSliderProps {
     radius: number;
@@ -75,8 +75,8 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
         <div
             style={{
                 position: 'relative',
-                width: size,
-                height: size,
+                //width: size,
+                //height: size,
                 color: disabled ? theme.palette.grey.A400 : theme.palette.primary.main,
             }}
         >
