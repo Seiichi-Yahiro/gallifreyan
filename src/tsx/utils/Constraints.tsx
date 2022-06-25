@@ -68,7 +68,7 @@ export const calculateVocalDistanceConstraints = (vocal: Vocal, word: Word): Dis
         case VocalPlacement.OnLine:
             return { minDistance: word.circle.r, maxDistance: word.circle.r };
         case VocalPlacement.Outside:
-            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: Infinity };
+            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: word.circle.r + vocal.circle.r * 2 };
         case VocalPlacement.Inside:
             return { minDistance: 0, maxDistance: word.circle.r - vocal.circle.r };
     }
@@ -170,10 +170,10 @@ export const calculateNestedVocalDistanceConstraints = (
 ): DistanceConstraints => {
     switch (vocal.placement) {
         case VocalPlacement.OnLine: {
-            return { minDistance: 0, maxDistance: Infinity }; // TODO
+            return { minDistance: 0, maxDistance: 1000 }; // TODO
         }
         case VocalPlacement.Outside: {
-            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: Infinity };
+            return { minDistance: word.circle.r + vocal.circle.r, maxDistance: word.circle.r + vocal.circle.r * 2 };
         }
         case VocalPlacement.Inside: {
             return { minDistance: consonant.circle.r, maxDistance: consonant.circle.r };
