@@ -108,7 +108,6 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                         </g>
                     ) : (
                         <circle
-                            ref={circleRef}
                             r={radius}
                             cx={0}
                             cy={0}
@@ -119,6 +118,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                         />
                     )}
                     <circle
+                        ref={circleRef}
                         r={radius}
                         cx={0}
                         cy={0}
