@@ -38,6 +38,7 @@ const VocalSettings: React.FunctionComponent<VocalSettingsProps> = ({ id }) => {
             disableAngle={
                 isNested && placement === VocalPlacement.Outside && parent.placement === ConsonantPlacement.Inside
             }
+            relativeAngle={isNested ? parent.circle.angle : 0}
         />
     );
 };

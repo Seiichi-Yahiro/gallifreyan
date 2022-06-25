@@ -12,6 +12,7 @@ interface CircularSliderProps {
     onChange: (newAngle: Degree) => void;
     disabled?: boolean;
     constraints?: AngleConstraints;
+    relativeAngle?: Degree;
 }
 
 const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
@@ -20,6 +21,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
     onChange,
     disabled = false,
     constraints,
+    relativeAngle = 0,
 }) => {
     const theme = useTheme();
 
@@ -42,7 +44,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
         if (circleRef.current) {
             const mousePos: Position = { x: event.clientX, y: event.clientY };
             const circleCenter = centerOfDOMRect(circleRef.current.getBoundingClientRect());
-            const angle: Degree = adjustAngle(calculateAngle(mousePos, circleCenter));
+            const angle: Degree = adjustAngle(calculateAngle(mousePos, circleCenter) - relativeAngle);
             onChange(angle);
         }
     };
@@ -85,12 +87,17 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
         <div
             style={{
                 position: 'relative',
+                padding: 1,
             }}
         >
             <svg width={size} height={size}>
-                <g style={{ transform: `translate(${circleCenterOffset}px, ${circleCenterOffset}px)` }}>
+                <g
+                    style={{
+                        transform: `translate(${circleCenterOffset}px, ${circleCenterOffset}px)`,
+                    }}
+                >
                     {!disabled && constraints && !(Math.abs(constraints.maxAngle - constraints.minAngle) >= 360) ? (
-                        <g>
+                        <g style={{ transform: `rotate(-${relativeAngle}deg)` }}>
                             <path
                                 d={describeArc(0, 0, radius, constraints.minAngle, constraints.maxAngle)}
                                 stroke={currentColor}
@@ -139,7 +146,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                 style={{
                     width: knobSize,
                     height: knobSize,
-                    transform: `rotate(${-value}deg) translateY(${radius}px)`,
+                    transform: `rotate(-${relativeAngle}deg) rotate(${-value}deg) translateY(${radius}px)`,
                     transformOrigin: 'center',
                     left: circleCenterOffset - knobCenterOffset,
                     top: circleCenterOffset - knobCenterOffset,

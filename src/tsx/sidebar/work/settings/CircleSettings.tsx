@@ -15,6 +15,7 @@ interface CircleSettingsProps {
     disableRadius?: boolean;
     disableDistance?: boolean;
     disableAngle?: boolean;
+    relativeAngle?: Degree;
 }
 
 const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({
@@ -25,6 +26,7 @@ const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({
     disableRadius,
     disableDistance,
     disableAngle,
+    relativeAngle,
 }) => {
     const { r, distance, angle } = useRedux((state) => state.image.circles[id]!.circle);
 
@@ -32,7 +34,13 @@ const CircleSettings: React.FunctionComponent<CircleSettingsProps> = ({
         <>
             <RadiusInput id={id} radius={r} updateRadius={updateRadius} disabled={disableRadius} />
             <DistanceInput id={id} distance={distance} updateDistance={updateDistance} disabled={disableDistance} />
-            <AngleInput id={id} angle={angle} updateAngle={updateAngle} disabled={disableAngle} />
+            <AngleInput
+                id={id}
+                angle={angle}
+                updateAngle={updateAngle}
+                disabled={disableAngle}
+                relativeAngle={relativeAngle}
+            />
         </>
     );
 };

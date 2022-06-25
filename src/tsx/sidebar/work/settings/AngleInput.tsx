@@ -12,9 +12,10 @@ interface AngleInputProps {
     angle: Degree;
     updateAngle: (id: UUID, angle: Degree) => AppThunkAction;
     disabled?: boolean;
+    relativeAngle?: Degree;
 }
 
-const AngleInput: React.FunctionComponent<AngleInputProps> = ({ id, angle, updateAngle, disabled }) => {
+const AngleInput: React.FunctionComponent<AngleInputProps> = ({ id, angle, updateAngle, disabled, relativeAngle }) => {
     const dispatch = useAppDispatch();
     const angleConstraints = useRedux((state) => state.work.constraints[id]!.angle);
 
@@ -31,6 +32,7 @@ const AngleInput: React.FunctionComponent<AngleInputProps> = ({ id, angle, updat
                 onChange={changeAngle}
                 disabled={disabled}
                 constraints={angleConstraints}
+                relativeAngle={relativeAngle}
             />
         </div>
     );
