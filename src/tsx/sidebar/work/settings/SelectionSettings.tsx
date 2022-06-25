@@ -1,3 +1,4 @@
+import { Divider } from '@mui/material';
 import React from 'react';
 import { useRedux } from '../../../hooks/useRedux';
 import { ImageType } from '../../../state/image/ImageTypes';
@@ -41,7 +42,12 @@ const SelectionSettings: React.FunctionComponent<SettingsProps> = ({ className }
         }
     };
 
-    return <div className={className}>{createSettings()}</div>;
+    return (
+        <div className={className}>
+            <Divider />
+            {createSettings()}
+        </div>
+    );
 };
 
 export default React.memo(SelectionSettings);
