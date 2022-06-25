@@ -42,20 +42,20 @@ body,
 
     &-work {
         height: 100%;
-        display: grid;
-        grid-template-rows: min-content auto min-content;
-        grid-template-columns: 100%;
-        grid-row-gap: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
 
         &__tree {
             overflow-y: auto;
             min-height: 100px;
+            flex-grow: 1;
         }
 
         &__settings {
-            display: grid;
-            grid-row-gap: 8px;
-            justify-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         &-settings {
