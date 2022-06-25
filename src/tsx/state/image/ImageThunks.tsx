@@ -247,17 +247,6 @@ export const dragDot =
         dispatch(updateDotPositionData(id, positionData));
     };
 
-export const updateLineSlotDistance =
-    (id: UUID, distance: number): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const constraints = state.work.constraints[id]!;
-
-        const constrainedDistance = clamp(distance, constraints.distance.minDistance, constraints.distance.maxDistance);
-
-        dispatch(updateLineSlotData({ id, positionData: { distance: constrainedDistance } }));
-    };
-
 export const updateLineSlotAngle =
     (id: UUID, angle: Degree): AppThunkAction =>
     (dispatch, getState) => {
