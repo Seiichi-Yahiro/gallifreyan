@@ -3,6 +3,7 @@ import { clamp, clampAngle, Degree, Position } from '../../utils/LinearAlgebra';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
 import { setLineSlotConstraints } from '../work/WorkThunks';
+import { AngleConstraints, DistanceConstraints } from '../work/WorkTypes';
 import {
     convertSentenceText,
     nestWordVocals,
@@ -41,48 +42,45 @@ export const setSentence =
         dispatch(resetAllPositionsAndRadii());
     };
 
-export const updateCircleDistance =
+const constrainDistance = (distance: number, { minDistance, maxDistance }: DistanceConstraints) =>
+    clamp(distance, minDistance, maxDistance);
+
+const constrainAngle = (angle: Degree, { minAngle, maxAngle }: AngleConstraints) =>
+    clampAngle(angle, minAngle, maxAngle);
+
+const updateCircleDistance =
     (id: UUID, distance: number): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const constraints = state.work.constraints[id]!;
 
-        const constrainedDistance = clamp(distance, constraints.distance.minDistance, constraints.distance.maxDistance);
+        const constrainedDistance = constrainDistance(distance, constraints.distance);
 
         dispatch(updateCircleData({ id, circle: { distance: constrainedDistance } }));
         dispatch(updateCircleLineSlots(id));
     };
 
-export const updateCircleAngle =
+const updateCircleAngle =
     (id: UUID, angle: number): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const constraints = state.work.constraints[id]!;
 
-        const constrainedAngle = clampAngle(angle, constraints.angle.minAngle, constraints.angle.maxAngle);
+        const constrainedAngle = constrainAngle(angle, constraints.angle);
 
         dispatch(updateCircleData({ id, circle: { angle: constrainedAngle } }));
         dispatch(updateCircleLineSlots(id));
     };
 
-export const updateCirclePositionData =
+const updateCirclePositionData =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const circleShape = state.image.circles[id]!;
+        const circle = state.image.circles[id]!.circle;
         const constraints = state.work.constraints[id]!;
 
-        const constrainedDistance = clamp(
-            positionData.distance ?? circleShape.circle.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
-
-        const constrainedAngle = clampAngle(
-            positionData.angle ?? circleShape.circle.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
+        const constrainedDistance = constrainDistance(positionData.distance ?? circle.distance, constraints.distance);
+        const constrainedAngle = constrainAngle(positionData.angle ?? circle.angle, constraints.angle);
 
         dispatch(updateCircleData({ id, circle: { distance: constrainedDistance, angle: constrainedAngle } }));
         dispatch(updateCircleLineSlots(id));
@@ -111,7 +109,6 @@ export const updateSentenceRadius =
 
 export const updateSentenceDistance = updateCircleDistance;
 export const updateSentenceAngle = updateCircleAngle;
-export const updateSentencePositionData = updateCirclePositionData;
 
 export const dragSentence =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -121,7 +118,7 @@ export const dragSentence =
         const sentence = state.image.circles[id] as Sentence;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, sentence.circle);
 
-        dispatch(updateSentencePositionData(id, positionData));
+        dispatch(updateCirclePositionData(id, positionData));
     };
 
 export const updateWordRadius =
@@ -133,7 +130,6 @@ export const updateWordRadius =
 
 export const updateWordDistance = updateCircleDistance;
 export const updateWordAngle = updateCircleAngle;
-export const updateWordPositionData = updateCirclePositionData;
 
 export const dragWord =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -143,7 +139,7 @@ export const dragWord =
         const word = state.image.circles[id] as Word;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, word.circle);
 
-        dispatch(updateWordPositionData(id, positionData));
+        dispatch(updateCirclePositionData(id, positionData));
     };
 
 export const updateConsonantRadius =
@@ -167,13 +163,6 @@ export const updateConsonantAngle =
         dispatch(updateConsonantNestedVocal(id));
     };
 
-export const updateConsonantPositionData =
-    (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(updateCirclePositionData(id, positionData));
-        dispatch(updateConsonantNestedVocal(id));
-    };
-
 export const dragConsonant =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
     (dispatch, getState) => {
@@ -181,7 +170,8 @@ export const dragConsonant =
         const viewPortScale = state.svgPanZoom.value.a;
         const consonant = state.image.circles[id] as Consonant;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, consonant.circle);
-        dispatch(updateConsonantPositionData(id, positionData));
+        dispatch(updateCirclePositionData(id, positionData));
+        dispatch(updateConsonantNestedVocal(id));
     };
 
 const updateConsonantNestedVocal =
@@ -205,7 +195,6 @@ export const updateVocalRadius =
 
 export const updateVocalDistance = updateCircleDistance;
 export const updateVocalAngle = updateCircleAngle;
-export const updateVocalPositionData = updateCirclePositionData;
 
 export const dragVocal =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -222,7 +211,7 @@ export const dragVocal =
         }
 
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, vocal.circle, relativeAngle);
-        dispatch(updateVocalPositionData(id, positionData));
+        dispatch(updateCirclePositionData(id, positionData));
     };
 
 export const updateDotRadius =
@@ -234,7 +223,6 @@ export const updateDotRadius =
 
 export const updateDotDistance = updateCircleDistance;
 export const updateDotAngle = updateCircleAngle;
-export const updateDotPositionData = updateCirclePositionData;
 
 export const dragDot =
     (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
@@ -244,7 +232,7 @@ export const dragDot =
         const dot = state.image.circles[id] as Dot;
         const consonantAngle = state.image.circles[dot.parentId]!.circle.angle;
         const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, dot.circle, consonantAngle);
-        dispatch(updateDotPositionData(id, positionData));
+        dispatch(updateCirclePositionData(id, positionData));
     };
 
 export const updateLineSlotAngle =
@@ -258,26 +246,17 @@ export const updateLineSlotAngle =
         dispatch(updateLineSlotData({ id, positionData: { angle: constrainedAngle } }));
     };
 
-export const updateLineSlotPositionData =
+const updateLineSlotPositionData =
     (id: UUID, positionData: Partial<PositionData>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const lineSlot = state.image.lineSlots[id]!;
         const constraints = state.work.constraints[id]!;
 
-        const distance = clamp(
-            positionData.distance ?? lineSlot.distance,
-            constraints.distance.minDistance,
-            constraints.distance.maxDistance
-        );
+        const constrainedDistance = constrainDistance(positionData.distance ?? lineSlot.distance, constraints.distance);
+        const constrainedAngle = constrainAngle(positionData.angle ?? lineSlot.angle, constraints.angle);
 
-        const angle = clampAngle(
-            positionData.angle ?? lineSlot.angle,
-            constraints.angle.minAngle,
-            constraints.angle.maxAngle
-        );
-
-        dispatch(updateLineSlotData({ id, positionData: { distance, angle } }));
+        dispatch(updateLineSlotData({ id, positionData: { distance: constrainedDistance, angle: constrainedAngle } }));
     };
 
 export const dragLineSlot =
