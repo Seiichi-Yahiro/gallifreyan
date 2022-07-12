@@ -1,20 +1,5 @@
 import { PositionData } from '../state/image/ImageTypes';
-import {
-    add,
-    angleBetween,
-    Degree,
-    div,
-    dot,
-    length,
-    lengthSquared,
-    mul,
-    Position,
-    rotate,
-    sub,
-    toDegree,
-    toRadian,
-    Vector2,
-} from './LinearAlgebra';
+import { add, angleBetween, Degree, div, length, Position, sub, toDegree, Vector2 } from './LinearAlgebra';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
 export const centerOfDOMRect = ({ left, top, width, height }: DOMRect): Position => ({
@@ -33,36 +18,23 @@ export const calculateAngle = (newPosition: Position, parentPos: Position): Degr
     return toDegree(angleBetween(vec, zeroDegreeVec));
 };
 
-export const calculatePositionData = (
-    mouseOffset: Position,
+export const calculateRelativePositionData = (
+    mouseMovement: Vector2,
     viewPortScale: number,
     domRect: DOMRect,
-    positionData: PositionData,
+    currentPositionData: PositionData,
     relativeAngle = 0
 ): PositionData => {
-    const scaledMouseOffset = div(mouseOffset, viewPortScale);
-    const elementPos = div(centerOfDOMRect(domRect), viewPortScale);
+    const scaledMouseMovement = div(mouseMovement, viewPortScale);
+    const currentPosition = div(centerOfDOMRect(domRect), viewPortScale);
 
-    const newPosition = add(elementPos, scaledMouseOffset);
+    const newPosition = add(currentPosition, scaledMouseMovement);
 
-    const translation = calculateTranslation(positionData.angle + relativeAngle, positionData.distance);
-    const parentPos = sub(elementPos, translation);
+    const translation = calculateTranslation(currentPositionData.angle + relativeAngle, currentPositionData.distance);
+    const parentPosition = sub(currentPosition, translation);
 
     return {
-        distance: calculateDistance(newPosition, parentPos),
-        angle: adjustAngle(calculateAngle(newPosition, parentPos) - relativeAngle),
+        distance: calculateDistance(newPosition, parentPosition),
+        angle: adjustAngle(calculateAngle(newPosition, parentPosition) - relativeAngle),
     };
-};
-
-// TODO remove?
-export const constrainDistanceOnAngle = (mousePos: Position, constrainedAngle: Degree): number => {
-    const constrainedAngleVector = rotate({ x: 0, y: 1 }, -toRadian(constrainedAngle));
-    const lambda = dot(mousePos, constrainedAngleVector) / lengthSquared(constrainedAngleVector);
-
-    if (lambda <= 0) {
-        return 0;
-    } else {
-        const intersection = mul(constrainedAngleVector, lambda);
-        return length(intersection);
-    }
 };

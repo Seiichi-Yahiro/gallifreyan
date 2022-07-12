@@ -145,3 +145,49 @@ export const circleIntersections = (a: Circle, b: Circle): Maybe<[Position, Posi
 
     return Maybe.some([q1, q2]);
 };
+
+interface Line {
+    a: Position;
+    b: Position;
+}
+
+export const circleLineIntersections = (circle: Circle, line: Line): Maybe<[Position, Position]> => {
+    const a = line.a.y - line.b.y;
+    const b = line.b.x - line.a.x;
+    const c = line.b.x * line.a.y - line.a.x * line.b.y;
+    const d = c - a * circle.pos.x - b * circle.pos.y;
+
+    const aa = a * a;
+    const bb = b * b;
+    const dd = d * d;
+
+    const denominator = aa + bb;
+
+    const rr = circle.r ** 2;
+
+    const determinante = rr * denominator - dd;
+
+    // zero or one intersection
+    if (determinante <= 0) {
+        return Maybe.none();
+    }
+
+    const root = Math.sqrt(determinante);
+
+    const ad = a * d;
+    const broot = b * root;
+
+    const x1 = circle.pos.x + (ad + broot) / denominator;
+    const x2 = circle.pos.x + (ad - broot) / denominator;
+
+    const bd = b * d;
+    const aroot = a * root;
+
+    const y1 = circle.pos.y + (bd - aroot) / denominator;
+    const y2 = circle.pos.y + (bd + aroot) / denominator;
+
+    const pos1: Position = { x: x1, y: y1 };
+    const pos2: Position = { x: x2, y: y2 };
+
+    return Maybe.some([pos1, pos2]);
+};

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { AppThunkAction } from '../state/AppState';
 import { UUID } from '../state/image/ImageTypes';
 import { useIsSelectedSelector } from '../state/Selectors';
-import { Position, sub } from '../utils/LinearAlgebra';
+import { Position, sub, Vector2 } from '../utils/LinearAlgebra';
 import { useAppDispatch } from './useAppDispatch';
 import useEventListener from './useEventListener';
 import { setIsDragging as reduxSetIsDragging, setJustDragged } from '../state/work/WorkActions';
@@ -10,7 +10,7 @@ import { setIsDragging as reduxSetIsDragging, setJustDragged } from '../state/wo
 export const useDragAndDrop = (
     id: UUID,
     target: (EventTarget & Element) | undefined | null,
-    dragAction: (id: UUID, domRect: DOMRect, mouseOffset: Position) => AppThunkAction
+    dragAction: (id: UUID, domRect: DOMRect, mouseMovement: Vector2) => AppThunkAction
 ) => {
     const dispatch = useAppDispatch();
     const isSelected = useIsSelectedSelector(id);
@@ -37,8 +37,8 @@ export const useDragAndDrop = (
             event.preventDefault();
 
             const domRect = target!.getBoundingClientRect();
-            const mouseOffset: Position = { x: event.movementX, y: event.movementY };
-            dispatch(dragAction(id, domRect, mouseOffset));
+            const mouseMovement: Vector2 = { x: event.movementX, y: event.movementY };
+            dispatch(dragAction(id, domRect, mouseMovement));
         },
         eventTarget
     );
@@ -56,8 +56,8 @@ export const useDragAndDrop = (
             const touchPosition = { x: touch.clientX, y: touch.clientY };
             const previousTouchPosition = previousTouchPositionRef.current ?? touchPosition;
 
-            const touchOffset: Position = sub(touchPosition, previousTouchPosition);
-            dispatch(dragAction(id, domRect, touchOffset));
+            const touchMovement: Vector2 = sub(touchPosition, previousTouchPosition);
+            dispatch(dragAction(id, domRect, touchMovement));
 
             previousTouchPositionRef.current = { x: touch.clientX, y: touch.clientY };
         },

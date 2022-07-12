@@ -1,8 +1,21 @@
-import { calculatePositionData } from '../../utils/DragAndDrop';
-import { clamp, clampAngle, Degree, Position } from '../../utils/LinearAlgebra';
+import { calculateRelativePositionData } from '../../utils/DragAndDrop';
+import {
+    add,
+    angleBetween,
+    clamp,
+    clampAngle,
+    Degree,
+    length,
+    mul,
+    normalize,
+    sub,
+    toDegree,
+    Vector2,
+} from '../../utils/LinearAlgebra';
+import { calculateTranslation } from '../../utils/TextTransforms';
 import { AppThunkAction } from '../AppState';
 import { setHovering, setSelection } from '../work/WorkActions';
-import { setLineSlotConstraints } from '../work/WorkThunks';
+import { setLineSlotConstraints, setVocalConstraints } from '../work/WorkThunks';
 import { AngleConstraints, DistanceConstraints } from '../work/WorkTypes';
 import {
     convertSentenceText,
@@ -11,7 +24,18 @@ import {
     updateCircleData,
     updateLineSlotData,
 } from './ImageActions';
-import { Consonant, Dot, ImageType, PositionData, Sentence, UUID, Vocal, Word } from './ImageTypes';
+import {
+    Consonant,
+    ConsonantPlacement,
+    Dot,
+    ImageType,
+    PositionData,
+    Sentence,
+    UUID,
+    Vocal,
+    VocalPlacement,
+    Word,
+} from './ImageTypes';
 
 export const setSentence =
     (sentenceText: string): AppThunkAction =>
@@ -111,12 +135,12 @@ export const updateSentenceDistance = updateCircleDistance;
 export const updateSentenceAngle = updateCircleAngle;
 
 export const dragSentence =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const sentence = state.image.circles[id] as Sentence;
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, sentence.circle);
+        const positionData = calculateRelativePositionData(mouseMovement, viewPortScale, domRect, sentence.circle);
 
         dispatch(updateCirclePositionData(id, positionData));
     };
@@ -132,12 +156,12 @@ export const updateWordDistance = updateCircleDistance;
 export const updateWordAngle = updateCircleAngle;
 
 export const dragWord =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const word = state.image.circles[id] as Word;
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, word.circle);
+        const positionData = calculateRelativePositionData(mouseMovement, viewPortScale, domRect, word.circle);
 
         dispatch(updateCirclePositionData(id, positionData));
     };
@@ -164,12 +188,12 @@ export const updateConsonantAngle =
     };
 
 export const dragConsonant =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const consonant = state.image.circles[id] as Consonant;
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, consonant.circle);
+        const positionData = calculateRelativePositionData(mouseMovement, viewPortScale, domRect, consonant.circle);
         dispatch(updateCirclePositionData(id, positionData));
         dispatch(updateConsonantNestedVocal(id));
     };
@@ -193,25 +217,107 @@ export const updateVocalRadius =
         dispatch(updateCircleData({ id, circle: { r } }));
     };
 
-export const updateVocalDistance = updateCircleDistance;
-export const updateVocalAngle = updateCircleAngle;
+export const updateVocalDistance =
+    (id: UUID, distance: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(updateCircleDistance(id, distance));
+        dispatch(updateNestedVocalConstraints(id));
+    };
+
+export const updateVocalAngle =
+    (id: UUID, angle: Degree): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(updateCircleAngle(id, angle));
+        dispatch(updateNestedVocalConstraints(id));
+    };
+
+const updateNestedVocalConstraints =
+    (id: UUID): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const vocal = state.image.circles[id] as Vocal;
+
+        if (state.image.circles[vocal.parentId]!.type === ImageType.Consonant) {
+            dispatch(setVocalConstraints(id));
+        }
+    };
+
+const dragNestedVocal =
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const viewPortScale = state.svgPanZoom.value.a;
+        const vocal = state.image.circles[id] as Vocal;
+        const consonant = state.image.circles[vocal.parentId] as Consonant;
+
+        const positionData = calculateRelativePositionData(
+            mouseMovement,
+            viewPortScale,
+            domRect,
+            vocal.circle,
+            consonant.circle.angle
+        );
+
+        // special drag handling for online vocals
+        // needed for smooth dragging along edges
+        if (vocal.placement === VocalPlacement.OnLine && consonant.placement !== ConsonantPlacement.Inside) {
+            const word = state.image.circles[consonant.parentId] as Word;
+
+            const consonantPos = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+            const vocalPos = add(
+                calculateTranslation(positionData.angle + consonant.circle.angle, positionData.distance),
+                consonantPos
+            );
+
+            const distanceVocalToWordCircle =
+                consonant.placement === ConsonantPlacement.DeepCut
+                    ? length(vocalPos) - word.circle.r + vocal.circle.r
+                    : length(vocalPos) - word.circle.r;
+
+            // is vocal outside word
+            if (distanceVocalToWordCircle > 0) {
+                const wordToVocalVec = normalize(vocalPos);
+                const wordCircleIntersection = mul(wordToVocalVec, word.circle.r);
+                let adjustedVocalToWordIntersection = wordCircleIntersection;
+
+                // is consonant inside word
+                if (consonant.placement === ConsonantPlacement.DeepCut) {
+                    adjustedVocalToWordIntersection = sub(wordCircleIntersection, mul(wordToVocalVec, vocal.circle.r));
+                }
+
+                const consonantToVocalVec = sub(adjustedVocalToWordIntersection, consonantPos);
+
+                const distance = clamp(length(consonantToVocalVec), 0, consonant.circle.r - vocal.circle.r);
+                const angle = -toDegree(angleBetween({ x: 0, y: 1 }, consonantToVocalVec)) - consonant.circle.angle;
+
+                dispatch(updateCircleData({ id, circle: { distance, angle } }));
+                dispatch(updateCircleLineSlots(id));
+            } else {
+                dispatch(updateCirclePositionData(id, positionData));
+            }
+
+            dispatch(updateNestedVocalConstraints(id));
+        } else {
+            dispatch(updateCirclePositionData(id, positionData));
+        }
+    };
 
 export const dragVocal =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const vocal = state.image.circles[id] as Vocal;
         const parent = state.image.circles[vocal.parentId]!;
 
-        let relativeAngle;
-
+        // nested vocal
         if (parent.type === ImageType.Consonant) {
-            relativeAngle = parent.circle.angle;
-        }
+            dispatch(dragNestedVocal(id, domRect, mouseMovement));
+        } else {
+            const positionData = calculateRelativePositionData(mouseMovement, viewPortScale, domRect, vocal.circle);
 
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, vocal.circle, relativeAngle);
-        dispatch(updateCirclePositionData(id, positionData));
+            dispatch(updateCirclePositionData(id, positionData));
+        }
     };
 
 export const updateDotRadius =
@@ -225,13 +331,19 @@ export const updateDotDistance = updateCircleDistance;
 export const updateDotAngle = updateCircleAngle;
 
 export const dragDot =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
         const dot = state.image.circles[id] as Dot;
         const consonantAngle = state.image.circles[dot.parentId]!.circle.angle;
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, dot.circle, consonantAngle);
+        const positionData = calculateRelativePositionData(
+            mouseMovement,
+            viewPortScale,
+            domRect,
+            dot.circle,
+            consonantAngle
+        );
         dispatch(updateCirclePositionData(id, positionData));
     };
 
@@ -260,7 +372,7 @@ const updateLineSlotPositionData =
     };
 
 export const dragLineSlot =
-    (id: UUID, domRect: DOMRect, mouseOffset: Position): AppThunkAction =>
+    (id: UUID, domRect: DOMRect, mouseMovement: Vector2): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const viewPortScale = state.svgPanZoom.value.a;
@@ -282,6 +394,12 @@ export const dragLineSlot =
             }
         }
 
-        const positionData = calculatePositionData(mouseOffset, viewPortScale, domRect, lineSlot, relativeAngle);
+        const positionData = calculateRelativePositionData(
+            mouseMovement,
+            viewPortScale,
+            domRect,
+            lineSlot,
+            relativeAngle
+        );
         dispatch(updateLineSlotPositionData(id, positionData));
     };
