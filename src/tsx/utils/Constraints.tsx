@@ -81,7 +81,42 @@ export const calculateNestedVocalAngleConstraints = (
 ): AngleConstraints => {
     switch (vocal.placement) {
         case VocalPlacement.OnLine: {
-            return { minAngle: 0, maxAngle: 360 }; // TODO
+            const consonantTranslation = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+
+            let vocalBasedWordRadius;
+            switch (consonant.placement) {
+                case ConsonantPlacement.DeepCut:
+                case ConsonantPlacement.Inside:
+                    vocalBasedWordRadius = word.circle.r - vocal.circle.r;
+                    break;
+                case ConsonantPlacement.ShallowCut:
+                case ConsonantPlacement.OnLine:
+                    vocalBasedWordRadius = word.circle.r;
+                    break;
+            }
+
+            const vocalBasedWordCircle = {
+                r: vocalBasedWordRadius,
+                pos: { x: 0, y: 0 },
+            };
+
+            const vocalBasedConsonantCircle = {
+                r: vocal.circle.distance,
+                pos: consonantTranslation,
+            };
+
+            return circleIntersections(vocalBasedWordCircle, vocalBasedConsonantCircle)
+                .map((intersections) =>
+                    intersections.map((intersection) => {
+                        let angle = calculateAngle(intersection, consonantTranslation);
+                        angle -= consonant.circle.angle;
+                        return adjustAngle(angle);
+                    })
+                )
+                .map<AngleConstraints>(([angle1, angle2]) =>
+                    angle1 < angle2 ? { minAngle: angle1, maxAngle: angle2 } : { minAngle: angle2, maxAngle: angle1 }
+                )
+                .unwrapOr(() => ({ minAngle: 0, maxAngle: 360 }));
         }
         case VocalPlacement.Outside: {
             switch (consonant.placement) {
