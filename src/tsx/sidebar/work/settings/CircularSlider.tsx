@@ -83,6 +83,26 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
     const pointerEvents = disabled ? 'none' : 'auto';
     const opacity = 0.38;
 
+    const drawMinMaxAngleLines = (constraints: AngleConstraints) => {
+        const [start, end] = calculateArcPositions(
+            0,
+            0,
+            radius - strokeWidth / 2,
+            constraints.minAngle,
+            constraints.maxAngle
+        );
+
+        return (
+            <path
+                d={`M ${start.x} ${start.y} L 0 0 L ${end.x} ${end.y}`}
+                stroke={currentColor}
+                strokeWidth={1}
+                opacity={opacity}
+                fill="none"
+            />
+        );
+    };
+
     return (
         <div
             style={{
@@ -112,6 +132,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                                 opacity={opacity}
                                 strokeWidth={strokeWidth}
                             />
+                            {drawMinMaxAngleLines(constraints)}
                         </g>
                     ) : (
                         <circle
@@ -178,11 +199,17 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
     );
 };
 
-const describeArc = (x: number, y: number, radius: number, minAngle: Degree, maxAngle: Degree): string => {
+const calculateArcPositions = (x: number, y: number, radius: number, minAngle: Degree, maxAngle: Degree) => {
     const zeroVec = { x, y: y + radius };
 
     const start = rotate(zeroVec, -toRadian(minAngle));
     const end = rotate(zeroVec, -toRadian(maxAngle));
+
+    return [start, end];
+};
+
+const describeArc = (x: number, y: number, radius: number, minAngle: Degree, maxAngle: Degree): string => {
+    const [start, end] = calculateArcPositions(x, y, radius, minAngle, maxAngle);
 
     const length = Math.abs(maxAngle - minAngle);
 
