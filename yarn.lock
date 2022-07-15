@@ -1272,7 +1272,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.7":
+"@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7":
   version: 0.5.7
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7"
   dependencies:
@@ -4424,7 +4424,7 @@ __metadata:
     "@mui/icons-material": 5.6.2
     "@mui/lab": 5.0.0-alpha.80
     "@mui/material": 5.6.4
-    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
+    "@pmmmwh/react-refresh-webpack-plugin": 0.5.7
     "@redux-devtools/core": 3.12.0
     "@reduxjs/toolkit": 1.8.1
     "@testing-library/react": 13.2.0
@@ -4455,14 +4455,14 @@ __metadata:
     react: 18.1.0
     react-dom: 18.1.0
     react-redux: 8.0.1
-    react-refresh: ^0.14.0
-    react-refresh-typescript: ^2.0.7
+    react-refresh: 0.14.0
+    react-refresh-typescript: 2.0.7
     react-svg-pan-zoom: 3.11.0
     reselect: 4.1.5
     rimraf: 3.0.2
     rxjs: 6.6.7
     sass: 1.51.0
-    sass-loader: 12.6.0
+    sass-loader: 13.0.2
     ts-jest: 28.0.1
     ts-loader: 9.3.0
     tslib: 1.14.1
@@ -7300,7 +7300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-refresh-typescript@npm:^2.0.7":
+"react-refresh-typescript@npm:2.0.7":
   version: 2.0.7
   resolution: "react-refresh-typescript@npm:2.0.7"
   peerDependencies:
@@ -7310,7 +7310,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-refresh@npm:^0.14.0":
+"react-refresh@npm:0.14.0":
   version: 0.14.0
   resolution: "react-refresh@npm:0.14.0"
   checksum: dc69fa8c993df512f42dd0f1b604978ae89bd747c0ed5ec595c0cc50d535fb2696619ccd98ae28775cc01d0a7c146a532f0f7fb81dc22e1977c242a4912312f4
@@ -7652,9 +7652,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:12.6.0":
-  version: 12.6.0
-  resolution: "sass-loader@npm:12.6.0"
+"sass-loader@npm:13.0.2":
+  version: 13.0.2
+  resolution: "sass-loader@npm:13.0.2"
   dependencies:
     klona: ^2.0.4
     neo-async: ^2.6.2
@@ -7673,7 +7673,7 @@ __metadata:
       optional: true
     sass-embedded:
       optional: true
-  checksum: 5d73a428588150f704016aa27397941bb9246cecd2ee083b573e95d969fc080ac6a16f2fe1cc64aca08f6e70da6f3c586ee68f0efc9f527fecc360e5f1c299ec
+  checksum: 6306712cc75bd4b4260ce67178778c92110089485f358b5956b6b12aba15a55e5c7287154daaf8b32678891df915b7bcda7356991afe8bf08ca7356ed30eb448
   languageName: node
   linkType: hard
 
