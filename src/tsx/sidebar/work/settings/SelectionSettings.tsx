@@ -43,10 +43,10 @@ const SelectionSettings: React.FunctionComponent<SettingsProps> = ({ className }
     };
 
     return (
-        <div className={className}>
+        <>
             <Divider />
-            {createSettings()}
-        </div>
+            <div className={className}>{createSettings()}</div>
+        </>
     );
 };
 
