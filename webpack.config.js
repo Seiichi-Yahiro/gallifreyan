@@ -5,6 +5,8 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const ReactRefreshTypeScript = require('react-refresh-typescript');
 
 module.exports = {
     mode: 'development',
@@ -30,6 +32,9 @@ module.exports = {
                         loader: 'ts-loader',
                         options: {
                             transpileOnly: true,
+                            getCustomTransformers: () => ({
+                                before: [ReactRefreshTypeScript()],
+                            }),
                         },
                     },
                 ],
@@ -77,6 +82,7 @@ module.exports = {
             filename: 'css/[name].css',
             chunkFilename: 'css/[name].chunk.css',
         }),
+        new ReactRefreshWebpackPlugin(),
     ],
     devServer: {
         port: 3000,
@@ -85,5 +91,6 @@ module.exports = {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
             'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
         },
+        open: true,
     },
 };

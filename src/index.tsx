@@ -18,3 +18,7 @@ window.addEventListener('load', function load() {
         </Provider>
     );
 });
+
+if (import.meta['webpackHot']) {
+    import.meta['webpackHot'].accept();
+}
