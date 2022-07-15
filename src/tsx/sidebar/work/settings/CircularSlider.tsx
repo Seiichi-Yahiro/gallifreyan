@@ -1,10 +1,10 @@
 import { useTheme } from '@mui/material';
-import React, { useRef, useState } from 'react';
-import useEventListener from '../../../hooks/useEventListener';
+import React, { useRef } from 'react';
 import { AngleConstraints } from '../../../state/work/WorkTypes';
 import { calculateAngle, centerOfDOMRect } from '../../../utils/DragAndDrop';
-import { Degree, Position, rotate, toRadian } from '../../../utils/LinearAlgebra';
+import { addValue, Degree, Position, rotate, toRadian } from '../../../utils/LinearAlgebra';
 import { adjustAngle } from '../../../utils/TextTransforms';
+import SliderThumb from './SliderThumb';
 
 interface CircularSliderProps {
     radius: number;
@@ -25,20 +25,13 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
 }) => {
     const theme = useTheme();
 
-    const [isHovered, setHovered] = useState(false);
-    const [isDragging, setDragging] = useState(false);
-
     const strokeWidth = 4;
-
-    const knobSize = 20;
-    const knobCenterOffset = knobSize / 2;
-
-    const size = radius * 2 + knobSize;
+    const thumbSize = 20;
+    const thumbCenterOffset = thumbSize / 2;
+    const size = radius * 2 + thumbSize;
     const circleCenterOffset = size / 2;
 
     const circleRef = useRef<SVGCircleElement>(null);
-
-    const target = !disabled && isDragging ? window : undefined;
 
     const updateAngle = (event: MouseEvent | React.MouseEvent | Touch) => {
         if (circleRef.current) {
@@ -49,33 +42,6 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
         }
     };
 
-    useEventListener(
-        'mousemove',
-        (event: MouseEvent) => {
-            event.preventDefault();
-            updateAngle(event);
-        },
-        target
-    );
-
-    useEventListener(
-        'touchmove',
-        (event: TouchEvent) => {
-            event.preventDefault();
-            const touch = event.touches[0];
-            updateAngle(touch);
-        },
-        target
-    );
-
-    useEventListener(
-        'mouseup touchend',
-        () => {
-            setDragging(false);
-        },
-        target
-    );
-
     const activeColor = theme.palette.primary.main;
     const disabledColor = theme.palette.grey.A400;
     const currentColor = disabled ? disabledColor : activeColor;
@@ -83,24 +49,59 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
     const pointerEvents = disabled ? 'none' : 'auto';
     const opacity = 0.38;
 
-    const drawMinMaxAngleLines = (constraints: AngleConstraints) => {
-        const [start, end] = calculateArcPositions(
-            0,
-            0,
-            radius - strokeWidth / 2,
-            constraints.minAngle,
-            constraints.maxAngle
-        );
+    const thumbPosition = addValue(
+        rotate({ x: 0, y: radius }, -toRadian(value + relativeAngle)),
+        circleCenterOffset - thumbCenterOffset
+    );
 
-        return (
-            <path
-                d={`M ${start.x} ${start.y} L 0 0 L ${end.x} ${end.y}`}
-                stroke={currentColor}
-                strokeWidth={1}
-                opacity={opacity}
-                fill="none"
-            />
-        );
+    const drawCircleArcs = () => {
+        if (!disabled && constraints && !(Math.abs(constraints.maxAngle - constraints.minAngle) >= 360)) {
+            const [start, end] = calculateArcPositions(
+                0,
+                0,
+                radius - strokeWidth / 2,
+                constraints.minAngle,
+                constraints.maxAngle
+            );
+
+            return (
+                <g style={{ transform: `rotate(-${relativeAngle}deg)` }}>
+                    <path
+                        d={describeArc(0, 0, radius, constraints.minAngle, constraints.maxAngle)}
+                        stroke={currentColor}
+                        fill="none"
+                        opacity={opacity}
+                        strokeWidth={strokeWidth}
+                    />
+                    <path
+                        d={describeArc(0, 0, radius, constraints.maxAngle, constraints.minAngle)}
+                        stroke={disabledColor}
+                        fill="none"
+                        opacity={opacity}
+                        strokeWidth={strokeWidth}
+                    />
+                    <path
+                        d={`M ${start.x} ${start.y} L 0 0 L ${end.x} ${end.y}`}
+                        stroke={currentColor}
+                        strokeWidth={1}
+                        opacity={opacity}
+                        fill="none"
+                    />
+                </g>
+            );
+        } else {
+            return (
+                <circle
+                    r={radius}
+                    cx={0}
+                    cy={0}
+                    strokeWidth={strokeWidth}
+                    stroke={currentColor}
+                    opacity={opacity}
+                    fill="none"
+                />
+            );
+        }
     };
 
     return (
@@ -116,35 +117,7 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                         transform: `translate(${circleCenterOffset}px, ${circleCenterOffset}px)`,
                     }}
                 >
-                    {!disabled && constraints && !(Math.abs(constraints.maxAngle - constraints.minAngle) >= 360) ? (
-                        <g style={{ transform: `rotate(-${relativeAngle}deg)` }}>
-                            <path
-                                d={describeArc(0, 0, radius, constraints.minAngle, constraints.maxAngle)}
-                                stroke={currentColor}
-                                fill="none"
-                                opacity={opacity}
-                                strokeWidth={strokeWidth}
-                            />
-                            <path
-                                d={describeArc(0, 0, radius, constraints.maxAngle, constraints.minAngle)}
-                                stroke={disabledColor}
-                                fill="none"
-                                opacity={opacity}
-                                strokeWidth={strokeWidth}
-                            />
-                            {drawMinMaxAngleLines(constraints)}
-                        </g>
-                    ) : (
-                        <circle
-                            r={radius}
-                            cx={0}
-                            cy={0}
-                            strokeWidth={strokeWidth}
-                            stroke={currentColor}
-                            opacity={opacity}
-                            fill="none"
-                        />
-                    )}
+                    {drawCircleArcs()}
                     <circle
                         ref={circleRef}
                         r={radius}
@@ -158,43 +131,18 @@ const CircularSlider: React.FunctionComponent<CircularSliderProps> = ({
                     />
                 </g>
             </svg>
-            <span
-                className="MuiSlider-thumb"
-                onMouseOver={disabled ? undefined : () => setHovered(true)}
-                onMouseLeave={disabled ? undefined : () => setHovered(false)}
-                onMouseDown={disabled ? undefined : () => setDragging(true)}
-                onTouchStart={disabled ? undefined : () => setDragging(true)}
+            <SliderThumb
+                disabled={disabled}
+                onChange={updateAngle}
+                size={thumbSize}
+                color={currentColor}
                 style={{
-                    width: knobSize,
-                    height: knobSize,
-                    transform: `rotate(-${relativeAngle}deg) rotate(${-value}deg) translateY(${radius}px)`,
-                    transformOrigin: 'center',
-                    left: circleCenterOffset - knobCenterOffset,
-                    top: circleCenterOffset - knobCenterOffset,
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    backgroundColor: currentColor,
                     cursor,
                     pointerEvents,
-                    boxShadow:
-                        isHovered || isDragging
-                            ? `0px 0px 0px ${isDragging ? 14 : 8}px rgb(144 202 249 / 16%)`
-                            : undefined,
+                    left: thumbPosition.x,
+                    top: thumbPosition.y,
                 }}
-            >
-                <span
-                    style={{
-                        position: 'absolute',
-                        transform: `rotate(${value}deg)`,
-                        transformOrigin: 'center',
-                        borderRadius: '50%',
-                        width: '100%',
-                        height: '100%',
-                        boxShadow:
-                            '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)',
-                    }}
-                />
-            </span>
+            />
         </div>
     );
 };

@@ -13,6 +13,7 @@ export type Radian = number;
 export type Degree = number;
 
 export const add = (a: Dimension2, b: Dimension2): Dimension2 => ({ x: a.x + b.x, y: a.y + b.y });
+export const addValue = (d2: Dimension2, value: number): Dimension2 => ({ x: d2.x + value, y: d2.y + value });
 export const sub = (a: Dimension2, b: Dimension2): Dimension2 => ({ x: a.x - b.x, y: a.y - b.y });
 export const div = (d2: Dimension2, value: number): Dimension2 => ({ x: d2.x / value, y: d2.y / value });
 export const mul = (d2: Dimension2, value: number): Dimension2 => ({ x: d2.x * value, y: d2.y * value });
