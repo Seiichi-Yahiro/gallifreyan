@@ -168,8 +168,8 @@ export const circleLineIntersections = (circle: Circle, line: Line): Maybe<[Posi
 
     const determinante = rr * denominator - dd;
 
-    // zero or one intersection
-    if (determinante <= 0) {
+    // zero intersection
+    if (determinante < 0) {
         return Maybe.none();
     }
 
@@ -190,5 +190,6 @@ export const circleLineIntersections = (circle: Circle, line: Line): Maybe<[Posi
     const pos1: Position = { x: x1, y: y1 };
     const pos2: Position = { x: x2, y: y2 };
 
+    // one or two intersections
     return Maybe.some([pos1, pos2]);
 };

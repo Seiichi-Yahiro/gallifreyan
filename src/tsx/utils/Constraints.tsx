@@ -13,7 +13,17 @@ import {
 } from '../state/image/ImageTypes';
 import { AngleConstraints, DistanceConstraints } from '../state/work/WorkTypes';
 import { calculateAngle } from './DragAndDrop';
-import { circleIntersections, length } from './LinearAlgebra';
+import {
+    add,
+    circleIntersections,
+    circleLineIntersections,
+    length,
+    mul,
+    normalize,
+    rotate,
+    sub,
+    toRadian,
+} from './LinearAlgebra';
 import Maybe from './Maybe';
 import { adjustAngle, calculateTranslation } from './TextTransforms';
 
@@ -205,7 +215,69 @@ export const calculateNestedVocalDistanceConstraints = (
 ): DistanceConstraints => {
     switch (vocal.placement) {
         case VocalPlacement.OnLine: {
-            return { minDistance: 0, maxDistance: 1000 }; // TODO
+            switch (consonant.placement) {
+                case ConsonantPlacement.Inside: {
+                    return { minDistance: 0, maxDistance: consonant.circle.r - vocal.circle.r };
+                }
+                case ConsonantPlacement.DeepCut: {
+                    const maxMaxDistance = consonant.circle.r - vocal.circle.r;
+
+                    const consonantPos = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+                    const direction = rotate({ x: 0, y: 1 }, -toRadian(vocal.circle.angle + consonant.circle.angle));
+
+                    const intersection = circleLineIntersections(
+                        { r: word.circle.r - vocal.circle.r, pos: { x: 0, y: 0 } },
+                        { a: consonantPos, b: add(consonantPos, direction) }
+                    )
+                        .unwrap() // can never have zero intersections;
+                        .find((intersection) => {
+                            // pointing same direction as direction
+                            const dir = normalize(sub(intersection, consonantPos));
+                            return length(sub(dir, direction)) < 1e-8;
+                        })!;
+
+                    const distanceToIntersection = length(sub(consonantPos, intersection));
+                    const maxDistance = Math.min(distanceToIntersection, maxMaxDistance);
+
+                    return {
+                        minDistance: 0,
+                        maxDistance,
+                    };
+                }
+                case ConsonantPlacement.ShallowCut:
+                case ConsonantPlacement.OnLine: {
+                    const maxMaxDistance = consonant.circle.r - vocal.circle.r;
+
+                    const consonantPos = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
+                    const direction = rotate({ x: 0, y: 1 }, -toRadian(vocal.circle.angle + consonant.circle.angle));
+
+                    const [closeIntersection, farIntersection] = circleLineIntersections(
+                        { r: word.circle.r, pos: { x: 0, y: 0 } },
+                        { a: consonantPos, b: add(consonantPos, direction) }
+                    )
+                        .unwrap() // can never have zero intersections;
+                        .map((intersection) => length(sub(consonantPos, intersection)))
+                        .sort((a, b) => a - b);
+
+                    const minDistance = closeIntersection;
+
+                    let maxDistance;
+
+                    if (farIntersection < maxMaxDistance) {
+                        maxDistance = farIntersection;
+                    } else if (length(add(consonantPos, mul(direction, maxMaxDistance))) - word.circle.r <= 0) {
+                        // is constraint inside word
+                        maxDistance = maxMaxDistance;
+                    } else {
+                        maxDistance = minDistance;
+                    }
+
+                    return {
+                        minDistance,
+                        maxDistance,
+                    };
+                }
+            }
         }
         case VocalPlacement.Outside: {
             return { minDistance: word.circle.r + vocal.circle.r, maxDistance: word.circle.r + vocal.circle.r * 2 };
