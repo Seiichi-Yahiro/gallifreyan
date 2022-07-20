@@ -20,6 +20,8 @@ const DistanceInput: React.FunctionComponent<DistanceInputProps> = ({ id, distan
         dispatch(updateDistance(id, distance));
     };
 
+    const diff = maxDistance - minDistance;
+
     return (
         <div className="sidebar-work-settings__distance">
             <InputLabel>Distance</InputLabel>
@@ -28,9 +30,10 @@ const DistanceInput: React.FunctionComponent<DistanceInputProps> = ({ id, distan
                 value={distance}
                 min={minDistance}
                 max={maxDistance}
+                step={diff / 100}
                 onChange={changeDistance}
                 track={false}
-                disabled={disabled}
+                disabled={diff < 1e-8 || disabled}
             />
         </div>
     );
