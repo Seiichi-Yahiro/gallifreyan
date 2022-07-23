@@ -205,8 +205,8 @@ const updateConsonantNestedVocal =
         const consonant = state.image.circles[id] as Consonant;
 
         if (consonant.vocal) {
-            // TODO update nested vocal
-            //dispatch(updateVocalPositionData(consonant.vocal, {}));
+            dispatch(updateNestedVocalConstraints(consonant.vocal));
+            dispatch(updateCirclePositionData(consonant.vocal, {}));
         }
     };
 

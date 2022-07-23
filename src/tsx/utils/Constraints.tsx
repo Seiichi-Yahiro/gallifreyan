@@ -224,12 +224,20 @@ export const calculateNestedVocalDistanceConstraints = (
 
                     const consonantPos = calculateTranslation(consonant.circle.angle, consonant.circle.distance);
                     const direction = rotate({ x: 0, y: 1 }, -toRadian(vocal.circle.angle + consonant.circle.angle));
+                    const reducedWordRadius = word.circle.r - vocal.circle.r;
 
                     const intersection = circleLineIntersections(
-                        { r: word.circle.r - vocal.circle.r, pos: { x: 0, y: 0 } },
+                        { r: reducedWordRadius, pos: { x: 0, y: 0 } },
                         { a: consonantPos, b: add(consonantPos, direction) }
                     )
-                        .unwrap() // can never have zero intersections;
+                        .unwrapOr(() => {
+                            const vocalPos = add(
+                                calculateTranslation(vocal.circle.angle, vocal.circle.distance),
+                                consonantPos
+                            );
+                            const direction = normalize(vocalPos);
+                            return [mul(direction, reducedWordRadius), mul(direction, -reducedWordRadius)];
+                        })
                         .find((intersection) => {
                             // pointing same direction as direction
                             const dir = normalize(sub(intersection, consonantPos));
@@ -255,7 +263,14 @@ export const calculateNestedVocalDistanceConstraints = (
                         { r: word.circle.r, pos: { x: 0, y: 0 } },
                         { a: consonantPos, b: add(consonantPos, direction) }
                     )
-                        .unwrap() // can never have zero intersections;
+                        .unwrapOr(() => {
+                            const vocalPos = add(
+                                calculateTranslation(vocal.circle.angle, vocal.circle.distance),
+                                consonantPos
+                            );
+                            const direction = normalize(vocalPos);
+                            return [mul(direction, word.circle.r), mul(direction, -word.circle.r)];
+                        })
                         .map((intersection) => length(sub(consonantPos, intersection)))
                         .sort((a, b) => a - b);
 
