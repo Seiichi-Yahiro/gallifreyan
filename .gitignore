@@ -1,0 +1,13 @@
+.idea
+
+# dependencies
+/node_modules
+
+# testing
+/reports
+
+# stryker temp files
+.stryker-tmp
+
+# production
+/build
