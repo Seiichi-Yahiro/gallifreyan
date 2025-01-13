@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, type UserConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -19,6 +20,7 @@ export default defineConfig(({ command }): UserConfig => {
                     useFlatConfig: true,
                 },
             }),
+            tailwindcss(),
         ],
     };
 

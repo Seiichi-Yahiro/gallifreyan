@@ -11,14 +11,18 @@
         "prepare": "husky"
     },
     "dependencies": {
+        "clsx": "^2.1.1",
         "react": "^19.0.0",
-        "react-dom": "^19.0.0"
+        "react-dom": "^19.0.0",
+        "tailwind-merge": "^2.6.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.18.0",
+        "@tailwindcss/vite": "4.0.0-beta.9",
         "@types/react": "^19.0.5",
         "@types/react-dom": "^19.0.3",
         "@vitejs/plugin-react": "^4.3.4",
+        "autoprefixer": "^10.4.20",
         "babel-plugin-react-compiler": "19.0.0-beta-63e3235-20250105",
         "eslint": "^9.18.0",
         "eslint-config-prettier": "^9.1.0",
@@ -27,9 +31,12 @@
         "eslint-plugin-react-refresh": "^0.4.18",
         "globals": "^15.14.0",
         "husky": "^9.1.7",
+        "postcss": "^8.4.49",
         "prettier": "^3.4.2",
         "prettier-plugin-organize-imports": "^4.1.0",
+        "prettier-plugin-tailwindcss": "^0.6.9",
         "pretty-quick": "^4.0.0",
+        "tailwindcss": "4.0.0-beta.9",
         "typescript": "^5.7.3",
         "typescript-eslint": "^8.19.1",
         "vite": "^6.0.7",
