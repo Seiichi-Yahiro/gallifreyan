@@ -1,5 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { defineConfig, type UserConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -22,6 +23,11 @@ export default defineConfig(({ command }): UserConfig => {
             }),
             tailwindcss(),
         ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, './src'),
+            },
+        },
     };
 
     if (command === 'serve') {

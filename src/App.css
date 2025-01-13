@@ -1,6 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;500;700&display=swap');
 @import 'tailwindcss';
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
     --font-sans: 'Roboto', sans-serif;
+
+    --color-background: var(--color-zinc-50);
+    --color-text: var(--color-zinc-950);
+    --color-ring: var(--color-sky-500);
+    --color-border: var(--color-zinc-300);
+}
+
+html,
+body,
+#root {
+    @apply bg-background text-text size-full font-sans;
 }

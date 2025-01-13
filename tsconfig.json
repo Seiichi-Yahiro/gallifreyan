@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
         "module": "ESNext",
         "target": "ES2020", // ignored by vite
         "lib": ["ESNext", "DOM", "DOM.Iterable"],
