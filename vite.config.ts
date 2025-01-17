@@ -47,6 +47,12 @@ export default defineConfig(({ command }): UserConfig => {
                     output: {
                         manualChunks: {
                             react: ['react', 'react-dom'],
+                            redux: [
+                                'react-redux',
+                                'redux',
+                                'redux-logger',
+                                '@reduxjs/toolkit',
+                            ],
                         },
                     },
                 },

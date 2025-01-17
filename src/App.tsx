@@ -1,23 +1,29 @@
+import { setupStore } from '@/redux/store';
+import Sidebar from '@/sidebar/Sidebar';
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/ui/Resizeable';
-import TextInput from '@/ui/TextInput';
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { Provider } from 'react-redux';
 import './App.css';
 
 const App: React.FC = () => {
-    const [value, setValue] = useState('');
+    const store = useMemo(() => {
+        return setupStore();
+    }, []);
 
     return (
-        <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel minSize={10} defaultSize={25}>
-                <TextInput label="Sentence" value={value} onChange={setValue} />
-            </ResizablePanel>
-            <ResizableHandle withHandle={true} />
-            <ResizablePanel></ResizablePanel>
-        </ResizablePanelGroup>
+        <Provider store={store}>
+            <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel minSize={10} defaultSize={25}>
+                    <Sidebar />
+                </ResizablePanel>
+                <ResizableHandle withHandle={true} />
+                <ResizablePanel></ResizablePanel>
+            </ResizablePanelGroup>
+        </Provider>
     );
 };
 
