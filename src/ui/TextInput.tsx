@@ -70,7 +70,7 @@ const TextInput: React.FC<TextInputProps> = ({
                 className={cn(
                     'absolute -top-4 left-0 text-xs transition-all duration-200 ease-out',
 
-                    'peer-placeholder-shown:top-0 peer-placeholder-shown:cursor-text peer-placeholder-shown:text-base',
+                    'peer-placeholder-shown:text-muted peer-placeholder-shown:top-0 peer-placeholder-shown:cursor-text peer-placeholder-shown:text-base',
                     'peer-focus:text-accent peer-focus:-top-4 peer-focus:cursor-default peer-focus:text-xs',
 
                     {
