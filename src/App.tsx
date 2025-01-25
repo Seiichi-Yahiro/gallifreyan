@@ -5,7 +5,7 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/ui/Resizeable';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Provider } from 'react-redux';
 import './App.css';
 
