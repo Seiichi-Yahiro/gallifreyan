@@ -22,11 +22,16 @@ export const Tree: React.FC<TreeProps> = ({ children, className }) => {
 
 interface TreeItemProps {
     title: string;
+    defaultOpen?: boolean;
     children?: React.ReactNode;
 }
 
-export const TreeItem: React.FC<TreeItemProps> = ({ title, children }) => {
-    const [open, setOpen] = useState(true);
+export const TreeItem: React.FC<TreeItemProps> = ({
+    title,
+    defaultOpen = false,
+    children,
+}) => {
+    const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
 
     return (

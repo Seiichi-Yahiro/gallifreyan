@@ -33,7 +33,7 @@ const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
     const sentence = useRedux((state) => state.text.elements[sentenceId]!);
 
     return (
-        <TreeItem title={sentence.text}>
+        <TreeItem title={sentence.text} defaultOpen={true}>
             {sentence.words.map((word) => (
                 <TextWordTreeItem key={word} wordId={word} />
             ))}
@@ -49,7 +49,7 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
     const word = useRedux((state) => state.text.elements[wordId]!);
 
     return (
-        <TreeItem title={word.text}>
+        <TreeItem title={word.text} defaultOpen={true}>
             {word.letters.map((letter) => (
                 <TextLetterTreeItem key={letter} letterId={letter} />
             ))}
