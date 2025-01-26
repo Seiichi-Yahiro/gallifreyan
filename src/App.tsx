@@ -18,7 +18,7 @@ const App: React.FC = () => {
         <Provider store={store}>
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel minSize={10} defaultSize={25}>
-                    <Sidebar />
+                    <Sidebar className="h-full" />
                 </ResizablePanel>
                 <ResizableHandle withHandle={true} />
                 <ResizablePanel></ResizablePanel>
