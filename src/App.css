@@ -36,6 +36,12 @@
     }
 }
 
+@layer base {
+    * {
+        scrollbar-width: thin;
+    }
+}
+
 html,
 body,
 #root {

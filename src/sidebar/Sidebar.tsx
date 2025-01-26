@@ -11,7 +11,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     return (
         <div className={cn('flex flex-col', className)}>
             <SentenceInput />
-            <TextTree className="grow" />
+            <div className="grow overflow-y-auto p-1">
+                <TextTree />
+            </div>
         </div>
     );
 };

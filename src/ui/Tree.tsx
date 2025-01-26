@@ -16,9 +16,7 @@ interface TreeProps {
 
 export const Tree: React.FC<TreeProps> = ({ children, className }) => {
     return (
-        <div className={cn('flex flex-col gap-1 p-1', className)}>
-            {children}
-        </div>
+        <div className={cn('flex flex-col gap-1', className)}>{children}</div>
     );
 };
 
