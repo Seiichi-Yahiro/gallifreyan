@@ -1,16 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;500;700&display=swap');
 @import 'tailwindcss';
 
-@theme inline {
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
     --font-sans: 'Roboto', sans-serif;
 
-    --color-background: var(--color-zinc-100);
-    --color-text: var(--color-zinc-900);
-    --color-ring: var(--color-blue-700);
-    --color-border: var(--color-zinc-300);
-    --color-accent: var(--color-blue-700);
-    --color-muted: var(--color-zinc-400);
-    --color-error: var(--color-red-500);
+    --color-*: initial;
+
+    --color-white: #f4f4f5ff;
+    --color-black: #18181bff;
+    --color-gray: #333333;
+    --color-blue: #3d81f6;
+    --color-red: #dc422f;
+
+    --color-background: var(--color-white);
+    --color-text: var(--color-black);
+    --color-ring: var(--color-blue);
+    --color-border: --alpha(var(--color-gray) / 20%);
+    --color-accent: var(--color-blue);
+    --color-hover-accent: --alpha(var(--color-accent) / 20%);
+    --color-muted: var(--color-gray);
+    --color-error: var(--color-red);
 
     --animate-tree-item-open: tree-item-open 250ms ease-out;
     --animate-tree-item-close: tree-item-close 250ms ease-out;
@@ -39,6 +50,12 @@
 @layer base {
     * {
         scrollbar-width: thin;
+    }
+
+    [data-theme='dark'] {
+        --color-gray: #666666;
+        --color-background: var(--color-black);
+        --color-text: var(--color-white);
     }
 }
 

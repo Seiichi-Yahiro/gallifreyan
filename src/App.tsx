@@ -5,6 +5,7 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/ui/Resizeable';
+import { ThemeProvider } from 'next-themes';
 import React, { useMemo } from 'react';
 import { Provider } from 'react-redux';
 import './App.css';
@@ -16,13 +17,15 @@ const App: React.FC = () => {
 
     return (
         <Provider store={store}>
-            <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel minSize={10} defaultSize={25}>
-                    <Sidebar className="h-full" />
-                </ResizablePanel>
-                <ResizableHandle withHandle={true} />
-                <ResizablePanel></ResizablePanel>
-            </ResizablePanelGroup>
+            <ThemeProvider enableSystem={true}>
+                <ResizablePanelGroup direction="horizontal">
+                    <ResizablePanel minSize={10} defaultSize={25}>
+                        <Sidebar className="h-full" />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle={true} />
+                    <ResizablePanel></ResizablePanel>
+                </ResizablePanelGroup>
+            </ThemeProvider>
         </Provider>
     );
 };

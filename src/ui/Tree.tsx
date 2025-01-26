@@ -43,7 +43,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
                     hasChildren={!!children}
                 />
                 {children && (
-                    <div className="border-muted ml-[0.5px] w-3 grow border-r" />
+                    <div className="border-border ml-[0.5px] w-3 grow border-r" />
                 )}
             </div>
             <div className="flex grow flex-col">
@@ -89,7 +89,7 @@ interface TreeItemTitleProps {
 
 const TreeItemTitle: React.FC<TreeItemTitleProps> = ({ title }) => {
     return (
-        <div className="border-muted hover:bg-accent/10 ml-6 rounded-sm border px-1">
+        <div className="border-border hover:bg-hover-accent ml-6 rounded-sm border px-1">
             {title}
         </div>
     );
@@ -152,7 +152,7 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
             <div ref={observeHeight} className="mt-1 flex flex-col gap-1">
                 {React.Children.map(children, (child, index) => (
                     <div key={index} className="relative">
-                        <div className="border-muted absolute top-0 -left-3 mt-[0.5px] h-3 w-3 border-b" />
+                        <div className="border-border absolute top-0 -left-3 mt-[0.5px] h-3 w-3 border-b" />
                         {child}
                     </div>
                 ))}
