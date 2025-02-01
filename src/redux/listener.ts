@@ -1,13 +1,22 @@
-import type { AppDispatch, AppState } from '@/redux/store';
+import type { AppState } from '@/redux/store';
 import { setupTextListeners } from '@/redux/text/textListeners';
 import {
     createListenerMiddleware,
+    type ThunkDispatch,
     type TypedAddListener,
     type TypedStartListening,
+    type UnknownAction,
 } from '@reduxjs/toolkit';
 
-export type AppStartListening = TypedStartListening<AppState, AppDispatch>;
-export type AppAddListener = TypedAddListener<AppState, AppDispatch>;
+export type AppStartListening = TypedStartListening<
+    AppState,
+    ThunkDispatch<AppState, unknown, UnknownAction>
+>;
+
+export type AppAddListener = TypedAddListener<
+    AppState,
+    ThunkDispatch<AppState, unknown, UnknownAction>
+>;
 
 const setupListenerMiddleware = () => {
     const middleware = createListenerMiddleware();

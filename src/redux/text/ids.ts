@@ -32,6 +32,8 @@ export type LineSlotId = IdGenerator<'LNS'>;
 const lineSlotCounter = createIdCounter('LNS');
 export const lineSlotId: () => LineSlotId = lineSlotCounter.generator;
 
+export type TextElementId = SentenceId | WordId | LetterId | DotId | LineSlotId;
+
 // For testing
 export const resetIdCounters = () => {
     sentenceCounter.reset();

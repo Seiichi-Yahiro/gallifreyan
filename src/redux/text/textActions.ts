@@ -1,39 +1,51 @@
 import type {
-    DotElement,
-    LetterElement,
-    LineSlotElement,
-    SentenceElement,
-    WordElement,
-} from '@/redux/text/textTypes';
+    DotId,
+    LetterId,
+    LineSlotId,
+    SentenceId,
+    WordId,
+} from '@/redux/text/ids';
+import type { Letter } from '@/redux/text/letterTypes';
 import { createAction } from '@reduxjs/toolkit';
 
 const setText = createAction<string>('TEXT/SET_TEXT');
 
-const addSentence = createAction<SentenceElement>('TEXT/ADD_SENTENCE');
-const removeSentence = createAction('TEXT/REMOVE_SENTENCE');
-const updateSentenceText = createAction<Pick<SentenceElement, 'id' | 'text'>>(
+const addSentence = createAction<{ id: SentenceId; text: string }>(
+    'TEXT/ADD_SENTENCE',
+);
+const removeSentence = createAction<SentenceId>('TEXT/REMOVE_SENTENCE');
+const updateSentenceText = createAction<{ id: SentenceId; text: string }>(
     'TEXT/UPDATE_SENTENCE',
 );
 
-const addWord = createAction<WordElement>('TEXT/ADD_WORD');
-const removeWord = createAction<WordElement['id']>('TEXT/REMOVE_WORD');
-const updateWordText =
-    createAction<Pick<WordElement, 'id' | 'text'>>('TEXT/UPDATE_WORD');
-
-const addLetter = createAction<LetterElement>('TEXT/ADD_LETTER');
-const removeLetter = createAction<LetterElement['id']>('TEXT/REMOVE_LETTER');
-const updateLetterText =
-    createAction<Pick<LetterElement, 'id' | 'text' | 'letter'>>(
-        'TEXT/UPDATE_LETTER',
-    );
-
-const addDot = createAction<DotElement>('TEXT/ADD_DOT');
-const removeDot = createAction<DotElement['id']>('TEXT/REMOVE_DOT');
-
-const addLineSlot = createAction<LineSlotElement>('TEXT/ADD_LINE_SLOT');
-const removeLineSlot = createAction<LineSlotElement['id']>(
-    'TEXT/REMOVE_LINE_SLOT',
+const addWord = createAction<{ id: WordId; parent: SentenceId; text: string }>(
+    'TEXT/ADD_WORD',
 );
+const removeWord = createAction<WordId>('TEXT/REMOVE_WORD');
+const updateWordText = createAction<{ id: WordId; text: string }>(
+    'TEXT/UPDATE_WORD',
+);
+
+const addLetter = createAction<{
+    id: LetterId;
+    parent: WordId;
+    text: string;
+    letter: Letter;
+}>('TEXT/ADD_LETTER');
+const removeLetter = createAction<LetterId>('TEXT/REMOVE_LETTER');
+const updateLetterText = createAction<{
+    id: LetterId;
+    text: string;
+    letter: Letter;
+}>('TEXT/UPDATE_LETTER');
+
+const addDot = createAction<{ id: DotId; parent: LetterId }>('TEXT/ADD_DOT');
+const removeDot = createAction<DotId>('TEXT/REMOVE_DOT');
+
+const addLineSlot = createAction<{ id: LineSlotId; parent: LetterId }>(
+    'TEXT/ADD_LINE_SLOT',
+);
+const removeLineSlot = createAction<LineSlotId>('TEXT/REMOVE_LINE_SLOT');
 
 const textActions = {
     setText,

@@ -3,6 +3,7 @@ import type {
     LetterId,
     LineSlotId,
     SentenceId,
+    TextElementId,
     WordId,
 } from '@/redux/text/ids';
 import type { Letter } from '@/redux/text/letterTypes';
@@ -57,6 +58,12 @@ export interface TextLetterPair {
     letter: Letter;
 }
 
+export type TextElement =
+    | SentenceElement
+    | WordElement
+    | DotElement
+    | LineSlotElement;
+
 // prettier-ignore
 export type TextElementDictValue<K extends string> =
     K extends SentenceId ? SentenceElement :
@@ -66,10 +73,5 @@ export type TextElementDictValue<K extends string> =
     K extends LineSlotId ? LineSlotElement : never;
 
 export type TextElementsDict = {
-    [K in
-        | SentenceId
-        | WordId
-        | LetterId
-        | DotId
-        | LineSlotId]?: TextElementDictValue<K>;
+    [K in TextElementId]: TextElementDictValue<K>;
 };

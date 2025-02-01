@@ -10,6 +10,19 @@ import {
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
 
+export const splitWords = (sentence: string): string[] => sentence.split(' ');
+
+export const splitLetters = (word: string): TextLetterPair[] =>
+    word
+        .split('')
+        .map(
+            (letterText): TextLetterPair => ({
+                text: letterText,
+                letter: charToLetter(letterText)!,
+            }),
+        )
+        .reduce(digraphReducer, []);
+
 export const sanitizeSentence = (sentence: string): string => {
     const vocals = Object.values<string>(VocalValue);
     const consonants = Object.values<string>(ConsonantValue);
@@ -100,8 +113,10 @@ const consonantDecoration = (
     }
 };
 
-export const dotAmount = (consonantDecoration: ConsonantDecoration): number => {
-    switch (consonantDecoration) {
+export const dotAmount = (
+    decoration: VocalDecoration | ConsonantDecoration,
+): number => {
+    switch (decoration) {
         case ConsonantDecoration.SingleDot: {
             return 1;
         }
