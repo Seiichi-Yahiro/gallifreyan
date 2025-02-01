@@ -1,13 +1,7 @@
 import cn from '@/utils/cn';
 import { debounce } from 'lodash';
 import { ChevronRight, Dot } from 'lucide-react';
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 interface TreeProps {
     children: React.ReactNode;
@@ -104,16 +98,6 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
     open,
     children,
 }) => {
-    const [shouldAnimate, setShouldAnimate] = useState(false);
-    const prevOpen = useRef(open);
-
-    useEffect(() => {
-        if (prevOpen.current !== open) {
-            setShouldAnimate(true);
-            prevOpen.current = open;
-        }
-    }, [open]);
-
     const [height, setHeight] = useState(0);
 
     const style = useMemo(() => {
@@ -144,9 +128,8 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
         <div
             style={style}
             className={cn('overflow-hidden pl-6', {
-                'animate-tree-item-open': shouldAnimate && open,
-                'animate-tree-item-close': shouldAnimate && !open,
-                'h-0': !open,
+                'animate-tree-item-open': open,
+                'animate-tree-item-close h-0': !open,
             })}
         >
             <div ref={observeHeight} className="mt-1 flex flex-col gap-1">
