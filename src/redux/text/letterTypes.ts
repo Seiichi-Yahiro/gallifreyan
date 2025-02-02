@@ -64,22 +64,38 @@ export enum ConsonantDecoration {
     TripleLine = 'TripleLine',
 }
 
+export enum VocalPlacement {
+    Inside = 'Inside',
+    OnLine = 'OnLine',
+    Outside = 'Outside',
+}
+
+export enum ConsonantPlacement {
+    DeepCut = 'DeepCut',
+    Inside = 'Inside',
+    ShallowCut = 'ShallowCut',
+    OnLine = 'OnLine',
+}
+
 export interface Vocal {
     letterType: LetterType.Vocal;
     value: VocalValue;
     decoration: VocalDecoration;
+    placement: VocalPlacement;
 }
 
 export interface Consonant {
     letterType: LetterType.Consonant;
     value: ConsonantValue;
     decoration: ConsonantDecoration;
+    placement: ConsonantPlacement;
 }
 
 export interface Digraph {
     letterType: LetterType.Digraph;
     value: DigraphValue;
     decoration: ConsonantDecoration;
+    placement: ConsonantPlacement;
 }
 
 export type Letter = Vocal | Consonant | Digraph;

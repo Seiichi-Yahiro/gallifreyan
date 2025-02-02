@@ -1,11 +1,13 @@
 import {
     type Consonant,
     ConsonantDecoration,
+    ConsonantPlacement,
     ConsonantValue,
     DigraphValue,
     LetterType,
     type Vocal,
     VocalDecoration,
+    VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
@@ -63,6 +65,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Vocal,
                 value: VocalValue.A,
                 decoration: VocalDecoration.None,
+                placement: VocalPlacement.Outside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -79,6 +82,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Vocal,
                 value: VocalValue.E,
                 decoration: VocalDecoration.None,
+                placement: VocalPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -90,6 +94,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Vocal,
                 value: VocalValue.I,
                 decoration: VocalDecoration.LineInside,
+                placement: VocalPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -101,6 +106,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Vocal,
                 value: VocalValue.O,
                 decoration: VocalDecoration.None,
+                placement: VocalPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -117,6 +123,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Vocal,
                 value: VocalValue.U,
                 decoration: VocalDecoration.LineOutside,
+                placement: VocalPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -133,6 +140,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.B,
                 decoration: ConsonantDecoration.None,
+                placement: ConsonantPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -144,6 +152,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.J,
                 decoration: ConsonantDecoration.None,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -155,6 +164,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.T,
                 decoration: ConsonantDecoration.None,
+                placement: ConsonantPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -166,6 +176,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.K,
                 decoration: ConsonantDecoration.DoubleDot,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -177,6 +188,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Y,
                 decoration: ConsonantDecoration.DoubleDot,
+                placement: ConsonantPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -188,6 +200,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.D,
                 decoration: ConsonantDecoration.TripleDot,
+                placement: ConsonantPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -199,6 +212,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.L,
                 decoration: ConsonantDecoration.TripleDot,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -210,6 +224,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.R,
                 decoration: ConsonantDecoration.TripleDot,
+                placement: ConsonantPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -221,6 +236,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Z,
                 decoration: ConsonantDecoration.TripleDot,
+                placement: ConsonantPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -232,6 +248,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.C,
                 decoration: ConsonantDecoration.QuadrupleDot,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -243,6 +260,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Q,
                 decoration: ConsonantDecoration.QuadrupleDot,
+                placement: ConsonantPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -254,6 +272,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.G,
                 decoration: ConsonantDecoration.SingleLine,
+                placement: ConsonantPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -265,6 +284,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.N,
                 decoration: ConsonantDecoration.SingleLine,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -276,6 +296,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.V,
                 decoration: ConsonantDecoration.SingleLine,
+                placement: ConsonantPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -287,6 +308,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.H,
                 decoration: ConsonantDecoration.DoubleLine,
+                placement: ConsonantPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -298,6 +320,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.P,
                 decoration: ConsonantDecoration.DoubleLine,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -309,6 +332,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.W,
                 decoration: ConsonantDecoration.DoubleLine,
+                placement: ConsonantPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -320,6 +344,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.X,
                 decoration: ConsonantDecoration.DoubleLine,
+                placement: ConsonantPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -331,6 +356,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.F,
                 decoration: ConsonantDecoration.TripleLine,
+                placement: ConsonantPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -342,6 +368,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.M,
                 decoration: ConsonantDecoration.TripleLine,
+                placement: ConsonantPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -353,6 +380,7 @@ describe('textUtils', () => {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.S,
                 decoration: ConsonantDecoration.TripleLine,
+                placement: ConsonantPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -381,6 +409,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.TH,
                         decoration: ConsonantDecoration.None,
+                        placement: ConsonantPlacement.OnLine,
                     },
                 },
             ];
@@ -404,6 +433,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.PH,
                         decoration: ConsonantDecoration.SingleDot,
+                        placement: ConsonantPlacement.Inside,
                     },
                 },
             ];
@@ -427,6 +457,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.WH,
                         decoration: ConsonantDecoration.SingleDot,
+                        placement: ConsonantPlacement.ShallowCut,
                     },
                 },
             ];
@@ -450,6 +481,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.GH,
                         decoration: ConsonantDecoration.SingleDot,
+                        placement: ConsonantPlacement.OnLine,
                     },
                 },
             ];
@@ -473,6 +505,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.CH,
                         decoration: ConsonantDecoration.DoubleDot,
+                        placement: ConsonantPlacement.DeepCut,
                     },
                 },
             ];
@@ -496,6 +529,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.SH,
                         decoration: ConsonantDecoration.DoubleDot,
+                        placement: ConsonantPlacement.ShallowCut,
                     },
                 },
             ];
@@ -519,6 +553,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.QU,
                         decoration: ConsonantDecoration.SingleLine,
+                        placement: ConsonantPlacement.OnLine,
                     },
                 },
             ];
@@ -542,6 +577,7 @@ describe('textUtils', () => {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.NG,
                         decoration: ConsonantDecoration.TripleLine,
+                        placement: ConsonantPlacement.OnLine,
                     },
                 },
             ];

@@ -1,11 +1,13 @@
 import {
     type Consonant,
     ConsonantDecoration,
+    ConsonantPlacement,
     ConsonantValue,
     DigraphValue,
     LetterType,
     type Vocal,
     VocalDecoration,
+    VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
@@ -113,6 +115,66 @@ const consonantDecoration = (
     }
 };
 
+const vocalPlacement = (vocal: VocalValue): VocalPlacement => {
+    switch (vocal) {
+        case VocalValue.A: {
+            return VocalPlacement.Outside;
+        }
+        case VocalValue.O: {
+            return VocalPlacement.Inside;
+        }
+        case VocalValue.E:
+        case VocalValue.I:
+        case VocalValue.U: {
+            return VocalPlacement.OnLine;
+        }
+    }
+};
+
+const consonantPlacement = (
+    consonant: ConsonantValue | DigraphValue,
+): ConsonantPlacement => {
+    switch (consonant) {
+        case ConsonantValue.B:
+        case DigraphValue.CH:
+        case ConsonantValue.D:
+        case ConsonantValue.G:
+        case ConsonantValue.H:
+        case ConsonantValue.F: {
+            return ConsonantPlacement.DeepCut;
+        }
+        case ConsonantValue.J:
+        case DigraphValue.PH:
+        case ConsonantValue.K:
+        case ConsonantValue.L:
+        case ConsonantValue.C:
+        case ConsonantValue.N:
+        case ConsonantValue.P:
+        case ConsonantValue.M: {
+            return ConsonantPlacement.Inside;
+        }
+        case ConsonantValue.T:
+        case DigraphValue.WH:
+        case DigraphValue.SH:
+        case ConsonantValue.R:
+        case ConsonantValue.V:
+        case ConsonantValue.W:
+        case ConsonantValue.S: {
+            return ConsonantPlacement.ShallowCut;
+        }
+        case DigraphValue.TH:
+        case DigraphValue.GH:
+        case ConsonantValue.Y:
+        case ConsonantValue.Z:
+        case ConsonantValue.Q:
+        case DigraphValue.QU:
+        case ConsonantValue.X:
+        case DigraphValue.NG: {
+            return ConsonantPlacement.OnLine;
+        }
+    }
+};
+
 export const dotAmount = (
     decoration: VocalDecoration | ConsonantDecoration,
 ): number => {
@@ -164,6 +226,7 @@ const charToVocal = (char: string): Vocal | null => {
             letterType: LetterType.Vocal,
             value,
             decoration: vocalDecoration(value),
+            placement: vocalPlacement(value),
         };
     }
 
@@ -178,6 +241,7 @@ const charToConsonant = (char: string): Consonant | null => {
             letterType: LetterType.Consonant,
             value,
             decoration: consonantDecoration(value),
+            placement: consonantPlacement(value),
         };
     }
 
@@ -210,6 +274,7 @@ export const digraphReducer = (
                 letterType: LetterType.Digraph,
                 value,
                 decoration: consonantDecoration(value),
+                placement: consonantPlacement(value),
             },
         });
     } else {
