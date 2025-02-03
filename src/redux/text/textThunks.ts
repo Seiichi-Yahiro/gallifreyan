@@ -26,7 +26,7 @@ const updateTree =
     (text: string): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        dispatch(compareSentence(text, state.text.rootElement));
+        dispatch(compareSentence(text, state.main.text.rootElement));
     };
 
 const compareSentence =
@@ -47,7 +47,7 @@ const compareSentence =
         }
 
         const state = getState();
-        const sentenceElement = state.text.elements[id];
+        const sentenceElement = state.main.text.elements[id];
 
         if (sentenceElement.text !== newSentenceText) {
             dispatch(
@@ -81,7 +81,7 @@ const compareWord =
         }
 
         const state = getState();
-        const wordElement = state.text.elements[id];
+        const wordElement = state.main.text.elements[id];
 
         if (wordElement.text !== newWordText) {
             dispatch(textActions.updateWordText({ id, text: newWordText }));
@@ -111,7 +111,7 @@ const compareLetter =
         }
 
         const state = getState();
-        const letterElement = state.text.elements[id];
+        const letterElement = state.main.text.elements[id];
 
         if (letterElement.text !== pair.text) {
             dispatch(
@@ -226,7 +226,7 @@ const removeSentence =
     (id: SentenceId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        state.text.elements[id].words.forEach((wordId) =>
+        state.main.text.elements[id].words.forEach((wordId) =>
             dispatch(removeWord(wordId)),
         );
 
@@ -237,7 +237,7 @@ const removeWord =
     (id: WordId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        state.text.elements[id].letters.forEach((letterId) =>
+        state.main.text.elements[id].letters.forEach((letterId) =>
             dispatch(removeLetter(letterId)),
         );
 
@@ -249,7 +249,7 @@ const removeLetter =
     (dispatch, getState) => {
         const state = getState();
 
-        const letter = state.text.elements[id];
+        const letter = state.main.text.elements[id];
 
         letter.dots.forEach((dotId) => dispatch(textActions.removeDot(dotId)));
 

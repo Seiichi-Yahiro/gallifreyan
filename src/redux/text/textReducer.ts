@@ -1,3 +1,4 @@
+import type { MainState } from '@/redux/reducer';
 import { type SentenceId } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
 import {
@@ -9,7 +10,7 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/text/textTypes';
-import { createReducer } from '@reduxjs/toolkit';
+import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {
     value: string;
@@ -17,129 +18,128 @@ export interface TextState {
     elements: TextElementsDict;
 }
 
-const createInitialTextState = (): TextState => ({
+export const createInitialTextState = (): TextState => ({
     value: '',
     rootElement: null,
     elements: {},
 });
 
 export const createTextReducer = (
-    initialState: TextState | (() => TextState) = createInitialTextState,
-) =>
-    createReducer(initialState, (builder) => {
-        builder
-            .addCase(textActions.setText, (state, action) => {
-                state.value = action.payload;
-            })
-            .addCase(textActions.addSentence, (state, action) => {
-                state.rootElement = action.payload.id;
+    builder: ActionReducerMapBuilder<MainState>,
+) => {
+    builder
+        .addCase(textActions.setText, (state, action) => {
+            state.text.value = action.payload;
+        })
+        .addCase(textActions.addSentence, (state, action) => {
+            state.text.rootElement = action.payload.id;
 
-                state.elements[action.payload.id] = {
-                    elementType: TextElementType.Sentence,
-                    id: action.payload.id,
-                    text: action.payload.text,
-                    words: [],
-                } satisfies SentenceElement;
-            })
-            .addCase(textActions.removeSentence, (state, action) => {
-                state.rootElement = null;
-                delete state.elements[action.payload];
-            })
-            .addCase(textActions.updateSentenceText, (state, action) => {
-                state.elements[action.payload.id].text = action.payload.text;
-            })
-            .addCase(textActions.addWord, (state, action) => {
-                state.elements[action.payload.parent].words.push(
-                    action.payload.id,
-                );
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.Sentence,
+                id: action.payload.id,
+                text: action.payload.text,
+                words: [],
+            } satisfies SentenceElement;
+        })
+        .addCase(textActions.removeSentence, (state, action) => {
+            state.text.rootElement = null;
+            delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.updateSentenceText, (state, action) => {
+            state.text.elements[action.payload.id].text = action.payload.text;
+        })
+        .addCase(textActions.addWord, (state, action) => {
+            state.text.elements[action.payload.parent].words.push(
+                action.payload.id,
+            );
 
-                state.elements[action.payload.id] = {
-                    elementType: TextElementType.Word,
-                    id: action.payload.id,
-                    parent: action.payload.parent,
-                    text: action.payload.text,
-                    letters: [],
-                } satisfies WordElement;
-            })
-            .addCase(textActions.removeWord, (state, action) => {
-                const parentId = state.elements[action.payload].parent;
-                const parent = state.elements[parentId];
-                parent.words = parent.words.filter(
-                    (wordId) => wordId !== action.payload,
-                );
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.Word,
+                id: action.payload.id,
+                parent: action.payload.parent,
+                text: action.payload.text,
+                letters: [],
+            } satisfies WordElement;
+        })
+        .addCase(textActions.removeWord, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.words = parent.words.filter(
+                (wordId) => wordId !== action.payload,
+            );
 
-                delete state.elements[action.payload];
-            })
-            .addCase(textActions.updateWordText, (state, action) => {
-                state.elements[action.payload.id].text = action.payload.text;
-            })
-            .addCase(textActions.addLetter, (state, action) => {
-                state.elements[action.payload.parent].letters.push(
-                    action.payload.id,
-                );
+            delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.updateWordText, (state, action) => {
+            state.text.elements[action.payload.id].text = action.payload.text;
+        })
+        .addCase(textActions.addLetter, (state, action) => {
+            state.text.elements[action.payload.parent].letters.push(
+                action.payload.id,
+            );
 
-                state.elements[action.payload.id] = {
-                    elementType: TextElementType.Letter,
-                    id: action.payload.id,
-                    parent: action.payload.parent,
-                    text: action.payload.text,
-                    letter: action.payload.letter,
-                    dots: [],
-                    lineSlots: [],
-                } satisfies LetterElement;
-            })
-            .addCase(textActions.removeLetter, (state, action) => {
-                const parentId = state.elements[action.payload].parent;
-                const parent = state.elements[parentId];
-                parent.letters = parent.letters.filter(
-                    (letterId) => letterId !== action.payload,
-                );
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.Letter,
+                id: action.payload.id,
+                parent: action.payload.parent,
+                text: action.payload.text,
+                letter: action.payload.letter,
+                dots: [],
+                lineSlots: [],
+            } satisfies LetterElement;
+        })
+        .addCase(textActions.removeLetter, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.letters = parent.letters.filter(
+                (letterId) => letterId !== action.payload,
+            );
 
-                delete state.elements[action.payload];
-            })
-            .addCase(textActions.updateLetterText, (state, action) => {
-                const letterElement = state.elements[action.payload.id];
-                letterElement.text = action.payload.text;
-                letterElement.letter = action.payload.letter;
-            })
-            .addCase(textActions.addDot, (state, action) => {
-                state.elements[action.payload.parent].dots.push(
-                    action.payload.id,
-                );
+            delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.updateLetterText, (state, action) => {
+            const letterElement = state.text.elements[action.payload.id];
+            letterElement.text = action.payload.text;
+            letterElement.letter = action.payload.letter;
+        })
+        .addCase(textActions.addDot, (state, action) => {
+            state.text.elements[action.payload.parent].dots.push(
+                action.payload.id,
+            );
 
-                state.elements[action.payload.id] = {
-                    elementType: TextElementType.Dot,
-                    id: action.payload.id,
-                    parent: action.payload.parent,
-                } satisfies DotElement;
-            })
-            .addCase(textActions.removeDot, (state, action) => {
-                const parentId = state.elements[action.payload].parent;
-                const parent = state.elements[parentId];
-                parent.dots = parent.dots.filter(
-                    (dotId) => dotId !== action.payload,
-                );
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.Dot,
+                id: action.payload.id,
+                parent: action.payload.parent,
+            } satisfies DotElement;
+        })
+        .addCase(textActions.removeDot, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.dots = parent.dots.filter(
+                (dotId) => dotId !== action.payload,
+            );
 
-                delete state.elements[action.payload];
-            })
-            .addCase(textActions.addLineSlot, (state, action) => {
-                state.elements[action.payload.parent].lineSlots.push(
-                    action.payload.id,
-                );
+            delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.addLineSlot, (state, action) => {
+            state.text.elements[action.payload.parent].lineSlots.push(
+                action.payload.id,
+            );
 
-                state.elements[action.payload.id] = {
-                    elementType: TextElementType.LineSlot,
-                    id: action.payload.id,
-                    parent: action.payload.parent,
-                } satisfies LineSlotElement;
-            })
-            .addCase(textActions.removeLineSlot, (state, action) => {
-                const parentId = state.elements[action.payload].parent;
-                const parent = state.elements[parentId];
-                parent.lineSlots = parent.lineSlots.filter(
-                    (lineSlotId) => lineSlotId !== action.payload,
-                );
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.LineSlot,
+                id: action.payload.id,
+                parent: action.payload.parent,
+            } satisfies LineSlotElement;
+        })
+        .addCase(textActions.removeLineSlot, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.lineSlots = parent.lineSlots.filter(
+                (lineSlotId) => lineSlotId !== action.payload,
+            );
 
-                delete state.elements[action.payload];
-            });
-    });
+            delete state.text.elements[action.payload];
+        });
+};

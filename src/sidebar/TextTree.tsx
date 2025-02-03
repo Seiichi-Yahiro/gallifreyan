@@ -14,7 +14,7 @@ interface TextTreeProps {
 }
 
 const TextTree: React.FC<TextTreeProps> = ({ className }) => {
-    const root = useRedux((state) => state.text.rootElement);
+    const root = useRedux((state) => state.main.text.rootElement);
 
     return (
         <Tree className={className}>
@@ -30,7 +30,7 @@ interface TextSentenceTreeItemProps {
 const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
     sentenceId,
 }) => {
-    const sentence = useRedux((state) => state.text.elements[sentenceId]!);
+    const sentence = useRedux((state) => state.main.text.elements[sentenceId]);
 
     return (
         <TreeItem title={sentence.text} defaultOpen={true}>
@@ -46,7 +46,7 @@ interface TextWordTreeItemProps {
 }
 
 const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
-    const word = useRedux((state) => state.text.elements[wordId]!);
+    const word = useRedux((state) => state.main.text.elements[wordId]);
 
     return (
         <TreeItem title={word.text} defaultOpen={true}>
@@ -64,7 +64,7 @@ interface TextLetterTreeItemProps {
 const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
     letterId,
 }) => {
-    const letter = useRedux((state) => state.text.elements[letterId]!);
+    const letter = useRedux((state) => state.main.text.elements[letterId]);
 
     return (
         <TreeItem title={letter.text}>

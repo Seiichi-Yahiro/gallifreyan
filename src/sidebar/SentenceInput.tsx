@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 
 const SentenceInput: React.FC = () => {
     const dispatch = useAppDispatch();
-    const text = useRedux((state) => state.text.value);
+    const text = useRedux((state) => state.main.text.value);
 
     const setText = useCallback(
         (value: string) => {
