@@ -1,7 +1,12 @@
 import cn from '@/utils/cn';
 import { debounce } from 'lodash';
 import { ChevronRight, Dot } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+    type KeyboardEvent,
+    useCallback,
+    useMemo,
+    useState,
+} from 'react';
 
 interface TreeProps {
     children: React.ReactNode;
@@ -61,17 +66,34 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
     open,
     toggleOpen,
 }) => {
+    const onKeyDown = useCallback(
+        (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                toggleOpen();
+            }
+        },
+        [toggleOpen],
+    );
+
     return (
         <div className="w-6 select-none">
             {hasChildren ? (
-                <ChevronRight
-                    className={cn('cursor-pointer transition-all', {
-                        'rotate-90': open,
-                    })}
+                <div
+                    className="focus-visible:outline-accent cursor-pointer focus-visible:rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
+                    tabIndex={0}
                     onClick={toggleOpen}
-                />
+                    onKeyDown={onKeyDown}
+                >
+                    <ChevronRight
+                        className={cn('transition-all', {
+                            'rotate-90': open,
+                        })}
+                    />
+                </div>
             ) : (
-                <Dot />
+                <div>
+                    <Dot />
+                </div>
             )}
         </div>
     );
@@ -83,7 +105,10 @@ interface TreeItemTitleProps {
 
 const TreeItemTitle: React.FC<TreeItemTitleProps> = ({ title }) => {
     return (
-        <div className="border-border hover:bg-hover-accent ml-6 rounded-sm border px-1">
+        <div
+            className="border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 focus-visible:outline-2 focus-visible:-outline-offset-2"
+            tabIndex={0}
+        >
             {title}
         </div>
     );
@@ -129,7 +154,7 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
             style={style}
             className={cn('overflow-hidden pl-6', {
                 'animate-tree-item-open': open,
-                'animate-tree-item-close h-0': !open,
+                'animate-tree-item-close invisible h-0': !open,
             })}
         >
             <div ref={observeHeight} className="mt-1 flex flex-col gap-1">
