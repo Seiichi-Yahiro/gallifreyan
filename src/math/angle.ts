@@ -13,6 +13,8 @@ export interface Radian {
     value: number;
 }
 
+export type Angle = Degree | Radian;
+
 export const degree = (value: number): Degree => ({
     unit: AngleUnit.Degree,
     value,
