@@ -27,8 +27,12 @@ export const radian = (value: number): Radian => ({
 
 const radToDegFactor = 180.0 / Math.PI;
 
-export const toDegree = (radian: Radian): Degree =>
-    degree(radian.value * radToDegFactor);
+export const toDegree = (angle: Angle): Degree =>
+    angle.unit === AngleUnit.Degree
+        ? angle
+        : degree(angle.value * radToDegFactor);
 
-export const toRadian = (degree: Degree): Radian =>
-    radian(degree.value / radToDegFactor);
+export const toRadian = (angle: Angle): Radian =>
+    angle.unit === AngleUnit.Radian
+        ? angle
+        : radian(angle.value / radToDegFactor);
