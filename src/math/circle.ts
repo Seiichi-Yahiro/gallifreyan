@@ -63,8 +63,8 @@ export type CircleIntersections =
  * Based on http://walter.bislins.ch/blog/index.asp?page=Schnittpunkte+zweier+Kreise+berechnen+%28JavaScript%29
  */
 export const intersections = (a: Circle, b: Circle): CircleIntersections => {
-    const bToA = vec2.sub(b.position, a.position);
-    const distance = vec2.length(bToA);
+    const aToB = vec2.sub(b.position, a.position);
+    const distance = vec2.length(aToB);
 
     if (distance === 0) {
         return {
@@ -91,7 +91,7 @@ export const intersections = (a: Circle, b: Circle): CircleIntersections => {
     const y = Math.sqrt(determinant);
 
     // translate intersection points x and y back into original coordinate system
-    const xUnit = vec2.div(bToA, distance); // normalize
+    const xUnit = vec2.div(aToB, distance); // normalize
     const yUnit = vec2.rotate(xUnit, degree(90)); // rotate 90° left;
 
     const xTranslation = vec2.mul(xUnit, x);
