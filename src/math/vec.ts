@@ -1,4 +1,4 @@
-import { type Angle, toRadian } from '@/math/angle';
+import mAngle, { type Angle } from '@/math/angle';
 import { isNumber } from 'lodash';
 
 export interface Vec2 {
@@ -47,8 +47,8 @@ const div = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
 const length = (vec: Vec2): number => Math.hypot(vec.x, vec.y);
 
 const rotate = (vec: Vec2, angle: Angle): Vec2 => {
-    const cos = Math.cos(toRadian(angle).value);
-    const sin = Math.sin(toRadian(angle).value);
+    const cos = Math.cos(mAngle.toRadian(angle).value);
+    const sin = Math.sin(mAngle.toRadian(angle).value);
 
     return {
         x: vec.x * cos - vec.y * sin,
@@ -56,7 +56,7 @@ const rotate = (vec: Vec2, angle: Angle): Vec2 => {
     };
 };
 
-export const vec2 = {
+const mVec2 = {
     create,
     add,
     sub,
@@ -65,3 +65,5 @@ export const vec2 = {
     length,
     rotate,
 };
+
+export default mVec2;

@@ -1,5 +1,5 @@
-import { degree } from '@/math/angle';
-import { vec2, type Vec2 } from '@/math/vec';
+import mAngle from '@/math/angle';
+import mVec2, { type Vec2 } from '@/math/vec';
 
 export interface Circle {
     radius: number;
@@ -62,9 +62,9 @@ export type CircleIntersections =
  *
  * Based on http://walter.bislins.ch/blog/index.asp?page=Schnittpunkte+zweier+Kreise+berechnen+%28JavaScript%29
  */
-export const intersections = (a: Circle, b: Circle): CircleIntersections => {
-    const aToB = vec2.sub(b.position, a.position);
-    const distance = vec2.length(aToB);
+const intersections = (a: Circle, b: Circle): CircleIntersections => {
+    const aToB = mVec2.sub(b.position, a.position);
+    const distance = mVec2.length(aToB);
 
     if (distance === 0) {
         return {
@@ -91,18 +91,24 @@ export const intersections = (a: Circle, b: Circle): CircleIntersections => {
     const y = Math.sqrt(determinant);
 
     // translate intersection points x and y back into original coordinate system
-    const xUnit = vec2.div(aToB, distance); // normalize
-    const yUnit = vec2.rotate(xUnit, degree(90)); // rotate 90° left;
+    const xUnit = mVec2.div(aToB, distance); // normalize
+    const yUnit = mVec2.rotate(xUnit, mAngle.degree(90)); // rotate 90° left;
 
-    const xTranslation = vec2.mul(xUnit, x);
-    const yTranslation = vec2.mul(yUnit, y);
+    const xTranslation = mVec2.mul(xUnit, x);
+    const yTranslation = mVec2.mul(yUnit, y);
 
-    const q1 = vec2.add(a.position, xTranslation, yTranslation);
+    const q1 = mVec2.add(a.position, xTranslation, yTranslation);
 
     if (determinant === 0) {
         return { type: CircleIntersectionType.One, intersection: q1 };
     } else {
-        const q2 = vec2.sub(vec2.add(a.position, xTranslation), yTranslation);
+        const q2 = mVec2.sub(mVec2.add(a.position, xTranslation), yTranslation);
         return { type: CircleIntersectionType.Two, intersections: [q1, q2] };
     }
 };
+
+const mCircle = {
+    intersections,
+};
+
+export default mCircle;

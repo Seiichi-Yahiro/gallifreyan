@@ -1,4 +1,4 @@
-import { degree } from '@/math/angle';
+import mAngle from '@/math/angle';
 import type { Circle, LineSlot, PositionData } from '@/redux/svg/svgTypes';
 import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
 
@@ -6,14 +6,14 @@ export const defaultCircle = (): Circle => ({
     radius: 0,
     position: {
         distance: 0,
-        angle: degree(0),
+        angle: mAngle.degree(0),
     },
 });
 
 export const defaultLineSlot = (): LineSlot => ({
     position: {
         distance: 0,
-        angle: degree(0),
+        angle: mAngle.degree(0),
     },
 });
 
@@ -22,7 +22,7 @@ export const defaultSentenceRadius = (svgSize: number): number =>
 
 export const defaultSentencePosition = (): PositionData => ({
     distance: 0,
-    angle: degree(0),
+    angle: mAngle.degree(0),
 });
 
 export const defaultWordRadius = (
@@ -37,7 +37,7 @@ export const defaultWordPosition = (
     index: number,
 ): PositionData => ({
     distance: numberOfWords > 1 ? sentenceRadius - wordRadius * 1.5 : 0,
-    angle: degree(index * (360 / numberOfWords)),
+    angle: mAngle.degree(index * (360 / numberOfWords)),
 });
 
 export const defaultVocalRadius = (
@@ -63,7 +63,7 @@ export const defaultVocalPosition = (
 
     return {
         distance,
-        angle: degree(angle),
+        angle: mAngle.degree(angle),
     };
 };
 
@@ -91,7 +91,7 @@ export const defaultConsonantPosition = (
 
     return {
         distance,
-        angle: degree(angle),
+        angle: mAngle.degree(angle),
     };
 };
 
@@ -119,6 +119,6 @@ export const defaultDotPosition = (
 
     return {
         distance,
-        angle: degree(angle),
+        angle: mAngle.degree(angle),
     };
 };
