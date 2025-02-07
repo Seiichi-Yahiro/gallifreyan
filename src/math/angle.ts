@@ -37,11 +37,21 @@ const toRadian = (angle: Angle): Radian =>
         ? angle
         : radian(angle.value / radToDegFactor);
 
+const normalize = <T extends Angle>(angle: T): T => {
+    const max = angle.unit === AngleUnit.Degree ? 360 : Math.PI * 2;
+
+    return {
+        unit: angle.unit,
+        value: ((angle.value % max) + max) % max,
+    } as T;
+};
+
 const mAngle = {
     degree,
     radian,
     toDegree,
     toRadian,
+    normalize,
 };
 
 export default mAngle;
