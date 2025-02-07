@@ -1,4 +1,4 @@
-import mAngle, { type Angle } from '@/math/angle';
+import mAngle, { type Angle, type Radian } from '@/math/angle';
 import { isNumber } from 'lodash';
 
 export interface Vec2 {
@@ -46,6 +46,11 @@ const div = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
 
 const length = (vec: Vec2): number => Math.hypot(vec.x, vec.y);
 
+const distance = (a: Vec2, b: Vec2): number => length(sub(a, b));
+
+/**
+ * Rotates counterclockwise
+ */
 const rotate = (vec: Vec2, angle: Angle): Vec2 => {
     const cos = Math.cos(mAngle.toRadian(angle).value);
     const sin = Math.sin(mAngle.toRadian(angle).value);
@@ -56,6 +61,11 @@ const rotate = (vec: Vec2, angle: Angle): Vec2 => {
     };
 };
 
+const dot = (a: Vec2, b: Vec2) => a.x * b.x + a.y * b.y;
+
+const angleBetween = (a: Vec2, b: Vec2): Radian =>
+    mAngle.radian(Math.acos(dot(a, b) / (length(a) * length(b))));
+
 const mVec2 = {
     create,
     add,
@@ -63,7 +73,10 @@ const mVec2 = {
     mul,
     div,
     length,
+    distance,
     rotate,
+    dot,
+    angleBetween,
 };
 
 export default mVec2;
