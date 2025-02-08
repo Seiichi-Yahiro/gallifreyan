@@ -73,6 +73,6 @@ describe('vec', () => {
             mVec2.create(0, -1),
             mVec2.create(-1, 0),
         );
-        expect(result.value).approximately(Math.PI / 2, 0.000001);
+        expect(result.value).approximately(-Math.PI / 2, 0.000001);
     });
 });

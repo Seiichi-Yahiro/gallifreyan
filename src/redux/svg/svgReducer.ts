@@ -1,22 +1,31 @@
+import mAngle from '@/math/angle';
+import mCircle, {
+    CircleIntersectionType,
+    type Circle as MCircle,
+    type TwoCircleIntersections,
+} from '@/math/circle';
+import mVec2 from '@/math/vec';
 import type { MainState } from '@/redux/reducer';
 import svgActions from '@/redux/svg/svgActions';
-import type { CirclesDict, LineSlotDict } from '@/redux/svg/svgTypes';
+import type { CircleI, CirclesDict, LineSlotDict } from '@/redux/svg/svgTypes';
 import {
-    defaultCircle,
+    circleTransform,
     defaultConsonantPosition,
     defaultConsonantRadius,
     defaultDotPosition,
     defaultDotRadius,
-    defaultLineSlot,
     defaultSentencePosition,
     defaultSentenceRadius,
     defaultVocalPosition,
     defaultVocalRadius,
     defaultWordPosition,
     defaultWordRadius,
+    sortIntersectionsByAngle,
+    wordArcsFromIntersections,
 } from '@/redux/svg/svgUtils';
-import { LetterType } from '@/redux/text/letterTypes';
+import { ConsonantPlacement, LetterType } from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
+import { TextElementType } from '@/redux/text/textTypes';
 import { type ActionReducerMapBuilder, isAnyOf } from '@reduxjs/toolkit';
 
 export interface SvgState {
@@ -116,6 +125,92 @@ export const createSvgReducer = (
                 });
             });
         })
+        .addCase(svgActions.calculateCircleIntersections, (state, action) => {
+            const wordCircle = state.svg.circles[action.payload];
+            wordCircle.intersections = [];
+
+            const wordMCircle: MCircle = {
+                radius: wordCircle.radius,
+                position: mVec2.create(0, 0),
+            };
+
+            const letters = state.text.elements[action.payload].letters;
+
+            for (const letterId of letters) {
+                const letter = state.text.elements[letterId].letter;
+                const letterCircle = state.svg.circles[letterId];
+
+                if (
+                    !(
+                        letter.placement === ConsonantPlacement.DeepCut ||
+                        letter.placement === ConsonantPlacement.ShallowCut
+                    )
+                ) {
+                    letterCircle.intersections = {
+                        type: CircleIntersectionType.None,
+                    };
+                    continue;
+                }
+
+                const letterMCircle: MCircle = {
+                    radius: letterCircle.radius,
+                    position: circleTransform(letterCircle.position),
+                };
+
+                const intersections = mCircle.intersections(
+                    wordMCircle,
+                    letterMCircle,
+                );
+
+                if (intersections.type === CircleIntersectionType.Two) {
+                    const sortedIntersections = sortIntersectionsByAngle(
+                        wordMCircle,
+                        letterMCircle,
+                        intersections.values,
+                    );
+
+                    wordCircle.intersections.push(sortedIntersections);
+
+                    const transformedIntersections = sortedIntersections
+                        .map((pos) => mVec2.sub(pos, letterMCircle.position))
+                        .map((pos) =>
+                            mVec2.rotate(pos, {
+                                ...letterCircle.position.angle,
+                                value: -letterCircle.position.angle.value,
+                            }),
+                        ) as TwoCircleIntersections['values'];
+
+                    letterCircle.intersections = {
+                        type: CircleIntersectionType.Two,
+                        values: transformedIntersections,
+                    };
+                } else if (intersections.type === CircleIntersectionType.One) {
+                    const transformedIntersection = mVec2.sub(
+                        intersections.value,
+                        letterMCircle.position,
+                    );
+
+                    const rotatedIntersection = mVec2.rotate(
+                        transformedIntersection,
+                        {
+                            ...letterCircle.position.angle,
+                            value: -letterCircle.position.angle.value,
+                        },
+                    );
+
+                    letterCircle.intersections = {
+                        type: CircleIntersectionType.One,
+                        value: rotatedIntersection,
+                    };
+                } else {
+                    letterCircle.intersections = intersections;
+                }
+            }
+
+            wordCircle.arcs = wordArcsFromIntersections(
+                wordCircle.intersections,
+            );
+        })
         .addMatcher(
             isAnyOf(
                 textActions.addSentence,
@@ -124,7 +219,40 @@ export const createSvgReducer = (
                 textActions.addDot,
             ),
             (state, action) => {
-                state.svg.circles[action.payload.id] = defaultCircle();
+                const circle: CircleI = {
+                    radius: 0,
+                    position: {
+                        distance: 0,
+                        angle: mAngle.degree(0),
+                    },
+                };
+
+                if (textActions.addSentence.match(action)) {
+                    state.svg.circles[action.payload.id] = {
+                        ...circle,
+                        type: TextElementType.Sentence,
+                    };
+                } else if (textActions.addWord.match(action)) {
+                    state.svg.circles[action.payload.id] = {
+                        ...circle,
+                        type: TextElementType.Word,
+                        intersections: [],
+                        arcs: [],
+                    };
+                } else if (textActions.addLetter.match(action)) {
+                    state.svg.circles[action.payload.id] = {
+                        ...circle,
+                        type: TextElementType.Letter,
+                        intersections: {
+                            type: CircleIntersectionType.None,
+                        },
+                    };
+                } else {
+                    state.svg.circles[action.payload.id] = {
+                        ...circle,
+                        type: TextElementType.Dot,
+                    };
+                }
             },
         )
         .addMatcher(
@@ -139,7 +267,12 @@ export const createSvgReducer = (
             },
         )
         .addMatcher(isAnyOf(textActions.addLineSlot), (state, action) => {
-            state.svg.lineSlots[action.payload.id] = defaultLineSlot();
+            state.svg.lineSlots[action.payload.id] = {
+                position: {
+                    distance: 0,
+                    angle: mAngle.degree(0),
+                },
+            };
         })
         .addMatcher(isAnyOf(textActions.removeLineSlot), (state, action) => {
             delete state.svg.lineSlots[action.payload];

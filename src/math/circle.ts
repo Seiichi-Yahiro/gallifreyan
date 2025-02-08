@@ -23,12 +23,12 @@ export interface InfinityCircleIntersections {
 
 export interface OneCircleIntersections {
     type: CircleIntersectionType.One;
-    intersection: Vec2;
+    value: Vec2;
 }
 
 export interface TwoCircleIntersections {
     type: CircleIntersectionType.Two;
-    intersections: [Vec2, Vec2];
+    values: [Vec2, Vec2];
 }
 
 export type CircleIntersections =
@@ -100,10 +100,10 @@ const intersections = (a: Circle, b: Circle): CircleIntersections => {
     const q1 = mVec2.add(a.position, xTranslation, yTranslation);
 
     if (determinant === 0) {
-        return { type: CircleIntersectionType.One, intersection: q1 };
+        return { type: CircleIntersectionType.One, value: q1 };
     } else {
         const q2 = mVec2.sub(mVec2.add(a.position, xTranslation), yTranslation);
-        return { type: CircleIntersectionType.Two, intersections: [q1, q2] };
+        return { type: CircleIntersectionType.Two, values: [q1, q2] };
     }
 };
 

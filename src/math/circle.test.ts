@@ -1,4 +1,11 @@
-import mCircle, { type Circle, CircleIntersectionType } from '@/math/circle';
+import mCircle, {
+    type Circle,
+    CircleIntersectionType,
+    type InfinityCircleIntersections,
+    type NoCircleIntersections,
+    type OneCircleIntersections,
+    type TwoCircleIntersections,
+} from '@/math/circle';
 import mVec2 from '@/math/vec';
 import { describe, expect, it } from 'vitest';
 
@@ -18,7 +25,7 @@ describe('circle', () => {
 
         expect(result).toStrictEqual({
             type: CircleIntersectionType.None,
-        });
+        } satisfies NoCircleIntersections);
     });
 
     it('should return no infinity intersections when same position same radius', () => {
@@ -36,7 +43,7 @@ describe('circle', () => {
 
         expect(result).toStrictEqual({
             type: CircleIntersectionType.Infinity,
-        });
+        } satisfies InfinityCircleIntersections);
     });
 
     it('should return no circle intersections', () => {
@@ -54,7 +61,7 @@ describe('circle', () => {
 
         expect(result).toStrictEqual({
             type: CircleIntersectionType.None,
-        });
+        } satisfies NoCircleIntersections);
     });
 
     it('should return one circle intersection', () => {
@@ -72,8 +79,8 @@ describe('circle', () => {
 
         expect(result).toStrictEqual({
             type: CircleIntersectionType.One,
-            intersection: mVec2.create(-5, 5),
-        });
+            value: mVec2.create(-5, 5),
+        } satisfies OneCircleIntersections);
     });
 
     it('should return two circle intersections', () => {
@@ -91,10 +98,10 @@ describe('circle', () => {
 
         expect(result).toStrictEqual({
             type: CircleIntersectionType.Two,
-            intersections: [
+            values: [
                 mVec2.create(-3.2322906495242942, -0.6770935047570674),
                 mVec2.create(-4.193451924733133, 8.934519247331325),
             ],
-        });
+        } satisfies TwoCircleIntersections);
     });
 });

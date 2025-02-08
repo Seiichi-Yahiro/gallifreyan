@@ -49,7 +49,7 @@ const length = (vec: Vec2): number => Math.hypot(vec.x, vec.y);
 const distance = (a: Vec2, b: Vec2): number => length(sub(a, b));
 
 /**
- * Rotates counterclockwise
+ * Rotates counterclockwise.
  */
 const rotate = (vec: Vec2, angle: Angle): Vec2 => {
     const cos = Math.cos(mAngle.toRadian(angle).value);
@@ -61,10 +61,15 @@ const rotate = (vec: Vec2, angle: Angle): Vec2 => {
     };
 };
 
-const dot = (a: Vec2, b: Vec2) => a.x * b.x + a.y * b.y;
+const dot = (a: Vec2, b: Vec2): number => a.x * b.x + a.y * b.y;
 
+const cross = (a: Vec2, b: Vec2): number => a.x * b.y - a.y * b.x;
+
+/**
+ * Get angle between a and b in range [-PI, PI].
+ */
 const angleBetween = (a: Vec2, b: Vec2): Radian =>
-    mAngle.radian(Math.acos(dot(a, b) / (length(a) * length(b))));
+    mAngle.radian(Math.atan2(cross(a, b), dot(a, b)));
 
 const mVec2 = {
     create,
@@ -76,6 +81,7 @@ const mVec2 = {
     distance,
     rotate,
     dot,
+    cross,
     angleBetween,
 };
 

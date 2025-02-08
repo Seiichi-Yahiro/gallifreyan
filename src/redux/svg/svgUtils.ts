@@ -1,21 +1,12 @@
 import mAngle from '@/math/angle';
-import type { Circle, LineSlot, PositionData } from '@/redux/svg/svgTypes';
+import {
+    type Circle as MCircle,
+    type TwoCircleIntersections,
+} from '@/math/circle';
+import mVec2, { type Vec2 } from '@/math/vec';
+import type { PositionData } from '@/redux/svg/svgTypes';
 import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
-
-export const defaultCircle = (): Circle => ({
-    radius: 0,
-    position: {
-        distance: 0,
-        angle: mAngle.degree(0),
-    },
-});
-
-export const defaultLineSlot = (): LineSlot => ({
-    position: {
-        distance: 0,
-        angle: mAngle.degree(0),
-    },
-});
+import { chunk } from 'lodash';
 
 export const defaultSentenceRadius = (svgSize: number): number =>
     (svgSize * 0.9) / 2;
@@ -121,4 +112,62 @@ export const defaultDotPosition = (
         distance,
         angle: mAngle.degree(angle),
     };
+};
+
+/**
+ * Rotate counterclockwise starting from the bottom.
+ */
+export const circleTransform = (positionData: PositionData): Vec2 =>
+    mVec2.rotate(mVec2.create(0, -positionData.distance), positionData.angle);
+
+/**
+ * Rotate counterclockwise starting from the bottom.
+ * Gives values in range [0, 2Pi].
+ */
+export const angleFromVec = (vec: Vec2) =>
+    mAngle.normalize(mVec2.angleBetween(mVec2.create(0, -1), vec));
+
+/**
+ * Sort angles counterclockwise.
+ * Arcs should be drawn from bigger angle to smaller angle.
+ * Except if the angle origin (bottom) is included.
+ */
+export const sortIntersectionsByAngle = (
+    circle1: MCircle,
+    circle2: MCircle,
+    [intersection1, intersection2]: TwoCircleIntersections['values'],
+): TwoCircleIntersections['values'] => {
+    const angle1 = angleFromVec(intersection1).value;
+    const angle2 = angleFromVec(intersection2).value;
+
+    const angleOrigin = mVec2.add(
+        circle1.position,
+        mVec2.create(0, -circle1.radius),
+    );
+
+    const distance =
+        mVec2.distance(circle2.position, angleOrigin) - circle2.radius;
+
+    const isAngleOriginInside = distance <= 0;
+
+    // truth table
+    // o & (a < b): a,b
+    // o & !(a < b): b,a
+    //!o & (a < b): b,a
+    //!o & !(a < b): a,b
+    if (isAngleOriginInside === angle1 <= angle2) {
+        return [intersection1, intersection2];
+    } else {
+        return [intersection2, intersection1];
+    }
+};
+
+export const wordArcsFromIntersections = (
+    intersections: TwoCircleIntersections['values'][],
+): TwoCircleIntersections['values'][] => {
+    const flatIntersections = intersections.map(([a, b]) => [b, a]).flat();
+    return chunk(
+        [...flatIntersections.slice(1), flatIntersections[0]],
+        2,
+    ) as TwoCircleIntersections['values'][];
 };

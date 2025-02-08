@@ -1,5 +1,6 @@
 import { setupStore } from '@/redux/store';
 import Sidebar from '@/sidebar/Sidebar';
+import Svg from '@/svg/Svg';
 import {
     ResizableHandle,
     ResizablePanel,
@@ -23,7 +24,9 @@ const App: React.FC = () => {
                         <Sidebar className="h-full" />
                     </ResizablePanel>
                     <ResizableHandle withHandle={true} />
-                    <ResizablePanel></ResizablePanel>
+                    <ResizablePanel>
+                        <Svg />
+                    </ResizablePanel>
                 </ResizablePanelGroup>
             </ThemeProvider>
         </Provider>
