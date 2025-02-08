@@ -6,12 +6,13 @@ import React from 'react';
 interface SvgArcProps {
     radius: number;
     arcs: Arc | Arc[];
+    className?: string;
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
     isArray(arcs.at(0)) ? (arcs as Arc[]) : [arcs as Arc];
 
-const SvgArc: React.FC<SvgArcProps> = ({ radius, arcs }) => {
+const SvgArc: React.FC<SvgArcProps> = ({ radius, arcs, className }) => {
     const d = toArray(arcs)
         .map(([start, end]) => {
             const startAngle = angleFromVec(start).value;
@@ -24,7 +25,14 @@ const SvgArc: React.FC<SvgArcProps> = ({ radius, arcs }) => {
         })
         .join(' ');
 
-    return <path d={d} stroke="currentColor" fill="transparent" />;
+    return (
+        <path
+            d={d}
+            stroke="currentColor"
+            fill="transparent"
+            className={className}
+        />
+    );
 };
 
 export default React.memo(SvgArc);

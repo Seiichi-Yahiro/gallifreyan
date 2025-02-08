@@ -3,9 +3,14 @@ import React from 'react';
 interface SvgCircleProps {
     radius: number;
     filled?: boolean;
+    className?: string;
 }
 
-const SvgCircle: React.FC<SvgCircleProps> = ({ radius, filled = false }) => {
+const SvgCircle: React.FC<SvgCircleProps> = ({
+    radius,
+    filled = false,
+    className,
+}) => {
     return (
         <circle
             cx={0}
@@ -13,6 +18,7 @@ const SvgCircle: React.FC<SvgCircleProps> = ({ radius, filled = false }) => {
             r={radius}
             fill={filled ? 'currentColor' : 'transparent'}
             stroke="currentColor"
+            className={className}
         />
     );
 };

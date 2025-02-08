@@ -48,7 +48,7 @@ const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
         >
-            <SvgCircle radius={circle.radius} />
+            <SvgCircle radius={circle.radius} className="sentence" />
             {words.map((wordId) => (
                 <SvgWord key={wordId} id={wordId} />
             ))}
@@ -72,9 +72,13 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
             rotateInParent={false}
         >
             {circle.intersections.length > 0 ? (
-                <SvgArc radius={circle.radius} arcs={circle.arcs} />
+                <SvgArc
+                    radius={circle.radius}
+                    arcs={circle.arcs}
+                    className="word"
+                />
             ) : (
-                <SvgCircle radius={circle.radius} />
+                <SvgCircle radius={circle.radius} className="word" />
             )}
             {letters.map((letterId) => (
                 <SvgLetter key={letterId} id={letterId} />
@@ -106,9 +110,10 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                 <SvgArc
                     radius={circle.radius}
                     arcs={circle.intersections.values}
+                    className="letter"
                 />
             ) : (
-                <SvgCircle radius={circle.radius} />
+                <SvgCircle radius={circle.radius} className="letter" />
             )}
             {dots.map((dotId) => (
                 <SvgDot key={dotId} id={dotId} />
@@ -133,7 +138,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
         >
-            <SvgCircle radius={circle.radius} filled={true} />
+            <SvgCircle radius={circle.radius} filled={true} className="dot" />
         </SvgGroup>
     );
 };
