@@ -10,10 +10,10 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     return (
-        <div className={cn('flex flex-col', className)}>
+        <div className={cn('flex flex-col p-1', className)}>
             <SentenceInput />
             <ExportButton />
-            <div className="grow overflow-y-auto p-1">
+            <div className="grow overflow-y-auto pr-1">
                 <TextTree />
             </div>
         </div>
