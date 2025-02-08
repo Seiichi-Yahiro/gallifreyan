@@ -19,8 +19,7 @@ import {
     splitLetters,
     splitWords,
 } from '@/redux/text/textUtils';
-import { zipLongest } from '@/utils/zip';
-import { range } from 'lodash';
+import { range, zip } from 'lodash';
 
 const updateTree =
     (text: string): AppThunkAction =>
@@ -54,11 +53,9 @@ const compareSentence =
                 textActions.updateSentenceText({ id, text: newSentenceText }),
             );
 
-            zipLongest(
-                splitWords(newSentenceText),
-                sentenceElement.words,
-            ).forEach(([newWordText, wordId]) =>
-                dispatch(compareWord(id, newWordText ?? '', wordId)),
+            zip(splitWords(newSentenceText), sentenceElement.words).forEach(
+                ([newWordText, wordId]) =>
+                    dispatch(compareWord(id, newWordText ?? '', wordId)),
             );
         }
     };
@@ -86,7 +83,7 @@ const compareWord =
         if (wordElement.text !== newWordText) {
             dispatch(textActions.updateWordText({ id, text: newWordText }));
 
-            zipLongest(splitLetters(newWordText), wordElement.letters).forEach(
+            zip(splitLetters(newWordText), wordElement.letters).forEach(
                 ([newLetterText, letterId]) =>
                     dispatch(compareLetter(id, newLetterText, letterId)),
             );
@@ -122,14 +119,14 @@ const compareLetter =
                 }),
             );
 
-            zipLongest(
+            zip(
                 range(dotAmount(pair.letter.decoration)),
                 letterElement.dots,
             ).forEach(([newIndex, dotId]) =>
                 dispatch(compareDot(id, newIndex, dotId)),
             );
 
-            zipLongest(
+            zip(
                 range(lineSlotAmount(pair.letter.decoration)),
                 letterElement.lineSlots,
             ).forEach(([newIndex, lineSlotId]) =>
