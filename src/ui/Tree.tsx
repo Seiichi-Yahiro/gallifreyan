@@ -85,7 +85,7 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
                     onKeyDown={onKeyDown}
                 >
                     <ChevronRight
-                        className={cn('transition-all', {
+                        className={cn('transition-[rotate]', {
                             'rotate-90': open,
                         })}
                     />
@@ -106,7 +106,7 @@ interface TreeItemTitleProps {
 const TreeItemTitle: React.FC<TreeItemTitleProps> = ({ title }) => {
     return (
         <div
-            className="border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 focus-visible:outline-2 focus-visible:-outline-offset-2"
+            className="border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2"
             tabIndex={0}
         >
             {title}
