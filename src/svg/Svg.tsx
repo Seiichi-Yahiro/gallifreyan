@@ -1,6 +1,12 @@
 import { CircleIntersectionType } from '@/math/circle';
 import { useRedux } from '@/redux/hooks';
-import type { DotId, LetterId, SentenceId, WordId } from '@/redux/text/ids';
+import type {
+    DotId,
+    LetterId,
+    LineSlotId,
+    SentenceId,
+    WordId,
+} from '@/redux/text/ids';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
@@ -84,6 +90,10 @@ interface SvgLetterProps {
 const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
     const dots = useRedux((state) => state.main.text.elements[id].dots);
 
+    const lineSlots = useRedux(
+        (state) => state.main.text.elements[id].lineSlots,
+    );
+
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     return (
@@ -103,6 +113,9 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
             {dots.map((dotId) => (
                 <SvgDot key={dotId} id={dotId} />
             ))}
+            {lineSlots.map((lineSlotId) => (
+                <SvgLineSlot key={lineSlotId} id={lineSlotId} />
+            ))}
         </SvgGroup>
     );
 };
@@ -118,9 +131,28 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
         <SvgGroup
             distance={circle.position.distance}
             angle={circle.position.angle}
-            rotateInParent={true}
+            rotateInParent={false}
         >
             <SvgCircle radius={circle.radius} filled={true} />
+        </SvgGroup>
+    );
+};
+
+interface SvgLineSlotProps {
+    id: LineSlotId;
+}
+
+const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
+    const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
+
+    return (
+        <SvgGroup
+            distance={lineSlot.position.distance}
+            angle={lineSlot.position.angle}
+            rotateInParent={true}
+            className="no-export"
+        >
+            <line x1={0} y1={0} x2={0} y2={10} stroke="currentColor" />
         </SvgGroup>
     );
 };

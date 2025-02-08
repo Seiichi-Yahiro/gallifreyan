@@ -14,6 +14,7 @@ import {
     defaultConsonantRadius,
     defaultDotPosition,
     defaultDotRadius,
+    defaultLineSlotPosition,
     defaultSentencePosition,
     defaultSentenceRadius,
     defaultVocalPosition,
@@ -23,7 +24,11 @@ import {
     sortIntersectionsByAngle,
     wordArcsFromIntersections,
 } from '@/redux/svg/svgUtils';
-import { ConsonantPlacement, LetterType } from '@/redux/text/letterTypes';
+import {
+    ConsonantPlacement,
+    LetterType,
+    VocalDecoration,
+} from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
 import { TextElementType } from '@/redux/text/textTypes';
 import { type ActionReducerMapBuilder, isAnyOf } from '@reduxjs/toolkit';
@@ -118,10 +123,16 @@ export const createSvgReducer = (
                         );
                     });
 
-                    // TODO
-                    /*letter.lineSlots.forEach((lineSlotId, lineSlotIndex) => {
-                         state.svg.lineSlots[lineSlotId].position;
-                    });*/
+                    letter.lineSlots.forEach((lineSlotId, lineSlotIndex) => {
+                        state.svg.lineSlots[lineSlotId].position =
+                            defaultLineSlotPosition(
+                                letterCircle.radius,
+                                letter.lineSlots.length,
+                                lineSlotIndex,
+                                letter.letter.decoration ===
+                                    VocalDecoration.LineOutside,
+                            );
+                    });
                 });
             });
         })

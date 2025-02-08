@@ -114,6 +114,31 @@ export const defaultDotPosition = (
     };
 };
 
+export const defaultLineSlotPosition = (
+    letterRadius: number,
+    numberOfLines: number,
+    index: number,
+    pointOutside: boolean,
+): PositionData => {
+    const letterSideAngle = pointOutside ? 0 : 180;
+    const lineDistanceAngle = 45;
+
+    const centerLinesOnLetterSideAngle =
+        ((numberOfLines - 1) * lineDistanceAngle) / 2;
+
+    const distance = letterRadius;
+
+    const angle =
+        index * lineDistanceAngle -
+        centerLinesOnLetterSideAngle +
+        letterSideAngle;
+
+    return {
+        distance,
+        angle: mAngle.degree(angle),
+    };
+};
+
 /**
  * Rotate counterclockwise starting from the bottom.
  */

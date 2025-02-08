@@ -3,6 +3,15 @@ import IconButton from '@/ui/IconButton';
 import { ImageDown } from 'lucide-react';
 import React from 'react';
 
+const prepareSvg = (svg: HTMLElement): string => {
+    const svgClone = svg.cloneNode(true) as SVGSVGElement;
+
+    svgClone.querySelectorAll('.no-export').forEach((el) => el.remove());
+
+    const serializer = new XMLSerializer();
+    return serializer.serializeToString(svgClone);
+};
+
 const saveAsFile = async (svg: string, filename: string) => {
     const fileHandle = await window.showSaveFilePicker({
         types: [
@@ -54,8 +63,7 @@ const ExportButton: React.FC = () => {
                     return;
                 }
 
-                const serializer = new XMLSerializer();
-                const svgString = serializer.serializeToString(svg);
+                const svgString = prepareSvg(svg);
 
                 if ('showSaveFilePicker' in window) {
                     await saveAsFile(svgString, filename);

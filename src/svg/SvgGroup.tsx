@@ -6,6 +6,7 @@ interface SvgGroupProps {
     angle: Angle;
     distance: number;
     rotateInParent: boolean;
+    className?: string;
     children: React.ReactNode;
 }
 
@@ -14,6 +15,7 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
     distance,
     rotateInParent,
     children,
+    className,
 }) => {
     let transform;
 
@@ -26,6 +28,7 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
 
     return (
         <g
+            className={className}
             style={{
                 transform,
             }}
