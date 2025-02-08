@@ -150,7 +150,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
             distance={lineSlot.position.distance}
             angle={lineSlot.position.angle}
             rotateInParent={true}
-            className="no-export"
+            className="print:hidden"
         >
             <line x1={0} y1={0} x2={0} y2={10} stroke="currentColor" />
         </SvgGroup>

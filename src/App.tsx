@@ -20,10 +20,17 @@ const App: React.FC = () => {
         <Provider store={store}>
             <ThemeProvider enableSystem={true}>
                 <ResizablePanelGroup direction="horizontal">
-                    <ResizablePanel minSize={10} defaultSize={25}>
+                    <ResizablePanel
+                        minSize={10}
+                        defaultSize={25}
+                        className="print:hidden"
+                    >
                         <Sidebar className="h-full" />
                     </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
+                    <ResizableHandle
+                        withHandle={true}
+                        className="print:hidden"
+                    />
                     <ResizablePanel>
                         <Svg />
                     </ResizablePanel>

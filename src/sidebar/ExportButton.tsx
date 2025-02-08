@@ -6,7 +6,7 @@ import React from 'react';
 const prepareSvg = (svg: HTMLElement): string => {
     const svgClone = svg.cloneNode(true) as SVGSVGElement;
 
-    svgClone.querySelectorAll('.no-export').forEach((el) => el.remove());
+    svgClone.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
 
     const serializer = new XMLSerializer();
     return serializer.serializeToString(svgClone);
