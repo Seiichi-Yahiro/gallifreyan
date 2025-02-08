@@ -101,7 +101,7 @@ export const defaultDotPosition = (
     const centerDotsOnLetterSideAngle =
         ((numberOfDots - 1) * dotDistanceAngle) / 2;
 
-    const distance = consonantRadius - dotRadius * 1.5;
+    const distance = consonantRadius - dotRadius * 2;
 
     const angle =
         index * dotDistanceAngle -
