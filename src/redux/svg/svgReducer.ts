@@ -222,6 +222,9 @@ export const createSvgReducer = (
                 wordCircle.intersections,
             );
         })
+        .addCase(svgActions.setHover, (state, action) => {
+            state.hovered = action.payload;
+        })
         .addMatcher(
             isAnyOf(
                 textActions.addSentence,

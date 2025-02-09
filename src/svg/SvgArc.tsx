@@ -1,5 +1,6 @@
 import type { Arc } from '@/redux/svg/svgTypes';
 import { angleFromVec } from '@/redux/svg/svgUtils';
+import cn from '@/utils/cn';
 import { isArray } from 'lodash';
 import React from 'react';
 
@@ -7,12 +8,20 @@ interface SvgArcProps {
     radius: number;
     arcs: Arc | Arc[];
     className?: string;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
     isArray(arcs.at(0)) ? (arcs as Arc[]) : [arcs as Arc];
 
-const SvgArc: React.FC<SvgArcProps> = ({ radius, arcs, className }) => {
+const SvgArc: React.FC<SvgArcProps> = ({
+    radius,
+    arcs,
+    className,
+    onMouseEnter,
+    onMouseLeave,
+}) => {
     const d = toArray(arcs)
         .map(([start, end]) => {
             const startAngle = angleFromVec(start).value;
@@ -28,9 +37,11 @@ const SvgArc: React.FC<SvgArcProps> = ({ radius, arcs, className }) => {
     return (
         <path
             d={d}
-            stroke="currentColor"
+            stroke="inherit"
             fill="transparent"
-            className={className}
+            className={cn('transition-colors--not-print', className)}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
         />
     );
 };

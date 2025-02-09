@@ -1,0 +1,12 @@
+@media not print {
+    .hovered--not-print {
+        stroke: var(--color-hover-accent-strong);
+        fill: var(--color-hover-accent-strong);
+    }
+}
+
+.transition-colors--not-print {
+    transition-property: stroke, fill;
+    transition-timing-function: var(--default-transition-timing-function);
+    transition-duration: var(--default-transition-duration);
+}

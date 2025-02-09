@@ -23,12 +23,18 @@ interface TreeItemProps {
     title: string;
     defaultOpen?: boolean;
     children?: React.ReactNode;
+    className?: string;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
 export const TreeItem: React.FC<TreeItemProps> = ({
     title,
     defaultOpen = false,
     children,
+    className,
+    onMouseEnter,
+    onMouseLeave,
 }) => {
     const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
@@ -46,7 +52,12 @@ export const TreeItem: React.FC<TreeItemProps> = ({
                 )}
             </div>
             <div className="flex grow flex-col">
-                <TreeItemTitle title={title} />
+                <TreeItemTitle
+                    title={title}
+                    className={className}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                />
                 {children && (
                     <TreeItemContent open={open}>{children}</TreeItemContent>
                 )}
@@ -101,13 +112,26 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
 
 interface TreeItemTitleProps {
     title: string;
+    className?: string;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
-const TreeItemTitle: React.FC<TreeItemTitleProps> = ({ title }) => {
+const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
+    title,
+    className,
+    onMouseEnter,
+    onMouseLeave,
+}) => {
     return (
         <div
-            className="border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2"
+            className={cn(
+                'border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2',
+                className,
+            )}
             tabIndex={0}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
         >
             {title}
         </div>

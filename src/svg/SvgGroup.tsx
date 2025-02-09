@@ -1,6 +1,7 @@
 import type { Angle } from '@/math/angle';
 import { circleTransform } from '@/redux/svg/svgUtils';
-import React from 'react';
+import cn from '@/utils/cn';
+import React, { useMemo } from 'react';
 
 interface SvgGroupProps {
     angle: Angle;
@@ -8,6 +9,7 @@ interface SvgGroupProps {
     rotateInParent: boolean;
     className?: string;
     children: React.ReactNode;
+    isHovered?: boolean;
 }
 
 const SvgGroup: React.FC<SvgGroupProps> = ({
@@ -16,19 +18,25 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
     rotateInParent,
     children,
     className,
+    isHovered = false,
 }) => {
-    let transform;
-
-    if (rotateInParent) {
-        transform = `rotate(-${angle.value}${angle.unit}) translateY(${distance}px)`;
-    } else {
-        const pos = circleTransform({ angle, distance });
-        transform = `translate(${pos.x}px, ${-pos.y}px)`;
-    }
+    const transform = useMemo(() => {
+        if (rotateInParent) {
+            return `rotate(-${angle.value}${angle.unit}) translateY(${distance}px)`;
+        } else {
+            const pos = circleTransform({ angle, distance });
+            return `translate(${pos.x}px, ${-pos.y}px)`;
+        }
+    }, [angle, distance, rotateInParent]);
 
     return (
         <g
-            className={className}
+            className={cn(
+                {
+                    'hovered--not-print': isHovered,
+                },
+                className,
+            )}
             style={{
                 transform,
             }}

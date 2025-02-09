@@ -6,7 +6,9 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/text/ids';
+import useHover from '@/svg/useHover';
 import { Tree, TreeItem } from '@/ui/Tree';
+import cn from '@/utils/cn';
 import React from 'react';
 
 interface TextTreeProps {
@@ -30,10 +32,18 @@ interface TextSentenceTreeItemProps {
 const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
     sentenceId,
 }) => {
+    const { isHovered, onHover, onHoverStop } = useHover(sentenceId);
+
     const sentence = useRedux((state) => state.main.text.elements[sentenceId]);
 
     return (
-        <TreeItem title={sentence.text} defaultOpen={true}>
+        <TreeItem
+            title={sentence.text}
+            defaultOpen={true}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
+            className={cn({ 'bg-hover-accent': isHovered })}
+        >
             {sentence.words.map((word) => (
                 <TextWordTreeItem key={word} wordId={word} />
             ))}
@@ -46,10 +56,18 @@ interface TextWordTreeItemProps {
 }
 
 const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
+    const { isHovered, onHover, onHoverStop } = useHover(wordId);
+
     const word = useRedux((state) => state.main.text.elements[wordId]);
 
     return (
-        <TreeItem title={word.text} defaultOpen={true}>
+        <TreeItem
+            title={word.text}
+            defaultOpen={true}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
+            className={cn({ 'bg-hover-accent': isHovered })}
+        >
             {word.letters.map((letter) => (
                 <TextLetterTreeItem key={letter} letterId={letter} />
             ))}
@@ -64,10 +82,17 @@ interface TextLetterTreeItemProps {
 const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
     letterId,
 }) => {
+    const { isHovered, onHover, onHoverStop } = useHover(letterId);
+
     const letter = useRedux((state) => state.main.text.elements[letterId]);
 
     return (
-        <TreeItem title={letter.text}>
+        <TreeItem
+            title={letter.text}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
+            className={cn({ 'bg-hover-accent': isHovered })}
+        >
             {letter.dots.length > 0
                 ? letter.dots.map((dot) => (
                       <TextDotTreeItem key={dot} dotId={dot} />
@@ -88,8 +113,17 @@ interface TextDotTreeItemProps {
     dotId: DotId;
 }
 
-const TextDotTreeItem: React.FC<TextDotTreeItemProps> = () => {
-    return <TreeItem title="Dot" />;
+const TextDotTreeItem: React.FC<TextDotTreeItemProps> = ({ dotId }) => {
+    const { isHovered, onHover, onHoverStop } = useHover(dotId);
+
+    return (
+        <TreeItem
+            title="Dot"
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
+            className={cn({ 'bg-hover-accent': isHovered })}
+        />
+    );
 };
 
 interface TextLineSlotTreeItemProps {

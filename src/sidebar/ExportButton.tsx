@@ -8,6 +8,14 @@ const prepareSvg = (svg: HTMLElement): string => {
 
     svgClone.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
 
+    svgClone.querySelectorAll('[class]').forEach((el) => {
+        el.classList.forEach((cls) => {
+            if (cls.endsWith('--not-print')) {
+                el.classList.remove(cls);
+            }
+        });
+    });
+
     const serializer = new XMLSerializer();
     return serializer.serializeToString(svgClone);
 };
