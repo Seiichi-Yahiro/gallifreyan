@@ -55,11 +55,13 @@
         scrollbar-width: thin;
     }
 
-    [data-theme='dark'] {
-        --color-gray: #666666;
-        --color-background: var(--color-black);
-        --color-text: var(--color-white);
-        --color-hover-accent-strong: --alpha(var(--color-accent) / 40%);
+    @media not print {
+        [data-theme='dark'] {
+            --color-gray: #666666;
+            --color-background: var(--color-black);
+            --color-text: var(--color-white);
+            --color-hover-accent-strong: --alpha(var(--color-accent) / 40%);
+        }
     }
 }
 
