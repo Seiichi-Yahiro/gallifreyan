@@ -4,6 +4,7 @@ import {
     type SvgState,
 } from '@/redux/svg/svgReducer';
 import type { CircleId } from '@/redux/svg/svgTypes';
+import type { LineSlotId } from '@/redux/text/ids';
 import {
     createInitialTextState,
     createTextReducer,
@@ -15,7 +16,7 @@ import { combineReducers } from 'redux';
 export interface MainState {
     text: TextState;
     svg: SvgState;
-    hovered: CircleId | null;
+    hovered: CircleId | LineSlotId | null;
 }
 
 const createReducer = () =>

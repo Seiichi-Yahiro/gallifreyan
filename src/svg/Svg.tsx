@@ -201,14 +201,34 @@ interface SvgLineSlotProps {
 const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
 
+    const { isHovered, onHover, onHoverStop } = useHover(id);
+
     return (
         <SvgGroup
             distance={lineSlot.position.distance}
             angle={lineSlot.position.angle}
             rotateInParent={true}
             className="print:hidden"
+            isHovered={isHovered}
         >
-            <line x1={0} y1={0} x2={0} y2={10} stroke="currentColor" />
+            <line
+                x1={0}
+                y1={0}
+                x2={0}
+                y2={20}
+                stroke="inherit"
+                className="transition-colors--not-print"
+            />
+            <circle
+                cx={0}
+                cy={0}
+                r={8}
+                className="transition-colors--not-print"
+                fill="transparent"
+                stroke={isHovered ? 'inherit' : 'transparent'}
+                onMouseEnter={onHover}
+                onMouseLeave={onHoverStop}
+            />
         </SvgGroup>
     );
 };

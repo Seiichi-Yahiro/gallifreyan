@@ -130,8 +130,19 @@ interface TextLineSlotTreeItemProps {
     lineSlotId: LineSlotId;
 }
 
-const TextLineSlotTreeItem: React.FC<TextLineSlotTreeItemProps> = () => {
-    return <TreeItem title="Line-Slot" />;
+const TextLineSlotTreeItem: React.FC<TextLineSlotTreeItemProps> = ({
+    lineSlotId,
+}) => {
+    const { isHovered, onHover, onHoverStop } = useHover(lineSlotId);
+
+    return (
+        <TreeItem
+            title="Line-Slot"
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
+            className={cn({ 'bg-hover-accent': isHovered })}
+        />
+    );
 };
 
 export default React.memo(TextTree);
