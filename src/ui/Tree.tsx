@@ -26,6 +26,7 @@ interface TreeItemProps {
     className?: string;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
+    onClick?: () => void;
 }
 
 export const TreeItem: React.FC<TreeItemProps> = ({
@@ -35,6 +36,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
     className,
     onMouseEnter,
     onMouseLeave,
+    onClick,
 }) => {
     const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
@@ -57,6 +59,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
                     className={className}
                     onMouseEnter={onMouseEnter}
                     onMouseLeave={onMouseLeave}
+                    onClick={onClick}
                 />
                 {children && (
                     <TreeItemContent open={open}>{children}</TreeItemContent>
@@ -115,6 +118,7 @@ interface TreeItemTitleProps {
     className?: string;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
+    onClick?: () => void;
 }
 
 const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
@@ -122,6 +126,7 @@ const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
     className,
     onMouseEnter,
     onMouseLeave,
+    onClick,
 }) => {
     return (
         <div
@@ -132,6 +137,7 @@ const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
             tabIndex={0}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
+            onClick={onClick}
         >
             {title}
         </div>

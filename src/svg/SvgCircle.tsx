@@ -7,6 +7,7 @@ interface SvgCircleProps {
     className?: string;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
+    onClick?: () => void;
 }
 
 const SvgCircle: React.FC<SvgCircleProps> = ({
@@ -15,6 +16,7 @@ const SvgCircle: React.FC<SvgCircleProps> = ({
     className,
     onMouseEnter,
     onMouseLeave,
+    onClick,
 }) => {
     return (
         <circle
@@ -26,6 +28,7 @@ const SvgCircle: React.FC<SvgCircleProps> = ({
             className={cn('transition-colors--not-print', className)}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
+            onClick={onClick}
         />
     );
 };

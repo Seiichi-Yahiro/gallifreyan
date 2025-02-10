@@ -225,6 +225,9 @@ export const createSvgReducer = (
         .addCase(svgActions.setHover, (state, action) => {
             state.hovered = action.payload;
         })
+        .addCase(svgActions.setSelection, (state, action) => {
+            state.selected = action.payload;
+        })
         .addMatcher(
             isAnyOf(
                 textActions.addSentence,

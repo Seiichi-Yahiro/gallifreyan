@@ -17,6 +17,7 @@ export interface MainState {
     text: TextState;
     svg: SvgState;
     hovered: CircleId | LineSlotId | null;
+    selected: CircleId | LineSlotId | null;
 }
 
 const createReducer = () =>
@@ -26,6 +27,7 @@ const createReducer = () =>
                 text: createInitialTextState(),
                 svg: createInitialSvgState(),
                 hovered: null,
+                selected: null,
             },
             (builder) => {
                 createTextReducer(builder);

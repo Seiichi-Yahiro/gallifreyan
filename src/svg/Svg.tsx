@@ -11,6 +11,7 @@ import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import useHover from '@/svg/useHover';
+import useSelect from '@/svg/useSelect';
 import React from 'react';
 import './Svg.css';
 
@@ -47,6 +48,7 @@ const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
 
     return (
         <SvgGroup
@@ -54,12 +56,14 @@ const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
             isHovered={isHovered}
+            isSelected={isSelected}
         >
             <SvgCircle
                 radius={circle.radius}
                 className="sentence"
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
+                onClick={onSelect}
             />
             {words.map((wordId) => (
                 <SvgWord key={wordId} id={wordId} />
@@ -78,6 +82,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
 
     return (
         <SvgGroup
@@ -85,6 +90,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
             isHovered={isHovered}
+            isSelected={isSelected}
         >
             {circle.intersections.length > 0 ? (
                 <>
@@ -102,6 +108,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                         className="print:hidden"
                         onMouseEnter={onHover}
                         onMouseLeave={onHoverStop}
+                        onClick={onSelect}
                     />
                 </>
             ) : (
@@ -110,6 +117,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                     className="word"
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
+                    onClick={onSelect}
                 />
             )}
             {letters.map((letterId) => (
@@ -133,6 +141,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
 
     return (
         <SvgGroup
@@ -140,6 +149,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={true}
             isHovered={isHovered}
+            isSelected={isSelected}
         >
             {circle.intersections.type === CircleIntersectionType.Two ? (
                 <SvgArc
@@ -148,6 +158,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     className="letter"
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
+                    onClick={onSelect}
                 />
             ) : (
                 <SvgCircle
@@ -155,6 +166,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     className="letter"
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
+                    onClick={onSelect}
                 />
             )}
             {dots.map((dotId) => (
@@ -175,6 +187,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
 
     return (
         <SvgGroup
@@ -182,6 +195,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
             isHovered={isHovered}
+            isSelected={isSelected}
         >
             <SvgCircle
                 radius={circle.radius}
@@ -189,6 +203,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
                 className="dot"
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
+                onClick={onSelect}
             />
         </SvgGroup>
     );
@@ -202,6 +217,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
 
     return (
         <SvgGroup
@@ -210,6 +226,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
             rotateInParent={true}
             className="print:hidden"
             isHovered={isHovered}
+            isSelected={isSelected}
         >
             <line
                 x1={0}
@@ -225,9 +242,10 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
                 r={8}
                 className="transition-colors--not-print"
                 fill="transparent"
-                stroke={isHovered ? 'inherit' : 'transparent'}
+                stroke={isHovered || isSelected ? 'inherit' : 'transparent'}
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
+                onClick={onSelect}
             />
         </SvgGroup>
     );

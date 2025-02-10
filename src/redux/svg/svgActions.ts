@@ -9,10 +9,15 @@ const calculateCircleIntersections = createAction<WordId>(
 
 const setHover = createAction<CircleId | LineSlotId | null>('SVG/SET_HOVER');
 
+const setSelection = createAction<CircleId | LineSlotId | null>(
+    'SVG/SET_SELECTION',
+);
+
 const svgActions = {
     reset,
     calculateCircleIntersections,
     setHover,
+    setSelection,
 };
 
 export default svgActions;

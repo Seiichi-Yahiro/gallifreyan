@@ -10,6 +10,7 @@ interface SvgArcProps {
     className?: string;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
+    onClick?: () => void;
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
@@ -21,6 +22,7 @@ const SvgArc: React.FC<SvgArcProps> = ({
     className,
     onMouseEnter,
     onMouseLeave,
+    onClick,
 }) => {
     const d = toArray(arcs)
         .map(([start, end]) => {
@@ -42,6 +44,7 @@ const SvgArc: React.FC<SvgArcProps> = ({
             className={cn('transition-colors--not-print', className)}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
+            onClick={onClick}
         />
     );
 };

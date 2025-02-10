@@ -3,6 +3,11 @@
         stroke: var(--color-hover-accent-strong);
         fill: var(--color-hover-accent-strong);
     }
+
+    .selected--not-print {
+        stroke: var(--color-accent);
+        fill: var(--color-accent);
+    }
 }
 
 .transition-colors--not-print {

@@ -7,6 +7,7 @@ import type {
     WordId,
 } from '@/redux/text/ids';
 import useHover from '@/svg/useHover';
+import useSelect from '@/svg/useSelect';
 import { Tree, TreeItem } from '@/ui/Tree';
 import cn from '@/utils/cn';
 import React from 'react';
@@ -33,6 +34,7 @@ const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
     sentenceId,
 }) => {
     const { isHovered, onHover, onHoverStop } = useHover(sentenceId);
+    const { isSelected, onSelect } = useSelect(sentenceId);
 
     const sentence = useRedux((state) => state.main.text.elements[sentenceId]);
 
@@ -42,7 +44,11 @@ const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
             defaultOpen={true}
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
-            className={cn({ 'bg-hover-accent': isHovered })}
+            onClick={onSelect}
+            className={cn({
+                'bg-hover-accent': isHovered,
+                'bg-accent': isSelected,
+            })}
         >
             {sentence.words.map((word) => (
                 <TextWordTreeItem key={word} wordId={word} />
@@ -57,6 +63,7 @@ interface TextWordTreeItemProps {
 
 const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
     const { isHovered, onHover, onHoverStop } = useHover(wordId);
+    const { isSelected, onSelect } = useSelect(wordId);
 
     const word = useRedux((state) => state.main.text.elements[wordId]);
 
@@ -66,7 +73,11 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
             defaultOpen={true}
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
-            className={cn({ 'bg-hover-accent': isHovered })}
+            onClick={onSelect}
+            className={cn({
+                'bg-hover-accent': isHovered,
+                'bg-accent': isSelected,
+            })}
         >
             {word.letters.map((letter) => (
                 <TextLetterTreeItem key={letter} letterId={letter} />
@@ -83,6 +94,7 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
     letterId,
 }) => {
     const { isHovered, onHover, onHoverStop } = useHover(letterId);
+    const { isSelected, onSelect } = useSelect(letterId);
 
     const letter = useRedux((state) => state.main.text.elements[letterId]);
 
@@ -91,7 +103,11 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
             title={letter.text}
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
-            className={cn({ 'bg-hover-accent': isHovered })}
+            onClick={onSelect}
+            className={cn({
+                'bg-hover-accent': isHovered,
+                'bg-accent': isSelected,
+            })}
         >
             {letter.dots.length > 0
                 ? letter.dots.map((dot) => (
@@ -115,13 +131,18 @@ interface TextDotTreeItemProps {
 
 const TextDotTreeItem: React.FC<TextDotTreeItemProps> = ({ dotId }) => {
     const { isHovered, onHover, onHoverStop } = useHover(dotId);
+    const { isSelected, onSelect } = useSelect(dotId);
 
     return (
         <TreeItem
             title="Dot"
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
-            className={cn({ 'bg-hover-accent': isHovered })}
+            onClick={onSelect}
+            className={cn({
+                'bg-hover-accent': isHovered,
+                'bg-accent': isSelected,
+            })}
         />
     );
 };
@@ -134,13 +155,18 @@ const TextLineSlotTreeItem: React.FC<TextLineSlotTreeItemProps> = ({
     lineSlotId,
 }) => {
     const { isHovered, onHover, onHoverStop } = useHover(lineSlotId);
+    const { isSelected, onSelect } = useSelect(lineSlotId);
 
     return (
         <TreeItem
             title="Line-Slot"
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
-            className={cn({ 'bg-hover-accent': isHovered })}
+            onClick={onSelect}
+            className={cn({
+                'bg-hover-accent': isHovered,
+                'bg-accent': isSelected,
+            })}
         />
     );
 };
