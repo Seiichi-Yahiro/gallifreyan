@@ -1,5 +1,6 @@
 import setupListenerMiddleware from '@/redux/listener';
 import createReducer from '@/redux/reducer';
+import svgActions from '@/redux/svg/svgActions';
 import {
     configureStore,
     type ThunkAction,
@@ -13,6 +14,7 @@ export const setupStore = () => {
             getDefaultMiddleware().prepend(
                 setupListenerMiddleware().middleware,
             ),
+        devTools: { actionsDenylist: [svgActions.setHover.type] },
     });
 };
 
