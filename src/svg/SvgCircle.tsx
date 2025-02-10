@@ -1,22 +1,16 @@
 import cn from '@/utils/cn';
 import React from 'react';
 
-interface SvgCircleProps {
+interface SvgCircleProps extends React.SVGProps<SVGCircleElement> {
     radius: number;
     filled?: boolean;
-    className?: string;
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
-    onClick?: () => void;
 }
 
 const SvgCircle: React.FC<SvgCircleProps> = ({
     radius,
     filled = false,
     className,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    ...props
 }) => {
     return (
         <circle
@@ -26,9 +20,7 @@ const SvgCircle: React.FC<SvgCircleProps> = ({
             fill={filled ? 'inherit' : 'transparent'}
             stroke="inherit"
             className={cn('transition-colors--not-print', className)}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            {...props}
         />
     );
 };

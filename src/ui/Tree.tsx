@@ -19,14 +19,10 @@ export const Tree: React.FC<TreeProps> = ({ children, className }) => {
     );
 };
 
-interface TreeItemProps {
+interface TreeItemProps extends React.HTMLProps<HTMLDivElement> {
     title: string;
     defaultOpen?: boolean;
     children?: React.ReactNode;
-    className?: string;
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
-    onClick?: () => void;
 }
 
 export const TreeItem: React.FC<TreeItemProps> = ({
@@ -34,9 +30,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
     defaultOpen = false,
     children,
     className,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    ...props
 }) => {
     const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
@@ -54,13 +48,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
                 )}
             </div>
             <div className="flex grow flex-col">
-                <TreeItemTitle
-                    title={title}
-                    className={className}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                    onClick={onClick}
-                />
+                <TreeItemTitle title={title} className={className} {...props} />
                 {children && (
                     <TreeItemContent open={open}>{children}</TreeItemContent>
                 )}
@@ -113,20 +101,15 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
     );
 };
 
-interface TreeItemTitleProps {
+interface TreeItemTitleProps extends React.HTMLProps<HTMLDivElement> {
     title: string;
     className?: string;
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
-    onClick?: () => void;
 }
 
 const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
     title,
     className,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    ...props
 }) => {
     return (
         <div
@@ -135,9 +118,7 @@ const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
                 className,
             )}
             tabIndex={0}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            {...props}
         >
             {title}
         </div>

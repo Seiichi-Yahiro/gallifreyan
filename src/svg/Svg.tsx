@@ -1,5 +1,6 @@
 import { CircleIntersectionType } from '@/math/circle';
-import { useRedux } from '@/redux/hooks';
+import { useAppDispatch, useRedux } from '@/redux/hooks';
+import svgActions from '@/redux/svg/svgActions';
 import type {
     DotId,
     LetterId,
@@ -12,10 +13,15 @@ import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
-import React from 'react';
+import React, { useCallback } from 'react';
 import './Svg.css';
 
 const Svg: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const deselect = useCallback(() => {
+        dispatch(svgActions.setSelection(null));
+    }, [dispatch]);
+
     const svgSize = useRedux((state) => state.main.svg.size);
     const sentenceId = useRedux((state) => state.main.text.rootElement);
 
@@ -32,6 +38,7 @@ const Svg: React.FC = () => {
                 fill: 'currentColor',
             }}
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
+            onClick={deselect}
         >
             {sentenceId && <SvgSentence id={sentenceId} />}
         </svg>

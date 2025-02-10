@@ -4,13 +4,9 @@ import cn from '@/utils/cn';
 import { isArray } from 'lodash';
 import React from 'react';
 
-interface SvgArcProps {
+interface SvgArcProps extends React.SVGProps<SVGPathElement> {
     radius: number;
     arcs: Arc | Arc[];
-    className?: string;
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
-    onClick?: () => void;
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
@@ -20,9 +16,7 @@ const SvgArc: React.FC<SvgArcProps> = ({
     radius,
     arcs,
     className,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    ...props
 }) => {
     const d = toArray(arcs)
         .map(([start, end]) => {
@@ -42,9 +36,7 @@ const SvgArc: React.FC<SvgArcProps> = ({
             stroke="inherit"
             fill="transparent"
             className={cn('transition-colors--not-print', className)}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            {...props}
         />
     );
 };
