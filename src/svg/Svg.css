@@ -1,11 +1,38 @@
+.sentence,
+.word,
+.letter,
+.dot,
+.line-slot {
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1px;
+}
+
+.sentence,
+.word,
+.letter,
+.line-slot {
+    fill: transparent;
+}
+
+.dot {
+    fill: currentColor;
+}
+
 @media not print {
-    .hovered--not-print {
+    .hovered__stroke--not-print {
         stroke: var(--color-hover-accent-strong);
+    }
+
+    .hovered__fill--not-print {
         fill: var(--color-hover-accent-strong);
     }
 
-    .selected--not-print {
+    .selected__stroke--not-print {
         stroke: var(--color-accent);
+    }
+
+    .selected__fill--not-print {
         fill: var(--color-accent);
     }
 }

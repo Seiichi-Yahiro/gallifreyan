@@ -9,8 +9,6 @@ interface SvgGroupProps {
     rotateInParent: boolean;
     className?: string;
     children: React.ReactNode;
-    isHovered?: boolean;
-    isSelected?: boolean;
 }
 
 const SvgGroup: React.FC<SvgGroupProps> = ({
@@ -19,8 +17,6 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
     rotateInParent,
     children,
     className,
-    isHovered = false,
-    isSelected = false,
 }) => {
     const transform = useMemo(() => {
         if (rotateInParent) {
@@ -33,13 +29,7 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
 
     return (
         <g
-            className={cn(
-                {
-                    'hovered--not-print': isHovered,
-                    'selected--not-print': isSelected,
-                },
-                className,
-            )}
+            className={cn(className)}
             style={{
                 transform,
             }}

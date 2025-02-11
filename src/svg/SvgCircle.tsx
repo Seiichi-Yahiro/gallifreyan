@@ -4,12 +4,16 @@ import React from 'react';
 interface SvgCircleProps extends React.SVGProps<SVGCircleElement> {
     radius: number;
     filled?: boolean;
+    isHovered?: boolean;
+    isSelected?: boolean;
 }
 
 const SvgCircle: React.FC<SvgCircleProps> = ({
     radius,
     filled = false,
     className,
+    isHovered = false,
+    isSelected = false,
     ...props
 }) => {
     return (
@@ -17,9 +21,16 @@ const SvgCircle: React.FC<SvgCircleProps> = ({
             cx={0}
             cy={0}
             r={radius}
-            fill={filled ? 'inherit' : 'transparent'}
-            stroke="inherit"
-            className={cn('transition-colors--not-print', className)}
+            className={cn(
+                'transition-colors--not-print',
+                {
+                    'hovered__stroke--not-print': isHovered,
+                    'hovered__fill--not-print': isHovered && filled,
+                    'selected__stroke--not-print': isSelected,
+                    'selected__fill--not-print': isSelected && filled,
+                },
+                className,
+            )}
             {...props}
         />
     );

@@ -16,6 +16,28 @@ const prepareSvg = (svg: HTMLElement): string => {
         });
     });
 
+    const style = document.createElement('style');
+    style.innerHTML = `.sentence,
+.word,
+.letter,
+.dot {
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1px;
+}
+
+.sentence,
+.word,
+.letter {
+    fill: transparent;
+}
+
+.dot {
+    fill: currentColor;
+}`;
+
+    svgClone.insertBefore(style, svgClone.firstChild);
+
     const serializer = new XMLSerializer();
     return serializer.serializeToString(svgClone);
 };

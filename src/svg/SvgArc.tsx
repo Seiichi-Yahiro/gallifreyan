@@ -7,6 +7,8 @@ import React from 'react';
 interface SvgArcProps extends React.SVGProps<SVGPathElement> {
     radius: number;
     arcs: Arc | Arc[];
+    isHovered?: boolean;
+    isSelected?: boolean;
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
@@ -16,6 +18,8 @@ const SvgArc: React.FC<SvgArcProps> = ({
     radius,
     arcs,
     className,
+    isHovered = false,
+    isSelected = false,
     ...props
 }) => {
     const d = toArray(arcs)
@@ -33,9 +37,14 @@ const SvgArc: React.FC<SvgArcProps> = ({
     return (
         <path
             d={d}
-            stroke="inherit"
-            fill="transparent"
-            className={cn('transition-colors--not-print', className)}
+            className={cn(
+                'transition-colors--not-print',
+                {
+                    'hovered__stroke--not-print': isHovered,
+                    'selected__stroke--not-print': isSelected,
+                },
+                className,
+            )}
             {...props}
         />
     );
