@@ -114,7 +114,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
 
     return (
         <div
-            className="border-border bg-hover-accent outline-accent h-3 rounded-sm border p-0.5 focus-visible:outline-2 focus-visible:-outline-offset-2"
+            className="border-border bg-hover-accent outline-accent h-4 rounded-sm border p-0.5 focus-visible:outline-2 focus-visible:-outline-offset-2"
             tabIndex={0}
             onKeyDown={onKeyDown}
         >
