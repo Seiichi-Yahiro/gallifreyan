@@ -81,7 +81,7 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
         <div className="w-6 select-none">
             {hasChildren ? (
                 <div
-                    className="focus-visible:outline-accent cursor-pointer focus-visible:rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
+                    className="outline-accent cursor-pointer focus-visible:rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
                     tabIndex={0}
                     onClick={toggleOpen}
                     onKeyDown={onKeyDown}
@@ -114,7 +114,7 @@ const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
     return (
         <div
             className={cn(
-                'border-border hover:bg-hover-accent focus-visible:outline-accent ml-6 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2',
+                'border-border hover:bg-hover-accent outline-accent ml-7 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2',
                 className,
             )}
             tabIndex={0}
@@ -163,7 +163,7 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
     return (
         <div
             style={style}
-            className={cn('overflow-hidden pl-6', {
+            className={cn('overflow-hidden pl-7', {
                 'animate-tree-item-open': open,
                 'animate-tree-item-close invisible h-0': !open,
             })}

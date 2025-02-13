@@ -47,7 +47,7 @@ const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
             onClick={onSelect}
             className={cn({
                 'bg-hover-accent': isHovered,
-                'bg-accent': isSelected,
+                'bg-hover-accent-strong': isSelected,
             })}
         >
             {sentence.words.map((word) => (
@@ -76,7 +76,7 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
             onClick={onSelect}
             className={cn({
                 'bg-hover-accent': isHovered,
-                'bg-accent': isSelected,
+                'bg-hover-accent-strong': isSelected,
             })}
         >
             {word.letters.map((letter) => (
@@ -106,7 +106,7 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
             onClick={onSelect}
             className={cn({
                 'bg-hover-accent': isHovered,
-                'bg-accent': isSelected,
+                'bg-hover-accent-strong': isSelected,
             })}
         >
             {letter.dots.length > 0
@@ -141,7 +141,7 @@ const TextDotTreeItem: React.FC<TextDotTreeItemProps> = ({ dotId }) => {
             onClick={onSelect}
             className={cn({
                 'bg-hover-accent': isHovered,
-                'bg-accent': isSelected,
+                'bg-hover-accent-strong': isSelected,
             })}
         />
     );
@@ -165,7 +165,7 @@ const TextLineSlotTreeItem: React.FC<TextLineSlotTreeItemProps> = ({
             onClick={onSelect}
             className={cn({
                 'bg-hover-accent': isHovered,
-                'bg-accent': isSelected,
+                'bg-hover-accent-strong': isSelected,
             })}
         />
     );
