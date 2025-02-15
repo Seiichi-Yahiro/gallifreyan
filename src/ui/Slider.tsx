@@ -1,13 +1,6 @@
 import useEventListener from '@/utils/useEventListener';
 import { clamp } from 'lodash';
-import React, {
-    type KeyboardEvent,
-    useCallback,
-    useRef,
-    useState,
-} from 'react';
-
-const thumbWidth = 1;
+import React, { useCallback, useRef, useState } from 'react';
 
 interface SliderProps {
     min: number;
@@ -23,8 +16,6 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [percent, setPercent] = useState((value / range) * 100);
-
-    const target = isDragging ? window : undefined;
 
     const calculateValue = useCallback(
         (clientX: number) => {
@@ -68,6 +59,8 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
         [calculateValue],
     );
 
+    const target = isDragging ? window : undefined;
+
     useEventListener(
         'mousemove',
         (event: MouseEvent) => {
@@ -96,7 +89,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     );
 
     const onKeyDown = useCallback(
-        (event: KeyboardEvent<HTMLDivElement>) => {
+        (event: React.KeyboardEvent<HTMLDivElement>) => {
             const keyStep = step ?? range * 0.1;
 
             if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
@@ -114,7 +107,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
 
     return (
         <div
-            className="border-border bg-hover-accent outline-accent h-4 rounded-sm border p-0.5 focus-visible:outline-2 focus-visible:-outline-offset-2"
+            className="border-border bg-hover-accent outline-accent h-4 rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"
             tabIndex={0}
             onKeyDown={onKeyDown}
         >
@@ -125,11 +118,8 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
                 onTouchStart={onTouchStart}
             >
                 <div
-                    className="bg-text absolute h-full rounded-sm"
-                    style={{
-                        width: thumbWidth,
-                        left: `calc(${percent}% - ${thumbWidth / 2}px)`,
-                    }}
+                    className="bg-text absolute h-full w-[1px] transform-[translate(-50%,0)] rounded-sm"
+                    style={{ left: `${percent}%` }}
                 />
             </div>
         </div>
