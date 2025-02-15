@@ -12,6 +12,7 @@ interface AngleSliderProps {
     value: number;
     step?: number;
     onChange: (value: number) => void;
+    className?: string;
 }
 
 const AngleSlider: React.FC<AngleSliderProps> = ({
@@ -21,6 +22,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     value,
     step,
     onChange,
+    className,
 }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -131,7 +133,10 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     return (
         <div
             ref={sliderRef}
-            className="border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer rounded-full border focus:outline-2 focus:-outline-offset-2"
+            className={cn(
+                'border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer rounded-full border focus:outline-2 focus:-outline-offset-2',
+                className,
+            )}
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
             onKeyDown={onKeyDown}

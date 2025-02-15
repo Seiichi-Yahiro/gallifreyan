@@ -1,5 +1,6 @@
 import ExportButton from '@/sidebar/ExportButton';
 import SentenceInput from '@/sidebar/SentenceInput';
+import ElementSettings from '@/sidebar/settings/ElementSettings';
 import TextTree from '@/sidebar/TextTree';
 import cn from '@/utils/cn';
 import React from 'react';
@@ -13,9 +14,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         <div className={cn('flex flex-col p-1', className)}>
             <SentenceInput />
             <ExportButton />
-            <div className="grow overflow-y-auto pr-1">
-                <TextTree />
-            </div>
+            <TextTree className="min-h-24 grow overflow-y-auto pr-1" />
+            <ElementSettings className="border-border border-t pt-1" />
         </div>
     );
 };

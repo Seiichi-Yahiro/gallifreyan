@@ -15,7 +15,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
 
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [percent, setPercent] = useState((value / range) * 100);
+    const percent = (value / range) * 100;
 
     const calculateValue = useCallback(
         (clientX: number) => {
@@ -32,7 +32,6 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
                 factor = Math.round(factor / stepFactor) * stepFactor;
             }
 
-            setPercent(factor * 100);
             onChange(range * factor);
         },
         [onChange, range, step],
@@ -94,11 +93,9 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
 
             if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
                 const nextValue = Math.min(value + keyStep, max);
-                setPercent((nextValue / range) * 100);
                 onChange(nextValue);
             } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
                 const nextValue = Math.max(min, value - keyStep);
-                setPercent((nextValue / range) * 100);
                 onChange(nextValue);
             }
         },
