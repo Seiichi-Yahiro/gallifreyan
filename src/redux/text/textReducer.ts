@@ -30,6 +30,8 @@ export const createTextReducer = (
     builder
         .addCase(textActions.setText, (state, action) => {
             state.text.value = action.payload;
+            state.hovered = null;
+            state.selected = null;
         })
         .addCase(textActions.addSentence, (state, action) => {
             state.text.rootElement = action.payload.id;
