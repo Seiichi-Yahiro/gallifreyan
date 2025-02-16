@@ -1,11 +1,13 @@
-export enum AngleUnit {
-    Degree = 'deg',
-    Radian = 'rad',
-}
+import { isNumber } from 'lodash';
 
 const MIN = 0;
 const MAX_DEG = 360;
 const MAX_RAD = Math.PI * 2;
+
+export enum AngleUnit {
+    Degree = 'deg',
+    Radian = 'rad',
+}
 
 export interface Degree {
     unit: AngleUnit.Degree;
@@ -81,16 +83,46 @@ const clamp = <T extends Angle>(angle: T, min: number, max: number): T => {
     }
 };
 
+const angleOp =
+    (op: (a: number, b: number) => number) =>
+    <T extends Angle>(a: T, ...bs: (Angle | number)[]): T =>
+        bs.reduce<T>((result, b) => {
+            if (isNumber(b)) {
+                return { unit: result.unit, value: op(result.value, b) } as T;
+            }
+
+            if (result.unit === AngleUnit.Degree) {
+                return {
+                    unit: result.unit,
+                    value: op(result.value, toDegree(b).value),
+                } as T;
+            } else {
+                return {
+                    unit: result.unit,
+                    value: op(result.value, toRadian(b).value),
+                } as T;
+            }
+        }, a);
+
+const add = angleOp((a, b) => a + b);
+const sub = angleOp((a, b) => a - b);
+const mul = angleOp((a, b) => a * b);
+const div = angleOp((a, b) => a / b);
+
 const mAngle = {
+    MIN,
+    MAX_DEG,
+    MAX_RAD,
     degree,
     radian,
     toDegree,
     toRadian,
     normalize,
     clamp,
-    MIN,
-    MAX_DEG,
-    MAX_RAD,
+    add,
+    sub,
+    mul,
+    div,
 };
 
 export default mAngle;

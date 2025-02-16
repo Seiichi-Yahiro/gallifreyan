@@ -115,4 +115,44 @@ describe('angle', () => {
         const result = mAngle.clamp(mAngle.degree(350), 270, 90);
         expect(result.value).toBe(350);
     });
+
+    it('should add', () => {
+        const result = mAngle.add(
+            mAngle.degree(90),
+            mAngle.degree(-180),
+            90,
+            mAngle.radian(Math.PI),
+        );
+        expect(result).toStrictEqual(mAngle.degree(180));
+    });
+
+    it('should subtract', () => {
+        const result = mAngle.sub(
+            mAngle.degree(90),
+            mAngle.degree(180),
+            -90,
+            mAngle.radian(-Math.PI),
+        );
+        expect(result).toStrictEqual(mAngle.degree(180));
+    });
+
+    it('should multiply', () => {
+        const result = mAngle.mul(
+            mAngle.degree(90),
+            mAngle.degree(90),
+            -4,
+            mAngle.radian(Math.PI * 2),
+        );
+        expect(result).toStrictEqual(mAngle.degree(-11664000));
+    });
+
+    it('should divide', () => {
+        const result = mAngle.div(
+            mAngle.radian(Math.PI * 2),
+            mAngle.degree(90),
+            -8,
+            mAngle.radian(1 / (Math.PI * 2)),
+        );
+        expect(result).toStrictEqual(mAngle.radian(-Math.PI));
+    });
 });
