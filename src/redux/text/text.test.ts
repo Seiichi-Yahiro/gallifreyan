@@ -27,6 +27,9 @@ describe('text', () => {
             value: '',
             rootElement: null,
             elements: {},
+            splitLetterOptions: {
+                digraphs: true,
+            },
         });
     });
 

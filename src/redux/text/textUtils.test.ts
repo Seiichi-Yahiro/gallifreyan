@@ -15,6 +15,7 @@ import {
     charToLetter,
     digraphReducer,
     sanitizeSentence,
+    splitLetters,
 } from '@/redux/text/textUtils';
 import { describe, expect, it } from 'vitest';
 
@@ -394,14 +395,8 @@ describe('textUtils', () => {
 
     describe('combine letters', () => {
         it('should combine th', () => {
-            const letters = ['t', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('th', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'th',
@@ -418,14 +413,8 @@ describe('textUtils', () => {
         });
 
         it('should combine ph', () => {
-            const letters = ['p', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('ph', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'ph',
@@ -442,14 +431,8 @@ describe('textUtils', () => {
         });
 
         it('should combine wh', () => {
-            const letters = ['w', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('wh', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'wh',
@@ -466,14 +449,8 @@ describe('textUtils', () => {
         });
 
         it('should combine gh', () => {
-            const letters = ['g', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('gh', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'gh',
@@ -490,14 +467,8 @@ describe('textUtils', () => {
         });
 
         it('should combine ch', () => {
-            const letters = ['c', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('ch', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'ch',
@@ -514,14 +485,8 @@ describe('textUtils', () => {
         });
 
         it('should combine sh', () => {
-            const letters = ['s', 'h'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('sh', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'sh',
@@ -538,14 +503,8 @@ describe('textUtils', () => {
         });
 
         it('should combine qu', () => {
-            const letters = ['q', 'u'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('qu', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'qu',
@@ -562,14 +521,8 @@ describe('textUtils', () => {
         });
 
         it('should combine ng', () => {
-            const letters = ['n', 'g'].map(
-                (text): TextLetterPair => ({
-                    text,
-                    letter: charToLetter(text)!,
-                }),
-            );
+            const result = splitLetters('ng', { digraphs: true });
 
-            const result = letters.reduce(digraphReducer, []);
             const expected: TextLetterPair[] = [
                 {
                     text: 'ng',

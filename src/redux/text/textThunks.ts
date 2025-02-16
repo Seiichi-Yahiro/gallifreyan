@@ -83,9 +83,11 @@ const compareWord =
         if (wordElement.text !== newWordText) {
             dispatch(textActions.updateWordText({ id, text: newWordText }));
 
-            zip(splitLetters(newWordText), wordElement.letters).forEach(
-                ([newLetterText, letterId]) =>
-                    dispatch(compareLetter(id, newLetterText, letterId)),
+            zip(
+                splitLetters(newWordText, state.main.text.splitLetterOptions),
+                wordElement.letters,
+            ).forEach(([newLetterText, letterId]) =>
+                dispatch(compareLetter(id, newLetterText, letterId)),
             );
         }
     };
@@ -180,7 +182,7 @@ const addSentence =
 
 const addWord =
     (newWordText: string, parent: SentenceId): AppThunkAction =>
-    (dispatch, _getState) => {
+    (dispatch, getState) => {
         const id = wordId();
 
         dispatch(
@@ -191,8 +193,10 @@ const addWord =
             }),
         );
 
-        splitLetters(newWordText).forEach((pair) =>
-            dispatch(addLetter(pair, id)),
+        const state = getState();
+
+        splitLetters(newWordText, state.main.text.splitLetterOptions).forEach(
+            (pair) => dispatch(addLetter(pair, id)),
         );
     };
 

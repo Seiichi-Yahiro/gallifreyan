@@ -14,16 +14,27 @@ import type { TextLetterPair } from '@/redux/text/textTypes';
 
 export const splitWords = (sentence: string): string[] => sentence.split(' ');
 
-export const splitLetters = (word: string): TextLetterPair[] =>
-    word
-        .split('')
-        .map(
-            (letterText): TextLetterPair => ({
-                text: letterText,
-                letter: charToLetter(letterText)!,
-            }),
-        )
-        .reduce(digraphReducer, []);
+export interface SplitLettersOptions {
+    digraphs?: boolean;
+}
+
+export const splitLetters = (
+    word: string,
+    options?: SplitLettersOptions,
+): TextLetterPair[] => {
+    let letters = word.split('').map(
+        (letterText): TextLetterPair => ({
+            text: letterText,
+            letter: charToLetter(letterText)!,
+        }),
+    );
+
+    if (options?.digraphs) {
+        letters = letters.reduce(digraphReducer, []);
+    }
+
+    return letters;
+};
 
 export const sanitizeSentence = (sentence: string): string => {
     const vocals = Object.values<string>(VocalValue);

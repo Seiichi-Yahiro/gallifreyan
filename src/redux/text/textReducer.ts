@@ -10,18 +10,23 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/text/textTypes';
+import type { SplitLettersOptions } from '@/redux/text/textUtils';
 import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
+    splitLetterOptions: SplitLettersOptions;
 }
 
 export const createInitialTextState = (): TextState => ({
     value: '',
     rootElement: null,
     elements: {},
+    splitLetterOptions: {
+        digraphs: true,
+    },
 });
 
 export const createTextReducer = (
