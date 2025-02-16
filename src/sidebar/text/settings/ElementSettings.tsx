@@ -1,9 +1,9 @@
 import { useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import { isDotId, isLineSlotId, type LineSlotId } from '@/redux/text/ids';
-import AngleSettings from '@/sidebar/settings/AngleSettings';
-import DistanceSettings from '@/sidebar/settings/DistanceSettings';
-import RadiusSettings from '@/sidebar/settings/RadiusSettings';
+import AngleSettings from '@/sidebar/text/settings/AngleSettings';
+import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
+import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import cn from '@/utils/cn';
 import React from 'react';
 
