@@ -8,41 +8,21 @@ export interface Vec2 {
 
 const create = (x: number, y: number): Vec2 => ({ x, y });
 
-const add = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
-    bs.reduce<Vec2>(
-        (sum, b) =>
-            isNumber(b)
-                ? create(sum.x + b, sum.y + b)
-                : create(sum.x + b.x, sum.y + b.y),
-        a,
-    );
+const vec2Op =
+    (op: (a: number, b: number) => number) =>
+    (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
+        bs.reduce<Vec2>(
+            (result, b) =>
+                isNumber(b)
+                    ? create(op(result.x, b), op(result.y, b))
+                    : create(op(result.x, b.x), op(result.y, b.y)),
+            a,
+        );
 
-const sub = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
-    bs.reduce<Vec2>(
-        (sum, b) =>
-            isNumber(b)
-                ? create(sum.x - b, sum.y - b)
-                : create(sum.x - b.x, sum.y - b.y),
-        a,
-    );
-
-const mul = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
-    bs.reduce<Vec2>(
-        (sum, b) =>
-            isNumber(b)
-                ? create(sum.x * b, sum.y * b)
-                : create(sum.x * b.x, sum.y * b.y),
-        a,
-    );
-
-const div = (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
-    bs.reduce<Vec2>(
-        (sum, b) =>
-            isNumber(b)
-                ? create(sum.x / b, sum.y / b)
-                : create(sum.x / b.x, sum.y / b.y),
-        a,
-    );
+const add = vec2Op((a, b) => a + b);
+const sub = vec2Op((a, b) => a - b);
+const mul = vec2Op((a, b) => a * b);
+const div = vec2Op((a, b) => a / b);
 
 const length = (vec: Vec2): number => Math.hypot(vec.x, vec.y);
 
