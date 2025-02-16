@@ -1,6 +1,6 @@
 import { useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
-import { isLineSlotId, type LineSlotId } from '@/redux/text/ids';
+import { isDotId, isLineSlotId, type LineSlotId } from '@/redux/text/ids';
 import AngleSettings from '@/sidebar/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/settings/RadiusSettings';
@@ -36,11 +36,21 @@ interface CircleSettingsProps {
 const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
+    const parentAngle = useRedux((state) =>
+        isDotId(id)
+            ? state.main.svg.circles[state.main.text.elements[id].parent]
+                  .position.angle
+            : undefined,
+    );
+
     return (
         <>
             <RadiusSettings radius={circle.radius} />
             <DistanceSettings distance={circle.position.distance} />
-            <AngleSettings angle={circle.position.angle} />
+            <AngleSettings
+                angle={circle.position.angle}
+                parentAngle={parentAngle}
+            />
         </>
     );
 };
@@ -52,7 +62,18 @@ interface LineSlotSettingsProps {
 const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
     const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
 
-    return <AngleSettings angle={lineSlot.position.angle} />;
+    const parentAngle = useRedux(
+        (state) =>
+            state.main.svg.circles[state.main.text.elements[id].parent].position
+                .angle,
+    );
+
+    return (
+        <AngleSettings
+            angle={lineSlot.position.angle}
+            parentAngle={parentAngle}
+        />
+    );
 };
 
 export default React.memo(ElementSettings);

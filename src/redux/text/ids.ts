@@ -27,6 +27,7 @@ export const letterId: () => LetterId = letterCounter.generator;
 export type DotId = IdGenerator<'DOT'>;
 const dotCounter = createIdCounter('DOT');
 export const dotId: () => DotId = dotCounter.generator;
+export const isDotId = (id: TextElementId): id is DotId => id.startsWith('DOT');
 
 export type LineSlotId = IdGenerator<'LNS'>;
 const lineSlotCounter = createIdCounter('LNS');
