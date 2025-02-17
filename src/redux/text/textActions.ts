@@ -6,6 +6,7 @@ import type {
     WordId,
 } from '@/redux/text/ids';
 import type { Letter } from '@/redux/text/letterTypes';
+import type { SplitLettersOptions } from '@/redux/text/textUtils';
 import { createAction } from '@reduxjs/toolkit';
 
 const setText = createAction<string>('TEXT/SET_TEXT');
@@ -47,6 +48,10 @@ const addLineSlot = createAction<{ id: LineSlotId; parent: LetterId }>(
 );
 const removeLineSlot = createAction<LineSlotId>('TEXT/REMOVE_LINE_SLOT');
 
+const setSplitLetterOptions = createAction<SplitLettersOptions>(
+    'TEXT/SET_SPLIT_LETTER_OPTIONS',
+);
+
 const textActions = {
     setText,
     addSentence,
@@ -62,6 +67,7 @@ const textActions = {
     removeDot,
     addLineSlot,
     removeLineSlot,
+    setSplitLetterOptions,
 };
 
 export default textActions;

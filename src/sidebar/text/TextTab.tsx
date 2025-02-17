@@ -5,7 +5,7 @@ import React from 'react';
 
 const TextTab: React.FC = () => {
     return (
-        <div className="flex h-full flex-col py-1 pr-1">
+        <div className="flex h-full flex-col">
             <SentenceInput />
             <TextTree className="min-h-24 grow overflow-y-auto pr-1" />
             <ElementSettings className="border-border border-t pt-1" />

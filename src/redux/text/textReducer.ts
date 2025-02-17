@@ -17,7 +17,7 @@ export interface TextState {
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
-    splitLetterOptions: SplitLettersOptions;
+    splitLetterOptions: Required<SplitLettersOptions>;
 }
 
 export const createInitialTextState = (): TextState => ({
@@ -148,5 +148,11 @@ export const createTextReducer = (
             );
 
             delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.setSplitLetterOptions, (state, action) => {
+            state.text.splitLetterOptions = {
+                ...state.text.splitLetterOptions,
+                ...action.payload,
+            };
         });
 };

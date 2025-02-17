@@ -1,4 +1,5 @@
 import ExportButton from '@/sidebar/ExportButton';
+import SettingsTab from '@/sidebar/settings/SettingsTab';
 import TextTab from '@/sidebar/text/TextTab';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/Tabs';
 import cn from '@/utils/cn';
@@ -20,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         <Tabs
             defaultValue={TabName.Text}
             orientation="vertical"
-            className={cn(className)}
+            className={cn('gap-0', className)}
         >
             <TabsList className="bg-background border-border rounded-none border-r">
                 <TabsTrigger
@@ -42,14 +43,13 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                     <Download />
                 </TabsTrigger>
             </TabsList>
-            <TabsContent value={TabName.Text} className="grow">
+            <TabsContent value={TabName.Text} className="grow p-1">
                 <TextTab />
             </TabsContent>
-            <TabsContent
-                value={TabName.Settings}
-                className="grow"
-            ></TabsContent>
-            <TabsContent value={TabName.Export} className="grow">
+            <TabsContent value={TabName.Settings} className="grow p-1">
+                <SettingsTab />
+            </TabsContent>
+            <TabsContent value={TabName.Export} className="grow p-1">
                 <ExportButton />
             </TabsContent>
         </Tabs>
