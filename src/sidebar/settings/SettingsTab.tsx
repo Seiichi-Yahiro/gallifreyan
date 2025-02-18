@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import textActions from '@/redux/text/textActions';
-import { Checkbox } from '@/ui/Checkbox';
+import Checkbox from '@/ui/Checkbox';
 import React, { useCallback } from 'react';
 
 const SettingsTab: React.FC = () => {

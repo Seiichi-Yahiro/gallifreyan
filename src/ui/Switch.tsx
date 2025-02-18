@@ -23,4 +23,4 @@ const Switch: React.FC<React.ComponentProps<typeof SwitchPrimitives.Root>> = ({
     </SwitchPrimitives.Root>
 );
 
-export { Switch };
+export default Switch;

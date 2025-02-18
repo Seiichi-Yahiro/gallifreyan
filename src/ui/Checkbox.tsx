@@ -22,4 +22,4 @@ const Checkbox: React.FC<
     </CheckboxPrimitive.Root>
 );
 
-export { Checkbox };
+export default Checkbox;
