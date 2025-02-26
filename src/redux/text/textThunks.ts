@@ -1,4 +1,5 @@
 import type { AppThunkAction } from '@/redux/store';
+import svgActions from '@/redux/svg/svgActions';
 import {
     type DotId,
     dotId,
@@ -14,6 +15,7 @@ import {
 import textActions from '@/redux/text/textActions';
 import type { TextLetterPair } from '@/redux/text/textTypes';
 import {
+    charToLetter,
     dotAmount,
     lineSlotAmount,
     splitLetters,
@@ -201,7 +203,7 @@ const addWord =
     };
 
 const addLetter =
-    (pair: TextLetterPair, parent: WordId): AppThunkAction =>
+    (pair: TextLetterPair, parent: WordId, index?: number): AppThunkAction =>
     (dispatch, _getState) => {
         const id = letterId();
 
@@ -211,6 +213,7 @@ const addLetter =
                 parent,
                 text: pair.text,
                 letter: pair.letter,
+                index,
             }),
         );
 
@@ -261,8 +264,42 @@ const removeLetter =
         dispatch(textActions.removeLetter(id));
     };
 
+const splitDigraph =
+    (letterId: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letter = state.main.text.elements[letterId];
+        const index = state.main.text.elements[letter.parent].letters.findIndex(
+            (id) => id === letterId,
+        );
+
+        const [firstChar, secondChar] = letter.text;
+
+        dispatch(
+            compareLetter(
+                letter.parent,
+                {
+                    text: firstChar,
+                    letter: charToLetter(firstChar)!,
+                },
+                letterId,
+            ),
+        );
+
+        dispatch(
+            addLetter(
+                { text: secondChar, letter: charToLetter(secondChar)! },
+                letter.parent,
+                index + 1,
+            ),
+        );
+
+        dispatch(svgActions.reset());
+    };
+
 const textThunks = {
     updateTree,
+    splitDigraph,
 };
 
 export default textThunks;

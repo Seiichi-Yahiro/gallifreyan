@@ -23,6 +23,8 @@ export const wordId: () => WordId = wordCounter.generator;
 export type LetterId = IdGenerator<'LTR'>;
 const letterCounter = createIdCounter('LTR');
 export const letterId: () => LetterId = letterCounter.generator;
+export const isLetterId = (id: TextElementId): id is LetterId =>
+    id.startsWith('LTR');
 
 export type DotId = IdGenerator<'DOT'>;
 const dotCounter = createIdCounter('DOT');

@@ -1,10 +1,20 @@
-import { useRedux } from '@/redux/hooks';
+import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
-import { isDotId, isLineSlotId, type LineSlotId } from '@/redux/text/ids';
+import {
+    isDotId,
+    isLetterId,
+    isLineSlotId,
+    type LetterId,
+    type LineSlotId,
+} from '@/redux/text/ids';
+import { LetterType } from '@/redux/text/letterTypes';
+import textThunks from '@/redux/text/textThunks';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
+import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
+import { Split } from 'lucide-react';
 import React from 'react';
 
 interface PositionInputProps {
@@ -20,12 +30,38 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
 
     return (
         <div className={cn('flex flex-col gap-1', className)}>
+            {isLetterId(selected) && <LetterSettings id={selected} />}
             {isLineSlotId(selected) ? (
                 <LineSlotSettings id={selected} />
             ) : (
                 <CircleSettings id={selected} />
             )}
         </div>
+    );
+};
+
+interface LetterSettingsProps {
+    id: LetterId;
+}
+
+const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
+    const dispatch = useAppDispatch();
+    const isDigraph = useRedux(
+        (state) =>
+            state.main.text.elements[id].letter.letterType ===
+            LetterType.Digraph,
+    );
+
+    return (
+        isDigraph && (
+            <IconButton
+                onClick={() => {
+                    dispatch(textThunks.splitDigraph(id));
+                }}
+            >
+                <Split className="rotate-90" />
+            </IconButton>
+        )
     );
 };
 

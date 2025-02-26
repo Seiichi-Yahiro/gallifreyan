@@ -32,6 +32,7 @@ const addLetter = createAction<{
     parent: WordId;
     text: string;
     letter: Letter;
+    index?: number;
 }>('TEXT/ADD_LETTER');
 const removeLetter = createAction<LetterId>('TEXT/REMOVE_LETTER');
 const updateLetterText = createAction<{

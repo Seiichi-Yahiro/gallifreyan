@@ -81,9 +81,17 @@ export const createTextReducer = (
             state.text.elements[action.payload.id].text = action.payload.text;
         })
         .addCase(textActions.addLetter, (state, action) => {
-            state.text.elements[action.payload.parent].letters.push(
-                action.payload.id,
-            );
+            if (action.payload.index) {
+                state.text.elements[action.payload.parent].letters.splice(
+                    action.payload.index,
+                    0,
+                    action.payload.id,
+                );
+            } else {
+                state.text.elements[action.payload.parent].letters.push(
+                    action.payload.id,
+                );
+            }
 
             state.text.elements[action.payload.id] = {
                 elementType: TextElementType.Letter,
