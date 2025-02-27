@@ -9,12 +9,14 @@ import {
 } from '@/redux/text/ids';
 import { LetterType } from '@/redux/text/letterTypes';
 import textThunks from '@/redux/text/textThunks';
+import { isDigraphText } from '@/redux/text/textUtils';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
-import { Split } from 'lucide-react';
+import { isEqual } from 'lodash';
+import { Merge, Split } from 'lucide-react';
 import React from 'react';
 
 interface PositionInputProps {
@@ -46,22 +48,69 @@ interface LetterSettingsProps {
 
 const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
     const dispatch = useAppDispatch();
-    const isDigraph = useRedux(
-        (state) =>
-            state.main.text.elements[id].letter.letterType ===
-            LetterType.Digraph,
-    );
+
+    const { prevId, nextId, isDigraph } = useRedux((state) => {
+        const letter = state.main.text.elements[id];
+
+        let prevId = null;
+        let nextId = null;
+
+        if (letter.letter.letterType === LetterType.Digraph) {
+            return { prevId, nextId, isDigraph: true };
+        }
+
+        const parent = state.main.text.elements[letter.parent];
+        const index = parent.letters.findIndex((letterId) => letterId === id);
+
+        if (index - 1 >= 0) {
+            const localPrevId = parent.letters[index - 1];
+            const prevText = state.main.text.elements[localPrevId].text;
+            if (isDigraphText(prevText + letter.text)) {
+                prevId = localPrevId;
+            }
+        }
+
+        if (index + 1 < parent.letters.length) {
+            const localNextId = parent.letters[index + 1];
+            const nextText = state.main.text.elements[localNextId].text;
+            if (isDigraphText(letter.text + nextText)) {
+                nextId = localNextId;
+            }
+        }
+
+        return { prevId, nextId, isDigraph: false };
+    }, isEqual);
 
     return (
-        isDigraph && (
-            <IconButton
-                onClick={() => {
-                    dispatch(textThunks.splitDigraph(id));
-                }}
-            >
-                <Split className="rotate-90" />
-            </IconButton>
-        )
+        <div className="flex flex-row gap-1 empty:hidden">
+            {prevId && (
+                <IconButton
+                    onClick={() => {
+                        dispatch(textThunks.mergeToDigraph(prevId, id));
+                    }}
+                >
+                    <Merge className="-rotate-90" />
+                </IconButton>
+            )}
+            {isDigraph && (
+                <IconButton
+                    onClick={() => {
+                        dispatch(textThunks.splitDigraph(id));
+                    }}
+                >
+                    <Split />
+                </IconButton>
+            )}
+            {nextId && (
+                <IconButton
+                    onClick={() => {
+                        dispatch(textThunks.mergeToDigraph(id, nextId));
+                    }}
+                >
+                    <Merge className="rotate-90" />
+                </IconButton>
+            )}
+        </div>
     );
 };
 

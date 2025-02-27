@@ -15,11 +15,12 @@ import {
 import textActions from '@/redux/text/textActions';
 import type { TextLetterPair } from '@/redux/text/textTypes';
 import {
-    charToLetter,
+    charToSingleLetter,
     dotAmount,
     lineSlotAmount,
     splitLetters,
     splitWords,
+    textToDigraph,
 } from '@/redux/text/textUtils';
 import { range, zip } from 'lodash';
 
@@ -280,7 +281,7 @@ const splitDigraph =
                 letter.parent,
                 {
                     text: firstChar,
-                    letter: charToLetter(firstChar)!,
+                    letter: charToSingleLetter(firstChar)!,
                 },
                 letterId,
             ),
@@ -288,7 +289,7 @@ const splitDigraph =
 
         dispatch(
             addLetter(
-                { text: secondChar, letter: charToLetter(secondChar)! },
+                { text: secondChar, letter: charToSingleLetter(secondChar)! },
                 letter.parent,
                 index + 1,
             ),
@@ -297,9 +298,38 @@ const splitDigraph =
         dispatch(svgActions.reset());
     };
 
+const mergeToDigraph =
+    (firstLetterId: LetterId, secondLetterId: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const firstLetter = state.main.text.elements[firstLetterId];
+        const secondLetter = state.main.text.elements[secondLetterId];
+
+        const text = firstLetter.text + secondLetter.text;
+
+        dispatch(
+            compareLetter(
+                firstLetter.parent,
+                {
+                    text,
+                    letter: textToDigraph(text)!,
+                },
+                firstLetterId,
+            ),
+        );
+
+        if (state.main.selected === secondLetterId) {
+            dispatch(svgActions.setSelection(firstLetterId));
+        }
+
+        dispatch(removeLetter(secondLetterId));
+        dispatch(svgActions.reset());
+    };
+
 const textThunks = {
     updateTree,
     splitDigraph,
+    mergeToDigraph,
 };
 
 export default textThunks;

@@ -3,6 +3,7 @@ import {
     ConsonantDecoration,
     ConsonantPlacement,
     ConsonantValue,
+    type Digraph,
     DigraphValue,
     LetterType,
     type Vocal,
@@ -11,6 +12,9 @@ import {
     VocalValue,
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
+
+export const isDigraphText = (text: string): boolean =>
+    Object.values(DigraphValue).includes(text.toUpperCase() as DigraphValue);
 
 export const splitWords = (sentence: string): string[] => sentence.split(' ');
 
@@ -25,7 +29,7 @@ export const splitLetters = (
     let letters = word.split('').map(
         (letterText): TextLetterPair => ({
             text: letterText,
-            letter: charToLetter(letterText)!,
+            letter: charToSingleLetter(letterText)!,
         }),
     );
 
@@ -259,9 +263,24 @@ const charToConsonant = (char: string): Consonant | null => {
     return null;
 };
 
-export const charToLetter = (char: string): Vocal | Consonant | null => {
+export const charToSingleLetter = (char: string): Vocal | Consonant | null => {
     const upperCaseChar = char.toUpperCase();
     return charToVocal(upperCaseChar) ?? charToConsonant(upperCaseChar);
+};
+
+export const textToDigraph = (text: string): Digraph | null => {
+    if (!isDigraphText(text)) {
+        return null;
+    }
+
+    const value = text.toUpperCase() as DigraphValue;
+
+    return {
+        letterType: LetterType.Digraph,
+        value,
+        decoration: consonantDecoration(value),
+        placement: consonantPlacement(value),
+    };
 };
 
 export const digraphReducer = (
@@ -276,17 +295,12 @@ export const digraphReducer = (
     }
 
     const text = prev.text + next.text;
-    const value = text.toUpperCase() as DigraphValue;
+    const digraph = textToDigraph(text);
 
-    if (Object.values(DigraphValue).includes(value)) {
+    if (digraph) {
         acc.push({
             text,
-            letter: {
-                letterType: LetterType.Digraph,
-                value,
-                decoration: consonantDecoration(value),
-                placement: consonantPlacement(value),
-            },
+            letter: digraph,
         });
     } else {
         acc.push(prev, next);

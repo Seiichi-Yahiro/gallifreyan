@@ -12,7 +12,7 @@ import {
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
 import {
-    charToLetter,
+    charToSingleLetter,
     digraphReducer,
     sanitizeSentence,
     splitLetters,
@@ -61,7 +61,7 @@ describe('textUtils', () => {
 
     describe('char to letter', () => {
         it('should work with a', () => {
-            const result = charToLetter('a');
+            const result = charToSingleLetter('a');
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.A,
@@ -73,12 +73,12 @@ describe('textUtils', () => {
         });
 
         it('should not work with ä', () => {
-            const result = charToLetter('ä');
+            const result = charToSingleLetter('ä');
             expect(result).toBeNull();
         });
 
         it('should work with e', () => {
-            const result = charToLetter('e');
+            const result = charToSingleLetter('e');
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.E,
@@ -90,7 +90,7 @@ describe('textUtils', () => {
         });
 
         it('should work with i', () => {
-            const result = charToLetter('i');
+            const result = charToSingleLetter('i');
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.I,
@@ -102,7 +102,7 @@ describe('textUtils', () => {
         });
 
         it('should work with o', () => {
-            const result = charToLetter('o');
+            const result = charToSingleLetter('o');
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.O,
@@ -114,12 +114,12 @@ describe('textUtils', () => {
         });
 
         it('should not work with ö', () => {
-            const result = charToLetter('ö');
+            const result = charToSingleLetter('ö');
             expect(result).toBeNull();
         });
 
         it('should work with u', () => {
-            const result = charToLetter('u');
+            const result = charToSingleLetter('u');
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.U,
@@ -131,12 +131,12 @@ describe('textUtils', () => {
         });
 
         it('should not work with ü', () => {
-            const result = charToLetter('ü');
+            const result = charToSingleLetter('ü');
             expect(result).toBeNull();
         });
 
         it('should work with b', () => {
-            const result = charToLetter('b');
+            const result = charToSingleLetter('b');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.B,
@@ -148,7 +148,7 @@ describe('textUtils', () => {
         });
 
         it('should work with j', () => {
-            const result = charToLetter('j');
+            const result = charToSingleLetter('j');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.J,
@@ -160,7 +160,7 @@ describe('textUtils', () => {
         });
 
         it('should work with t', () => {
-            const result = charToLetter('t');
+            const result = charToSingleLetter('t');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.T,
@@ -172,7 +172,7 @@ describe('textUtils', () => {
         });
 
         it('should work with k', () => {
-            const result = charToLetter('k');
+            const result = charToSingleLetter('k');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.K,
@@ -184,7 +184,7 @@ describe('textUtils', () => {
         });
 
         it('should work with y', () => {
-            const result = charToLetter('y');
+            const result = charToSingleLetter('y');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Y,
@@ -196,7 +196,7 @@ describe('textUtils', () => {
         });
 
         it('should work with d', () => {
-            const result = charToLetter('d');
+            const result = charToSingleLetter('d');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.D,
@@ -208,7 +208,7 @@ describe('textUtils', () => {
         });
 
         it('should work with l', () => {
-            const result = charToLetter('l');
+            const result = charToSingleLetter('l');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.L,
@@ -220,7 +220,7 @@ describe('textUtils', () => {
         });
 
         it('should work with r', () => {
-            const result = charToLetter('r');
+            const result = charToSingleLetter('r');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.R,
@@ -232,7 +232,7 @@ describe('textUtils', () => {
         });
 
         it('should work with z', () => {
-            const result = charToLetter('z');
+            const result = charToSingleLetter('z');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Z,
@@ -244,7 +244,7 @@ describe('textUtils', () => {
         });
 
         it('should work with c', () => {
-            const result = charToLetter('c');
+            const result = charToSingleLetter('c');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.C,
@@ -256,7 +256,7 @@ describe('textUtils', () => {
         });
 
         it('should work with q', () => {
-            const result = charToLetter('q');
+            const result = charToSingleLetter('q');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Q,
@@ -268,7 +268,7 @@ describe('textUtils', () => {
         });
 
         it('should work with g', () => {
-            const result = charToLetter('g');
+            const result = charToSingleLetter('g');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.G,
@@ -280,7 +280,7 @@ describe('textUtils', () => {
         });
 
         it('should work with n', () => {
-            const result = charToLetter('n');
+            const result = charToSingleLetter('n');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.N,
@@ -292,7 +292,7 @@ describe('textUtils', () => {
         });
 
         it('should work with v', () => {
-            const result = charToLetter('v');
+            const result = charToSingleLetter('v');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.V,
@@ -304,7 +304,7 @@ describe('textUtils', () => {
         });
 
         it('should work with h', () => {
-            const result = charToLetter('h');
+            const result = charToSingleLetter('h');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.H,
@@ -316,7 +316,7 @@ describe('textUtils', () => {
         });
 
         it('should work with p', () => {
-            const result = charToLetter('p');
+            const result = charToSingleLetter('p');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.P,
@@ -328,7 +328,7 @@ describe('textUtils', () => {
         });
 
         it('should work with w', () => {
-            const result = charToLetter('w');
+            const result = charToSingleLetter('w');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.W,
@@ -340,7 +340,7 @@ describe('textUtils', () => {
         });
 
         it('should work with x', () => {
-            const result = charToLetter('x');
+            const result = charToSingleLetter('x');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.X,
@@ -352,7 +352,7 @@ describe('textUtils', () => {
         });
 
         it('should work with f', () => {
-            const result = charToLetter('f');
+            const result = charToSingleLetter('f');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.F,
@@ -364,7 +364,7 @@ describe('textUtils', () => {
         });
 
         it('should work with m', () => {
-            const result = charToLetter('m');
+            const result = charToSingleLetter('m');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.M,
@@ -376,7 +376,7 @@ describe('textUtils', () => {
         });
 
         it('should work with s', () => {
-            const result = charToLetter('s');
+            const result = charToSingleLetter('s');
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.S,
@@ -388,7 +388,7 @@ describe('textUtils', () => {
         });
 
         it('should not work with ß', () => {
-            const result = charToLetter('ß');
+            const result = charToSingleLetter('ß');
             expect(result).toBeNull();
         });
     });
@@ -542,7 +542,7 @@ describe('textUtils', () => {
             const letters = Object.values(ConsonantValue).map(
                 (text): TextLetterPair => ({
                     text,
-                    letter: charToLetter(text)!,
+                    letter: charToSingleLetter(text)!,
                 }),
             );
 
@@ -555,7 +555,7 @@ describe('textUtils', () => {
             const letters = Object.values(VocalValue).map(
                 (text): TextLetterPair => ({
                     text,
-                    letter: charToLetter(text)!,
+                    letter: charToSingleLetter(text)!,
                 }),
             );
 
@@ -568,7 +568,7 @@ describe('textUtils', () => {
             const letters = Object.values(DigraphValue).map(
                 (text): TextLetterPair => ({
                     text,
-                    letter: charToLetter(text)!,
+                    letter: charToSingleLetter(text)!,
                 }),
             );
 
