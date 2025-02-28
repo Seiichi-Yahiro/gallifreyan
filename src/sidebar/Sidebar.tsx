@@ -1,4 +1,4 @@
-import ExportButton from '@/sidebar/ExportButton';
+import ExportButton from '@/sidebar/export/ExportButton';
 import SettingsTab from '@/sidebar/settings/SettingsTab';
 import TextTab from '@/sidebar/text/TextTab';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/Tabs';

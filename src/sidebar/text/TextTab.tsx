@@ -1,5 +1,5 @@
-import SentenceInput from '@/sidebar/SentenceInput';
-import TextTree from '@/sidebar/TextTree';
+import TextTree from '@/sidebar//text/TextTree';
+import SentenceInput from '@/sidebar/text/SentenceInput';
 import ElementSettings from '@/sidebar/text/settings/ElementSettings';
 import React from 'react';
 
