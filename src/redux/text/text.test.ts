@@ -1,11 +1,17 @@
 import { type AppStore, setupStore } from '@/redux/store';
 import { resetIdCounters } from '@/redux/text/ids';
 import {
+    ConsonantDecoration,
+    ConsonantPlacement,
     ConsonantValue,
     DigraphValue,
+    LetterType,
+    VocalDecoration,
+    VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
+import textThunks from '@/redux/text/textThunks';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -481,5 +487,82 @@ describe('text', () => {
                 parent: 'LTR-1',
             },
         });
+    });
+
+    it('should merge consonants to a digraph', () => {
+        store.dispatch(textActions.setSplitLetterOptions({ digraphs: false }));
+        store.dispatch(textActions.setText('sh'));
+
+        store.dispatch(textThunks.mergeToDigraph('LTR-0', 'LTR-1'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                letters: ['LTR-0'],
+            },
+            'LTR-0': {
+                text: 'sh',
+                letter: {
+                    letterType: LetterType.Digraph,
+                    value: DigraphValue.SH,
+                    decoration: ConsonantDecoration.DoubleDot,
+                    placement: ConsonantPlacement.ShallowCut,
+                },
+                dots: ['DOT-0', 'DOT-1'],
+                lineSlots: [],
+            },
+        });
+
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(
+            Object.keys(state.main.text.elements).some((id) =>
+                id.startsWith('LNS'),
+            ),
+        ).toBeFalsy();
+    });
+
+    it('should split digraph to letters', () => {
+        store.dispatch(textActions.setSplitLetterOptions({ digraphs: true }));
+        store.dispatch(textActions.setText('qu'));
+
+        store.dispatch(textThunks.splitDigraph('LTR-0'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'LTR-0': {
+                text: 'q',
+                letter: {
+                    letterType: LetterType.Consonant,
+                    value: ConsonantValue.Q,
+                    decoration: ConsonantDecoration.QuadrupleDot,
+                    placement: ConsonantPlacement.OnLine,
+                },
+                dots: ['DOT-0', 'DOT-1', 'DOT-2', 'DOT-3'],
+                lineSlots: [],
+            },
+            'LTR-1': {
+                text: 'u',
+                letter: {
+                    letterType: LetterType.Vocal,
+                    value: VocalValue.U,
+                    decoration: VocalDecoration.LineOutside,
+                    placement: VocalPlacement.OnLine,
+                },
+                dots: [],
+                lineSlots: ['LNS-1'],
+            },
+            'DOT-0': {},
+            'DOT-1': {},
+            'DOT-2': {},
+            'DOT-3': {},
+            'LNS-1': {},
+        });
+
+        expect(state.main.text.elements['LNS-0']).toBeUndefined();
     });
 });
