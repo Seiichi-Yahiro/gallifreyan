@@ -12,6 +12,7 @@ import {
     VocalValue,
 } from '@/redux/text/letterTypes';
 import type { TextLetterPair } from '@/redux/text/textTypes';
+import { match } from 'ts-pattern';
 
 export const isDigraphText = (text: string): boolean =>
     Object.values(DigraphValue).includes(text.toUpperCase() as DigraphValue);
@@ -62,176 +63,159 @@ export const sanitizeSentence = (sentence: string): string => {
         .join(' ');
 };
 
-const vocalDecoration = (vocal: VocalValue): VocalDecoration => {
-    switch (vocal) {
-        case VocalValue.I: {
-            return VocalDecoration.LineInside;
-        }
-        case VocalValue.U: {
-            return VocalDecoration.LineOutside;
-        }
-        case VocalValue.A:
-        case VocalValue.E:
-        case VocalValue.O: {
-            return VocalDecoration.None;
-        }
-    }
-};
+const vocalDecoration = (vocal: VocalValue): VocalDecoration =>
+    match(vocal)
+        .with(VocalValue.I, () => VocalDecoration.LineInside)
+        .with(VocalValue.U, () => VocalDecoration.LineOutside)
+        .with(
+            VocalValue.A,
+            VocalValue.E,
+            VocalValue.O,
+            () => VocalDecoration.None,
+        )
+        .exhaustive();
 
 const consonantDecoration = (
     consonant: ConsonantValue | DigraphValue,
-): ConsonantDecoration => {
-    switch (consonant) {
-        case ConsonantValue.B:
-        case ConsonantValue.J:
-        case ConsonantValue.T:
-        case DigraphValue.TH: {
-            return ConsonantDecoration.None;
-        }
-        case DigraphValue.PH:
-        case DigraphValue.WH:
-        case DigraphValue.GH: {
-            return ConsonantDecoration.SingleDot;
-        }
-        case ConsonantValue.K:
-        case ConsonantValue.Y:
-        case DigraphValue.CH:
-        case DigraphValue.SH: {
-            return ConsonantDecoration.DoubleDot;
-        }
-        case ConsonantValue.D:
-        case ConsonantValue.L:
-        case ConsonantValue.R:
-        case ConsonantValue.Z: {
-            return ConsonantDecoration.TripleDot;
-        }
-        case ConsonantValue.C:
-        case ConsonantValue.Q: {
-            return ConsonantDecoration.QuadrupleDot;
-        }
-        case ConsonantValue.G:
-        case ConsonantValue.N:
-        case ConsonantValue.V:
-        case DigraphValue.QU: {
-            return ConsonantDecoration.SingleLine;
-        }
-        case ConsonantValue.H:
-        case ConsonantValue.P:
-        case ConsonantValue.W:
-        case ConsonantValue.X: {
-            return ConsonantDecoration.DoubleLine;
-        }
-        case ConsonantValue.F:
-        case ConsonantValue.M:
-        case ConsonantValue.S:
-        case DigraphValue.NG: {
-            return ConsonantDecoration.TripleLine;
-        }
-    }
-};
+): ConsonantDecoration =>
+    match(consonant)
+        .with(
+            ConsonantValue.B,
+            ConsonantValue.J,
+            ConsonantValue.T,
+            DigraphValue.TH,
+            () => ConsonantDecoration.None,
+        )
+        .with(
+            DigraphValue.PH,
+            DigraphValue.WH,
+            DigraphValue.GH,
+            () => ConsonantDecoration.SingleDot,
+        )
+        .with(
+            ConsonantValue.K,
+            ConsonantValue.Y,
+            DigraphValue.CH,
+            DigraphValue.SH,
+            () => ConsonantDecoration.DoubleDot,
+        )
+        .with(
+            ConsonantValue.D,
+            ConsonantValue.L,
+            ConsonantValue.R,
+            ConsonantValue.Z,
+            () => ConsonantDecoration.TripleDot,
+        )
+        .with(
+            ConsonantValue.C,
+            ConsonantValue.Q,
+            () => ConsonantDecoration.QuadrupleDot,
+        )
+        .with(
+            ConsonantValue.G,
+            ConsonantValue.N,
+            ConsonantValue.V,
+            DigraphValue.QU,
+            () => ConsonantDecoration.SingleLine,
+        )
+        .with(
+            ConsonantValue.H,
+            ConsonantValue.P,
+            ConsonantValue.W,
+            ConsonantValue.X,
+            () => ConsonantDecoration.DoubleLine,
+        )
+        .with(
+            ConsonantValue.F,
+            ConsonantValue.M,
+            ConsonantValue.S,
+            DigraphValue.NG,
+            () => ConsonantDecoration.TripleLine,
+        )
+        .exhaustive();
 
-const vocalPlacement = (vocal: VocalValue): VocalPlacement => {
-    switch (vocal) {
-        case VocalValue.A: {
-            return VocalPlacement.Outside;
-        }
-        case VocalValue.O: {
-            return VocalPlacement.Inside;
-        }
-        case VocalValue.E:
-        case VocalValue.I:
-        case VocalValue.U: {
-            return VocalPlacement.OnLine;
-        }
-    }
-};
+const vocalPlacement = (vocal: VocalValue): VocalPlacement =>
+    match(vocal)
+        .with(VocalValue.A, () => VocalPlacement.Outside)
+        .with(VocalValue.O, () => VocalPlacement.Inside)
+        .with(
+            VocalValue.E,
+            VocalValue.I,
+            VocalValue.U,
+            () => VocalPlacement.OnLine,
+        )
+        .exhaustive();
 
 const consonantPlacement = (
     consonant: ConsonantValue | DigraphValue,
-): ConsonantPlacement => {
-    switch (consonant) {
-        case ConsonantValue.B:
-        case DigraphValue.CH:
-        case ConsonantValue.D:
-        case ConsonantValue.G:
-        case ConsonantValue.H:
-        case ConsonantValue.F: {
-            return ConsonantPlacement.DeepCut;
-        }
-        case ConsonantValue.J:
-        case DigraphValue.PH:
-        case ConsonantValue.K:
-        case ConsonantValue.L:
-        case ConsonantValue.C:
-        case ConsonantValue.N:
-        case ConsonantValue.P:
-        case ConsonantValue.M: {
-            return ConsonantPlacement.Inside;
-        }
-        case ConsonantValue.T:
-        case DigraphValue.WH:
-        case DigraphValue.SH:
-        case ConsonantValue.R:
-        case ConsonantValue.V:
-        case ConsonantValue.W:
-        case ConsonantValue.S: {
-            return ConsonantPlacement.ShallowCut;
-        }
-        case DigraphValue.TH:
-        case DigraphValue.GH:
-        case ConsonantValue.Y:
-        case ConsonantValue.Z:
-        case ConsonantValue.Q:
-        case DigraphValue.QU:
-        case ConsonantValue.X:
-        case DigraphValue.NG: {
-            return ConsonantPlacement.OnLine;
-        }
-    }
-};
+): ConsonantPlacement =>
+    match(consonant)
+        .with(
+            ConsonantValue.B,
+            DigraphValue.CH,
+            ConsonantValue.D,
+            ConsonantValue.G,
+            ConsonantValue.H,
+            ConsonantValue.F,
+            () => ConsonantPlacement.DeepCut,
+        )
+        .with(
+            ConsonantValue.J,
+            DigraphValue.PH,
+            ConsonantValue.K,
+            ConsonantValue.L,
+            ConsonantValue.C,
+            ConsonantValue.N,
+            ConsonantValue.P,
+            ConsonantValue.M,
+            () => ConsonantPlacement.Inside,
+        )
+        .with(
+            ConsonantValue.T,
+            DigraphValue.WH,
+            DigraphValue.SH,
+            ConsonantValue.R,
+            ConsonantValue.V,
+            ConsonantValue.W,
+            ConsonantValue.S,
+            () => ConsonantPlacement.ShallowCut,
+        )
+        .with(
+            DigraphValue.TH,
+            DigraphValue.GH,
+            ConsonantValue.Y,
+            ConsonantValue.Z,
+            ConsonantValue.Q,
+            DigraphValue.QU,
+            ConsonantValue.X,
+            DigraphValue.NG,
+            () => ConsonantPlacement.OnLine,
+        )
+        .exhaustive();
 
 export const dotAmount = (
     decoration: VocalDecoration | ConsonantDecoration,
-): number => {
-    switch (decoration) {
-        case ConsonantDecoration.SingleDot: {
-            return 1;
-        }
-        case ConsonantDecoration.DoubleDot: {
-            return 2;
-        }
-        case ConsonantDecoration.TripleDot: {
-            return 3;
-        }
-        case ConsonantDecoration.QuadrupleDot: {
-            return 4;
-        }
-        default: {
-            return 0;
-        }
-    }
-};
+): number =>
+    match(decoration)
+        .with(ConsonantDecoration.SingleDot, () => 1)
+        .with(ConsonantDecoration.DoubleDot, () => 2)
+        .with(ConsonantDecoration.TripleDot, () => 3)
+        .with(ConsonantDecoration.QuadrupleDot, () => 4)
+        .otherwise(() => 0);
 
 export const lineSlotAmount = (
     decoration: VocalDecoration | ConsonantDecoration,
-): number => {
-    switch (decoration) {
-        case VocalDecoration.LineOutside:
-        case VocalDecoration.LineInside:
-        case ConsonantDecoration.SingleLine: {
-            return 1;
-        }
-        case ConsonantDecoration.DoubleLine: {
-            return 2;
-        }
-        case ConsonantDecoration.TripleLine: {
-            return 3;
-        }
-        default: {
-            return 0;
-        }
-    }
-};
+): number =>
+    match(decoration)
+        .with(
+            VocalDecoration.LineOutside,
+            VocalDecoration.LineInside,
+            ConsonantDecoration.SingleLine,
+            () => 1,
+        )
+        .with(ConsonantDecoration.DoubleLine, () => 2)
+        .with(ConsonantDecoration.TripleLine, () => 3)
+        .otherwise(() => 0);
 
 const charToVocal = (char: string): Vocal | null => {
     if (Object.values(VocalValue).includes(char as VocalValue)) {

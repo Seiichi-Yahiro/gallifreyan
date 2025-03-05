@@ -7,6 +7,7 @@ import mVec2, { type Vec2 } from '@/math/vec';
 import type { PositionData } from '@/redux/svg/svgTypes';
 import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
 import { chunk } from 'lodash';
+import { match } from 'ts-pattern';
 
 export const defaultSentenceRadius = (svgSize: number): number =>
     (svgSize * 0.9) / 2;
@@ -43,12 +44,13 @@ export const defaultVocalPosition = (
     placement: VocalPlacement,
     index: number,
 ): PositionData => {
-    const distance = {
-        [VocalPlacement.OnLine]: wordRadius,
-        [VocalPlacement.Outside]: wordRadius + letterRadius * 1.5,
-        [VocalPlacement.Inside]:
+    const distance = match(placement)
+        .with(VocalPlacement.OnLine, () => wordRadius)
+        .with(VocalPlacement.Outside, () => wordRadius + letterRadius * 1.5)
+        .with(VocalPlacement.Inside, () =>
             numberOfLetters > 1 ? wordRadius - letterRadius * 1.5 : 0,
-    }[placement];
+        )
+        .exhaustive();
 
     const angle = index * (360 / numberOfLetters);
 
@@ -70,13 +72,20 @@ export const defaultConsonantPosition = (
     placement: ConsonantPlacement,
     index: number,
 ): PositionData => {
-    const distance = {
-        [ConsonantPlacement.DeepCut]: wordRadius - letterRadius * 0.75,
-        [ConsonantPlacement.Inside]:
+    const distance = match(placement)
+        .with(
+            ConsonantPlacement.DeepCut,
+            () => wordRadius - letterRadius * 0.75,
+        )
+        .with(ConsonantPlacement.Inside, () =>
             numberOfLetters > 1 ? wordRadius - letterRadius * 1.5 : 0,
-        [ConsonantPlacement.ShallowCut]: wordRadius,
-        [ConsonantPlacement.OnLine]: wordRadius,
-    }[placement];
+        )
+        .with(
+            ConsonantPlacement.ShallowCut,
+            ConsonantPlacement.OnLine,
+            () => wordRadius,
+        )
+        .exhaustive();
 
     const angle = index * (360 / numberOfLetters);
 
