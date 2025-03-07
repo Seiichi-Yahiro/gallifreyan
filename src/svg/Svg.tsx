@@ -60,9 +60,15 @@ const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
         >
+            <circle
+                cx={0}
+                cy={0}
+                r={circle.radius + 10}
+                className="sentence__outer"
+            />
             <SvgCircle
                 radius={circle.radius}
-                className="sentence"
+                className="sentence__inner"
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
                 onClick={onSelect}

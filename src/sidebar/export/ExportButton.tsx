@@ -17,16 +17,32 @@ const prepareSvg = (svg: HTMLElement): string => {
     });
 
     const style = document.createElement('style');
-    style.innerHTML = `.sentence,
+    style.innerHTML = `.sentence__outer {
+    stroke-width: 3px;
+}
+
+.sentence__inner,
+.word,
+.letter,
+.dot {
+    stroke-width: 1px;
+}
+
+.sentence__outer,
+.sentence__inner,
 .word,
 .letter,
 .dot {
     stroke: currentColor;
-    stroke-linecap: round;
-    stroke-width: 1px;
 }
 
-.sentence,
+.word,
+.letter {
+    stroke-linecap: round;
+}
+
+.sentence__outer,
+.sentence__inner,
 .word,
 .letter {
     fill: transparent;

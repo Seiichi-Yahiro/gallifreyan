@@ -1,14 +1,32 @@
-.sentence,
+.sentence__outer {
+    stroke-width: 3px;
+}
+
+.sentence__inner,
+.word,
+.letter,
+.dot,
+.line-slot {
+    stroke-width: 1px;
+}
+
+.sentence__outer,
+.sentence__inner,
 .word,
 .letter,
 .dot,
 .line-slot {
     stroke: currentColor;
-    stroke-linecap: round;
-    stroke-width: 1px;
 }
 
-.sentence,
+.word,
+.letter,
+.line-slot {
+    stroke-linecap: round;
+}
+
+.sentence__outer,
+.sentence__inner,
 .word,
 .letter,
 .line-slot {
