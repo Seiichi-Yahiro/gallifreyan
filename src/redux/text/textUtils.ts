@@ -107,7 +107,9 @@ const consonantDecoration = (
             () => ConsonantDecoration.TripleDot,
         )
         .with(
+            DigraphValue.ND,
             ConsonantValue.C,
+            DigraphValue.NT,
             ConsonantValue.Q,
             () => ConsonantDecoration.QuadrupleDot,
         )
@@ -154,6 +156,7 @@ const consonantPlacement = (
             ConsonantValue.B,
             DigraphValue.CH,
             ConsonantValue.D,
+            DigraphValue.ND,
             ConsonantValue.G,
             ConsonantValue.H,
             ConsonantValue.F,
@@ -175,6 +178,7 @@ const consonantPlacement = (
             DigraphValue.WH,
             DigraphValue.SH,
             ConsonantValue.R,
+            DigraphValue.NT,
             ConsonantValue.V,
             ConsonantValue.W,
             ConsonantValue.S,

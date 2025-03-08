@@ -502,6 +502,42 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
+        it('should combine nd', () => {
+            const result = splitLetters('nd', { digraphs: true });
+
+            const expected: TextLetterPair[] = [
+                {
+                    text: 'nd',
+                    letter: {
+                        letterType: LetterType.Digraph,
+                        value: DigraphValue.ND,
+                        decoration: ConsonantDecoration.QuadrupleDot,
+                        placement: ConsonantPlacement.DeepCut,
+                    },
+                },
+            ];
+
+            expect(result).toStrictEqual(expected);
+        });
+
+        it('should combine nt', () => {
+            const result = splitLetters('nt', { digraphs: true });
+
+            const expected: TextLetterPair[] = [
+                {
+                    text: 'nt',
+                    letter: {
+                        letterType: LetterType.Digraph,
+                        value: DigraphValue.NT,
+                        decoration: ConsonantDecoration.QuadrupleDot,
+                        placement: ConsonantPlacement.ShallowCut,
+                    },
+                },
+            ];
+
+            expect(result).toStrictEqual(expected);
+        });
+
         it('should combine qu', () => {
             const result = splitLetters('qu', { digraphs: true });
 

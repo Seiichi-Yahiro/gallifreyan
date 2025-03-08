@@ -43,6 +43,8 @@ export enum DigraphValue {
     GH = 'GH',
     CH = 'CH',
     SH = 'SH',
+    ND = 'ND',
+    NT = 'NT',
     QU = 'QU',
     NG = 'NG',
 }
