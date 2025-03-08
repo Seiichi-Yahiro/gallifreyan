@@ -10,7 +10,7 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import type { TextLetterPair } from '@/redux/text/textTypes';
+import type { RawLetterElement } from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     digraphReducer,
@@ -397,7 +397,7 @@ describe('textUtils', () => {
         it('should combine th', () => {
             const result = splitLetters('th', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'th',
                     letter: {
@@ -415,7 +415,7 @@ describe('textUtils', () => {
         it('should combine ph', () => {
             const result = splitLetters('ph', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'ph',
                     letter: {
@@ -433,7 +433,7 @@ describe('textUtils', () => {
         it('should combine wh', () => {
             const result = splitLetters('wh', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'wh',
                     letter: {
@@ -451,7 +451,7 @@ describe('textUtils', () => {
         it('should combine gh', () => {
             const result = splitLetters('gh', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'gh',
                     letter: {
@@ -469,7 +469,7 @@ describe('textUtils', () => {
         it('should combine ch', () => {
             const result = splitLetters('ch', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'ch',
                     letter: {
@@ -487,7 +487,7 @@ describe('textUtils', () => {
         it('should combine sh', () => {
             const result = splitLetters('sh', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'sh',
                     letter: {
@@ -505,7 +505,7 @@ describe('textUtils', () => {
         it('should combine nd', () => {
             const result = splitLetters('nd', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'nd',
                     letter: {
@@ -523,7 +523,7 @@ describe('textUtils', () => {
         it('should combine nt', () => {
             const result = splitLetters('nt', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'nt',
                     letter: {
@@ -541,7 +541,7 @@ describe('textUtils', () => {
         it('should combine qu', () => {
             const result = splitLetters('qu', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'qu',
                     letter: {
@@ -559,7 +559,7 @@ describe('textUtils', () => {
         it('should combine ng', () => {
             const result = splitLetters('ng', { digraphs: true });
 
-            const expected: TextLetterPair[] = [
+            const expected: RawLetterElement[] = [
                 {
                     text: 'ng',
                     letter: {
@@ -576,7 +576,7 @@ describe('textUtils', () => {
 
         it('should not combine other consonants', () => {
             const letters = Object.values(ConsonantValue).map(
-                (text): TextLetterPair => ({
+                (text): RawLetterElement => ({
                     text,
                     letter: charToSingleLetter(text)!,
                 }),
@@ -589,7 +589,7 @@ describe('textUtils', () => {
 
         it('should not combine vocals', () => {
             const letters = Object.values(VocalValue).map(
-                (text): TextLetterPair => ({
+                (text): RawLetterElement => ({
                     text,
                     letter: charToSingleLetter(text)!,
                 }),
@@ -602,7 +602,7 @@ describe('textUtils', () => {
 
         it('should not combine digraphs', () => {
             const letters = Object.values(DigraphValue).map(
-                (text): TextLetterPair => ({
+                (text): RawLetterElement => ({
                     text,
                     letter: charToSingleLetter(text)!,
                 }),

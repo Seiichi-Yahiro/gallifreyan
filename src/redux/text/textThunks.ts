@@ -13,7 +13,7 @@ import {
     wordId,
 } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
-import type { TextLetterPair } from '@/redux/text/textTypes';
+import type { RawLetterElement } from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     dotAmount,
@@ -96,43 +96,47 @@ const compareWord =
     };
 
 const compareLetter =
-    (parent: WordId, pair?: TextLetterPair, id?: LetterId): AppThunkAction =>
+    (
+        parent: WordId,
+        rawLetter?: RawLetterElement,
+        id?: LetterId,
+    ): AppThunkAction =>
     (dispatch, getState) => {
-        if (!id && pair) {
-            dispatch(addLetter(pair, parent));
+        if (!id && rawLetter) {
+            dispatch(addLetter(rawLetter, parent));
             return;
         }
 
-        if (id && !pair) {
+        if (id && !rawLetter) {
             dispatch(removeLetter(id));
             return;
         }
 
-        if (!id || !pair) {
+        if (!id || !rawLetter) {
             return;
         }
 
         const state = getState();
         const letterElement = state.main.text.elements[id];
 
-        if (letterElement.text !== pair.text) {
+        if (letterElement.text !== rawLetter.text) {
             dispatch(
                 textActions.updateLetterText({
                     id,
-                    text: pair.text,
-                    letter: pair.letter,
+                    text: rawLetter.text,
+                    letter: rawLetter.letter,
                 }),
             );
 
             zip(
-                range(dotAmount(pair.letter.decoration)),
+                range(dotAmount(rawLetter.letter.decoration)),
                 letterElement.dots,
             ).forEach(([newIndex, dotId]) =>
                 dispatch(compareDot(id, newIndex, dotId)),
             );
 
             zip(
-                range(lineSlotAmount(pair.letter.decoration)),
+                range(lineSlotAmount(rawLetter.letter.decoration)),
                 letterElement.lineSlots,
             ).forEach(([newIndex, lineSlotId]) =>
                 dispatch(compareLineSlot(id, newIndex, lineSlotId)),
@@ -204,7 +208,11 @@ const addWord =
     };
 
 const addLetter =
-    (pair: TextLetterPair, parent: WordId, index?: number): AppThunkAction =>
+    (
+        rawLetter: RawLetterElement,
+        parent: WordId,
+        index?: number,
+    ): AppThunkAction =>
     (dispatch, _getState) => {
         const id = letterId();
 
@@ -212,17 +220,17 @@ const addLetter =
             textActions.addLetter({
                 id,
                 parent,
-                text: pair.text,
-                letter: pair.letter,
+                text: rawLetter.text,
+                letter: rawLetter.letter,
                 index,
             }),
         );
 
-        range(dotAmount(pair.letter.decoration)).forEach(() =>
+        range(dotAmount(rawLetter.letter.decoration)).forEach(() =>
             dispatch(textActions.addDot({ id: dotId(), parent: id })),
         );
 
-        range(lineSlotAmount(pair.letter.decoration)).forEach(() =>
+        range(lineSlotAmount(rawLetter.letter.decoration)).forEach(() =>
             dispatch(textActions.addLineSlot({ id: lineSlotId(), parent: id })),
         );
     };

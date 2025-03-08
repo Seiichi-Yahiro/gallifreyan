@@ -53,7 +53,7 @@ export interface LineSlotElement {
     parent: LetterId; // TODO can also be word or sentence
 }
 
-export interface TextLetterPair {
+export interface RawLetterElement {
     text: string;
     letter: Letter;
 }
