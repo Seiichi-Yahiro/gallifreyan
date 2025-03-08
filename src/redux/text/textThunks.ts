@@ -32,65 +32,79 @@ const updateTree =
     };
 
 const compareSentence =
-    (newSentenceText: string, id: SentenceId | null): AppThunkAction =>
+    (newSentenceText: string, existingId: SentenceId | null): AppThunkAction =>
     (dispatch, getState) => {
-        if (!id && newSentenceText.length > 0) {
+        if (!existingId && newSentenceText.length > 0) {
             dispatch(addSentence(newSentenceText));
             return;
         }
 
-        if (id && newSentenceText.length === 0) {
-            dispatch(removeSentence(id));
+        if (existingId && newSentenceText.length === 0) {
+            dispatch(removeSentence(existingId));
             return;
         }
 
-        if (!id) {
+        if (!existingId) {
             return;
         }
 
         const state = getState();
-        const sentenceElement = state.main.text.elements[id];
+        const sentenceElement = state.main.text.elements[existingId];
 
         if (sentenceElement.text !== newSentenceText) {
             dispatch(
-                textActions.updateSentenceText({ id, text: newSentenceText }),
+                textActions.updateSentenceText({
+                    id: existingId,
+                    text: newSentenceText,
+                }),
             );
 
             zip(splitWords(newSentenceText), sentenceElement.words).forEach(
                 ([newWordText, wordId]) =>
-                    dispatch(compareWord(id, newWordText ?? '', wordId)),
+                    dispatch(
+                        compareWord(existingId, newWordText ?? '', wordId),
+                    ),
             );
         }
     };
 
 const compareWord =
-    (parent: SentenceId, newWordText: string, id?: WordId): AppThunkAction =>
+    (
+        parent: SentenceId,
+        newWordText: string,
+        existingId?: WordId,
+    ): AppThunkAction =>
     (dispatch, getState) => {
-        if (!id && newWordText.length > 0) {
+        if (!existingId && newWordText.length > 0) {
             dispatch(addWord(newWordText, parent));
             return;
         }
 
-        if (id && newWordText.length === 0) {
-            dispatch(removeWord(id));
+        if (existingId && newWordText.length === 0) {
+            dispatch(removeWord(existingId));
             return;
         }
 
-        if (!id) {
+        if (!existingId) {
             return;
         }
 
         const state = getState();
-        const wordElement = state.main.text.elements[id];
+        const wordElement = state.main.text.elements[existingId];
 
         if (wordElement.text !== newWordText) {
-            dispatch(textActions.updateWordText({ id, text: newWordText }));
+            dispatch(
+                textActions.updateWordText({
+                    id: existingId,
+                    text: newWordText,
+                }),
+            );
 
             zip(
                 splitLetters(newWordText, state.main.text.splitLetterOptions),
                 wordElement.letters,
             ).forEach(([newLetterText, letterId]) =>
-                dispatch(compareLetter(id, newLetterText, letterId)),
+                dispatch(compareLetter(existingId, newLetterText, letterId)),
             );
         }
     };
@@ -98,75 +112,79 @@ const compareWord =
 const compareLetter =
     (
         parent: WordId,
-        rawLetter?: RawLetterElement,
-        id?: LetterId,
+        newRawLetter?: RawLetterElement,
+        existingId?: LetterId,
     ): AppThunkAction =>
     (dispatch, getState) => {
-        if (!id && rawLetter) {
-            dispatch(addLetter(rawLetter, parent));
+        if (!existingId && newRawLetter) {
+            dispatch(addLetter(newRawLetter, parent));
             return;
         }
 
-        if (id && !rawLetter) {
-            dispatch(removeLetter(id));
+        if (existingId && !newRawLetter) {
+            dispatch(removeLetter(existingId));
             return;
         }
 
-        if (!id || !rawLetter) {
+        if (!existingId || !newRawLetter) {
             return;
         }
 
         const state = getState();
-        const letterElement = state.main.text.elements[id];
+        const letterElement = state.main.text.elements[existingId];
 
-        if (letterElement.text !== rawLetter.text) {
+        if (letterElement.text !== newRawLetter.text) {
             dispatch(
                 textActions.updateLetterText({
-                    id,
-                    text: rawLetter.text,
-                    letter: rawLetter.letter,
+                    id: existingId,
+                    text: newRawLetter.text,
+                    letter: newRawLetter.letter,
                 }),
             );
 
             zip(
-                range(dotAmount(rawLetter.letter.decoration)),
+                range(dotAmount(newRawLetter.letter.decoration)),
                 letterElement.dots,
             ).forEach(([newIndex, dotId]) =>
-                dispatch(compareDot(id, newIndex, dotId)),
+                dispatch(compareDot(existingId, newIndex, dotId)),
             );
 
             zip(
-                range(lineSlotAmount(rawLetter.letter.decoration)),
+                range(lineSlotAmount(newRawLetter.letter.decoration)),
                 letterElement.lineSlots,
             ).forEach(([newIndex, lineSlotId]) =>
-                dispatch(compareLineSlot(id, newIndex, lineSlotId)),
+                dispatch(compareLineSlot(existingId, newIndex, lineSlotId)),
             );
         }
     };
 
 const compareDot =
-    (parent: LetterId, newIndex?: number, id?: DotId): AppThunkAction =>
+    (parent: LetterId, newIndex?: number, existingId?: DotId): AppThunkAction =>
     (dispatch, _getState) => {
-        if (!id && newIndex !== undefined) {
+        if (!existingId && newIndex !== undefined) {
             dispatch(textActions.addDot({ id: dotId(), parent }));
             return;
         }
 
-        if (id && newIndex === undefined) {
-            dispatch(textActions.removeDot(id));
+        if (existingId && newIndex === undefined) {
+            dispatch(textActions.removeDot(existingId));
         }
     };
 
 const compareLineSlot =
-    (parent: LetterId, newIndex?: number, id?: LineSlotId): AppThunkAction =>
+    (
+        parent: LetterId,
+        newIndex?: number,
+        existingId?: LineSlotId,
+    ): AppThunkAction =>
     (dispatch, _getState) => {
-        if (!id && newIndex !== undefined) {
+        if (!existingId && newIndex !== undefined) {
             dispatch(textActions.addLineSlot({ id: lineSlotId(), parent }));
             return;
         }
 
-        if (id && newIndex === undefined) {
-            dispatch(textActions.removeLineSlot(id));
+        if (existingId && newIndex === undefined) {
+            dispatch(textActions.removeLineSlot(existingId));
         }
     };
 
