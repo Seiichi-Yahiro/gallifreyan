@@ -35,22 +35,27 @@ export const TreeItem: React.FC<TreeItemProps> = ({
     const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
 
+    const validChildren = React.Children.toArray(children).filter(Boolean);
+    const hasChildren = validChildren.length > 0;
+
     return (
         <div className="relative">
             <div className="absolute flex h-full flex-col gap-1">
                 <TreeItemTrigger
                     open={open}
                     toggleOpen={toggleOpen}
-                    hasChildren={!!children}
+                    hasChildren={hasChildren}
                 />
-                {children && (
+                {hasChildren && (
                     <div className="border-border ml-[0.5px] w-3 grow border-r" />
                 )}
             </div>
             <div className="flex grow flex-col">
                 <TreeItemTitle title={title} className={className} {...props} />
-                {children && (
-                    <TreeItemContent open={open}>{children}</TreeItemContent>
+                {hasChildren && (
+                    <TreeItemContent open={open}>
+                        {validChildren}
+                    </TreeItemContent>
                 )}
             </div>
         </div>

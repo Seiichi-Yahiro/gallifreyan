@@ -1,19 +1,34 @@
 import type { AppThunkAction } from '@/redux/store';
 import svgActions from '@/redux/svg/svgActions';
 import {
+    type ConsonantId,
+    consonantId,
+    convertConsonantIdToVocalId,
+    convertVocalIdToConsonantId,
     type DotId,
     dotId,
     type LetterId,
-    letterId,
     type LineSlotId,
     lineSlotId,
     sentenceId,
     type SentenceId,
+    type VocalId,
+    vocalId,
     type WordId,
     wordId,
 } from '@/redux/text/ids';
+import {
+    ConsonantDecoration,
+    LetterType,
+    VocalDecoration,
+} from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
-import type { RawLetterElement } from '@/redux/text/textTypes';
+import {
+    type RawConsonantElement,
+    type RawLetterElement,
+    type RawVocalElement,
+    TextElementType,
+} from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     dotAmount,
@@ -23,6 +38,7 @@ import {
     textToDigraph,
 } from '@/redux/text/textUtils';
 import { range, zip } from 'lodash';
+import { match, P } from 'ts-pattern';
 
 const updateTree =
     (text: string): AppThunkAction =>
@@ -103,8 +119,8 @@ const compareWord =
             zip(
                 splitLetters(newWordText, state.main.text.splitLetterOptions),
                 wordElement.letters,
-            ).forEach(([newLetterText, letterId]) =>
-                dispatch(compareLetter(existingId, newLetterText, letterId)),
+            ).forEach(([rawLetter, letterId]) =>
+                dispatch(compareLetter(existingId, rawLetter, letterId)),
             );
         }
     };
@@ -134,32 +150,176 @@ const compareLetter =
         const letterElement = state.main.text.elements[existingId];
 
         if (letterElement.text !== newRawLetter.text) {
-            dispatch(
-                textActions.updateLetterText({
-                    id: existingId,
-                    text: newRawLetter.text,
-                    letter: newRawLetter.letter,
-                }),
-            );
+            match([letterElement, newRawLetter])
+                .with(
+                    [
+                        { elementType: TextElementType.Vocal },
+                        { letter: { letterType: LetterType.Vocal } },
+                    ],
+                    ([vocalElement, newRawVocal]) => {
+                        dispatch(
+                            textActions.updateVocalText({
+                                id: vocalElement.id,
+                                text: newRawVocal.text,
+                                letter: newRawVocal.letter,
+                            }),
+                        );
 
-            zip(
-                range(dotAmount(newRawLetter.letter.decoration)),
-                letterElement.dots,
-            ).forEach(([newIndex, dotId]) =>
-                dispatch(compareDot(existingId, newIndex, dotId)),
-            );
+                        dispatch(
+                            compareLineSlots(
+                                vocalElement.id,
+                                newRawVocal.letter.decoration,
+                                vocalElement.lineSlots,
+                            ),
+                        );
+                    },
+                )
+                .with(
+                    [
+                        { elementType: TextElementType.Consonant },
+                        {
+                            letter: {
+                                letterType: P.union(
+                                    LetterType.Consonant,
+                                    LetterType.Digraph,
+                                ),
+                            },
+                        },
+                    ],
+                    ([consonantElement, newRawConsonant]) => {
+                        dispatch(
+                            textActions.updateConsonantText({
+                                id: consonantElement.id,
+                                text: newRawConsonant.text,
+                                letter: newRawConsonant.letter,
+                            }),
+                        );
 
-            zip(
-                range(lineSlotAmount(newRawLetter.letter.decoration)),
-                letterElement.lineSlots,
-            ).forEach(([newIndex, lineSlotId]) =>
-                dispatch(compareLineSlot(existingId, newIndex, lineSlotId)),
-            );
+                        zip(
+                            range(dotAmount(newRawConsonant.letter.decoration)),
+                            consonantElement.dots,
+                        ).forEach(([newIndex, dotId]) =>
+                            dispatch(
+                                compareDot(
+                                    consonantElement.id,
+                                    newIndex,
+                                    dotId,
+                                ),
+                            ),
+                        );
+
+                        dispatch(
+                            compareLineSlots(
+                                consonantElement.id,
+                                newRawConsonant.letter.decoration,
+                                consonantElement.lineSlots,
+                            ),
+                        );
+                    },
+                )
+                .with(
+                    [
+                        { elementType: TextElementType.Vocal },
+                        {
+                            letter: {
+                                letterType: P.union(
+                                    LetterType.Consonant,
+                                    LetterType.Digraph,
+                                ),
+                            },
+                        },
+                    ],
+                    ([vocalElement, newRawConsonant]) => {
+                        dispatch(
+                            convertVocalToConsonant(
+                                vocalElement.id,
+                                newRawConsonant,
+                            ),
+                        );
+                    },
+                )
+                .with(
+                    [
+                        { elementType: TextElementType.Consonant },
+                        { letter: { letterType: LetterType.Vocal } },
+                    ],
+                    ([consonantElement, newRawVocal]) => {
+                        dispatch(
+                            convertConsonantToVocal(
+                                consonantElement.id,
+                                newRawVocal,
+                            ),
+                        );
+                    },
+                )
+                .exhaustive();
         }
     };
 
+const convertConsonantToVocal =
+    (oldId: ConsonantId, rawVocal: RawVocalElement): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const oldConsonant = state.main.text.elements[oldId];
+
+        oldConsonant.dots.forEach((dotId) => {
+            dispatch(textActions.removeDot(dotId));
+        });
+
+        dispatch(
+            textActions.convertConsonantToVocal({
+                oldId,
+                text: rawVocal.text,
+                letter: rawVocal.letter,
+            }),
+        );
+
+        const newId = convertConsonantIdToVocalId(oldId);
+
+        dispatch(
+            compareLineSlots(
+                newId,
+                rawVocal.letter.decoration,
+                oldConsonant.lineSlots,
+            ),
+        );
+    };
+
+const convertVocalToConsonant =
+    (oldId: VocalId, rawConsonant: RawConsonantElement): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const oldVocal = state.main.text.elements[oldId];
+
+        dispatch(
+            textActions.convertVocalToConsonant({
+                oldId,
+                text: rawConsonant.text,
+                letter: rawConsonant.letter,
+            }),
+        );
+
+        const newId = convertVocalIdToConsonantId(oldId);
+
+        range(dotAmount(rawConsonant.letter.decoration)).forEach(() =>
+            dispatch(textActions.addDot({ id: dotId(), parent: newId })),
+        );
+
+        dispatch(
+            compareLineSlots(
+                newId,
+                rawConsonant.letter.decoration,
+                oldVocal.lineSlots,
+            ),
+        );
+    };
+
 const compareDot =
-    (parent: LetterId, newIndex?: number, existingId?: DotId): AppThunkAction =>
+    (
+        parent: ConsonantId,
+        newIndex?: number,
+        existingId?: DotId,
+    ): AppThunkAction =>
     (dispatch, _getState) => {
         if (!existingId && newIndex !== undefined) {
             dispatch(textActions.addDot({ id: dotId(), parent }));
@@ -171,21 +331,27 @@ const compareDot =
         }
     };
 
-const compareLineSlot =
+const compareLineSlots =
     (
         parent: LetterId,
-        newIndex?: number,
-        existingId?: LineSlotId,
+        newDecoration: VocalDecoration | ConsonantDecoration,
+        currentIds: LineSlotId[],
     ): AppThunkAction =>
     (dispatch, _getState) => {
-        if (!existingId && newIndex !== undefined) {
-            dispatch(textActions.addLineSlot({ id: lineSlotId(), parent }));
-            return;
-        }
+        zip(range(lineSlotAmount(newDecoration)), currentIds).forEach(
+            ([newIndex, existingId]) => {
+                if (!existingId && newIndex !== undefined) {
+                    dispatch(
+                        textActions.addLineSlot({ id: lineSlotId(), parent }),
+                    );
+                    return;
+                }
 
-        if (existingId && newIndex === undefined) {
-            dispatch(textActions.removeLineSlot(existingId));
-        }
+                if (existingId && newIndex === undefined) {
+                    dispatch(textActions.removeLineSlot(existingId));
+                }
+            },
+        );
     };
 
 const addSentence =
@@ -221,7 +387,9 @@ const addWord =
         const state = getState();
 
         splitLetters(newWordText, state.main.text.splitLetterOptions).forEach(
-            (pair) => dispatch(addLetter(pair, id)),
+            (rawLetter) => {
+                dispatch(addLetter(rawLetter, id));
+            },
         );
     };
 
@@ -232,10 +400,41 @@ const addLetter =
         index?: number,
     ): AppThunkAction =>
     (dispatch, _getState) => {
-        const id = letterId();
+        match(rawLetter)
+            .with(
+                {
+                    letter: {
+                        letterType: LetterType.Vocal,
+                    },
+                },
+                (rawVocal) => dispatch(addVocal(rawVocal, parent, index)),
+            )
+            .with(
+                {
+                    letter: {
+                        letterType: P.union(
+                            LetterType.Consonant,
+                            LetterType.Digraph,
+                        ),
+                    },
+                },
+                (rawConsonant) =>
+                    dispatch(addConsonant(rawConsonant, parent, index)),
+            )
+            .exhaustive();
+    };
+
+const addConsonant =
+    (
+        rawLetter: RawConsonantElement,
+        parent: WordId,
+        index?: number,
+    ): AppThunkAction =>
+    (dispatch, _getState) => {
+        const id = consonantId();
 
         dispatch(
-            textActions.addLetter({
+            textActions.addConsonant({
                 id,
                 parent,
                 text: rawLetter.text,
@@ -246,6 +445,30 @@ const addLetter =
 
         range(dotAmount(rawLetter.letter.decoration)).forEach(() =>
             dispatch(textActions.addDot({ id: dotId(), parent: id })),
+        );
+
+        range(lineSlotAmount(rawLetter.letter.decoration)).forEach(() =>
+            dispatch(textActions.addLineSlot({ id: lineSlotId(), parent: id })),
+        );
+    };
+
+const addVocal =
+    (
+        rawLetter: RawVocalElement,
+        parent: WordId,
+        index?: number,
+    ): AppThunkAction =>
+    (dispatch, _getState) => {
+        const id = vocalId();
+
+        dispatch(
+            textActions.addVocal({
+                id,
+                parent,
+                text: rawLetter.text,
+                letter: rawLetter.letter,
+                index,
+            }),
         );
 
         range(lineSlotAmount(rawLetter.letter.decoration)).forEach(() =>
@@ -282,7 +505,11 @@ const removeLetter =
 
         const letter = state.main.text.elements[id];
 
-        letter.dots.forEach((dotId) => dispatch(textActions.removeDot(dotId)));
+        if (letter.elementType === TextElementType.Consonant) {
+            letter.dots.forEach((dotId) =>
+                dispatch(textActions.removeDot(dotId)),
+            );
+        }
 
         letter.lineSlots.forEach((lineSlotId) =>
             dispatch(textActions.removeLineSlot(lineSlotId)),
@@ -308,14 +535,17 @@ const splitDigraph =
                 {
                     text: firstChar,
                     letter: charToSingleLetter(firstChar)!,
-                },
+                } as RawLetterElement,
                 letterId,
             ),
         );
 
         dispatch(
             addLetter(
-                { text: secondChar, letter: charToSingleLetter(secondChar)! },
+                {
+                    text: secondChar,
+                    letter: charToSingleLetter(secondChar)!,
+                } as RawLetterElement,
                 letter.parent,
                 index + 1,
             ),

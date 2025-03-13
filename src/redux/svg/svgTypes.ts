@@ -5,10 +5,12 @@ import type {
 } from '@/math/circle';
 import type { Vec2 } from '@/math/vec';
 import type {
+    ConsonantId,
     DotId,
     LetterId,
     LineSlotId,
     SentenceId,
+    VocalId,
     WordId,
 } from '@/redux/text/ids';
 import type { TextElementType } from '@/redux/text/textTypes';
@@ -35,8 +37,12 @@ export interface WordCircle extends CircleI {
     arcs: Arc[];
 }
 
-export interface LetterCircle extends CircleI {
-    type: TextElementType.Letter;
+export interface VocalCircle extends CircleI {
+    type: TextElementType.Vocal;
+}
+
+export interface ConsonantCircle extends CircleI {
+    type: TextElementType.Consonant;
     intersections: CircleIntersections;
 }
 
@@ -44,15 +50,14 @@ export interface DotCircle extends CircleI {
     type: TextElementType.Dot;
 }
 
-export type Circle = SentenceCircle | WordCircle | LetterCircle | DotCircle;
-
 export type CircleId = SentenceId | WordId | LetterId | DotId;
 
 // prettier-ignore
 export type CirclesDictValue<K extends string> =
     K extends SentenceId ? SentenceCircle :
     K extends WordId ? WordCircle :
-    K extends LetterId ? LetterCircle :
+    K extends VocalId ? VocalCircle :
+    K extends ConsonantId ? ConsonantCircle :
     K extends DotId ? DotCircle : never;
 
 export type CirclesDict = {

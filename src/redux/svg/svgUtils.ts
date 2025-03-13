@@ -4,10 +4,18 @@ import {
     type TwoCircleIntersections,
 } from '@/math/circle';
 import mVec2, { type Vec2 } from '@/math/vec';
-import type { PositionData } from '@/redux/svg/svgTypes';
+import type { CircleI, PositionData } from '@/redux/svg/svgTypes';
 import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
 import { chunk } from 'lodash';
 import { match } from 'ts-pattern';
+
+export const defaultCircle = (): CircleI => ({
+    radius: 0,
+    position: {
+        distance: 0,
+        angle: mAngle.degree(0),
+    },
+});
 
 export const defaultSentenceRadius = (svgSize: number): number =>
     (svgSize * 0.9) / 2;

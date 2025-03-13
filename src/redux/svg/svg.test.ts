@@ -64,18 +64,24 @@ describe('svg', () => {
     });
 
     it('should add letter circles', () => {
-        store.dispatch(textActions.setText('bj t'));
+        store.dispatch(textActions.setText('bj to'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
-            'LTR-0': {
-                type: TextElementType.Letter,
+            'CON-0': {
+                type: TextElementType.Consonant,
+                intersections: {},
             },
-            'LTR-1': {
-                type: TextElementType.Letter,
+            'CON-1': {
+                type: TextElementType.Consonant,
+                intersections: {},
             },
-            'LTR-2': {
-                type: TextElementType.Letter,
+            'CON-2': {
+                type: TextElementType.Consonant,
+                intersections: {},
+            },
+            'VOC-3': {
+                type: TextElementType.Vocal,
             },
         });
     });
@@ -86,15 +92,48 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
-            'LTR-0': {
-                type: TextElementType.Letter,
+            'CON-0': {
+                type: TextElementType.Consonant,
             },
-            'LTR-2': {
-                type: TextElementType.Letter,
+            'CON-2': {
+                type: TextElementType.Consonant,
             },
         });
 
-        expect(state.main.svg.circles['LTR-1']).toBeUndefined();
+        expect(state.main.svg.circles['CON-1']).toBeUndefined();
+    });
+
+    it('should convert consonant to vocal letter circle', () => {
+        store.dispatch(textActions.setText('b'));
+        store.dispatch(textActions.setText('o'));
+        const state = store.getState();
+
+        expect(state.main.svg.circles).toMatchObject({
+            'VOC-0': {
+                type: TextElementType.Vocal,
+            },
+        });
+
+        expect(state.main.svg.circles['VOC-0']).not.toHaveProperty(
+            'intersections',
+        );
+
+        expect(state.main.svg.circles['CON-0']).toBeUndefined();
+    });
+
+    it('should convert vocal to consonant letter circle', () => {
+        store.dispatch(textActions.setText('o'));
+        store.dispatch(textActions.setText('b'));
+        const state = store.getState();
+
+        expect(state.main.svg.circles).toMatchObject({
+            'CON-0': {
+                type: TextElementType.Consonant,
+                intersections: {},
+            },
+        });
+
+        expect(state.main.svg.circles['VOC-0']).toBeUndefined();
     });
 
     it('should add dot circles', () => {

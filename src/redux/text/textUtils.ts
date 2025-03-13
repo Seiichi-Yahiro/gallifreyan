@@ -28,10 +28,11 @@ export const splitLetters = (
     options?: SplitLettersOptions,
 ): RawLetterElement[] => {
     let letters = word.split('').map(
-        (letterText): RawLetterElement => ({
-            text: letterText,
-            letter: charToSingleLetter(letterText)!,
-        }),
+        (letterText): RawLetterElement =>
+            ({
+                text: letterText,
+                letter: charToSingleLetter(letterText)!,
+            }) as RawLetterElement,
     );
 
     if (options?.digraphs) {

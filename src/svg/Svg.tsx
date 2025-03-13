@@ -1,12 +1,15 @@
 import { CircleIntersectionType } from '@/math/circle';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import svgActions from '@/redux/svg/svgActions';
-import type {
-    DotId,
-    LetterId,
-    LineSlotId,
-    SentenceId,
-    WordId,
+import {
+    type ConsonantId,
+    type DotId,
+    isConsonantId,
+    isVocalId,
+    type LineSlotId,
+    type SentenceId,
+    type VocalId,
+    type WordId,
 } from '@/redux/text/ids';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
@@ -15,6 +18,7 @@ import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
 import React, { useCallback } from 'react';
+import { match } from 'ts-pattern';
 import './Svg.css';
 
 const Svg: React.FC = () => {
@@ -132,18 +136,64 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                     isSelected={isSelected}
                 />
             )}
-            {letters.map((letterId) => (
-                <SvgLetter key={letterId} id={letterId} />
+            {letters.map((letterId) =>
+                match(letterId)
+                    .when(isVocalId, (vocalId) => (
+                        <SvgVocal key={vocalId.slice(4)} id={vocalId} />
+                    ))
+                    .when(isConsonantId, (consonantId) => (
+                        <SvgConsonant
+                            key={consonantId.slice(4)}
+                            id={consonantId}
+                        />
+                    ))
+                    .exhaustive(),
+            )}
+        </SvgGroup>
+    );
+};
+
+interface SvgVocalProps {
+    id: VocalId;
+}
+
+const SvgVocal: React.FC<SvgVocalProps> = ({ id }) => {
+    const lineSlots = useRedux(
+        (state) => state.main.text.elements[id].lineSlots,
+    );
+
+    const circle = useRedux((state) => state.main.svg.circles[id]);
+
+    const { isHovered, onHover, onHoverStop } = useHover(id);
+    const { isSelected, onSelect } = useSelect(id);
+
+    return (
+        <SvgGroup
+            distance={circle.position.distance}
+            angle={circle.position.angle}
+            rotateInParent={true}
+        >
+            <SvgCircle
+                radius={circle.radius}
+                className="letter"
+                onMouseEnter={onHover}
+                onMouseLeave={onHoverStop}
+                onClick={onSelect}
+                isHovered={isHovered}
+                isSelected={isSelected}
+            />
+            {lineSlots.map((lineSlotId) => (
+                <SvgLineSlot key={lineSlotId} id={lineSlotId} />
             ))}
         </SvgGroup>
     );
 };
 
-interface SvgLetterProps {
-    id: LetterId;
+interface SvgConsonantProps {
+    id: ConsonantId;
 }
 
-const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
+const SvgConsonant: React.FC<SvgConsonantProps> = ({ id }) => {
     const dots = useRedux((state) => state.main.text.elements[id].dots);
 
     const lineSlots = useRedux(
