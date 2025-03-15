@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="gallifreyan" style="width: 100%; height: 100%;" viewBox="-500 -500 1000 1000">
+    <style>
+        .sentence__outer {
+            stroke-width: 3px;
+        }
+
+        .sentence__inner,
+        .word,
+        .letter,
+        .dot {
+            stroke-width: 1px;
+        }
+
+        .sentence__outer,
+        .sentence__inner,
+        .word,
+        .letter,
+        .dot {
+            stroke: currentColor;
+        }
+
+        .word,
+        .letter {
+            stroke-linecap: round;
+        }
+
+        .sentence__outer,
+        .sentence__inner,
+        .word,
+        .letter {
+            fill: transparent;
+        }
+
+        .dot {
+            fill: currentColor;
+        }
+    </style>
+    <g class="" style="transform: translate(0px, 0px);">
+        <circle cx="0" cy="0" r="460" class="sentence__outer"/>
+        <circle cx="0" cy="0" r="450" class="sentence__inner"/>
+        <g class="" style="transform: translate(0px, 0px);">
+            <path d="M 152.71905625076255 -165.23283528970995 A 225 225 0 1 0 219.45536102559998 -49.642164710289926" class="word"/>
+            <g class="" style="transform: rotate(-0deg) translateY(123.75px);">
+                <circle cx="0" cy="0" r="67.5" class="letter"/>
+                <g class="" style="transform: translate(6.6130927153957075e-15px, -54px);">
+                    <circle cx="0" cy="0" r="6.75" class="dot"/>
+                </g>
+            </g>
+            <g class="" style="transform: rotate(-120deg) translateY(225px);">
+                <path d="M 66.73630477483748 -10.124999999999975 A 67.5 67.5 0 0 0 -66.73630477483749 -10.12500000000001" class="letter"/>
+                <g class="" style="transform: translate(6.6130927153957075e-15px, -54px);">
+                    <circle cx="0" cy="0" r="6.75" class="dot"/>
+                </g>
+            </g>
+            <g class="" style="transform: rotate(-240deg) translateY(225px);">
+                <circle cx="0" cy="0" r="67.5" class="letter"/>
+                <g class="" style="transform: translate(6.6130927153957075e-15px, -54px);">
+                    <circle cx="0" cy="0" r="6.75" class="dot"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="gallifreyan" style="width: 100%; height: 100%;" viewBox="-500 -500 1000 1000">
+    <style>
+        .sentence__outer {
+            stroke-width: 3px;
+        }
+
+        .sentence__inner,
+        .word,
+        .letter,
+        .dot {
+            stroke-width: 1px;
+        }
+
+        .sentence__outer,
+        .sentence__inner,
+        .word,
+        .letter,
+        .dot {
+            stroke: currentColor;
+        }
+
+        .word,
+        .letter {
+            stroke-linecap: round;
+        }
+
+        .sentence__outer,
+        .sentence__inner,
+        .word,
+        .letter {
+            fill: transparent;
+        }
+
+        .dot {
+            fill: currentColor;
+        }
+    </style>
+    <g class="" style="transform: translate(0px, 0px);">
+        <circle cx="0" cy="0" r="460" class="sentence__outer"/>
+        <circle cx="0" cy="0" r="450" class="sentence__inner"/>
+        <g class="" style="transform: translate(0px, 0px);">
+            <circle cx="0" cy="0" r="225" class="word"/>
+            <g class="" style="transform: rotate(-0deg) translateY(253.92857142857142px);">
+                <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
+            </g>
+            <g class="" style="transform: rotate(-72deg) translateY(225px);">
+                <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
+            </g>
+            <g class="" style="transform: rotate(-144deg) translateY(225px);">
+                <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
+            </g>
+            <g class="" style="transform: rotate(-216deg) translateY(196.07142857142858px);">
+                <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
+            </g>
+            <g class="" style="transform: rotate(-288deg) translateY(225px);">
+                <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
+            </g>
+        </g>
+    </g>
+</svg>
