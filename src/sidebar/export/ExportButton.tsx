@@ -1,95 +1,12 @@
 import { useRedux } from '@/redux/hooks';
+import {
+    convertSvgHtmlElementToString,
+    downloadAsFile,
+    saveAsFile,
+} from '@/sidebar/export/svgExport';
 import IconButton from '@/ui/IconButton';
 import { ImageDown } from 'lucide-react';
 import React from 'react';
-
-const prepareSvg = (svg: HTMLElement): string => {
-    const svgClone = svg.cloneNode(true) as SVGSVGElement;
-
-    svgClone.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
-
-    svgClone.querySelectorAll('[class]').forEach((el) => {
-        el.classList.forEach((cls) => {
-            if (cls.endsWith('--not-print')) {
-                el.classList.remove(cls);
-            }
-        });
-    });
-
-    const style = document.createElement('style');
-    style.innerHTML = `.sentence__outer {
-    stroke-width: 3px;
-}
-
-.sentence__inner,
-.word,
-.letter,
-.dot {
-    stroke-width: 1px;
-}
-
-.sentence__outer,
-.sentence__inner,
-.word,
-.letter,
-.dot {
-    stroke: currentColor;
-}
-
-.word,
-.letter {
-    stroke-linecap: round;
-}
-
-.sentence__outer,
-.sentence__inner,
-.word,
-.letter {
-    fill: transparent;
-}
-
-.dot {
-    fill: currentColor;
-}`;
-
-    svgClone.insertBefore(style, svgClone.firstChild);
-
-    const serializer = new XMLSerializer();
-    return serializer.serializeToString(svgClone);
-};
-
-const saveAsFile = async (svg: string, filename: string) => {
-    const fileHandle = await window.showSaveFilePicker({
-        types: [
-            {
-                description: 'SVG',
-                accept: { 'image/svg+xml': '.svg' },
-            },
-        ],
-        excludeAcceptAllOption: true,
-        startIn: 'downloads',
-        suggestedName: filename,
-    });
-
-    const writable = await fileHandle.createWritable();
-    await writable.write(svg);
-    await writable.close();
-};
-
-const downloadAsFile = (svg: string, filename: string) => {
-    const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename + '.svg';
-
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    URL.revokeObjectURL(url);
-};
 
 const ExportButton: React.FC = () => {
     const filename = useRedux((state) =>
@@ -109,7 +26,7 @@ const ExportButton: React.FC = () => {
                     return;
                 }
 
-                const svgString = prepareSvg(svg);
+                const svgString = convertSvgHtmlElementToString(svg);
 
                 if ('showSaveFilePicker' in window) {
                     await saveAsFile(svgString, filename);

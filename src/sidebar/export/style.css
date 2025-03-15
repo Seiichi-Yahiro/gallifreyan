@@ -1,0 +1,34 @@
+.sentence__outer {
+    stroke-width: 3px;
+}
+
+.sentence__inner,
+.word,
+.letter,
+.dot {
+    stroke-width: 1px;
+}
+
+.sentence__outer,
+.sentence__inner,
+.word,
+.letter,
+.dot {
+    stroke: currentColor;
+}
+
+.word,
+.letter {
+    stroke-linecap: round;
+}
+
+.sentence__outer,
+.sentence__inner,
+.word,
+.letter {
+    fill: transparent;
+}
+
+.dot {
+    fill: currentColor;
+}

@@ -56,6 +56,9 @@ importers:
       ts-pattern:
         specifier: ^5.6.2
         version: 5.6.2
+      xml-formatter:
+        specifier: ^3.6.4
+        version: 3.6.4
     devDependencies:
       '@eslint/js':
         specifier: ^9.22.0
@@ -2917,9 +2920,17 @@ packages:
       utf-8-validate:
         optional: true
 
+  xml-formatter@3.6.4:
+    resolution: {integrity: sha512-vkvTNw4u9mp72lMmJHw771NE9EJLX0kfwIcP+ZEo9eJ6HmotX23vmykyROyIQ9Y3a+ckdUdhxIE2ZO66rYuPrg==}
+    engines: {node: '>= 16'}
+
   xml-name-validator@5.0.0:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
     engines: {node: '>=18'}
+
+  xml-parser-xo@4.1.3:
+    resolution: {integrity: sha512-U6eN5Pyrlek9ottHVpT9e8YUax75oVYXbnYxU+utzDC7i+OyWj9ynsNMiZNQZvpuazbG0O7iLAs9FkcFmzlgSA==}
+    engines: {node: '>= 16'}
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
@@ -5633,7 +5644,13 @@ snapshots:
 
   ws@8.18.0: {}
 
+  xml-formatter@3.6.4:
+    dependencies:
+      xml-parser-xo: 4.1.3
+
   xml-name-validator@5.0.0: {}
+
+  xml-parser-xo@4.1.3: {}
 
   xmlchars@2.2.0: {}
 
