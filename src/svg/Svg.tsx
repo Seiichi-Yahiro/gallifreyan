@@ -1,6 +1,6 @@
 import { CircleIntersectionType } from '@/math/circle';
+import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import svgActions from '@/redux/svg/svgActions';
 import {
     type ConsonantId,
     type DotId,
@@ -24,7 +24,7 @@ import './Svg.css';
 const Svg: React.FC = () => {
     const dispatch = useAppDispatch();
     const deselect = useCallback(() => {
-        dispatch(svgActions.setSelection(null));
+        dispatch(actions.setSelection(null));
     }, [dispatch]);
 
     const svgSize = useRedux((state) => state.main.svg.size);

@@ -1,5 +1,5 @@
+import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import svgActions from '@/redux/svg/svgActions';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import type { LineSlotId } from '@/redux/text/ids';
 import { type MouseEvent, useCallback } from 'react';
@@ -14,7 +14,7 @@ const useSelect = (id: CircleId | LineSlotId) => {
             event.stopPropagation();
 
             if (!isSelected) {
-                dispatch(svgActions.setSelection(id));
+                dispatch(actions.setSelection(id));
             }
         },
         [dispatch, id, isSelected],

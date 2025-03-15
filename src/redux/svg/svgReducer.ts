@@ -58,7 +58,7 @@ export const createInitialSvgState = (): SvgState => ({
     lineSlots: {},
 });
 
-export const createSvgReducer = (
+export const createSvgReducerCases = (
     builder: ActionReducerMapBuilder<MainState>,
 ) => {
     builder
@@ -277,13 +277,13 @@ export const createSvgReducer = (
             wordCircle.arcs = wordArcsFromIntersections(
                 wordCircle.intersections,
             );
-        })
-        .addCase(svgActions.setHover, (state, action) => {
-            state.hovered = action.payload;
-        })
-        .addCase(svgActions.setSelection, (state, action) => {
-            state.selected = action.payload;
-        })
+        });
+};
+
+export const createSvgReducerMatches = (
+    builder: ActionReducerMapBuilder<MainState>,
+) => {
+    builder
         .addMatcher(textActions.addSentence.match, (state, action) => {
             state.svg.circles[action.payload.id] = {
                 ...defaultCircle(),

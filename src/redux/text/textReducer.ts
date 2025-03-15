@@ -34,7 +34,7 @@ export const createInitialTextState = (): TextState => ({
     },
 });
 
-export const createTextReducer = (
+export const createTextReducerCases = (
     builder: ActionReducerMapBuilder<MainState>,
 ) => {
     builder

@@ -1,13 +1,15 @@
+import actions from '@/redux/actions';
 import {
     createInitialSvgState,
-    createSvgReducer,
+    createSvgReducerCases,
+    createSvgReducerMatches,
     type SvgState,
 } from '@/redux/svg/svgReducer';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import type { LineSlotId } from '@/redux/text/ids';
 import {
     createInitialTextState,
-    createTextReducer,
+    createTextReducerCases,
     type TextState,
 } from '@/redux/text/textReducer';
 import { createReducer as createReduxReducer } from '@reduxjs/toolkit';
@@ -30,8 +32,18 @@ const createReducer = () =>
                 selected: null,
             },
             (builder) => {
-                createTextReducer(builder);
-                createSvgReducer(builder);
+                builder
+                    .addCase(actions.setHover, (state, action) => {
+                        state.hovered = action.payload;
+                    })
+                    .addCase(actions.setSelection, (state, action) => {
+                        state.selected = action.payload;
+                    });
+
+                createTextReducerCases(builder);
+                createSvgReducerCases(builder);
+
+                createSvgReducerMatches(builder);
             },
         ),
     });

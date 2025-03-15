@@ -1,3 +1,4 @@
+import actions from '@/redux/actions';
 import type { AppThunkAction } from '@/redux/store';
 import svgActions from '@/redux/svg/svgActions';
 import {
@@ -575,7 +576,7 @@ const mergeToDigraph =
         );
 
         if (state.main.selected === secondLetterId) {
-            dispatch(svgActions.setSelection(firstLetterId));
+            dispatch(actions.setSelection(firstLetterId));
         }
 
         dispatch(removeLetter(secondLetterId));
