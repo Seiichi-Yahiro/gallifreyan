@@ -1,6 +1,8 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import {
+    type ConsonantId,
+    isConsonantId,
     isDotId,
     isLetterId,
     isLineSlotId,
@@ -17,7 +19,7 @@ import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
 import { isEqual } from 'lodash';
 import { Merge, Split } from 'lucide-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 interface PositionInputProps {
     className?: string;
@@ -47,46 +49,86 @@ interface LetterSettingsProps {
 }
 
 const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
-    const dispatch = useAppDispatch();
+    const [prevId, nextId] = useRedux(
+        (state): [LetterId | undefined, LetterId | undefined] => {
+            const letter = state.main.text.elements[id];
+            const parent = state.main.text.elements[letter.parent];
+            const index = parent.letters.findIndex(
+                (letterId) => letterId === id,
+            );
 
-    const { prevId, nextId, isDigraph } = useRedux((state) => {
-        const letter = state.main.text.elements[id];
+            let prevId;
+            let nextId;
 
-        let prevId = null;
-        let nextId = null;
-
-        if (letter.letter.letterType === LetterType.Digraph) {
-            return { prevId, nextId, isDigraph: true };
-        }
-
-        const parent = state.main.text.elements[letter.parent];
-        const index = parent.letters.findIndex((letterId) => letterId === id);
-
-        if (index - 1 >= 0) {
-            const localPrevId = parent.letters[index - 1];
-            const prevText = state.main.text.elements[localPrevId].text;
-            if (isDigraphText(prevText + letter.text)) {
-                prevId = localPrevId;
+            if (index - 1 >= 0) {
+                prevId = parent.letters[index - 1];
             }
-        }
 
-        if (index + 1 < parent.letters.length) {
-            const localNextId = parent.letters[index + 1];
-            const nextText = state.main.text.elements[localNextId].text;
-            if (isDigraphText(letter.text + nextText)) {
-                nextId = localNextId;
+            if (index + 1 < parent.letters.length) {
+                nextId = parent.letters[index + 1];
             }
-        }
 
-        return { prevId, nextId, isDigraph: false };
-    }, isEqual);
+            return [prevId, nextId];
+        },
+        isEqual,
+    );
 
     return (
         <div className="flex flex-row gap-1 empty:hidden">
-            {prevId && (
+            {isConsonantId(id) && (
+                <ConsonantSettings id={id} prevId={prevId} nextId={nextId} />
+            )}
+        </div>
+    );
+};
+
+interface ConsonantSettingsProps {
+    prevId?: LetterId;
+    id: ConsonantId;
+    nextId?: LetterId;
+}
+
+const ConsonantSettings: React.FC<ConsonantSettingsProps> = ({
+    prevId,
+    id,
+    nextId,
+}) => {
+    const dispatch = useAppDispatch();
+
+    const isDigraph = useRedux(
+        (state) =>
+            state.main.text.elements[id].letter.letterType ===
+            LetterType.Digraph,
+    );
+
+    const [prevText, text, nextText] = useRedux((state) => {
+        const prevText = prevId ? state.main.text.elements[prevId].text : '';
+        const text = state.main.text.elements[id].text;
+        const nextText = nextId ? state.main.text.elements[nextId].text : '';
+        return [prevText, text, nextText];
+    }, isEqual);
+
+    const canMergeWithPrevToDigraph = useMemo(
+        () => !isDigraph && isDigraphText(prevText + text),
+        [isDigraph, prevText, text],
+    );
+
+    const canMergeWithNextToDigraph = useMemo(
+        () => !isDigraph && isDigraphText(text + nextText),
+        [isDigraph, nextText, text],
+    );
+
+    return (
+        <>
+            {canMergeWithPrevToDigraph && (
                 <IconButton
                     onClick={() => {
-                        dispatch(textThunks.mergeToDigraph(prevId, id));
+                        dispatch(
+                            textThunks.mergeToDigraph(
+                                prevId as ConsonantId,
+                                id,
+                            ),
+                        );
                     }}
                 >
                     <Merge className="-rotate-90" />
@@ -101,16 +143,18 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                     <Split />
                 </IconButton>
             )}
-            {nextId && (
+            {canMergeWithNextToDigraph && (
                 <IconButton
                     onClick={() => {
-                        dispatch(textThunks.mergeToDigraph(id, nextId));
+                        dispatch(
+                            textThunks.mergeToDigraph(id, nextId as LetterId),
+                        );
                     }}
                 >
                     <Merge className="rotate-90" />
                 </IconButton>
             )}
-        </div>
+        </>
     );
 };
 

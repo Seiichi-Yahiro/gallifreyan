@@ -520,7 +520,7 @@ const removeLetter =
     };
 
 const splitDigraph =
-    (letterId: LetterId): AppThunkAction =>
+    (letterId: ConsonantId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const letter = state.main.text.elements[letterId];
@@ -556,7 +556,7 @@ const splitDigraph =
     };
 
 const mergeToDigraph =
-    (firstLetterId: LetterId, secondLetterId: LetterId): AppThunkAction =>
+    (firstLetterId: ConsonantId, secondLetterId: LetterId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
         const firstLetter = state.main.text.elements[firstLetterId];
