@@ -4,7 +4,11 @@ import { useAppDispatch, useRedux } from '@/redux/hooks';
 import {
     type ConsonantId,
     type DotId,
+    isAttachedVocalGroupId,
     isConsonantId,
+    isDoubleConsonantGroupId,
+    isDoubleVocalGroupId,
+    isStackedConsonantGroupId,
     isVocalId,
     type LineSlotId,
     type SentenceId,
@@ -147,6 +151,22 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                             id={consonantId}
                         />
                     ))
+                    .when(isDoubleVocalGroupId, (_groupId) => {
+                        // TODO
+                        return null;
+                    })
+                    .when(isDoubleConsonantGroupId, (_groupId) => {
+                        // TODO
+                        return null;
+                    })
+                    .when(isStackedConsonantGroupId, (_groupId) => {
+                        // TODO
+                        return null;
+                    })
+                    .when(isAttachedVocalGroupId, (_groupId) => {
+                        // TODO
+                        return null;
+                    })
                     .exhaustive(),
             )}
         </SvgGroup>

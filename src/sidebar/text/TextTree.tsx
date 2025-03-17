@@ -1,6 +1,7 @@
 import { useRedux } from '@/redux/hooks';
 import {
     type DotId,
+    isLetterId,
     type LetterId,
     type LineSlotId,
     type SentenceId,
@@ -80,9 +81,12 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
                 'bg-hover-accent-strong': isSelected,
             })}
         >
-            {word.letters.map((letter) => (
-                <TextLetterTreeItem key={letter} letterId={letter} />
-            ))}
+            {word.letters.map(
+                (letter) =>
+                    isLetterId(letter) ? (
+                        <TextLetterTreeItem key={letter} letterId={letter} />
+                    ) : null, // TODO group letters
+            )}
         </TreeItem>
     );
 };

@@ -44,6 +44,44 @@ export const convertConsonantIdToVocalId = (id: ConsonantId): VocalId =>
 export const convertVocalIdToConsonantId = (id: VocalId): ConsonantId =>
     id.replace('VOC', 'CON') as ConsonantId;
 
+export type DoubleVocalGroupId = IdGenerator<'DVG'>;
+const doubleVocalGroupCounter = createIdCounter('DVG');
+export const doubleVocalGroupId: () => DoubleVocalGroupId =
+    doubleVocalGroupCounter.generator;
+export const isDoubleVocalGroupId = (
+    id: TextElementId,
+): id is DoubleVocalGroupId => id.startsWith('DVG');
+
+export type DoubleConsonantGroupId = IdGenerator<'DCG'>;
+const doubleConsonantGroupCounter = createIdCounter('DCG');
+export const doubleConsonantGroupId: () => DoubleConsonantGroupId =
+    doubleConsonantGroupCounter.generator;
+export const isDoubleConsonantGroupId = (
+    id: TextElementId,
+): id is DoubleConsonantGroupId => id.startsWith('DCG');
+
+export type StackedConsonantGroupId = IdGenerator<'SCG'>;
+const stackedConsonantGroupCounter = createIdCounter('SCG');
+export const stackedConsonantGroupId: () => StackedConsonantGroupId =
+    stackedConsonantGroupCounter.generator;
+export const isStackedConsonantGroupId = (
+    id: TextElementId,
+): id is StackedConsonantGroupId => id.startsWith('SCG');
+
+export type AttachedVocalGroupId = IdGenerator<'AVG'>;
+const attachedVocalGroupCounter = createIdCounter('AVG');
+export const attachedVocalGroupId: () => AttachedVocalGroupId =
+    attachedVocalGroupCounter.generator;
+export const isAttachedVocalGroupId = (
+    id: TextElementId,
+): id is AttachedVocalGroupId => id.startsWith('AVG');
+
+export type LetterGroupId =
+    | DoubleVocalGroupId
+    | DoubleConsonantGroupId
+    | StackedConsonantGroupId
+    | AttachedVocalGroupId;
+
 export type DotId = IdGenerator<'DOT'>;
 const dotCounter = createIdCounter('DOT');
 export const dotId: () => DotId = dotCounter.generator;
@@ -55,13 +93,23 @@ export const lineSlotId: () => LineSlotId = lineSlotCounter.generator;
 export const isLineSlotId = (id: TextElementId): id is LineSlotId =>
     id.startsWith('LNS');
 
-export type TextElementId = SentenceId | WordId | LetterId | DotId | LineSlotId;
+export type TextElementId =
+    | SentenceId
+    | WordId
+    | LetterId
+    | LetterGroupId
+    | DotId
+    | LineSlotId;
 
 // For testing
 export const resetIdCounters = () => {
     sentenceCounter.reset();
     wordCounter.reset();
     letterCounter.reset();
+    doubleVocalGroupCounter.reset();
+    doubleConsonantGroupCounter.reset();
+    stackedConsonantGroupCounter.reset();
+    attachedVocalGroupCounter.reset();
     dotCounter.reset();
     lineSlotCounter.reset();
 };

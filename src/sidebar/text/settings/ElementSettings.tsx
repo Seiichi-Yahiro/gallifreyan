@@ -6,6 +6,7 @@ import {
     isDotId,
     isLetterId,
     isLineSlotId,
+    type LetterGroupId,
     type LetterId,
     type LineSlotId,
 } from '@/redux/text/ids';
@@ -50,7 +51,12 @@ interface LetterSettingsProps {
 
 const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
     const [prevId, nextId] = useRedux(
-        (state): [LetterId | undefined, LetterId | undefined] => {
+        (
+            state,
+        ): [
+            LetterId | LetterGroupId | undefined,
+            LetterId | LetterGroupId | undefined,
+        ] => {
             const letter = state.main.text.elements[id];
             const parent = state.main.text.elements[letter.parent];
             const index = parent.letters.findIndex(

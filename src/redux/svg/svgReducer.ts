@@ -33,7 +33,11 @@ import {
 import {
     convertConsonantIdToVocalId,
     convertVocalIdToConsonantId,
+    isAttachedVocalGroupId,
     isConsonantId,
+    isDoubleConsonantGroupId,
+    isDoubleVocalGroupId,
+    isStackedConsonantGroupId,
     isVocalId,
 } from '@/redux/text/ids';
 import { ConsonantPlacement, VocalDecoration } from '@/redux/text/letterTypes';
@@ -162,6 +166,18 @@ export const createSvgReducerCases = (
 
                             resetLineSlots(letter, letterCircle);
                         })
+                        .when(isDoubleVocalGroupId, (_groupId) => {
+                            // TODO
+                        })
+                        .when(isDoubleConsonantGroupId, (_groupId) => {
+                            // TODO
+                        })
+                        .when(isStackedConsonantGroupId, (_groupId) => {
+                            // TODO
+                        })
+                        .when(isAttachedVocalGroupId, (_groupId) => {
+                            // TODO
+                        })
                         .exhaustive();
                 });
             });
@@ -178,7 +194,8 @@ export const createSvgReducerCases = (
             const letters = state.text.elements[action.payload].letters;
 
             for (const letterId of letters) {
-                if (isVocalId(letterId)) {
+                if (!isConsonantId(letterId)) {
+                    // TODO other letter types
                     continue;
                 }
 

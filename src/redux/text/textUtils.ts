@@ -11,8 +11,13 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import type { RawLetterElement } from '@/redux/text/textTypes';
-import { match } from 'ts-pattern';
+import {
+    type RawConsonantElement,
+    type RawLetterElement,
+    type RawVocalElement,
+    TextElementType,
+} from '@/redux/text/textTypes';
+import { match, Pattern } from 'ts-pattern';
 
 export const isDigraphText = (text: string): boolean =>
     Object.values(DigraphValue).includes(text.toUpperCase() as DigraphValue);
@@ -27,13 +32,28 @@ export const splitLetters = (
     word: string,
     options?: SplitLettersOptions,
 ): RawLetterElement[] => {
-    let letters = word.split('').map(
-        (letterText): RawLetterElement =>
-            ({
-                text: letterText,
-                letter: charToSingleLetter(letterText)!,
-            }) as RawLetterElement,
-    );
+    let letters = word.split('').map((letterText): RawLetterElement => {
+        const letter = charToSingleLetter(letterText)!;
+
+        return match(letter)
+            .with(
+                { letterType: LetterType.Vocal },
+                (vocal): RawVocalElement => ({
+                    elementType: TextElementType.Vocal,
+                    text: letterText,
+                    letter: vocal,
+                }),
+            )
+            .with(
+                { letterType: LetterType.Consonant },
+                (consonant): RawConsonantElement => ({
+                    elementType: TextElementType.Consonant,
+                    text: letterText,
+                    letter: consonant,
+                }),
+            )
+            .exhaustive();
+    });
 
     if (options?.digraphs) {
         letters = letters.reduce(digraphReducer, []);
@@ -276,24 +296,43 @@ export const digraphReducer = (
     acc: RawLetterElement[],
     next: RawLetterElement,
 ): RawLetterElement[] => {
-    const prev = acc.pop();
+    const prev = acc.at(-1);
 
-    if (!prev) {
-        acc.push(next);
-        return acc;
-    }
+    match([prev, next])
+        .with(
+            [
+                {
+                    elementType: TextElementType.Consonant,
+                    letter: { letterType: LetterType.Consonant },
+                },
+                Pattern.union(
+                    {
+                        elementType: TextElementType.Consonant,
+                        letter: { letterType: LetterType.Consonant },
+                    },
+                    { elementType: TextElementType.Vocal },
+                ),
+            ],
+            ([prev, next]) => {
+                acc.pop();
 
-    const text = prev.text + next.text;
-    const digraph = textToDigraph(text);
+                const text = prev.text + next.text;
+                const digraph = textToDigraph(text);
 
-    if (digraph) {
-        acc.push({
-            text,
-            letter: digraph,
+                if (digraph) {
+                    acc.push({
+                        elementType: TextElementType.Consonant,
+                        text,
+                        letter: digraph,
+                    });
+                } else {
+                    acc.push(prev, next);
+                }
+            },
+        )
+        .otherwise(() => {
+            acc.push(next);
         });
-    } else {
-        acc.push(prev, next);
-    }
 
     return acc;
 };

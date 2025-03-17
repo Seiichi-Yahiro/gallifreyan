@@ -8,6 +8,13 @@ import {
     convertVocalIdToConsonantId,
     type DotId,
     dotId,
+    isAttachedVocalGroupId,
+    isConsonantId,
+    isDoubleConsonantGroupId,
+    isDoubleVocalGroupId,
+    isStackedConsonantGroupId,
+    isVocalId,
+    type LetterGroupId,
     type LetterId,
     type LineSlotId,
     lineSlotId,
@@ -19,6 +26,7 @@ import {
     wordId,
 } from '@/redux/text/ids';
 import {
+    type Consonant,
     ConsonantDecoration,
     LetterType,
     VocalDecoration,
@@ -39,7 +47,7 @@ import {
     textToDigraph,
 } from '@/redux/text/textUtils';
 import { range, zip } from 'lodash';
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 
 const updateTree =
     (text: string): AppThunkAction =>
@@ -130,7 +138,7 @@ const compareLetter =
     (
         parent: WordId,
         newRawLetter?: RawLetterElement,
-        existingId?: LetterId,
+        existingId?: LetterId | LetterGroupId,
     ): AppThunkAction =>
     (dispatch, getState) => {
         if (!existingId && newRawLetter) {
@@ -150,111 +158,99 @@ const compareLetter =
         const state = getState();
         const letterElement = state.main.text.elements[existingId];
 
-        if (letterElement.text !== newRawLetter.text) {
-            match([letterElement, newRawLetter])
-                .with(
-                    [
-                        { elementType: TextElementType.Vocal },
-                        { letter: { letterType: LetterType.Vocal } },
-                    ],
-                    ([vocalElement, newRawVocal]) => {
-                        dispatch(
-                            textActions.updateVocalText({
-                                id: vocalElement.id,
-                                text: newRawVocal.text,
-                                letter: newRawVocal.letter,
-                            }),
-                        );
+        match([letterElement, newRawLetter])
+            .with(
+                [
+                    { elementType: TextElementType.Vocal },
+                    { elementType: TextElementType.Vocal },
+                ],
+                ([vocalElement, newRawVocal]) =>
+                    vocalElement.text !== newRawVocal.text,
+                ([vocalElement, newRawVocal]) => {
+                    dispatch(
+                        textActions.updateVocalText({
+                            id: vocalElement.id,
+                            text: newRawVocal.text,
+                            letter: newRawVocal.letter,
+                        }),
+                    );
 
-                        dispatch(
-                            compareLineSlots(
-                                vocalElement.id,
-                                newRawVocal.letter.decoration,
-                                vocalElement.lineSlots,
-                            ),
-                        );
-                    },
-                )
-                .with(
-                    [
-                        { elementType: TextElementType.Consonant },
-                        {
-                            letter: {
-                                letterType: P.union(
-                                    LetterType.Consonant,
-                                    LetterType.Digraph,
-                                ),
-                            },
-                        },
-                    ],
-                    ([consonantElement, newRawConsonant]) => {
-                        dispatch(
-                            textActions.updateConsonantText({
-                                id: consonantElement.id,
-                                text: newRawConsonant.text,
-                                letter: newRawConsonant.letter,
-                            }),
-                        );
+                    dispatch(
+                        compareLineSlots(
+                            vocalElement.id,
+                            newRawVocal.letter.decoration,
+                            vocalElement.lineSlots,
+                        ),
+                    );
+                },
+            )
+            .with(
+                [
+                    { elementType: TextElementType.Consonant },
+                    { elementType: TextElementType.Consonant },
+                ],
+                ([consonantElement, newRawConsonant]) =>
+                    consonantElement.text !== newRawConsonant.text,
+                ([consonantElement, newRawConsonant]) => {
+                    dispatch(
+                        textActions.updateConsonantText({
+                            id: consonantElement.id,
+                            text: newRawConsonant.text,
+                            letter: newRawConsonant.letter,
+                        }),
+                    );
 
-                        zip(
-                            range(dotAmount(newRawConsonant.letter.decoration)),
-                            consonantElement.dots,
-                        ).forEach(([newIndex, dotId]) =>
-                            dispatch(
-                                compareDot(
-                                    consonantElement.id,
-                                    newIndex,
-                                    dotId,
-                                ),
-                            ),
-                        );
+                    zip(
+                        range(dotAmount(newRawConsonant.letter.decoration)),
+                        consonantElement.dots,
+                    ).forEach(([newIndex, dotId]) =>
+                        dispatch(
+                            compareDot(consonantElement.id, newIndex, dotId),
+                        ),
+                    );
 
-                        dispatch(
-                            compareLineSlots(
-                                consonantElement.id,
-                                newRawConsonant.letter.decoration,
-                                consonantElement.lineSlots,
-                            ),
-                        );
-                    },
-                )
-                .with(
-                    [
-                        { elementType: TextElementType.Vocal },
-                        {
-                            letter: {
-                                letterType: P.union(
-                                    LetterType.Consonant,
-                                    LetterType.Digraph,
-                                ),
-                            },
-                        },
-                    ],
-                    ([vocalElement, newRawConsonant]) => {
-                        dispatch(
-                            convertVocalToConsonant(
-                                vocalElement.id,
-                                newRawConsonant,
-                            ),
-                        );
-                    },
-                )
-                .with(
-                    [
-                        { elementType: TextElementType.Consonant },
-                        { letter: { letterType: LetterType.Vocal } },
-                    ],
-                    ([consonantElement, newRawVocal]) => {
-                        dispatch(
-                            convertConsonantToVocal(
-                                consonantElement.id,
-                                newRawVocal,
-                            ),
-                        );
-                    },
-                )
-                .exhaustive();
-        }
+                    dispatch(
+                        compareLineSlots(
+                            consonantElement.id,
+                            newRawConsonant.letter.decoration,
+                            consonantElement.lineSlots,
+                        ),
+                    );
+                },
+            )
+            .with(
+                [
+                    { elementType: TextElementType.Vocal },
+                    { elementType: TextElementType.Consonant },
+                ],
+                ([vocalElement, newRawConsonant]) =>
+                    vocalElement.text !== newRawConsonant.text,
+                ([vocalElement, newRawConsonant]) => {
+                    dispatch(
+                        convertVocalToConsonant(
+                            vocalElement.id,
+                            newRawConsonant,
+                        ),
+                    );
+                },
+            )
+            .with(
+                [
+                    { elementType: TextElementType.Consonant },
+                    { elementType: TextElementType.Vocal },
+                ],
+                ([consonantElement, newRawVocal]) =>
+                    consonantElement.text !== newRawVocal.text,
+                ([consonantElement, newRawVocal]) => {
+                    dispatch(
+                        convertConsonantToVocal(
+                            consonantElement.id,
+                            newRawVocal,
+                        ),
+                    );
+                },
+            )
+            .otherwise(() => {}); // TODO make exhaustive again
     };
 
 const convertConsonantToVocal =
@@ -404,23 +400,48 @@ const addLetter =
         match(rawLetter)
             .with(
                 {
-                    letter: {
-                        letterType: LetterType.Vocal,
-                    },
+                    elementType: TextElementType.Vocal,
                 },
                 (rawVocal) => dispatch(addVocal(rawVocal, parent, index)),
             )
             .with(
                 {
-                    letter: {
-                        letterType: P.union(
-                            LetterType.Consonant,
-                            LetterType.Digraph,
-                        ),
-                    },
+                    elementType: TextElementType.Consonant,
                 },
                 (rawConsonant) =>
                     dispatch(addConsonant(rawConsonant, parent, index)),
+            )
+            .with(
+                {
+                    elementType: TextElementType.DoubleVocalGroup,
+                },
+                (_doubleVocalGroup) => {
+                    // TODO
+                },
+            )
+            .with(
+                {
+                    elementType: TextElementType.DoubleConsonantGroup,
+                },
+                (_doubleConsonantGroup) => {
+                    // TODO
+                },
+            )
+            .with(
+                {
+                    elementType: TextElementType.StackedConsonantGroup,
+                },
+                (_stackedConsonantGroup) => {
+                    // TODO
+                },
+            )
+            .with(
+                {
+                    elementType: TextElementType.AttachedVocalGroup,
+                },
+                (_attachedVocalGroup) => {
+                    // TODO
+                },
             )
             .exhaustive();
     };
@@ -500,19 +521,54 @@ const removeWord =
     };
 
 const removeLetter =
-    (id: LetterId): AppThunkAction =>
+    (id: LetterId | LetterGroupId): AppThunkAction =>
+    (dispatch, _getState) => {
+        match(id)
+            .when(isVocalId, (vocalId) => {
+                dispatch(removeVocal(vocalId));
+            })
+            .when(isConsonantId, (consonantId) => {
+                dispatch(removeConsonant(consonantId));
+            })
+            .when(isDoubleVocalGroupId, (_doubleVocalGroupId) => {
+                // TODO
+            })
+            .when(isDoubleConsonantGroupId, (_doubleConsonantGroupId) => {
+                // TODO
+            })
+            .when(isStackedConsonantGroupId, (_stackedConsonantGroupId) => {
+                // TODO
+            })
+            .when(isAttachedVocalGroupId, (_attachedVocalGroupId) => {
+                // TODO
+            })
+            .exhaustive();
+    };
+
+const removeConsonant =
+    (id: ConsonantId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const consonantElement = state.main.text.elements[id];
 
-        const letter = state.main.text.elements[id];
+        consonantElement.dots.forEach((dotId) =>
+            dispatch(textActions.removeDot(dotId)),
+        );
 
-        if (letter.elementType === TextElementType.Consonant) {
-            letter.dots.forEach((dotId) =>
-                dispatch(textActions.removeDot(dotId)),
-            );
-        }
+        consonantElement.lineSlots.forEach((lineSlotId) =>
+            dispatch(textActions.removeLineSlot(lineSlotId)),
+        );
 
-        letter.lineSlots.forEach((lineSlotId) =>
+        dispatch(textActions.removeLetter(id));
+    };
+
+const removeVocal =
+    (id: VocalId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const vocalElement = state.main.text.elements[id];
+
+        vocalElement.lineSlots.forEach((lineSlotId) =>
             dispatch(textActions.removeLineSlot(lineSlotId)),
         );
 
@@ -529,24 +585,41 @@ const splitDigraph =
         );
 
         const [firstChar, secondChar] = letter.text;
+        const firstLetter = charToSingleLetter(firstChar) as Consonant;
+        const secondLetter = charToSingleLetter(secondChar)!;
 
         dispatch(
             compareLetter(
                 letter.parent,
                 {
+                    elementType: TextElementType.Consonant,
                     text: firstChar,
-                    letter: charToSingleLetter(firstChar)!,
-                } as RawLetterElement,
+                    letter: firstLetter,
+                },
                 letterId,
             ),
         );
 
         dispatch(
             addLetter(
-                {
-                    text: secondChar,
-                    letter: charToSingleLetter(secondChar)!,
-                } as RawLetterElement,
+                match(secondLetter)
+                    .with(
+                        { letterType: LetterType.Vocal },
+                        (vocal): RawVocalElement => ({
+                            elementType: TextElementType.Vocal,
+                            text: secondChar,
+                            letter: vocal,
+                        }),
+                    )
+                    .with(
+                        { letterType: LetterType.Consonant },
+                        (consonant): RawConsonantElement => ({
+                            elementType: TextElementType.Consonant,
+                            text: secondChar,
+                            letter: consonant,
+                        }),
+                    )
+                    .exhaustive(),
                 letter.parent,
                 index + 1,
             ),
@@ -568,9 +641,10 @@ const mergeToDigraph =
             compareLetter(
                 firstLetter.parent,
                 {
+                    elementType: TextElementType.Consonant,
                     text,
                     letter: textToDigraph(text)!,
-                },
+                } satisfies RawConsonantElement,
                 firstLetterId,
             ),
         );

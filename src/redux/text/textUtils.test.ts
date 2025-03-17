@@ -10,7 +10,7 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import type { RawLetterElement } from '@/redux/text/textTypes';
+import { type RawLetterElement, TextElementType } from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     digraphReducer,
@@ -399,6 +399,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'th',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -417,6 +418,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'ph',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -435,6 +437,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'wh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -453,6 +456,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'gh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -471,6 +475,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'ch',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -489,6 +494,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'sh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -507,6 +513,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'nd',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -525,6 +532,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'nt',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -543,6 +551,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'qu',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -561,6 +570,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Consonant,
                     text: 'ng',
                     letter: {
                         letterType: LetterType.Digraph,
