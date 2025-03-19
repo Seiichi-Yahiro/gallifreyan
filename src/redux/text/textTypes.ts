@@ -2,13 +2,12 @@ import type {
     AttachedVocalGroupId,
     ConsonantId,
     DotId,
-    DoubleConsonantGroupId,
-    DoubleVocalGroupId,
     LetterGroupId,
     LetterId,
     LineSlotId,
     SentenceId,
     StackedConsonantGroupId,
+    StackedVocalGroupId,
     TextElementId,
     VocalId,
     WordId,
@@ -20,9 +19,8 @@ export enum TextElementType {
     Word = 'Word',
     Consonant = 'Consonant',
     Vocal = 'Vocal',
-    DoubleConsonantGroup = 'DoubleConsonantGroup',
-    DoubleVocalGroup = 'DoubleVocalGroup',
     StackedConsonantGroup = 'StackedConsonantGroup',
+    StackedVocalGroup = 'StackedVocalGroup',
     AttachedVocalGroup = 'AttachedVocalGroup',
     Dot = 'Dot',
     LineSlot = 'LineSlot',
@@ -62,25 +60,18 @@ export interface VocalElement {
     lineSlots: LineSlotId[];
 }
 
-export interface DoubleConsonantGroupElement {
-    elementType: TextElementType.DoubleConsonantGroup;
-    id: DoubleConsonantGroupId;
-    parent: WordId | StackedConsonantGroupId | AttachedVocalGroupId;
-    letters: [ConsonantId, ConsonantId];
-}
-
-export interface DoubleVocalGroupElement {
-    elementType: TextElementType.DoubleVocalGroup;
-    id: DoubleVocalGroupId;
-    parent: WordId | AttachedVocalGroupId;
-    letters: [VocalId, VocalId];
-}
-
 export interface StackedConsonantGroupElement {
     elementType: TextElementType.StackedConsonantGroup;
     id: StackedConsonantGroupId;
     parent: WordId | AttachedVocalGroupId;
-    letters: (ConsonantId | DoubleConsonantGroupId)[];
+    letters: ConsonantId[];
+}
+
+export interface StackedVocalGroupElement {
+    elementType: TextElementType.StackedVocalGroup;
+    id: StackedVocalGroupId;
+    parent: WordId | AttachedVocalGroupId;
+    letters: VocalId[];
 }
 
 export interface AttachedVocalGroupElement {
@@ -88,8 +79,8 @@ export interface AttachedVocalGroupElement {
     id: AttachedVocalGroupId;
     parent: WordId;
     letters: [
-        ConsonantId | DoubleConsonantGroupId | StackedConsonantGroupId,
-        VocalId | DoubleVocalGroupId,
+        ConsonantId | StackedConsonantGroupId,
+        VocalId | StackedVocalGroupId,
     ];
 }
 
@@ -117,38 +108,28 @@ export interface RawVocalElement {
     letter: Vocal;
 }
 
-export interface RawDoubleConsonantElement {
-    elementType: TextElementType.DoubleConsonantGroup;
-    letters: [RawConsonantElement, RawConsonantElement];
-}
-
-export interface RawDoubleVocalElement {
-    elementType: TextElementType.DoubleVocalGroup;
-    letters: [RawVocalElement, RawVocalElement];
+export interface RawStackedVocalElement {
+    elementType: TextElementType.StackedVocalGroup;
+    letters: RawVocalElement[];
 }
 
 export interface RawStackedConsonantElement {
     elementType: TextElementType.StackedConsonantGroup;
-    letters: (RawConsonantElement | RawDoubleConsonantElement)[];
+    letters: RawConsonantElement[];
 }
 
 export interface RawAttachedVocalGroupElement {
     elementType: TextElementType.AttachedVocalGroup;
     letters: [
-        (
-            | RawLetterElement
-            | RawDoubleConsonantElement
-            | RawStackedConsonantElement
-        ),
-        RawVocalElement | RawDoubleVocalElement,
+        RawConsonantElement | RawStackedConsonantElement,
+        RawVocalElement | RawStackedVocalElement,
     ];
 }
 
 export type RawLetterElement =
     | RawConsonantElement
     | RawVocalElement
-    | RawDoubleConsonantElement
-    | RawDoubleVocalElement
+    | RawStackedVocalElement
     | RawStackedConsonantElement
     | RawAttachedVocalGroupElement;
 
@@ -158,9 +139,8 @@ export type TextElementDictValue<K extends string> =
     K extends WordId ? WordElement :
     K extends ConsonantId ? ConsonantElement :
     K extends VocalId ? VocalElement :
-    K extends DoubleConsonantGroupId ? DoubleConsonantGroupElement :
-    K extends DoubleVocalGroupId ? DoubleVocalGroupElement :
     K extends StackedConsonantGroupId ? StackedConsonantGroupElement :
+    K extends StackedVocalGroupId ? StackedVocalGroupElement :
     K extends AttachedVocalGroupId ? AttachedVocalGroupElement :
     K extends DotId ? DotElement :
     K extends LineSlotId ? LineSlotElement : never;

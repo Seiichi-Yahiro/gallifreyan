@@ -10,9 +10,8 @@ import {
     dotId,
     isAttachedVocalGroupId,
     isConsonantId,
-    isDoubleConsonantGroupId,
-    isDoubleVocalGroupId,
     isStackedConsonantGroupId,
+    isStackedVocalGroupId,
     isVocalId,
     type LetterGroupId,
     type LetterId,
@@ -413,17 +412,9 @@ const addLetter =
             )
             .with(
                 {
-                    elementType: TextElementType.DoubleVocalGroup,
+                    elementType: TextElementType.StackedVocalGroup,
                 },
-                (_doubleVocalGroup) => {
-                    // TODO
-                },
-            )
-            .with(
-                {
-                    elementType: TextElementType.DoubleConsonantGroup,
-                },
-                (_doubleConsonantGroup) => {
+                (_stackedVocalGroup) => {
                     // TODO
                 },
             )
@@ -530,10 +521,7 @@ const removeLetter =
             .when(isConsonantId, (consonantId) => {
                 dispatch(removeConsonant(consonantId));
             })
-            .when(isDoubleVocalGroupId, (_doubleVocalGroupId) => {
-                // TODO
-            })
-            .when(isDoubleConsonantGroupId, (_doubleConsonantGroupId) => {
+            .when(isStackedVocalGroupId, (_stackedVocalGroupId) => {
                 // TODO
             })
             .when(isStackedConsonantGroupId, (_stackedConsonantGroupId) => {

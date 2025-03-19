@@ -6,9 +6,8 @@ import {
     type DotId,
     isAttachedVocalGroupId,
     isConsonantId,
-    isDoubleConsonantGroupId,
-    isDoubleVocalGroupId,
     isStackedConsonantGroupId,
+    isStackedVocalGroupId,
     isVocalId,
     type LineSlotId,
     type SentenceId,
@@ -151,11 +150,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                             id={consonantId}
                         />
                     ))
-                    .when(isDoubleVocalGroupId, (_groupId) => {
-                        // TODO
-                        return null;
-                    })
-                    .when(isDoubleConsonantGroupId, (_groupId) => {
+                    .when(isStackedVocalGroupId, (_groupId) => {
                         // TODO
                         return null;
                     })

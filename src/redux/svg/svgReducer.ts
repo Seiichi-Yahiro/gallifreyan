@@ -35,9 +35,8 @@ import {
     convertVocalIdToConsonantId,
     isAttachedVocalGroupId,
     isConsonantId,
-    isDoubleConsonantGroupId,
-    isDoubleVocalGroupId,
     isStackedConsonantGroupId,
+    isStackedVocalGroupId,
     isVocalId,
 } from '@/redux/text/ids';
 import { ConsonantPlacement, VocalDecoration } from '@/redux/text/letterTypes';
@@ -166,10 +165,7 @@ export const createSvgReducerCases = (
 
                             resetLineSlots(letter, letterCircle);
                         })
-                        .when(isDoubleVocalGroupId, (_groupId) => {
-                            // TODO
-                        })
-                        .when(isDoubleConsonantGroupId, (_groupId) => {
+                        .when(isStackedVocalGroupId, (_groupId) => {
                             // TODO
                         })
                         .when(isStackedConsonantGroupId, (_groupId) => {

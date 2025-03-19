@@ -44,22 +44,6 @@ export const convertConsonantIdToVocalId = (id: ConsonantId): VocalId =>
 export const convertVocalIdToConsonantId = (id: VocalId): ConsonantId =>
     id.replace('VOC', 'CON') as ConsonantId;
 
-export type DoubleVocalGroupId = IdGenerator<'DVG'>;
-const doubleVocalGroupCounter = createIdCounter('DVG');
-export const doubleVocalGroupId: () => DoubleVocalGroupId =
-    doubleVocalGroupCounter.generator;
-export const isDoubleVocalGroupId = (
-    id: TextElementId,
-): id is DoubleVocalGroupId => id.startsWith('DVG');
-
-export type DoubleConsonantGroupId = IdGenerator<'DCG'>;
-const doubleConsonantGroupCounter = createIdCounter('DCG');
-export const doubleConsonantGroupId: () => DoubleConsonantGroupId =
-    doubleConsonantGroupCounter.generator;
-export const isDoubleConsonantGroupId = (
-    id: TextElementId,
-): id is DoubleConsonantGroupId => id.startsWith('DCG');
-
 export type StackedConsonantGroupId = IdGenerator<'SCG'>;
 const stackedConsonantGroupCounter = createIdCounter('SCG');
 export const stackedConsonantGroupId: () => StackedConsonantGroupId =
@@ -67,6 +51,14 @@ export const stackedConsonantGroupId: () => StackedConsonantGroupId =
 export const isStackedConsonantGroupId = (
     id: TextElementId,
 ): id is StackedConsonantGroupId => id.startsWith('SCG');
+
+export type StackedVocalGroupId = IdGenerator<'SVG'>;
+const stackedVocalGroupCounter = createIdCounter('SVG');
+export const stackedVocalGroupId: () => StackedVocalGroupId =
+    stackedVocalGroupCounter.generator;
+export const isStackedVocalGroupId = (
+    id: TextElementId,
+): id is StackedVocalGroupId => id.startsWith('SVG');
 
 export type AttachedVocalGroupId = IdGenerator<'AVG'>;
 const attachedVocalGroupCounter = createIdCounter('AVG');
@@ -77,9 +69,8 @@ export const isAttachedVocalGroupId = (
 ): id is AttachedVocalGroupId => id.startsWith('AVG');
 
 export type LetterGroupId =
-    | DoubleVocalGroupId
-    | DoubleConsonantGroupId
     | StackedConsonantGroupId
+    | StackedVocalGroupId
     | AttachedVocalGroupId;
 
 export type DotId = IdGenerator<'DOT'>;
@@ -106,9 +97,8 @@ export const resetIdCounters = () => {
     sentenceCounter.reset();
     wordCounter.reset();
     letterCounter.reset();
-    doubleVocalGroupCounter.reset();
-    doubleConsonantGroupCounter.reset();
     stackedConsonantGroupCounter.reset();
+    stackedVocalGroupCounter.reset();
     attachedVocalGroupCounter.reset();
     dotCounter.reset();
     lineSlotCounter.reset();
