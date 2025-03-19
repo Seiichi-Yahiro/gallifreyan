@@ -14,6 +14,8 @@ import {
 import {
     type RawConsonantElement,
     type RawLetterElement,
+    type RawStackedConsonantElement,
+    type RawStackedVocalElement,
     type RawVocalElement,
     TextElementType,
 } from '@/redux/text/textTypes';
@@ -26,6 +28,7 @@ export const splitWords = (sentence: string): string[] => sentence.split(' ');
 
 export interface SplitLettersOptions {
     digraphs?: boolean;
+    doubleLetters?: boolean;
 }
 
 export const splitLetters = (
@@ -57,6 +60,10 @@ export const splitLetters = (
 
     if (options?.digraphs) {
         letters = letters.reduce(digraphReducer, []);
+    }
+
+    if (options?.doubleLetters) {
+        letters = letters.reduce(doubleLetterReducer, []);
     }
 
     return letters;
@@ -328,6 +335,54 @@ export const digraphReducer = (
                 } else {
                     acc.push(prev, next);
                 }
+            },
+        )
+        .otherwise(() => {
+            acc.push(next);
+        });
+
+    return acc;
+};
+
+export const doubleLetterReducer = (
+    acc: RawLetterElement[],
+    next: RawLetterElement,
+): RawLetterElement[] => {
+    const prev = acc.at(-1);
+
+    match([prev, next])
+        .with(
+            [
+                {
+                    elementType: TextElementType.Consonant,
+                },
+                {
+                    elementType: TextElementType.Consonant,
+                },
+            ],
+            ([prev, next]) => prev.letter.value === next.letter.value,
+            ([prev, next]) => {
+                acc.pop();
+
+                acc.push({
+                    elementType: TextElementType.StackedConsonantGroup,
+                    letters: [prev, next],
+                } satisfies RawStackedConsonantElement);
+            },
+        )
+        .with(
+            [
+                { elementType: TextElementType.Vocal },
+                { elementType: TextElementType.Vocal },
+            ],
+            ([prev, next]) => prev.letter.value === next.letter.value,
+            ([prev, next]) => {
+                acc.pop();
+
+                acc.push({
+                    elementType: TextElementType.StackedVocalGroup,
+                    letters: [prev, next],
+                } satisfies RawStackedVocalElement);
             },
         )
         .otherwise(() => {

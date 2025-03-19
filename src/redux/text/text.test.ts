@@ -35,6 +35,7 @@ describe('text', () => {
             elements: {},
             splitLetterOptions: {
                 digraphs: true,
+                doubleLetters: true,
             },
         });
     });

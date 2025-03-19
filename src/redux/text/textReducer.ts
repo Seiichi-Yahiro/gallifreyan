@@ -31,6 +31,7 @@ export const createInitialTextState = (): TextState => ({
     elements: {},
     splitLetterOptions: {
         digraphs: true,
+        doubleLetters: true,
     },
 });
 

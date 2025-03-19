@@ -10,12 +10,20 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import { type RawLetterElement, TextElementType } from '@/redux/text/textTypes';
+import {
+    type RawConsonantElement,
+    type RawLetterElement,
+    type RawStackedConsonantElement,
+    type RawStackedVocalElement,
+    type RawVocalElement,
+    TextElementType,
+} from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     digraphReducer,
     sanitizeSentence,
     splitLetters,
+    textToDigraph,
 } from '@/redux/text/textUtils';
 import { describe, expect, it } from 'vitest';
 
@@ -393,9 +401,12 @@ describe('textUtils', () => {
         });
     });
 
-    describe('combine letters', () => {
-        it('should combine th', () => {
-            const result = splitLetters('th', { digraphs: true });
+    describe('digraph letters', () => {
+        it('should digraph th', () => {
+            const result = splitLetters('th', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -413,8 +424,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine ph', () => {
-            const result = splitLetters('ph', { digraphs: true });
+        it('should digraph ph', () => {
+            const result = splitLetters('ph', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -432,8 +446,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine wh', () => {
-            const result = splitLetters('wh', { digraphs: true });
+        it('should digraph wh', () => {
+            const result = splitLetters('wh', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -451,8 +468,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine gh', () => {
-            const result = splitLetters('gh', { digraphs: true });
+        it('should digraph gh', () => {
+            const result = splitLetters('gh', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -470,8 +490,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine ch', () => {
-            const result = splitLetters('ch', { digraphs: true });
+        it('should digraph ch', () => {
+            const result = splitLetters('ch', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -489,8 +512,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine sh', () => {
-            const result = splitLetters('sh', { digraphs: true });
+        it('should digraph sh', () => {
+            const result = splitLetters('sh', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -508,8 +534,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine nd', () => {
-            const result = splitLetters('nd', { digraphs: true });
+        it('should digraph nd', () => {
+            const result = splitLetters('nd', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -527,8 +556,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine nt', () => {
-            const result = splitLetters('nt', { digraphs: true });
+        it('should digraph nt', () => {
+            const result = splitLetters('nt', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -546,8 +578,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine qu', () => {
-            const result = splitLetters('qu', { digraphs: true });
+        it('should digraph qu', () => {
+            const result = splitLetters('qu', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -565,8 +600,11 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should combine ng', () => {
-            const result = splitLetters('ng', { digraphs: true });
+        it('should digraph ng', () => {
+            const result = splitLetters('ng', {
+                digraphs: true,
+                doubleLetters: false,
+            });
 
             const expected: RawLetterElement[] = [
                 {
@@ -584,13 +622,13 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(expected);
         });
 
-        it('should not combine other consonants', () => {
+        it('should not digraph other consonants', () => {
             const letters = Object.values(ConsonantValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
+                (text): RawLetterElement => ({
+                    elementType: TextElementType.Consonant,
+                    text,
+                    letter: charToSingleLetter(text) as Consonant,
+                }),
             );
 
             const result = letters.reduce(digraphReducer, []);
@@ -598,13 +636,13 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(letters);
         });
 
-        it('should not combine vocals', () => {
+        it('should not digraph vocals', () => {
             const letters = Object.values(VocalValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
+                (text): RawLetterElement => ({
+                    elementType: TextElementType.Vocal,
+                    text,
+                    letter: charToSingleLetter(text) as Vocal,
+                }),
             );
 
             const result = letters.reduce(digraphReducer, []);
@@ -612,18 +650,122 @@ describe('textUtils', () => {
             expect(result).toStrictEqual(letters);
         });
 
-        it('should not combine digraphs', () => {
-            const letters = Object.values(DigraphValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
-            );
+        it('should not digraph ngh with ng digraph', () => {
+            const letters: RawLetterElement[] = [
+                {
+                    elementType: TextElementType.Consonant,
+                    text: 'ng',
+                    letter: textToDigraph('ng')!,
+                },
+                {
+                    elementType: TextElementType.Consonant,
+                    text: 'h',
+                    letter: charToSingleLetter('h') as Consonant,
+                },
+            ];
 
             const result = letters.reduce(digraphReducer, []);
 
             expect(result).toStrictEqual(letters);
         });
+
+        it('should not digraph ngh with gh digraph', () => {
+            const letters: RawLetterElement[] = [
+                {
+                    elementType: TextElementType.Consonant,
+                    text: 'n',
+                    letter: charToSingleLetter('n') as Consonant,
+                },
+                {
+                    elementType: TextElementType.Consonant,
+                    text: 'gh',
+                    letter: textToDigraph('gh')!,
+                },
+            ];
+
+            const result = letters.reduce(digraphReducer, []);
+
+            expect(result).toStrictEqual(letters);
+        });
+    });
+
+    describe('double letters', () => {
+        Object.values(VocalValue)
+            .map(
+                (text): RawVocalElement => ({
+                    elementType: TextElementType.Vocal,
+                    text,
+                    letter: charToSingleLetter(text) as Vocal,
+                }),
+            )
+            .forEach((raw) => {
+                it(`should group ${raw.text}`, () => {
+                    const result = splitLetters(raw.text + raw.text, {
+                        digraphs: false,
+                        doubleLetters: true,
+                    });
+
+                    const expected: RawStackedVocalElement[] = [
+                        {
+                            elementType: TextElementType.StackedVocalGroup,
+                            letters: [raw, raw],
+                        },
+                    ];
+
+                    expect(result).toStrictEqual(expected);
+                });
+            });
+
+        Object.values(ConsonantValue)
+            .map(
+                (text): RawConsonantElement => ({
+                    elementType: TextElementType.Consonant,
+                    text,
+                    letter: charToSingleLetter(text) as Consonant,
+                }),
+            )
+            .forEach((raw) => {
+                it(`should group ${raw.text}`, () => {
+                    const result = splitLetters(raw.text + raw.text, {
+                        digraphs: false,
+                        doubleLetters: true,
+                    });
+
+                    const expected: RawStackedConsonantElement[] = [
+                        {
+                            elementType: TextElementType.StackedConsonantGroup,
+                            letters: [raw, raw],
+                        },
+                    ];
+
+                    expect(result).toStrictEqual(expected);
+                });
+            });
+
+        Object.values(DigraphValue)
+            .map(
+                (text): RawConsonantElement => ({
+                    elementType: TextElementType.Consonant,
+                    text,
+                    letter: textToDigraph(text)!,
+                }),
+            )
+            .forEach((raw) => {
+                it(`should group ${raw.text}`, () => {
+                    const result = splitLetters(raw.text + raw.text, {
+                        digraphs: true,
+                        doubleLetters: true,
+                    });
+
+                    const expected: RawStackedConsonantElement[] = [
+                        {
+                            elementType: TextElementType.StackedConsonantGroup,
+                            letters: [raw, raw],
+                        },
+                    ];
+
+                    expect(result).toStrictEqual(expected);
+                });
+            });
     });
 });
