@@ -15,14 +15,17 @@ import {
     type VocalElement,
     type WordElement,
 } from '@/redux/text/textTypes';
-import type { SplitLettersOptions } from '@/redux/text/textUtils';
+import {
+    LetterStackType,
+    type SplitLettersOptions,
+} from '@/redux/text/textUtils';
 import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
-    splitLetterOptions: Required<SplitLettersOptions>;
+    splitLetterOptions: SplitLettersOptions;
 }
 
 export const createInitialTextState = (): TextState => ({
@@ -31,7 +34,10 @@ export const createInitialTextState = (): TextState => ({
     elements: {},
     splitLetterOptions: {
         digraphs: true,
-        doubleLetters: true,
+        stackLetters: {
+            stackType: LetterStackType.Value,
+            maxStackSize: 2,
+        },
     },
 });
 

@@ -28,7 +28,7 @@ export const splitWords = (sentence: string): string[] => sentence.split(' ');
 
 export interface SplitLettersOptions {
     digraphs?: boolean;
-    doubleLetters?: boolean;
+    stackLetters?: StackLetterOptions;
 }
 
 export const splitLetters = (
@@ -62,8 +62,11 @@ export const splitLetters = (
         letters = letters.reduce(digraphReducer, []);
     }
 
-    if (options?.doubleLetters) {
-        letters = letters.reduce(doubleLetterReducer, []);
+    if (options?.stackLetters) {
+        letters = letters.reduce(
+            createStackLetterReducer(options.stackLetters),
+            [],
+        );
     }
 
     return letters;
@@ -299,10 +302,12 @@ export const textToDigraph = (text: string): Digraph | null => {
     };
 };
 
-export const digraphReducer = (
+type RawLetterElementReducer = (
     acc: RawLetterElement[],
     next: RawLetterElement,
-): RawLetterElement[] => {
+) => RawLetterElement[];
+
+export const digraphReducer: RawLetterElementReducer = (acc, next) => {
     const prev = acc.at(-1);
 
     match([prev, next])
@@ -344,50 +349,123 @@ export const digraphReducer = (
     return acc;
 };
 
-export const doubleLetterReducer = (
-    acc: RawLetterElement[],
-    next: RawLetterElement,
-): RawLetterElement[] => {
-    const prev = acc.at(-1);
+export enum LetterStackType {
+    Value = 'Value',
+    Placement = 'Placement',
+}
 
-    match([prev, next])
-        .with(
-            [
-                {
-                    elementType: TextElementType.Consonant,
-                },
-                {
-                    elementType: TextElementType.Consonant,
-                },
-            ],
-            ([prev, next]) => prev.letter.value === next.letter.value,
-            ([prev, next]) => {
-                acc.pop();
+export interface StackLetterOptions {
+    stackType: LetterStackType;
+    maxStackSize: number;
+}
 
-                acc.push({
-                    elementType: TextElementType.StackedConsonantGroup,
-                    letters: [prev, next],
-                } satisfies RawStackedConsonantElement);
-            },
-        )
-        .with(
-            [
-                { elementType: TextElementType.Vocal },
-                { elementType: TextElementType.Vocal },
-            ],
-            ([prev, next]) => prev.letter.value === next.letter.value,
-            ([prev, next]) => {
-                acc.pop();
+export const createStackLetterReducer = (
+    options: StackLetterOptions,
+): RawLetterElementReducer => {
+    const maxStackSize =
+        options.maxStackSize <= 0
+            ? Number.POSITIVE_INFINITY
+            : options.maxStackSize;
 
-                acc.push({
-                    elementType: TextElementType.StackedVocalGroup,
-                    letters: [prev, next],
-                } satisfies RawStackedVocalElement);
-            },
-        )
-        .otherwise(() => {
+    if (maxStackSize === 1) {
+        return (acc, next) => {
             acc.push(next);
-        });
+            return acc;
+        };
+    }
 
-    return acc;
+    type SingleComparator = <T extends RawConsonantElement | RawVocalElement>([
+        prev,
+        next,
+    ]: readonly [T, T]) => boolean;
+
+    const singleValueComparator: SingleComparator = ([prev, next]) =>
+        prev.letter.value === next.letter.value;
+
+    const singlePlacementComparator: SingleComparator = ([prev, next]) =>
+        prev.letter.placement === next.letter.placement;
+
+    const singleComparator = match(options.stackType)
+        .with(LetterStackType.Value, () => singleValueComparator)
+        .with(LetterStackType.Placement, () => singlePlacementComparator)
+        .exhaustive();
+
+    const multiValueComparator = ([prev, next]:
+        | readonly [RawStackedConsonantElement, RawConsonantElement]
+        | readonly [RawStackedVocalElement, RawVocalElement]) =>
+        prev.letters.length < maxStackSize &&
+        singleComparator([prev.letters[0], next]);
+
+    return (acc, next) => {
+        const prev = acc.at(-1);
+
+        match([prev, next])
+            .with(
+                [
+                    {
+                        elementType: TextElementType.Consonant,
+                    },
+                    {
+                        elementType: TextElementType.Consonant,
+                    },
+                ],
+                (elements) => singleComparator(elements),
+                ([prev, next]) => {
+                    acc.pop();
+
+                    acc.push({
+                        elementType: TextElementType.StackedConsonantGroup,
+                        letters: [prev, next],
+                    } satisfies RawStackedConsonantElement);
+                },
+            )
+            .with(
+                [
+                    { elementType: TextElementType.Vocal },
+                    { elementType: TextElementType.Vocal },
+                ],
+                (elements) => singleComparator(elements),
+                ([prev, next]) => {
+                    acc.pop();
+
+                    acc.push({
+                        elementType: TextElementType.StackedVocalGroup,
+                        letters: [prev, next],
+                    } satisfies RawStackedVocalElement);
+                },
+            )
+            .with(
+                [
+                    {
+                        elementType: TextElementType.StackedConsonantGroup,
+                    },
+                    {
+                        elementType: TextElementType.Consonant,
+                    },
+                ],
+                (elements) => multiValueComparator(elements),
+                ([prev, next]) => {
+                    prev.letters.push(next);
+                },
+            )
+            .with(
+                [
+                    {
+                        elementType: TextElementType.StackedVocalGroup,
+                    },
+                    {
+                        elementType: TextElementType.Vocal,
+                    },
+                ],
+                (elements) => multiValueComparator(elements),
+                ([prev, next]) => {
+                    prev.letters.push(next);
+                },
+            )
+            .otherwise(() => {
+                acc.push(next);
+            });
+
+        return acc;
+    };
 };
