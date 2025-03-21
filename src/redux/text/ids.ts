@@ -20,29 +20,11 @@ export type WordId = IdGenerator<'WRD'>;
 const wordCounter = createIdCounter('WRD');
 export const wordId: () => WordId = wordCounter.generator;
 
+export type LetterId = IdGenerator<'LTR'>;
 const letterCounter = createIdCounter('LTR');
-
-export type ConsonantId = IdGenerator<'CON'>;
-export const consonantId = (): ConsonantId =>
-    letterCounter.generator().replace('LTR', 'CON') as ConsonantId;
-export const isConsonantId = (id: TextElementId): id is ConsonantId =>
-    id.startsWith('CON');
-
-export type VocalId = IdGenerator<'VOC'>;
-export const vocalId = (): VocalId =>
-    letterCounter.generator().replace('LTR', 'VOC') as VocalId;
-export const isVocalId = (id: TextElementId): id is VocalId =>
-    id.startsWith('VOC');
-
-export type LetterId = ConsonantId | VocalId;
+export const letterId: () => LetterId = letterCounter.generator;
 export const isLetterId = (id: TextElementId): id is LetterId =>
-    isConsonantId(id) || isVocalId(id);
-
-export const convertConsonantIdToVocalId = (id: ConsonantId): VocalId =>
-    id.replace('CON', 'VOC') as VocalId;
-
-export const convertVocalIdToConsonantId = (id: VocalId): ConsonantId =>
-    id.replace('VOC', 'CON') as ConsonantId;
+    id.startsWith('LTR');
 
 export type DotId = IdGenerator<'DOT'>;
 const dotCounter = createIdCounter('DOT');

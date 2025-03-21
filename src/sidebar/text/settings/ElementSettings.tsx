@@ -1,8 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import {
-    type ConsonantId,
-    isConsonantId,
     isDotId,
     isLetterId,
     isLineSlotId,
@@ -11,6 +9,7 @@ import {
 } from '@/redux/text/ids';
 import { LetterType } from '@/redux/text/letterTypes';
 import textThunks from '@/redux/text/textThunks';
+import type { LetterElement } from '@/redux/text/textTypes';
 import { isDigraphText } from '@/redux/text/textUtils';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
@@ -44,88 +43,71 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
     );
 };
 
+type LetterElementWithNeighbours = {
+    prevLetterElement: LetterElement | null;
+    letterElement: LetterElement;
+    nextLetterElement: LetterElement | null;
+};
+
 interface LetterSettingsProps {
     id: LetterId;
 }
 
 const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
-    const [prevId, nextId] = useRedux(
-        (state): [LetterId | undefined, LetterId | undefined] => {
-            const letter = state.main.text.elements[id];
-            const parent = state.main.text.elements[letter.parent];
-            const index = parent.letters.findIndex(
-                (letterId) => letterId === id,
-            );
+    const dispatch = useAppDispatch();
 
-            let prevId;
-            let nextId;
+    const {
+        prevLetterElement,
+        letterElement,
+        nextLetterElement,
+    }: LetterElementWithNeighbours = useRedux((state) => {
+        const letterElement = state.main.text.elements[id];
+        const parent = state.main.text.elements[letterElement.parent];
+        const index = parent.letters.findIndex((letterId) => letterId === id);
 
-            if (index - 1 >= 0) {
-                prevId = parent.letters[index - 1];
-            }
+        const letterElementWithNeighbours: LetterElementWithNeighbours = {
+            prevLetterElement: null,
+            letterElement,
+            nextLetterElement: null,
+        };
 
-            if (index + 1 < parent.letters.length) {
-                nextId = parent.letters[index + 1];
-            }
+        if (index - 1 >= 0) {
+            const prevId = parent.letters[index - 1];
+            letterElementWithNeighbours.prevLetterElement =
+                state.main.text.elements[prevId];
+        }
 
-            return [prevId, nextId];
-        },
-        isEqual,
+        if (index + 1 < parent.letters.length) {
+            const nextId = parent.letters[index + 1];
+            letterElementWithNeighbours.nextLetterElement =
+                state.main.text.elements[nextId];
+        }
+
+        return letterElementWithNeighbours;
+    }, isEqual);
+
+    const canMergeWithPrevToDigraph = useMemo(
+        () =>
+            prevLetterElement &&
+            isDigraphText(prevLetterElement.text + letterElement.text),
+        [letterElement.text, prevLetterElement],
+    );
+
+    const canMergeWithNextToDigraph = useMemo(
+        () =>
+            nextLetterElement &&
+            isDigraphText(letterElement.text + nextLetterElement.text),
+        [letterElement.text, nextLetterElement],
     );
 
     return (
         <div className="flex flex-row gap-1 empty:hidden">
-            {isConsonantId(id) && (
-                <ConsonantSettings id={id} prevId={prevId} nextId={nextId} />
-            )}
-        </div>
-    );
-};
-
-interface ConsonantSettingsProps {
-    prevId?: LetterId;
-    id: ConsonantId;
-    nextId?: LetterId;
-}
-
-const ConsonantSettings: React.FC<ConsonantSettingsProps> = ({
-    prevId,
-    id,
-    nextId,
-}) => {
-    const dispatch = useAppDispatch();
-
-    const isDigraph = useRedux(
-        (state) =>
-            state.main.text.elements[id].letter.letterType ===
-            LetterType.Digraph,
-    );
-
-    const [prevText, text, nextText] = useRedux((state) => {
-        const prevText = prevId ? state.main.text.elements[prevId].text : '';
-        const text = state.main.text.elements[id].text;
-        const nextText = nextId ? state.main.text.elements[nextId].text : '';
-        return [prevText, text, nextText];
-    }, isEqual);
-
-    const canMergeWithPrevToDigraph = useMemo(
-        () => !isDigraph && isDigraphText(prevText + text),
-        [isDigraph, prevText, text],
-    );
-
-    const canMergeWithNextToDigraph = useMemo(
-        () => !isDigraph && isDigraphText(text + nextText),
-        [isDigraph, nextText, text],
-    );
-
-    return (
-        <>
             {canMergeWithPrevToDigraph && (
                 <IconButton
                     onClick={() => {
                         dispatch(
                             textThunks.mergeToDigraph(
-                                prevId as ConsonantId,
+                                prevLetterElement!.id,
                                 id,
                             ),
                         );
@@ -134,7 +116,7 @@ const ConsonantSettings: React.FC<ConsonantSettingsProps> = ({
                     <Merge className="-rotate-90" />
                 </IconButton>
             )}
-            {isDigraph && (
+            {letterElement.letter.letterType === LetterType.Digraph && (
                 <IconButton
                     onClick={() => {
                         dispatch(textThunks.splitDigraph(id));
@@ -147,14 +129,17 @@ const ConsonantSettings: React.FC<ConsonantSettingsProps> = ({
                 <IconButton
                     onClick={() => {
                         dispatch(
-                            textThunks.mergeToDigraph(id, nextId as LetterId),
+                            textThunks.mergeToDigraph(
+                                id,
+                                nextLetterElement!.id,
+                            ),
                         );
                     }}
                 >
                     <Merge className="rotate-90" />
                 </IconButton>
             )}
-        </>
+        </div>
     );
 };
 

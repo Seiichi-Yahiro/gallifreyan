@@ -1,20 +1,17 @@
 import type {
-    ConsonantId,
     DotId,
     LetterId,
     LineSlotId,
     SentenceId,
     TextElementId,
-    VocalId,
     WordId,
 } from '@/redux/text/ids';
-import type { Consonant, Digraph, Vocal } from '@/redux/text/letterTypes';
+import type { Letter } from '@/redux/text/letterTypes';
 
 export enum TextElementType {
     Sentence = 'Sentence',
     Word = 'Word',
-    Consonant = 'Consonant',
-    Vocal = 'Vocal',
+    Letter = 'Letter',
     Dot = 'Dot',
     LineSlot = 'LineSlot',
 }
@@ -34,29 +31,20 @@ export interface WordElement {
     letters: LetterId[];
 }
 
-export interface ConsonantElement {
-    elementType: TextElementType.Consonant;
-    id: ConsonantId;
+export interface LetterElement {
+    elementType: TextElementType.Letter;
+    id: LetterId;
     parent: WordId;
     text: string;
-    letter: Consonant | Digraph;
+    letter: Letter;
     dots: DotId[];
-    lineSlots: LineSlotId[];
-}
-
-export interface VocalElement {
-    elementType: TextElementType.Vocal;
-    id: VocalId;
-    parent: WordId;
-    text: string;
-    letter: Vocal;
     lineSlots: LineSlotId[];
 }
 
 export interface DotElement {
     elementType: TextElementType.Dot;
     id: DotId;
-    parent: ConsonantId;
+    parent: LetterId;
 }
 
 export interface LineSlotElement {
@@ -65,24 +53,22 @@ export interface LineSlotElement {
     parent: LetterId; // TODO can also be word or sentence
 }
 
-export interface RawConsonantElement {
+export interface RawLetterElement {
     text: string;
-    letter: Consonant | Digraph;
+    letter: Letter;
 }
 
-export interface RawVocalElement {
-    text: string;
-    letter: Vocal;
-}
-
-export type RawLetterElement = RawConsonantElement | RawVocalElement;
+export type TextElement =
+    | SentenceElement
+    | WordElement
+    | DotElement
+    | LineSlotElement;
 
 // prettier-ignore
 export type TextElementDictValue<K extends string> =
     K extends SentenceId ? SentenceElement :
     K extends WordId ? WordElement :
-    K extends ConsonantId ? ConsonantElement :
-    K extends VocalId ? VocalElement :
+    K extends LetterId ? LetterElement :
     K extends DotId ? DotElement :
     K extends LineSlotId ? LineSlotElement : never;
 
