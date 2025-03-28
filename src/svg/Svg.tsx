@@ -1,8 +1,11 @@
 import { CircleIntersectionType } from '@/math/circle';
 import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import type {
+import {
     DotId,
+    isAttachedLetterId,
+    isLetterId,
+    isStackedLetterId,
     LetterId,
     LineSlotId,
     SentenceId,
@@ -15,6 +18,7 @@ import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
 import React, { useCallback } from 'react';
+import { match } from 'ts-pattern';
 import './Svg.css';
 
 const Svg: React.FC = () => {
@@ -132,9 +136,21 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                     isSelected={isSelected}
                 />
             )}
-            {letters.map((letterId) => (
-                <SvgLetter key={letterId} id={letterId} />
-            ))}
+            {letters.map((childId) =>
+                match(childId)
+                    .when(isLetterId, (letterId) => (
+                        <SvgLetter key={letterId} id={letterId} />
+                    ))
+                    .when(isStackedLetterId, () => {
+                        // TODO
+                        return null;
+                    })
+                    .when(isAttachedLetterId, () => {
+                        // TODO
+                        return null;
+                    })
+                    .exhaustive(),
+            )}
         </SvgGroup>
     );
 };

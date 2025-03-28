@@ -73,14 +73,18 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
 
         if (index - 1 >= 0) {
             const prevId = parent.letters[index - 1];
-            letterElementWithNeighbours.prevLetterElement =
-                state.main.text.elements[prevId];
+            if (isLetterId(prevId)) {
+                letterElementWithNeighbours.prevLetterElement =
+                    state.main.text.elements[prevId];
+            }
         }
 
         if (index + 1 < parent.letters.length) {
             const nextId = parent.letters[index + 1];
-            letterElementWithNeighbours.nextLetterElement =
-                state.main.text.elements[nextId];
+            if (isLetterId(nextId)) {
+                letterElementWithNeighbours.nextLetterElement =
+                    state.main.text.elements[nextId];
+            }
         }
 
         return letterElementWithNeighbours;

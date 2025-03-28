@@ -26,6 +26,20 @@ export const letterId: () => LetterId = letterCounter.generator;
 export const isLetterId = (id: TextElementId): id is LetterId =>
     id.startsWith('LTR');
 
+export type StackedLetterId = IdGenerator<'SLG'>;
+const stackedLetterCounter = createIdCounter('SLG');
+export const stackedLetterId: () => StackedLetterId =
+    stackedLetterCounter.generator;
+export const isStackedLetterId = (id: TextElementId): id is StackedLetterId =>
+    id.startsWith('SLG');
+
+export type AttachedLetterId = IdGenerator<'ALG'>;
+const attachedLetterCounter = createIdCounter('ALG');
+export const attachedLetterId: () => AttachedLetterId =
+    attachedLetterCounter.generator;
+export const isAttachedLetterId = (id: TextElementId): id is AttachedLetterId =>
+    id.startsWith('ALG');
+
 export type DotId = IdGenerator<'DOT'>;
 const dotCounter = createIdCounter('DOT');
 export const dotId: () => DotId = dotCounter.generator;
@@ -37,13 +51,22 @@ export const lineSlotId: () => LineSlotId = lineSlotCounter.generator;
 export const isLineSlotId = (id: TextElementId): id is LineSlotId =>
     id.startsWith('LNS');
 
-export type TextElementId = SentenceId | WordId | LetterId | DotId | LineSlotId;
+export type TextElementId =
+    | SentenceId
+    | WordId
+    | LetterId
+    | StackedLetterId
+    | AttachedLetterId
+    | DotId
+    | LineSlotId;
 
 // For testing
 export const resetIdCounters = () => {
     sentenceCounter.reset();
     wordCounter.reset();
     letterCounter.reset();
+    stackedLetterCounter.reset();
+    attachedLetterCounter.reset();
     dotCounter.reset();
     lineSlotCounter.reset();
 };

@@ -2,19 +2,28 @@ import actions from '@/redux/actions';
 import type { AppThunkAction } from '@/redux/store';
 import svgActions from '@/redux/svg/svgActions';
 import {
+    AttachedLetterId,
     type DotId,
     dotId,
+    isAttachedLetterId,
+    isLetterId,
+    isStackedLetterId,
     type LetterId,
     letterId,
     type LineSlotId,
     lineSlotId,
     sentenceId,
     type SentenceId,
+    StackedLetterId,
     type WordId,
     wordId,
 } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
-import type { RawLetterElement } from '@/redux/text/textTypes';
+import {
+    type RawLetter,
+    RawLetterElement,
+    TextElementType,
+} from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     dotAmount,
@@ -24,6 +33,7 @@ import {
     textToDigraph,
 } from '@/redux/text/textUtils';
 import { range, zip } from 'lodash';
+import { match } from 'ts-pattern';
 
 const updateTree =
     (text: string): AppThunkAction =>
@@ -112,51 +122,165 @@ const compareWord =
 
 const compareLetter =
     (
-        parent: WordId,
+        parent: WordId | StackedLetterId | AttachedLetterId,
         newRawLetter?: RawLetterElement,
-        existingId?: LetterId,
+        existingId?: LetterId | StackedLetterId | AttachedLetterId,
     ): AppThunkAction =>
     (dispatch, getState) => {
-        if (!existingId && newRawLetter) {
-            dispatch(addLetter(newRawLetter, parent));
-            return;
-        }
+        match(existingId)
+            .with(undefined, () =>
+                match(newRawLetter)
+                    .with(undefined, () => {})
+                    .with(
+                        { elementType: TextElementType.Letter },
+                        (newRawLetter) => {
+                            dispatch(addLetter(newRawLetter, parent));
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.StackedLetter },
+                        (_newStackedLetter) => {
+                            // TODO spawn
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.AttachedLetter },
+                        (_newAttachedLetter) => {
+                            // TODO spawn
+                        },
+                    )
+                    .exhaustive(),
+            )
+            .when(isLetterId, (existingLetterId) =>
+                match(newRawLetter)
+                    .with(undefined, () => {
+                        dispatch(removeLetter(existingLetterId));
+                    })
+                    .with(
+                        { elementType: TextElementType.Letter },
+                        (newRawLetter) => {
+                            // TODO extract
 
-        if (existingId && !newRawLetter) {
-            dispatch(removeLetter(existingId));
-            return;
-        }
+                            const state = getState();
+                            const letterElement =
+                                state.main.text.elements[existingLetterId];
 
-        if (!existingId || !newRawLetter) {
-            return;
-        }
+                            if (letterElement.text !== newRawLetter.text) {
+                                dispatch(
+                                    textActions.updateLetterText({
+                                        id: existingLetterId,
+                                        text: newRawLetter.text,
+                                        letter: newRawLetter.letter,
+                                    }),
+                                );
 
-        const state = getState();
-        const letterElement = state.main.text.elements[existingId];
+                                zip(
+                                    range(
+                                        dotAmount(
+                                            newRawLetter.letter.decoration,
+                                        ),
+                                    ),
+                                    letterElement.dots,
+                                ).forEach(([newIndex, dotId]) =>
+                                    dispatch(
+                                        compareDot(
+                                            existingLetterId,
+                                            newIndex,
+                                            dotId,
+                                        ),
+                                    ),
+                                );
 
-        if (letterElement.text !== newRawLetter.text) {
-            dispatch(
-                textActions.updateLetterText({
-                    id: existingId,
-                    text: newRawLetter.text,
-                    letter: newRawLetter.letter,
-                }),
-            );
-
-            zip(
-                range(dotAmount(newRawLetter.letter.decoration)),
-                letterElement.dots,
-            ).forEach(([newIndex, dotId]) =>
-                dispatch(compareDot(existingId, newIndex, dotId)),
-            );
-
-            zip(
-                range(lineSlotAmount(newRawLetter.letter.decoration)),
-                letterElement.lineSlots,
-            ).forEach(([newIndex, lineSlotId]) =>
-                dispatch(compareLineSlot(existingId, newIndex, lineSlotId)),
-            );
-        }
+                                zip(
+                                    range(
+                                        lineSlotAmount(
+                                            newRawLetter.letter.decoration,
+                                        ),
+                                    ),
+                                    letterElement.lineSlots,
+                                ).forEach(([newIndex, lineSlotId]) =>
+                                    dispatch(
+                                        compareLineSlot(
+                                            existingLetterId,
+                                            newIndex,
+                                            lineSlotId,
+                                        ),
+                                    ),
+                                );
+                            }
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.StackedLetter },
+                        (_newStackedLetter) => {
+                            dispatch(removeLetter(existingLetterId));
+                            // TODO spawn
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.AttachedLetter },
+                        (_newAttachedLetter) => {
+                            dispatch(removeLetter(existingLetterId));
+                            // TODO spawn
+                        },
+                    )
+                    .exhaustive(),
+            )
+            .when(isStackedLetterId, (_existingStackedLetterId) =>
+                match(newRawLetter)
+                    .with(undefined, () => {
+                        // TODO despawn
+                    })
+                    .with(
+                        { elementType: TextElementType.StackedLetter },
+                        (_newStackedLetter) => {
+                            // TODO update
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.Letter },
+                        (newRawLetter) => {
+                            // TODO despawn
+                            dispatch(addLetter(newRawLetter, parent));
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.AttachedLetter },
+                        (_newAttachedLetter) => {
+                            // TODO despawn
+                            // TODO spawn
+                        },
+                    )
+                    .exhaustive(),
+            )
+            .when(isAttachedLetterId, (_existingAttachedLetterId) =>
+                match(newRawLetter)
+                    .with(undefined, () => {
+                        // TODO despawn
+                    })
+                    .with(
+                        { elementType: TextElementType.AttachedLetter },
+                        (_newAttachedLetter) => {
+                            // TODO update
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.Letter },
+                        (newRawLetter) => {
+                            // TODO despawn
+                            dispatch(addLetter(newRawLetter, parent));
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.StackedLetter },
+                        (_newStackedLetter) => {
+                            // TODO despawn
+                            // TOTO spawn
+                        },
+                    )
+                    .exhaustive(),
+            )
+            .exhaustive();
     };
 
 const compareDot =
@@ -222,14 +346,34 @@ const addWord =
         const state = getState();
 
         splitLetters(newWordText, state.main.text.splitLetterOptions).forEach(
-            (pair) => dispatch(addLetter(pair, id)),
+            (rawLetterElement) =>
+                match(rawLetterElement)
+                    .with(
+                        { elementType: TextElementType.Letter },
+                        (rawLetter) => {
+                            dispatch(addLetter(rawLetter, id));
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.StackedLetter },
+                        () => {
+                            // TODO
+                        },
+                    )
+                    .with(
+                        { elementType: TextElementType.AttachedLetter },
+                        () => {
+                            // TODO
+                        },
+                    )
+                    .exhaustive(),
         );
     };
 
 const addLetter =
     (
-        rawLetter: RawLetterElement,
-        parent: WordId,
+        rawLetter: RawLetter,
+        parent: WordId | StackedLetterId | AttachedLetterId,
         index?: number,
     ): AppThunkAction =>
     (dispatch, _getState) => {
@@ -269,8 +413,18 @@ const removeWord =
     (id: WordId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        state.main.text.elements[id].letters.forEach((letterId) =>
-            dispatch(removeLetter(letterId)),
+        state.main.text.elements[id].letters.forEach((childId) =>
+            match(childId)
+                .when(isLetterId, (letterId) => {
+                    dispatch(removeLetter(letterId));
+                })
+                .when(isStackedLetterId, (_stackedLetterId) => {
+                    // TODO
+                })
+                .when(isAttachedLetterId, (_attachedLetterId) => {
+                    // TODO
+                })
+                .exhaustive(),
         );
 
         dispatch(textActions.removeWord(id));
@@ -307,6 +461,7 @@ const splitDigraph =
             compareLetter(
                 letter.parent,
                 {
+                    elementType: TextElementType.Letter,
                     text: firstChar,
                     letter: charToSingleLetter(firstChar)!,
                 },
@@ -316,7 +471,11 @@ const splitDigraph =
 
         dispatch(
             addLetter(
-                { text: secondChar, letter: charToSingleLetter(secondChar)! },
+                {
+                    elementType: TextElementType.Letter,
+                    text: secondChar,
+                    letter: charToSingleLetter(secondChar)!,
+                },
                 letter.parent,
                 index + 1,
             ),
@@ -338,6 +497,7 @@ const mergeToDigraph =
             compareLetter(
                 firstLetter.parent,
                 {
+                    elementType: TextElementType.Letter,
                     text,
                     letter: textToDigraph(text)!,
                 },

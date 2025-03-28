@@ -1,6 +1,9 @@
 import { useRedux } from '@/redux/hooks';
-import type {
+import {
     DotId,
+    isAttachedLetterId,
+    isLetterId,
+    isStackedLetterId,
     LetterId,
     LineSlotId,
     SentenceId,
@@ -11,6 +14,7 @@ import useSelect from '@/svg/useSelect';
 import { Tree, TreeItem } from '@/ui/Tree';
 import cn from '@/utils/cn';
 import React from 'react';
+import { match } from 'ts-pattern';
 
 interface TextTreeProps {
     className?: string;
@@ -79,9 +83,24 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
                 'bg-hover-accent-strong': isSelected,
             })}
         >
-            {word.letters.map((letter) => (
-                <TextLetterTreeItem key={letter} letterId={letter} />
-            ))}
+            {word.letters.map((childId) =>
+                match(childId)
+                    .when(isLetterId, (letterId) => (
+                        <TextLetterTreeItem
+                            key={letterId}
+                            letterId={letterId}
+                        />
+                    ))
+                    .when(isStackedLetterId, () => {
+                        // TODO
+                        return null;
+                    })
+                    .when(isAttachedLetterId, () => {
+                        // TODO
+                        return null;
+                    })
+                    .exhaustive(),
+            )}
         </TreeItem>
     );
 };

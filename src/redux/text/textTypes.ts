@@ -1,8 +1,10 @@
 import type {
+    AttachedLetterId,
     DotId,
     LetterId,
     LineSlotId,
     SentenceId,
+    StackedLetterId,
     TextElementId,
     WordId,
 } from '@/redux/text/ids';
@@ -11,6 +13,8 @@ import type { Letter } from '@/redux/text/letterTypes';
 export enum TextElementType {
     Sentence = 'Sentence',
     Word = 'Word',
+    StackedLetter = 'StackedLetter',
+    AttachedLetter = 'AttachedLetter',
     Letter = 'Letter',
     Dot = 'Dot',
     LineSlot = 'LineSlot',
@@ -28,13 +32,30 @@ export interface WordElement {
     id: WordId;
     parent: SentenceId;
     text: string;
+    letters: (LetterId | StackedLetterId | AttachedLetterId)[];
+}
+
+export interface StackedLetterElement {
+    elementType: TextElementType.StackedLetter;
+    id: StackedLetterId;
+    parent: WordId | AttachedLetterId;
     letters: LetterId[];
+}
+
+export interface AttachedLetterElement {
+    elementType: TextElementType.AttachedLetter;
+    id: AttachedLetterId;
+    parent: WordId;
+    letters: [
+        consonant: LetterId | StackedLetterId,
+        vocal: LetterId | StackedLetterId,
+    ];
 }
 
 export interface LetterElement {
     elementType: TextElementType.Letter;
     id: LetterId;
-    parent: WordId;
+    parent: WordId | StackedLetterId | AttachedLetterId;
     text: string;
     letter: Letter;
     dots: DotId[];
@@ -53,21 +74,30 @@ export interface LineSlotElement {
     parent: LetterId; // TODO can also be word or sentence
 }
 
-export interface RawLetterElement {
+export interface RawLetter {
+    elementType: TextElementType.Letter;
     text: string;
     letter: Letter;
 }
 
-export type TextElement =
-    | SentenceElement
-    | WordElement
-    | DotElement
-    | LineSlotElement;
+export interface RawStackedLetter {
+    elementType: TextElementType.StackedLetter;
+    letters: RawLetter[];
+}
+
+export interface RawAttachedLetter {
+    elementType: TextElementType.AttachedLetter;
+    letters: [RawLetter | RawStackedLetter, RawLetter | RawStackedLetter];
+}
+
+export type RawLetterElement = RawLetter | RawStackedLetter | RawAttachedLetter;
 
 // prettier-ignore
 export type TextElementDictValue<K extends string> =
     K extends SentenceId ? SentenceElement :
     K extends WordId ? WordElement :
+    K extends StackedLetterId ? StackedLetterElement :
+    K extends AttachedLetterId ? AttachedLetterElement :
     K extends LetterId ? LetterElement :
     K extends DotId ? DotElement :
     K extends LineSlotId ? LineSlotElement : never;

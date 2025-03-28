@@ -10,7 +10,7 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import type { RawLetterElement } from '@/redux/text/textTypes';
+import { type RawLetterElement, TextElementType } from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
     digraphReducer,
@@ -399,6 +399,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'th',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -417,6 +418,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'ph',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -435,6 +437,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'wh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -453,6 +456,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'gh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -471,6 +475,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'ch',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -489,6 +494,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'sh',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -507,6 +513,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'nd',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -525,6 +532,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'nt',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -543,6 +551,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'qu',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -561,6 +570,7 @@ describe('textUtils', () => {
 
             const expected: RawLetterElement[] = [
                 {
+                    elementType: TextElementType.Letter,
                     text: 'ng',
                     letter: {
                         letterType: LetterType.Digraph,
@@ -577,6 +587,7 @@ describe('textUtils', () => {
         it('should not combine other consonants', () => {
             const letters = Object.values(ConsonantValue).map(
                 (text): RawLetterElement => ({
+                    elementType: TextElementType.Letter,
                     text,
                     letter: charToSingleLetter(text)!,
                 }),
@@ -590,6 +601,7 @@ describe('textUtils', () => {
         it('should not combine vocals', () => {
             const letters = Object.values(VocalValue).map(
                 (text): RawLetterElement => ({
+                    elementType: TextElementType.Letter,
                     text,
                     letter: charToSingleLetter(text)!,
                 }),
@@ -603,6 +615,7 @@ describe('textUtils', () => {
         it('should not combine digraphs', () => {
             const letters = Object.values(DigraphValue).map(
                 (text): RawLetterElement => ({
+                    elementType: TextElementType.Letter,
                     text,
                     letter: charToSingleLetter(text)!,
                 }),

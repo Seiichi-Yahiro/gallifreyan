@@ -11,7 +11,11 @@ import {
     VocalPlacement,
     VocalValue,
 } from '@/redux/text/letterTypes';
-import type { RawLetterElement } from '@/redux/text/textTypes';
+import {
+    type RawLetter,
+    type RawLetterElement,
+    TextElementType,
+} from '@/redux/text/textTypes';
 import { match } from 'ts-pattern';
 
 export const isDigraphText = (text: string): boolean =>
@@ -27,8 +31,9 @@ export const splitLetters = (
     word: string,
     options?: SplitLettersOptions,
 ): RawLetterElement[] => {
-    let letters = word.split('').map(
-        (letterText): RawLetterElement => ({
+    let letters: RawLetterElement[] = word.split('').map(
+        (letterText): RawLetter => ({
+            elementType: TextElementType.Letter,
             text: letterText,
             letter: charToSingleLetter(letterText)!,
         }),
@@ -272,9 +277,9 @@ export const textToDigraph = (text: string): Digraph | null => {
 };
 
 export const digraphReducer = (
-    acc: RawLetterElement[],
-    next: RawLetterElement,
-): RawLetterElement[] => {
+    acc: RawLetter[],
+    next: RawLetter,
+): RawLetter[] => {
     const prev = acc.pop();
 
     if (!prev) {
@@ -287,6 +292,7 @@ export const digraphReducer = (
 
     if (digraph) {
         acc.push({
+            elementType: TextElementType.Letter,
             text,
             letter: digraph,
         });
