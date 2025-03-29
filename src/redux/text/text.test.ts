@@ -12,6 +12,7 @@ import {
 } from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
 import textThunks from '@/redux/text/textThunks';
+import { LetterStackType } from '@/redux/text/textUtils';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -35,6 +36,10 @@ describe('text', () => {
             elements: {},
             splitLetterOptions: {
                 digraphs: true,
+                stackLetters: {
+                    stackType: LetterStackType.Value,
+                    maxStackSize: 2,
+                },
             },
         });
     });

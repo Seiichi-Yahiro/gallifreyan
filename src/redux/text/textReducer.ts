@@ -10,7 +10,10 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/text/textTypes';
-import type { SplitLettersOptions } from '@/redux/text/textUtils';
+import {
+    LetterStackType,
+    type SplitLettersOptions,
+} from '@/redux/text/textUtils';
 import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {
@@ -26,6 +29,10 @@ export const createInitialTextState = (): TextState => ({
     elements: {},
     splitLetterOptions: {
         digraphs: true,
+        stackLetters: {
+            stackType: LetterStackType.Value,
+            maxStackSize: 2,
+        },
     },
 });
 
