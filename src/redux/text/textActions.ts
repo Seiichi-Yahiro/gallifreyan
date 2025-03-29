@@ -5,6 +5,7 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/text/ids';
+import type { SplitLettersOptions } from '@/redux/text/textSplitter';
 import {
     DotElement,
     LetterElement,
@@ -12,7 +13,6 @@ import {
     SentenceElement,
     WordElement,
 } from '@/redux/text/textTypes';
-import type { SplitLettersOptions } from '@/redux/text/textUtils';
 import { createAction } from '@reduxjs/toolkit';
 
 const setText = createAction<string>('TEXT/SET_TEXT');

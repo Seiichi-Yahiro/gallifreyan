@@ -1,6 +1,7 @@
 import type { MainState } from '@/redux/reducer';
 import { type SentenceId } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
+import { type SplitLettersOptions } from '@/redux/text/textSplitter';
 import {
     type DotElement,
     type LetterElement,
@@ -10,17 +11,13 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/text/textTypes';
-import {
-    LetterStackType,
-    type SplitLettersOptions,
-} from '@/redux/text/textUtils';
 import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
-    splitLetterOptions: Required<SplitLettersOptions>;
+    splitLetterOptions: SplitLettersOptions;
 }
 
 export const createInitialTextState = (): TextState => ({
@@ -29,10 +26,6 @@ export const createInitialTextState = (): TextState => ({
     elements: {},
     splitLetterOptions: {
         digraphs: true,
-        stackLetters: {
-            stackType: LetterStackType.Value,
-            maxStackSize: 2,
-        },
     },
 });
 

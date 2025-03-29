@@ -20,18 +20,17 @@ import {
 } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
 import {
+    charToSingleLetter,
+    dotAmount,
+    lineSlotAmount,
+    textToDigraph,
+} from '@/redux/text/textLetterUtils';
+import { splitLetters, splitWords } from '@/redux/text/textSplitter';
+import {
     type RawLetter,
     RawLetterElement,
     TextElementType,
 } from '@/redux/text/textTypes';
-import {
-    charToSingleLetter,
-    dotAmount,
-    lineSlotAmount,
-    splitLetters,
-    splitWords,
-    textToDigraph,
-} from '@/redux/text/textUtils';
 import { range, zip } from 'lodash';
 import { match } from 'ts-pattern';
 

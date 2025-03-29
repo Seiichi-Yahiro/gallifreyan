@@ -8,9 +8,9 @@ import {
     type LineSlotId,
 } from '@/redux/text/ids';
 import { LetterType } from '@/redux/text/letterTypes';
+import { isDigraphText } from '@/redux/text/textLetterUtils';
 import textThunks from '@/redux/text/textThunks';
 import type { LetterElement } from '@/redux/text/textTypes';
-import { isDigraphText } from '@/redux/text/textUtils';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';

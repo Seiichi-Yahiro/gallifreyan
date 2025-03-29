@@ -1,8 +1,8 @@
 import type { AppStartListening } from '@/redux/listener';
 import svgActions from '@/redux/svg/svgActions';
 import textActions from '@/redux/text/textActions';
+import { sanitizeSentence } from '@/redux/text/textSplitter';
 import textThunks from '@/redux/text/textThunks';
-import { sanitizeSentence } from '@/redux/text/textUtils';
 
 export const updateTree = (startListening: AppStartListening) =>
     startListening({
