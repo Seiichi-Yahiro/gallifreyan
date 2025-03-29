@@ -1,15 +1,20 @@
-import { ConsonantValue, VocalValue } from '@/redux/text/letterTypes';
+import {
+    ConsonantValue,
+    LetterType,
+    VocalValue,
+} from '@/redux/text/letterTypes';
 import {
     charToSingleLetter,
     textToDigraph,
 } from '@/redux/text/textLetterUtils';
 import {
+    type RawAttachedLetter,
     type RawLetter,
     type RawLetterElement,
     type RawStackedLetter,
     TextElementType,
 } from '@/redux/text/textTypes';
-import { match } from 'ts-pattern';
+import { match, Pattern } from 'ts-pattern';
 
 export const sanitizeSentence = (sentence: string): string => {
     const vocals = Object.values<string>(VocalValue);
@@ -38,6 +43,7 @@ export const splitWords = (sentence: string): string[] => sentence.split(' ');
 export interface SplitLettersOptions {
     digraphs?: boolean;
     stackLetters?: StackLetterOptions;
+    attachVocals?: boolean;
 }
 
 export const splitLetters = (
@@ -61,6 +67,10 @@ export const splitLetters = (
             createStackLetterReducer(options.stackLetters),
             [],
         );
+    }
+
+    if (options?.attachVocals) {
+        letters = letters.reduce(attachLetterReducer, []);
     }
 
     return letters;
@@ -186,4 +196,65 @@ const createStackLetterReducer = (
 
         return acc;
     };
+};
+
+const attachLetterReducer: RawLetterElementReducer = (acc, next) => {
+    const prev = acc.at(-1);
+
+    match([prev, next])
+        .with(
+            [
+                Pattern.union(
+                    {
+                        elementType: TextElementType.Letter,
+                        letter: {
+                            letterType: Pattern.union(
+                                LetterType.Consonant,
+                                LetterType.Digraph,
+                            ),
+                        },
+                    },
+                    {
+                        elementType: TextElementType.StackedLetter,
+                        letters: Pattern.array({
+                            letter: {
+                                letterType: Pattern.union(
+                                    LetterType.Consonant,
+                                    LetterType.Digraph,
+                                ),
+                            },
+                        }),
+                    },
+                ),
+                Pattern.union(
+                    {
+                        elementType: TextElementType.Letter,
+                        letter: {
+                            letterType: LetterType.Vocal,
+                        },
+                    },
+                    {
+                        elementType: TextElementType.StackedLetter,
+                        letters: Pattern.array({
+                            letter: {
+                                letterType: LetterType.Vocal,
+                            },
+                        }),
+                    },
+                ),
+            ],
+            ([prev, next]) => {
+                acc.pop();
+
+                acc.push({
+                    elementType: TextElementType.AttachedLetter,
+                    letters: [prev, next],
+                } satisfies RawAttachedLetter);
+            },
+        )
+        .otherwise(() => {
+            acc.push(next);
+        });
+
+    return acc;
 };

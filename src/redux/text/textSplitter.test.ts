@@ -12,8 +12,13 @@ import {
     charToSingleLetter,
     textToDigraph,
 } from '@/redux/text/textLetterUtils';
-import { LetterStackType, splitLetters } from '@/redux/text/textSplitter';
 import {
+    LetterStackType,
+    splitLetters,
+    type SplitLettersOptions,
+} from '@/redux/text/textSplitter';
+import {
+    type RawAttachedLetter,
     RawLetter,
     type RawLetterElement,
     type RawStackedLetter,
@@ -532,6 +537,350 @@ describe('Text splitter', () => {
             const expected: RawLetterElement[] = [rawVocal, rawVocal];
 
             expect(result).toStrictEqual(expected);
+        });
+    });
+
+    describe('attach letters', () => {
+        const consonants = Object.values(ConsonantValue).map(
+            (text): RawLetter => ({
+                elementType: TextElementType.Letter,
+                text,
+                letter: charToSingleLetter(text) as Consonant,
+            }),
+        );
+
+        const stackedConsonants = consonants.map(
+            (consonant): RawStackedLetter => ({
+                elementType: TextElementType.StackedLetter,
+                letters: [consonant, consonant],
+            }),
+        );
+
+        const digraphs = Object.values(DigraphValue).map(
+            (text): RawLetter => ({
+                elementType: TextElementType.Letter,
+                text,
+                letter: textToDigraph(text)!,
+            }),
+        );
+
+        const stackedDigraphs = digraphs.map(
+            (digraph): RawStackedLetter => ({
+                elementType: TextElementType.StackedLetter,
+                letters: [digraph, digraph],
+            }),
+        );
+
+        const vocals = Object.values(VocalValue).map(
+            (text): RawLetter => ({
+                elementType: TextElementType.Letter,
+                text,
+                letter: charToSingleLetter(text) as Vocal,
+            }),
+        );
+
+        const stackedVocals = vocals.map(
+            (vocal): RawStackedLetter => ({
+                elementType: TextElementType.StackedLetter,
+                letters: [vocal, vocal],
+            }),
+        );
+
+        const expectAttachedLetter = (
+            text: string,
+            splitLetterOptions: SplitLettersOptions,
+            consonant: RawLetter | RawStackedLetter,
+            vocal: RawLetter | RawStackedLetter,
+        ) => {
+            const result = splitLetters(text, splitLetterOptions);
+
+            const expected: RawAttachedLetter[] = [
+                {
+                    elementType: TextElementType.AttachedLetter,
+                    letters: [consonant, vocal],
+                },
+            ];
+
+            expect(result).toStrictEqual(expected);
+        };
+
+        vocals.forEach((vocal) => {
+            consonants.forEach((consonant) => {
+                it(`should attach ${consonant.text} ${vocal.text}`, () => {
+                    expectAttachedLetter(
+                        consonant.text + vocal.text,
+                        { attachVocals: true },
+                        consonant,
+                        vocal,
+                    );
+                });
+            });
+
+            digraphs.forEach((digraph) => {
+                it(`should attach ${digraph.text} ${vocal.text}`, () => {
+                    expectAttachedLetter(
+                        digraph.text + vocal.text,
+                        { digraphs: true, attachVocals: true },
+                        digraph,
+                        vocal,
+                    );
+                });
+            });
+        });
+
+        vocals.forEach((vocal) => {
+            stackedConsonants.forEach((consonant) => {
+                const stackedText = consonant.letters
+                    .map((it) => it.text)
+                    .join('');
+
+                it(`should attach ${stackedText} ${vocal.text}`, () => {
+                    expectAttachedLetter(
+                        stackedText + vocal.text,
+                        {
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        consonant,
+                        vocal,
+                    );
+                });
+            });
+
+            stackedDigraphs.forEach((digraph) => {
+                const stackedText = digraph.letters
+                    .map((it) => it.text)
+                    .join('');
+
+                it(`should attach ${stackedText} ${vocal.text}`, () => {
+                    expectAttachedLetter(
+                        stackedText + vocal.text,
+                        {
+                            digraphs: true,
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        digraph,
+                        vocal,
+                    );
+                });
+            });
+        });
+
+        stackedVocals.forEach((vocal) => {
+            const stackedVocalText = vocal.letters
+                .map((it) => it.text)
+                .join('');
+
+            consonants.forEach((consonant) => {
+                it(`should attach ${consonant.text} ${stackedVocalText}`, () => {
+                    expectAttachedLetter(
+                        consonant.text + stackedVocalText,
+                        {
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        consonant,
+                        vocal,
+                    );
+                });
+            });
+
+            digraphs.forEach((digraph) => {
+                it(`should attach ${digraph.text} ${stackedVocalText}`, () => {
+                    expectAttachedLetter(
+                        digraph.text + stackedVocalText,
+                        {
+                            digraphs: true,
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        digraph,
+                        vocal,
+                    );
+                });
+            });
+
+            stackedConsonants.forEach((consonant) => {
+                const stackedConsonantText = consonant.letters
+                    .map((it) => it.text)
+                    .join('');
+
+                it(`should attach ${stackedConsonantText} ${stackedVocalText}`, () => {
+                    expectAttachedLetter(
+                        stackedConsonantText + stackedVocalText,
+                        {
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        consonant,
+                        vocal,
+                    );
+                });
+            });
+
+            stackedDigraphs.forEach((digraph) => {
+                const stackedDigraphText = digraph.letters
+                    .map((it) => it.text)
+                    .join('');
+
+                it(`should attach ${stackedDigraphText} ${stackedVocalText}`, () => {
+                    expectAttachedLetter(
+                        stackedDigraphText + stackedVocalText,
+                        {
+                            digraphs: true,
+                            stackLetters: {
+                                stackType: LetterStackType.Value,
+                                maxStackSize: 2,
+                            },
+                            attachVocals: true,
+                        },
+                        digraph,
+                        vocal,
+                    );
+                });
+            });
+        });
+
+        it('should not attach consonant to vocal', () => {
+            const consonant = consonants[0];
+            const vocal = vocals[0];
+
+            const result = splitLetters(vocal.text + consonant.text, {
+                attachVocals: true,
+            });
+
+            expect(result).toStrictEqual([vocal, consonant]);
+        });
+
+        it('should not attach stacked consonant to vocal', () => {
+            const consonant = stackedConsonants[0];
+            const vocal = vocals[0];
+
+            const result = splitLetters(
+                vocal.text + consonant.letters.map((it) => it.text).join(''),
+                {
+                    stackLetters: {
+                        stackType: LetterStackType.Value,
+                        maxStackSize: 2,
+                    },
+                    attachVocals: true,
+                },
+            );
+
+            expect(result).toStrictEqual([vocal, consonant]);
+        });
+
+        it('should not attach consonant to stacked vocal', () => {
+            const consonant = consonants[0];
+            const vocal = stackedVocals[0];
+
+            const result = splitLetters(
+                vocal.letters.map((it) => it.text).join('') + consonant.text,
+                {
+                    stackLetters: {
+                        stackType: LetterStackType.Value,
+                        maxStackSize: 2,
+                    },
+                    attachVocals: true,
+                },
+            );
+
+            expect(result).toStrictEqual([vocal, consonant]);
+        });
+
+        it('should not attach stacked consonant to stacked vocal', () => {
+            const consonant = stackedConsonants[0];
+            const vocal = stackedVocals[0];
+
+            const result = splitLetters(
+                vocal.letters.map((it) => it.text).join('') +
+                    consonant.letters.map((it) => it.text).join(''),
+                {
+                    stackLetters: {
+                        stackType: LetterStackType.Value,
+                        maxStackSize: 2,
+                    },
+                    attachVocals: true,
+                },
+            );
+
+            expect(result).toStrictEqual([vocal, consonant]);
+        });
+
+        it('should not attach consonant to consonant', () => {
+            const consonant = consonants[0];
+
+            const result = splitLetters(consonant.text + consonant.text, {
+                attachVocals: true,
+            });
+
+            expect(result).toStrictEqual([consonant, consonant]);
+        });
+
+        it('should not attach stacked consonant to stacked consonant', () => {
+            const consonant = stackedConsonants[0];
+
+            const result = splitLetters(
+                consonant.letters
+                    .map((it) => it.text)
+                    .join('')
+                    .repeat(2),
+                {
+                    stackLetters: {
+                        stackType: LetterStackType.Value,
+                        maxStackSize: 2,
+                    },
+                    attachVocals: true,
+                },
+            );
+
+            expect(result).toStrictEqual([consonant, consonant]);
+        });
+
+        it('should not attach vocal to vocal', () => {
+            const vocal = vocals[0];
+
+            const result = splitLetters(vocal.text + vocal.text, {
+                attachVocals: true,
+            });
+
+            expect(result).toStrictEqual([vocal, vocal]);
+        });
+
+        it('should not attach stacked vocal to stacked vocal', () => {
+            const vocal = stackedVocals[0];
+
+            const result = splitLetters(
+                vocal.letters
+                    .map((it) => it.text)
+                    .join('')
+                    .repeat(2),
+                {
+                    stackLetters: {
+                        stackType: LetterStackType.Value,
+                        maxStackSize: 2,
+                    },
+                    attachVocals: true,
+                },
+            );
+
+            expect(result).toStrictEqual([vocal, vocal]);
         });
     });
 });
