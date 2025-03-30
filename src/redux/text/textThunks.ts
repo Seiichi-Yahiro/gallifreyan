@@ -14,6 +14,7 @@ import {
     lineSlotId,
     sentenceId,
     type SentenceId,
+    stackedLetterId,
     StackedLetterId,
     type WordId,
     wordId,
@@ -29,6 +30,7 @@ import { splitLetters, splitWords } from '@/redux/text/textSplitter';
 import {
     type RawLetter,
     RawLetterElement,
+    type RawStackedLetter,
     TextElementType,
 } from '@/redux/text/textTypes';
 import { range, zip } from 'lodash';
@@ -138,8 +140,12 @@ const compareLetter =
                     )
                     .with(
                         { elementType: TextElementType.StackedLetter },
-                        (_newStackedLetter) => {
-                            // TODO spawn
+                        (newStackedLetter) => {
+                            if (!isStackedLetterId(parent)) {
+                                dispatch(
+                                    addStackedLetter(newStackedLetter, parent),
+                                );
+                            }
                         },
                     )
                     .with(
@@ -211,9 +217,14 @@ const compareLetter =
                     )
                     .with(
                         { elementType: TextElementType.StackedLetter },
-                        (_newStackedLetter) => {
+                        (newStackedLetter) => {
                             dispatch(removeLetter(existingLetterId));
-                            // TODO spawn
+
+                            if (!isStackedLetterId(parent)) {
+                                dispatch(
+                                    addStackedLetter(newStackedLetter, parent),
+                                );
+                            }
                         },
                     )
                     .with(
@@ -225,10 +236,10 @@ const compareLetter =
                     )
                     .exhaustive(),
             )
-            .when(isStackedLetterId, (_existingStackedLetterId) =>
+            .when(isStackedLetterId, (existingStackedLetterId) =>
                 match(newRawLetter)
                     .with(undefined, () => {
-                        // TODO despawn
+                        dispatch(removeStackedLetter(existingStackedLetterId));
                     })
                     .with(
                         { elementType: TextElementType.StackedLetter },
@@ -239,14 +250,18 @@ const compareLetter =
                     .with(
                         { elementType: TextElementType.Letter },
                         (newRawLetter) => {
-                            // TODO despawn
+                            dispatch(
+                                removeStackedLetter(existingStackedLetterId),
+                            );
                             dispatch(addLetter(newRawLetter, parent));
                         },
                     )
                     .with(
                         { elementType: TextElementType.AttachedLetter },
                         (_newAttachedLetter) => {
-                            // TODO despawn
+                            dispatch(
+                                removeStackedLetter(existingStackedLetterId),
+                            );
                             // TODO spawn
                         },
                     )
@@ -272,9 +287,13 @@ const compareLetter =
                     )
                     .with(
                         { elementType: TextElementType.StackedLetter },
-                        (_newStackedLetter) => {
+                        (newStackedLetter) => {
                             // TODO despawn
-                            // TOTO spawn
+                            if (!isStackedLetterId(parent)) {
+                                dispatch(
+                                    addStackedLetter(newStackedLetter, parent),
+                                );
+                            }
                         },
                     )
                     .exhaustive(),
@@ -355,8 +374,8 @@ const addWord =
                     )
                     .with(
                         { elementType: TextElementType.StackedLetter },
-                        () => {
-                            // TODO
+                        (newStackedLetter) => {
+                            dispatch(addStackedLetter(newStackedLetter, id));
                         },
                     )
                     .with(
@@ -397,6 +416,21 @@ const addLetter =
         );
     };
 
+const addStackedLetter =
+    (
+        rawStackedLetter: RawStackedLetter,
+        parent: WordId | AttachedLetterId,
+    ): AppThunkAction =>
+    (dispatch, _getState) => {
+        const id = stackedLetterId();
+
+        dispatch(textActions.addStackedLetter({ id, parent }));
+
+        rawStackedLetter.letters.forEach((rawLetter) => {
+            dispatch(addLetter(rawLetter, id));
+        });
+    };
+
 const removeSentence =
     (id: SentenceId): AppThunkAction =>
     (dispatch, getState) => {
@@ -417,8 +451,8 @@ const removeWord =
                 .when(isLetterId, (letterId) => {
                     dispatch(removeLetter(letterId));
                 })
-                .when(isStackedLetterId, (_stackedLetterId) => {
-                    // TODO
+                .when(isStackedLetterId, (stackedLetterId) => {
+                    dispatch(removeStackedLetter(stackedLetterId));
                 })
                 .when(isAttachedLetterId, (_attachedLetterId) => {
                     // TODO
@@ -443,6 +477,20 @@ const removeLetter =
         );
 
         dispatch(textActions.removeLetter(id));
+    };
+
+const removeStackedLetter =
+    (id: StackedLetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const stackedLetter = state.main.text.elements[id];
+
+        stackedLetter.letters.forEach((letterId) => {
+            dispatch(removeLetter(letterId));
+        });
+
+        dispatch(textActions.removeStackedLetter(id));
     };
 
 const splitDigraph =

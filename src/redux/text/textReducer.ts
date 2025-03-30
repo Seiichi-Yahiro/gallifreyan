@@ -1,12 +1,16 @@
 import type { MainState } from '@/redux/reducer';
 import { type SentenceId } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
-import { type SplitLettersOptions } from '@/redux/text/textSplitter';
+import {
+    LetterStackType,
+    type SplitLettersOptions,
+} from '@/redux/text/textSplitter';
 import {
     type DotElement,
     type LetterElement,
     type LineSlotElement,
     type SentenceElement,
+    type StackedLetterElement,
     type TextElementsDict,
     TextElementType,
     type WordElement,
@@ -26,6 +30,10 @@ export const createInitialTextState = (): TextState => ({
     elements: {},
     splitLetterOptions: {
         digraphs: true,
+        stackLetters: {
+            stackType: LetterStackType.Value,
+            maxStackSize: 2,
+        },
     },
 });
 
@@ -116,6 +124,27 @@ export const createTextReducerCases = (
             const letterElement = state.text.elements[action.payload.id];
             letterElement.text = action.payload.text;
             letterElement.letter = action.payload.letter;
+        })
+        .addCase(textActions.addStackedLetter, (state, action) => {
+            state.text.elements[action.payload.parent].letters.push(
+                action.payload.id,
+            );
+
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.StackedLetter,
+                id: action.payload.id,
+                parent: action.payload.parent,
+                letters: [],
+            } satisfies StackedLetterElement;
+        })
+        .addCase(textActions.removeStackedLetter, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.letters = parent.letters.filter(
+                (childId) => childId !== action.payload,
+            );
+
+            delete state.text.elements[action.payload];
         })
         .addCase(textActions.addDot, (state, action) => {
             state.text.elements[action.payload.parent].dots.push(

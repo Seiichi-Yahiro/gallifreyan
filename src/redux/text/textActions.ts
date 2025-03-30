@@ -3,6 +3,7 @@ import type {
     LetterId,
     LineSlotId,
     SentenceId,
+    StackedLetterId,
     WordId,
 } from '@/redux/text/ids';
 import type { SplitLettersOptions } from '@/redux/text/textSplitter';
@@ -11,6 +12,7 @@ import {
     LetterElement,
     LineSlotElement,
     SentenceElement,
+    type StackedLetterElement,
     WordElement,
 } from '@/redux/text/textTypes';
 import { createAction } from '@reduxjs/toolkit';
@@ -41,6 +43,13 @@ const updateLetterText =
         'TEXT/UPDATE_LETTER',
     );
 
+const addStackedLetter = createAction<
+    Pick<StackedLetterElement, 'id' | 'parent'>
+>('TEXT/ADD_STACKED_LETTER');
+const removeStackedLetter = createAction<StackedLetterId>(
+    'TEXT/REMOVE_STACKED_LETTER',
+);
+
 const addDot = createAction<Pick<DotElement, 'id' | 'parent'>>('TEXT/ADD_DOT');
 const removeDot = createAction<DotId>('TEXT/REMOVE_DOT');
 
@@ -63,6 +72,8 @@ const textActions = {
     addLetter,
     removeLetter,
     updateLetterText,
+    addStackedLetter,
+    removeStackedLetter,
     addDot,
     removeDot,
     addLineSlot,

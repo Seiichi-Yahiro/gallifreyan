@@ -11,6 +11,7 @@ import {
     VocalValue,
 } from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
+import { LetterStackType } from '@/redux/text/textSplitter';
 import textThunks from '@/redux/text/textThunks';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -35,6 +36,10 @@ describe('text', () => {
             elements: {},
             splitLetterOptions: {
                 digraphs: true,
+                stackLetters: {
+                    stackType: LetterStackType.Value,
+                    maxStackSize: 2,
+                },
             },
         });
     });
@@ -222,7 +227,7 @@ describe('text', () => {
         expect(state.main.text.elements['WRD-2']).toBeUndefined();
     });
 
-    it('should remove word children', () => {
+    it('should remove word letter children', () => {
         store.dispatch(textActions.setText('this that'));
         store.dispatch(textActions.setText('this'));
 
@@ -247,6 +252,27 @@ describe('text', () => {
         expect(state.main.text.elements['LTR-3']).toBeUndefined();
         expect(state.main.text.elements['LTR-4']).toBeUndefined();
         expect(state.main.text.elements['LTR-5']).toBeUndefined();
+    });
+
+    it('should remove word stacked letter children', () => {
+        store.dispatch(textActions.setText('j bb'));
+        store.dispatch(textActions.setText('j'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'j',
+            },
+            'LTR-0': {
+                text: 'j',
+            },
+        });
+
+        expect(state.main.text.elements['WRD-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-2']).toBeUndefined();
+        expect(state.main.text.elements['SLG-0']).toBeUndefined();
     });
 
     it('should update word', () => {
@@ -348,6 +374,128 @@ describe('text', () => {
                 text: 'j',
             },
         });
+    });
+
+    it('should add stacked letter', () => {
+        store.dispatch(textActions.setText('bb'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'bb',
+                letters: ['SLG-0'],
+            },
+            'SLG-0': {
+                id: 'SLG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'LTR-0': {
+                parent: 'SLG-0',
+            },
+            'LTR-1': {
+                parent: 'SLG-0',
+            },
+        });
+    });
+
+    it('should add stacked letter on change', () => {
+        store.dispatch(textActions.setText('j'));
+        store.dispatch(textActions.setText('jbb'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'jbb',
+                letters: ['LTR-0', 'SLG-0'],
+            },
+            'SLG-0': {
+                id: 'SLG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-1', 'LTR-2'],
+            },
+            'LTR-0': {
+                parent: 'WRD-0',
+            },
+            'LTR-1': {
+                parent: 'SLG-0',
+            },
+            'LTR-2': {
+                parent: 'SLG-0',
+            },
+        });
+    });
+
+    it('should convert letter to stacked letter', () => {
+        store.dispatch(textActions.setText('b'));
+        store.dispatch(textActions.setText('bb'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'bb',
+                letters: ['SLG-0'],
+            },
+            'SLG-0': {
+                id: 'SLG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-1', 'LTR-2'],
+            },
+            'LTR-1': {
+                parent: 'SLG-0',
+            },
+            'LTR-2': {
+                parent: 'SLG-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+    });
+
+    it('should remove stacked letter', () => {
+        store.dispatch(textActions.setText('jbb'));
+        store.dispatch(textActions.setText('j'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'j',
+                letters: ['LTR-0'],
+            },
+            'LTR-0': {
+                text: 'j',
+                parent: 'WRD-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-2']).toBeUndefined();
+        expect(state.main.text.elements['SLG-0']).toBeUndefined();
+    });
+
+    it('should convert stacked letter to letter', () => {
+        store.dispatch(textActions.setText('bb'));
+        store.dispatch(textActions.setText('b'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'b',
+                letters: ['LTR-2'],
+            },
+            'LTR-2': {
+                parent: 'WRD-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['SLG-0']).toBeUndefined();
     });
 
     it('should add dot', () => {
