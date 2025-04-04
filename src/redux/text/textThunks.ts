@@ -127,7 +127,7 @@ const compareLetter =
         newRawLetter?: RawLetterElement,
         existingId?: LetterId | StackedLetterId | AttachedLetterId,
     ): AppThunkAction =>
-    (dispatch, getState) => {
+    (dispatch, _getState) => {
         match(existingId)
             .with(undefined, () =>
                 match(newRawLetter)
@@ -164,55 +164,9 @@ const compareLetter =
                     .with(
                         { elementType: TextElementType.Letter },
                         (newRawLetter) => {
-                            // TODO extract
-
-                            const state = getState();
-                            const letterElement =
-                                state.main.text.elements[existingLetterId];
-
-                            if (letterElement.text !== newRawLetter.text) {
-                                dispatch(
-                                    textActions.updateLetterText({
-                                        id: existingLetterId,
-                                        text: newRawLetter.text,
-                                        letter: newRawLetter.letter,
-                                    }),
-                                );
-
-                                zip(
-                                    range(
-                                        dotAmount(
-                                            newRawLetter.letter.decoration,
-                                        ),
-                                    ),
-                                    letterElement.dots,
-                                ).forEach(([newIndex, dotId]) =>
-                                    dispatch(
-                                        compareDot(
-                                            existingLetterId,
-                                            newIndex,
-                                            dotId,
-                                        ),
-                                    ),
-                                );
-
-                                zip(
-                                    range(
-                                        lineSlotAmount(
-                                            newRawLetter.letter.decoration,
-                                        ),
-                                    ),
-                                    letterElement.lineSlots,
-                                ).forEach(([newIndex, lineSlotId]) =>
-                                    dispatch(
-                                        compareLineSlot(
-                                            existingLetterId,
-                                            newIndex,
-                                            lineSlotId,
-                                        ),
-                                    ),
-                                );
-                            }
+                            dispatch(
+                                updateLetter(existingLetterId, newRawLetter),
+                            );
                         },
                     )
                     .with(
@@ -491,6 +445,39 @@ const removeStackedLetter =
         });
 
         dispatch(textActions.removeStackedLetter(id));
+    };
+
+const updateLetter =
+    (existingLetterId: LetterId, newRawLetter: RawLetter): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letterElement = state.main.text.elements[existingLetterId];
+
+        if (letterElement.text !== newRawLetter.text) {
+            dispatch(
+                textActions.updateLetterText({
+                    id: existingLetterId,
+                    text: newRawLetter.text,
+                    letter: newRawLetter.letter,
+                }),
+            );
+
+            zip(
+                range(dotAmount(newRawLetter.letter.decoration)),
+                letterElement.dots,
+            ).forEach(([newIndex, dotId]) =>
+                dispatch(compareDot(existingLetterId, newIndex, dotId)),
+            );
+
+            zip(
+                range(lineSlotAmount(newRawLetter.letter.decoration)),
+                letterElement.lineSlots,
+            ).forEach(([newIndex, lineSlotId]) =>
+                dispatch(
+                    compareLineSlot(existingLetterId, newIndex, lineSlotId),
+                ),
+            );
+        }
     };
 
 const splitDigraph =
