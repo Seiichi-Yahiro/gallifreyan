@@ -39,6 +39,7 @@ export interface StackedLetterElement {
     elementType: TextElementType.StackedLetter;
     id: StackedLetterId;
     parent: WordId | AttachedLetterId;
+    // actual size should be at least 2
     letters: LetterId[];
 }
 
@@ -46,10 +47,8 @@ export interface AttachedLetterElement {
     elementType: TextElementType.AttachedLetter;
     id: AttachedLetterId;
     parent: WordId;
-    letters: [
-        consonant: LetterId | StackedLetterId,
-        vocal: LetterId | StackedLetterId,
-    ];
+    // actual size should be 2
+    letters: (LetterId | StackedLetterId)[];
 }
 
 export interface LetterElement {

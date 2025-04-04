@@ -1,4 +1,5 @@
 import type {
+    AttachedLetterId,
     DotId,
     LetterId,
     LineSlotId,
@@ -8,6 +9,7 @@ import type {
 } from '@/redux/text/ids';
 import type { SplitLettersOptions } from '@/redux/text/textSplitter';
 import {
+    type AttachedLetterElement,
     DotElement,
     LetterElement,
     LineSlotElement,
@@ -50,6 +52,13 @@ const removeStackedLetter = createAction<StackedLetterId>(
     'TEXT/REMOVE_STACKED_LETTER',
 );
 
+const addAttachedLetter = createAction<
+    Pick<AttachedLetterElement, 'id' | 'parent'>
+>('TEXT/ADD_ATTACHED_LETTER');
+const removeAttachedLetter = createAction<AttachedLetterId>(
+    'TEXT/REMOVE_ATTACHED_LETTER',
+);
+
 const addDot = createAction<Pick<DotElement, 'id' | 'parent'>>('TEXT/ADD_DOT');
 const removeDot = createAction<DotId>('TEXT/REMOVE_DOT');
 
@@ -74,6 +83,8 @@ const textActions = {
     updateLetterText,
     addStackedLetter,
     removeStackedLetter,
+    addAttachedLetter,
+    removeAttachedLetter,
     addDot,
     removeDot,
     addLineSlot,

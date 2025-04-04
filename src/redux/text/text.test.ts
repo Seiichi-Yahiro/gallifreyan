@@ -40,6 +40,7 @@ describe('text', () => {
                     stackType: LetterStackType.Value,
                     maxStackSize: 2,
                 },
+                attachVocals: true,
             },
         });
     });
@@ -66,17 +67,27 @@ describe('text', () => {
                 id: 'WRD-0',
                 parent: 'SNT-0',
                 text: 'what',
-                letters: ['LTR-0', 'LTR-1', 'LTR-2'],
+                letters: ['ALG-0', 'LTR-2'],
             },
             'WRD-1': {
                 id: 'WRD-1',
                 parent: 'SNT-0',
                 text: 'ni',
+                letters: ['ALG-1'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'ALG-1': {
+                id: 'ALG-1',
+                parent: 'WRD-1',
                 letters: ['LTR-3', 'LTR-4'],
             },
             'LTR-0': {
                 id: 'LTR-0',
-                parent: 'WRD-0',
+                parent: 'ALG-0',
                 text: 'wh',
                 letter: {
                     value: DigraphValue.WH,
@@ -86,7 +97,7 @@ describe('text', () => {
             },
             'LTR-1': {
                 id: 'LTR-1',
-                parent: 'WRD-0',
+                parent: 'ALG-0',
                 text: 'a',
                 letter: {
                     value: VocalValue.A,
@@ -106,7 +117,7 @@ describe('text', () => {
             },
             'LTR-3': {
                 id: 'LTR-3',
-                parent: 'WRD-1',
+                parent: 'ALG-1',
                 text: 'n',
                 letter: {
                     value: ConsonantValue.N,
@@ -116,7 +127,7 @@ describe('text', () => {
             },
             'LTR-4': {
                 id: 'LTR-4',
-                parent: 'WRD-1',
+                parent: 'ALG-1',
                 text: 'i',
                 letter: {
                     value: VocalValue.I,
@@ -275,6 +286,27 @@ describe('text', () => {
         expect(state.main.text.elements['SLG-0']).toBeUndefined();
     });
 
+    it('should remove word attached letter children', () => {
+        store.dispatch(textActions.setText('j be'));
+        store.dispatch(textActions.setText('j'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'j',
+            },
+            'LTR-0': {
+                text: 'j',
+            },
+        });
+
+        expect(state.main.text.elements['WRD-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-2']).toBeUndefined();
+        expect(state.main.text.elements['ALG-0']).toBeUndefined();
+    });
+
     it('should update word', () => {
         store.dispatch(textActions.setText('this that'));
         store.dispatch(textActions.setText('that this'));
@@ -400,6 +432,60 @@ describe('text', () => {
         });
     });
 
+    it('should add attached letter', () => {
+        store.dispatch(textActions.setText('be'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'be',
+                letters: ['ALG-0'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'LTR-0': {
+                parent: 'ALG-0',
+            },
+            'LTR-1': {
+                parent: 'ALG-0',
+            },
+        });
+    });
+
+    it('should add attached letter with stacked letter children', () => {
+        store.dispatch(textActions.setText('bee'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'bee',
+                letters: ['ALG-0'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'SLG-0'],
+            },
+            'SLG-0': {
+                parent: 'ALG-0',
+            },
+            'LTR-0': {
+                parent: 'ALG-0',
+            },
+            'LTR-1': {
+                parent: 'SLG-0',
+            },
+            'LTR-2': {
+                parent: 'SLG-0',
+            },
+        });
+    });
+
     it('should add stacked letter on change', () => {
         store.dispatch(textActions.setText('j'));
         store.dispatch(textActions.setText('jbb'));
@@ -424,6 +510,34 @@ describe('text', () => {
             },
             'LTR-2': {
                 parent: 'SLG-0',
+            },
+        });
+    });
+
+    it('should add attached letter on change', () => {
+        store.dispatch(textActions.setText('j'));
+        store.dispatch(textActions.setText('jbe'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'jbe',
+                letters: ['LTR-0', 'ALG-0'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-1', 'LTR-2'],
+            },
+            'LTR-0': {
+                parent: 'WRD-0',
+            },
+            'LTR-1': {
+                parent: 'ALG-0',
+            },
+            'LTR-2': {
+                parent: 'ALG-0',
             },
         });
     });
@@ -455,6 +569,33 @@ describe('text', () => {
         expect(state.main.text.elements['LTR-0']).toBeUndefined();
     });
 
+    it('should convert letter to attached letter', () => {
+        store.dispatch(textActions.setText('b'));
+        store.dispatch(textActions.setText('be'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'be',
+                letters: ['ALG-0'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-1', 'LTR-2'],
+            },
+            'LTR-1': {
+                parent: 'ALG-0',
+            },
+            'LTR-2': {
+                parent: 'ALG-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+    });
+
     it('should remove stacked letter', () => {
         store.dispatch(textActions.setText('jbb'));
         store.dispatch(textActions.setText('j'));
@@ -477,6 +618,52 @@ describe('text', () => {
         expect(state.main.text.elements['SLG-0']).toBeUndefined();
     });
 
+    it('should remove attached letter', () => {
+        store.dispatch(textActions.setText('jbe'));
+        store.dispatch(textActions.setText('j'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'j',
+                letters: ['LTR-0'],
+            },
+            'LTR-0': {
+                text: 'j',
+                parent: 'WRD-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-2']).toBeUndefined();
+        expect(state.main.text.elements['ALG-0']).toBeUndefined();
+    });
+
+    it('should remove stacked letter children from attached letter', () => {
+        store.dispatch(textActions.setText('jbee'));
+        store.dispatch(textActions.setText('j'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'j',
+                letters: ['LTR-0'],
+            },
+            'LTR-0': {
+                text: 'j',
+                parent: 'WRD-0',
+            },
+        });
+
+        expect(state.main.text.elements['ALG-0']).toBeUndefined();
+        expect(state.main.text.elements['SLG-0']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['LTR-2']).toBeUndefined();
+        expect(state.main.text.elements['LTR-3']).toBeUndefined();
+    });
+
     it('should convert stacked letter to letter', () => {
         store.dispatch(textActions.setText('bb'));
         store.dispatch(textActions.setText('b'));
@@ -496,6 +683,85 @@ describe('text', () => {
         expect(state.main.text.elements['LTR-0']).toBeUndefined();
         expect(state.main.text.elements['LTR-1']).toBeUndefined();
         expect(state.main.text.elements['SLG-0']).toBeUndefined();
+    });
+
+    it('should convert attached letter to letter', () => {
+        store.dispatch(textActions.setText('be'));
+        store.dispatch(textActions.setText('b'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'b',
+                letters: ['LTR-2'],
+            },
+            'LTR-2': {
+                parent: 'WRD-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['ALG-0']).toBeUndefined();
+    });
+
+    it('should convert stacked letter to attached letter', () => {
+        store.dispatch(textActions.setText('bb'));
+        store.dispatch(textActions.setText('be'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'be',
+                letters: ['ALG-0'],
+            },
+            'ALG-0': {
+                id: 'ALG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-2', 'LTR-3'],
+            },
+            'LTR-2': {
+                parent: 'ALG-0',
+            },
+            'LTR-3': {
+                parent: 'ALG-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['SLG-0']).toBeUndefined();
+    });
+
+    it('should convert attached letter to stacked letter', () => {
+        store.dispatch(textActions.setText('be'));
+        store.dispatch(textActions.setText('bb'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'bb',
+                letters: ['SLG-0'],
+            },
+            'SLG-0': {
+                id: 'SLG-0',
+                parent: 'WRD-0',
+                letters: ['LTR-2', 'LTR-3'],
+            },
+            'LTR-2': {
+                parent: 'SLG-0',
+            },
+            'LTR-3': {
+                parent: 'SLG-0',
+            },
+        });
+
+        expect(state.main.text.elements['LTR-0']).toBeUndefined();
+        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.main.text.elements['ALG-0']).toBeUndefined();
     });
 
     it('should add dot', () => {

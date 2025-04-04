@@ -6,6 +6,7 @@ import {
     type SplitLettersOptions,
 } from '@/redux/text/textSplitter';
 import {
+    type AttachedLetterElement,
     type DotElement,
     type LetterElement,
     type LineSlotElement,
@@ -34,6 +35,7 @@ export const createInitialTextState = (): TextState => ({
             stackType: LetterStackType.Value,
             maxStackSize: 2,
         },
+        attachVocals: true,
     },
 });
 
@@ -138,6 +140,27 @@ export const createTextReducerCases = (
             } satisfies StackedLetterElement;
         })
         .addCase(textActions.removeStackedLetter, (state, action) => {
+            const parentId = state.text.elements[action.payload].parent;
+            const parent = state.text.elements[parentId];
+            parent.letters = parent.letters.filter(
+                (childId) => childId !== action.payload,
+            );
+
+            delete state.text.elements[action.payload];
+        })
+        .addCase(textActions.addAttachedLetter, (state, action) => {
+            state.text.elements[action.payload.parent].letters.push(
+                action.payload.id,
+            );
+
+            state.text.elements[action.payload.id] = {
+                elementType: TextElementType.AttachedLetter,
+                id: action.payload.id,
+                parent: action.payload.parent,
+                letters: [],
+            } satisfies AttachedLetterElement;
+        })
+        .addCase(textActions.removeAttachedLetter, (state, action) => {
             const parentId = state.text.elements[action.payload].parent;
             const parent = state.text.elements[parentId];
             parent.letters = parent.letters.filter(
