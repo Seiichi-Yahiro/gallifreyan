@@ -408,6 +408,58 @@ describe('text', () => {
         });
     });
 
+    it('should update stacked letter', () => {
+        store.dispatch(textActions.setText('bb'));
+        store.dispatch(textActions.setText('jj'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'jj',
+                letters: ['SLG-0'],
+            },
+            'SLG-0': {
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'LTR-0': {
+                parent: 'SLG-0',
+                text: 'j',
+            },
+            'LTR-1': {
+                parent: 'SLG-0',
+                text: 'j',
+            },
+        });
+    });
+
+    it('should update attached letter', () => {
+        store.dispatch(textActions.setText('be'));
+        store.dispatch(textActions.setText('jo'));
+
+        const state = store.getState();
+
+        expect(state.main.text.elements).toMatchObject({
+            'WRD-0': {
+                text: 'jo',
+                letters: ['ALG-0'],
+            },
+            'ALG-0': {
+                parent: 'WRD-0',
+                letters: ['LTR-0', 'LTR-1'],
+            },
+            'LTR-0': {
+                parent: 'ALG-0',
+                text: 'j',
+            },
+            'LTR-1': {
+                parent: 'ALG-0',
+                text: 'o',
+            },
+        });
+    });
+
     it('should add stacked letter', () => {
         store.dispatch(textActions.setText('bb'));
 

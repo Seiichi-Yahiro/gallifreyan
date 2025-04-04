@@ -217,8 +217,13 @@ const compareLetter =
                     })
                     .with(
                         { elementType: TextElementType.StackedLetter },
-                        (_newStackedLetter) => {
-                            // TODO update
+                        (newStackedLetter) => {
+                            dispatch(
+                                updateStackedLetter(
+                                    existingStackedLetterId,
+                                    newStackedLetter,
+                                ),
+                            );
                         },
                     )
                     .with(
@@ -258,8 +263,13 @@ const compareLetter =
                     })
                     .with(
                         { elementType: TextElementType.AttachedLetter },
-                        (_newAttachedLetter) => {
-                            // TODO update
+                        (newAttachedLetter) => {
+                            dispatch(
+                                updateAttachedLetter(
+                                    existingAttachedLetterId,
+                                    newAttachedLetter,
+                                ),
+                            );
                         },
                     )
                     .with(
@@ -559,6 +569,54 @@ const updateLetter =
                 ),
             );
         }
+    };
+
+const updateStackedLetter =
+    (
+        existingStackedLetterId: StackedLetterId,
+        newStackedLetter: RawStackedLetter,
+    ): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const stackedLetterElement =
+            state.main.text.elements[existingStackedLetterId];
+
+        zip(stackedLetterElement.letters, newStackedLetter.letters).forEach(
+            ([existingId, newRawLetter]) => {
+                dispatch(
+                    compareLetter(
+                        existingStackedLetterId,
+                        newRawLetter,
+                        existingId,
+                    ),
+                );
+            },
+        );
+    };
+
+const updateAttachedLetter =
+    (
+        existingAttachedLetterId: AttachedLetterId,
+        newAttachedLetter: RawAttachedLetter,
+    ): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const attachedLetterElement =
+            state.main.text.elements[existingAttachedLetterId];
+
+        zip(attachedLetterElement.letters, newAttachedLetter.letters).forEach(
+            ([existingId, newRawLetter]) => {
+                dispatch(
+                    compareLetter(
+                        existingAttachedLetterId,
+                        newRawLetter,
+                        existingId,
+                    ),
+                );
+            },
+        );
     };
 
 const splitDigraph =
