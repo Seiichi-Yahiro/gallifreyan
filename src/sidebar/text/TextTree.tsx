@@ -1,5 +1,6 @@
 import { useRedux } from '@/redux/hooks';
 import {
+    type AttachedLetterId,
     DotId,
     isAttachedLetterId,
     isLetterId,
@@ -7,6 +8,7 @@ import {
     LetterId,
     LineSlotId,
     SentenceId,
+    type StackedLetterId,
     WordId,
 } from '@/redux/text/ids';
 import useHover from '@/svg/useHover';
@@ -91,14 +93,18 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
                             letterId={letterId}
                         />
                     ))
-                    .when(isStackedLetterId, () => {
-                        // TODO
-                        return null;
-                    })
-                    .when(isAttachedLetterId, () => {
-                        // TODO
-                        return null;
-                    })
+                    .when(isStackedLetterId, (stackedLetterId) => (
+                        <TextStackedLetterTreeItem
+                            key={stackedLetterId}
+                            stackedLetterId={stackedLetterId}
+                        />
+                    ))
+                    .when(isAttachedLetterId, (attachedLetterId) => (
+                        <TextAttachedLetterTreeItem
+                            key={attachedLetterId}
+                            attachedLetterId={attachedLetterId}
+                        />
+                    ))
                     .exhaustive(),
             )}
         </TreeItem>
@@ -140,6 +146,59 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
                         />
                     ))
                   : null}
+        </TreeItem>
+    );
+};
+
+interface TextStackedLetterTreeItemProps {
+    stackedLetterId: StackedLetterId;
+}
+
+const TextStackedLetterTreeItem: React.FC<TextStackedLetterTreeItemProps> = ({
+    stackedLetterId,
+}) => {
+    const stackedLetter = useRedux(
+        (state) => state.main.text.elements[stackedLetterId],
+    );
+
+    return (
+        <TreeItem title="Stacked Group" defaultOpen={true}>
+            {stackedLetter.letters.map((letterId) => (
+                <TextLetterTreeItem key={letterId} letterId={letterId} />
+            ))}
+        </TreeItem>
+    );
+};
+
+interface TextAttachedLetterTreeItemProps {
+    attachedLetterId: AttachedLetterId;
+}
+
+const TextAttachedLetterTreeItem: React.FC<TextAttachedLetterTreeItemProps> = ({
+    attachedLetterId,
+}) => {
+    const attachedLetter = useRedux(
+        (state) => state.main.text.elements[attachedLetterId],
+    );
+
+    return (
+        <TreeItem title="Attached Group" defaultOpen={true}>
+            {attachedLetter.letters.map((childId) =>
+                match(childId)
+                    .when(isLetterId, (letterId) => (
+                        <TextLetterTreeItem
+                            key={letterId}
+                            letterId={letterId}
+                        />
+                    ))
+                    .when(isStackedLetterId, (stackedLetterId) => (
+                        <TextStackedLetterTreeItem
+                            key={stackedLetterId}
+                            stackedLetterId={stackedLetterId}
+                        />
+                    ))
+                    .exhaustive(),
+            )}
         </TreeItem>
     );
 };

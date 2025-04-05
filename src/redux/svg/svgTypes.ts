@@ -44,8 +44,6 @@ export interface DotCircle extends CircleI {
     type: TextElementType.Dot;
 }
 
-export type Circle = SentenceCircle | WordCircle | LetterCircle | DotCircle;
-
 export type CircleId = SentenceId | WordId | LetterId | DotId;
 
 // prettier-ignore
