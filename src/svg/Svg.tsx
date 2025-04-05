@@ -2,6 +2,7 @@ import { CircleIntersectionType } from '@/math/circle';
 import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import {
+    type AttachedLetterId,
     DotId,
     isAttachedLetterId,
     isLetterId,
@@ -9,15 +10,18 @@ import {
     LetterId,
     LineSlotId,
     SentenceId,
+    type StackedLetterId,
     WordId,
 } from '@/redux/text/ids';
+import { VocalPlacement } from '@/redux/text/letterTypes';
+import { TextElementType } from '@/redux/text/textTypes';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import './Svg.css';
 
@@ -145,10 +149,12 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                         // TODO
                         return null;
                     })
-                    .when(isAttachedLetterId, () => {
-                        // TODO
-                        return null;
-                    })
+                    .when(isAttachedLetterId, (attachedLetterId) => (
+                        <SvgAttachedLetter
+                            key={attachedLetterId}
+                            id={attachedLetterId}
+                        />
+                    ))
                     .exhaustive(),
             )}
         </SvgGroup>
@@ -157,9 +163,15 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
 
 interface SvgLetterProps {
     id: LetterId;
+    nestedVocal?: NestedVocalProps;
 }
 
-const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
+interface NestedVocalProps {
+    id: LetterId | StackedLetterId;
+    isPlacedOutside: boolean;
+}
+
+const SvgLetter: React.FC<SvgLetterProps> = ({ id, nestedVocal }) => {
     const dots = useRedux((state) => state.main.text.elements[id].dots);
 
     const lineSlots = useRedux(
@@ -205,8 +217,78 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
             {lineSlots.map((lineSlotId) => (
                 <SvgLineSlot key={lineSlotId} id={lineSlotId} />
             ))}
+            {nestedVocal &&
+                match(nestedVocal.id)
+                    .when(isLetterId, (nestedVocalId) => (
+                        <g
+                            style={{
+                                transform: `translateY(${-circle.position.distance}px)`,
+                            }}
+                        >
+                            <SvgLetter id={nestedVocalId} />
+                        </g>
+                    ))
+                    .when(isStackedLetterId, () => {
+                        // TODO
+                        return null;
+                    })
+                    .exhaustive()}
         </SvgGroup>
     );
+};
+
+interface SvgAttachedLetterProps {
+    id: AttachedLetterId;
+}
+
+const SvgAttachedLetter: React.FC<SvgAttachedLetterProps> = ({ id }) => {
+    const [consonantId, vocalId] = useRedux(
+        (state) => state.main.text.elements[id].letters,
+    );
+
+    const isVocalOutside = useRedux((state) => {
+        const vocalElement = state.main.text.elements[vocalId];
+
+        return match(vocalElement)
+            .with({ elementType: TextElementType.Letter }, (letterElement) => {
+                return (
+                    letterElement.letter.placement === VocalPlacement.Outside
+                );
+            })
+            .with(
+                { elementType: TextElementType.StackedLetter },
+                (stackedLetterElement) => {
+                    const stackedVocalElement =
+                        state.main.text.elements[
+                            stackedLetterElement.letters[0]
+                        ];
+
+                    return (
+                        stackedVocalElement.letter.placement ===
+                        VocalPlacement.Outside
+                    );
+                },
+            )
+            .exhaustive();
+    });
+
+    const nestedVocalProps = useMemo(
+        (): NestedVocalProps => ({
+            id: vocalId,
+            isPlacedOutside: isVocalOutside,
+        }),
+        [isVocalOutside, vocalId],
+    );
+
+    return match(consonantId)
+        .when(isLetterId, (consonantId) => (
+            <SvgLetter id={consonantId} nestedVocal={nestedVocalProps} />
+        ))
+        .when(isStackedLetterId, () => {
+            // TODO
+            return null;
+        })
+        .exhaustive();
 };
 
 interface SvgDotProps {

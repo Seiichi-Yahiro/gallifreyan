@@ -103,6 +103,41 @@ export const defaultConsonantPosition = (
     };
 };
 
+export const defaultAttachedVocalRadius = (
+    parentConsonantRadius: number,
+): number => parentConsonantRadius * 0.4;
+
+export const defaultAttachedVocalPosition = (
+    wordRadius: number,
+    parentConsonantCircle: CircleI,
+    attachedVocalRadius: number,
+    attachedVocalPlacement: VocalPlacement,
+    parentConsonantPlacement: ConsonantPlacement,
+): PositionData =>
+    match(attachedVocalPlacement)
+        .returnType<PositionData>()
+        .with(VocalPlacement.Inside, () => ({
+            angle: mAngle.degree(180),
+            distance: parentConsonantCircle.radius,
+        }))
+        .with(VocalPlacement.Outside, () => ({
+            angle: mAngle.degree(0),
+            distance: wordRadius + attachedVocalRadius * 1.5,
+        }))
+        .with(VocalPlacement.OnLine, () =>
+            match(parentConsonantPlacement)
+                .with(ConsonantPlacement.ShallowCut, () => ({
+                    angle: mAngle.degree(0),
+                    distance:
+                        wordRadius - parentConsonantCircle.position.distance,
+                }))
+                .otherwise(() => ({
+                    angle: mAngle.degree(0),
+                    distance: 0,
+                })),
+        )
+        .exhaustive();
+
 export const defaultDotRadius = (consonantRadius: number): number =>
     consonantRadius * 0.1;
 
