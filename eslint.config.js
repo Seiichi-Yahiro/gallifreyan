@@ -1,27 +1,34 @@
-import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
-import reactCompiler from 'eslint-plugin-react-compiler';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import pluginReactRefresh from 'eslint-plugin-react-refresh';
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-    { ignores: ['build'] },
+export default defineConfig([
+    { ignores: ['node_modules', 'build', 'reports', '.striker-tmp'] },
     {
-        extends: [js.configs.recommended, ...tseslint.configs.recommended],
-        files: ['**/*.{ts,tsx}'],
+        files: ['src/**/*.{ts,tsx}'],
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
         },
-        plugins: {
-            'react-hooks': reactHooks,
-            'react-refresh': reactRefresh,
-            'react-compiler': reactCompiler,
+        settings: {
+            react: {
+                version: 'detect',
+            },
         },
+        extends: [
+            ...tseslint.configs.recommended,
+            pluginReactRefresh.configs.vite,
+            pluginReact.configs.flat.recommended,
+            pluginReact.configs.flat['jsx-runtime'],
+            pluginReactHooks.configs.flat.recommended,
+            eslintConfigPrettier,
+        ],
         rules: {
-            ...reactHooks.configs.recommended.rules,
+            'react/prop-types': 'off',
             'react-refresh/only-export-components': [
                 'warn',
                 { allowConstantExport: true },
@@ -40,8 +47,6 @@ export default tseslint.config(
             ],
             'no-console': 'warn',
             eqeqeq: ['error', 'always'],
-            'react-compiler/react-compiler': 'error',
         },
     },
-    eslintConfigPrettier,
-);
+]);
