@@ -37,4 +37,4 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
     );
 };
 
-export default React.memo(AngleSettings);
+export default AngleSettings;

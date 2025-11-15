@@ -123,4 +123,4 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     );
 };
 
-export default React.memo(Slider);
+export default Slider;

@@ -23,4 +23,4 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ radius }) => {
     );
 };
 
-export default React.memo(RadiusSettings);
+export default RadiusSettings;

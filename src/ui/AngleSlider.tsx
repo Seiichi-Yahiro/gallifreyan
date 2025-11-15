@@ -178,4 +178,4 @@ const AngleArm: React.FC<AngleArmProps> = ({ value, unit, className }) => {
     );
 };
 
-export default React.memo(AngleSlider);
+export default AngleSlider;

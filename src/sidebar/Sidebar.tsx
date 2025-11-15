@@ -56,4 +56,4 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     );
 };
 
-export default React.memo(Sidebar);
+export default Sidebar;

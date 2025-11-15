@@ -180,4 +180,4 @@ const TextLineSlotTreeItem: React.FC<TextLineSlotTreeItemProps> = ({
     );
 };
 
-export default React.memo(TextTree);
+export default TextTree;

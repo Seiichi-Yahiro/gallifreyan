@@ -17,4 +17,4 @@ const SentenceInput: React.FC = () => {
     return <TextInput label="Sentence" value={text} onChange={setText} />;
 };
 
-export default React.memo(SentenceInput);
+export default SentenceInput;

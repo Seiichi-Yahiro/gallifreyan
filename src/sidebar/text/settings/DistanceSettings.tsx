@@ -23,4 +23,4 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ distance }) => {
     );
 };
 
-export default React.memo(DistanceSettings);
+export default DistanceSettings;

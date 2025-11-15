@@ -50,4 +50,4 @@ const SvgArc: React.FC<SvgArcProps> = ({
     );
 };
 
-export default React.memo(SvgArc);
+export default SvgArc;

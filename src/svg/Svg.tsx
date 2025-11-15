@@ -314,4 +314,4 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     );
 };
 
-export default React.memo(Svg);
+export default Svg;

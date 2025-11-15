@@ -19,4 +19,4 @@ const IconButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({
     );
 };
 
-export default React.memo(IconButton);
+export default IconButton;

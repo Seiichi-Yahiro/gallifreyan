@@ -40,4 +40,4 @@ const ExportButton: React.FC = () => {
     );
 };
 
-export default React.memo(ExportButton);
+export default ExportButton;

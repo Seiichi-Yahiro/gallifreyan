@@ -27,4 +27,4 @@ const SettingsTab: React.FC = () => {
     );
 };
 
-export default React.memo(SettingsTab);
+export default SettingsTab;

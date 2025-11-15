@@ -39,4 +39,4 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
     );
 };
 
-export default React.memo(SvgGroup);
+export default SvgGroup;

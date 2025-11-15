@@ -36,4 +36,4 @@ const SvgCircle: React.FC<SvgCircleProps> = ({
     );
 };
 
-export default React.memo(SvgCircle);
+export default SvgCircle;

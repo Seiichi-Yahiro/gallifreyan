@@ -205,4 +205,4 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
     );
 };
 
-export default React.memo(ElementSettings);
+export default ElementSettings;
