@@ -1,7 +1,6 @@
 import type { Arc } from '@/redux/svg/svgTypes';
 import { angleFromVec } from '@/redux/svg/svgUtils';
 import cn from '@/utils/cn';
-import { isArray } from 'lodash';
 import React from 'react';
 
 interface SvgArcProps extends React.SVGProps<SVGPathElement> {
@@ -12,7 +11,7 @@ interface SvgArcProps extends React.SVGProps<SVGPathElement> {
 }
 
 const toArray = (arcs: Arc | Arc[]): Arc[] =>
-    isArray(arcs.at(0)) ? (arcs as Arc[]) : [arcs as Arc];
+    Array.isArray(arcs.at(0)) ? (arcs as Arc[]) : [arcs as Arc];
 
 const SvgArc: React.FC<SvgArcProps> = ({
     radius,

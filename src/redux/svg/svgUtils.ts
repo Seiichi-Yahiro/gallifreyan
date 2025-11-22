@@ -6,7 +6,7 @@ import {
 import mVec2, { type Vec2 } from '@/math/vec';
 import type { CircleI, PositionData } from '@/redux/svg/svgTypes';
 import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
-import { chunk } from 'lodash';
+import { chunk } from 'es-toolkit';
 import { match } from 'ts-pattern';
 
 export const defaultCircle = (): CircleI => ({

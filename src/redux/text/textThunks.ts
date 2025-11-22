@@ -38,7 +38,7 @@ import {
     splitWords,
     textToDigraph,
 } from '@/redux/text/textUtils';
-import { range, zip } from 'lodash';
+import { range, zip } from 'es-toolkit';
 import { match, P } from 'ts-pattern';
 
 const updateTree =

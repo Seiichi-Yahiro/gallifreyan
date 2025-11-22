@@ -1,5 +1,3 @@
-import { isNumber } from 'lodash';
-
 const MIN = 0;
 const MAX_DEG = 360;
 const MAX_RAD = Math.PI * 2;
@@ -87,7 +85,7 @@ const angleOp =
     (op: (a: number, b: number) => number) =>
     <T extends Angle>(a: T, ...bs: (Angle | number)[]): T =>
         bs.reduce<T>((result, b) => {
-            if (isNumber(b)) {
+            if (typeof b === 'number') {
                 return { unit: result.unit, value: op(result.value, b) } as T;
             }
 

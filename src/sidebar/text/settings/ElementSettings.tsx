@@ -17,7 +17,6 @@ import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
-import { isEqual } from 'lodash';
 import { Merge, Split } from 'lucide-react';
 import React, { useMemo } from 'react';
 
@@ -70,7 +69,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
 
             return [prevId, nextId];
         },
-        isEqual,
+        ([prevA, nextA], [prevB, nextB]) => prevA === prevB && nextA === nextB,
     );
 
     return (
@@ -101,12 +100,20 @@ const ConsonantSettings: React.FC<ConsonantSettingsProps> = ({
             LetterType.Digraph,
     );
 
-    const [prevText, text, nextText] = useRedux((state) => {
-        const prevText = prevId ? state.main.text.elements[prevId].text : '';
-        const text = state.main.text.elements[id].text;
-        const nextText = nextId ? state.main.text.elements[nextId].text : '';
-        return [prevText, text, nextText];
-    }, isEqual);
+    const [prevText, text, nextText] = useRedux(
+        (state) => {
+            const prevText = prevId
+                ? state.main.text.elements[prevId].text
+                : '';
+            const text = state.main.text.elements[id].text;
+            const nextText = nextId
+                ? state.main.text.elements[nextId].text
+                : '';
+            return [prevText, text, nextText];
+        },
+        ([prevA, textA, nextA], [prevB, textB, nextB]) =>
+            prevA === prevB && textA === textB && nextA === nextB,
+    );
 
     const canMergeWithPrevToDigraph = useMemo(
         () => !isDigraph && isDigraphText(prevText + text),

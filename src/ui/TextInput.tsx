@@ -1,4 +1,3 @@
-import { uniqueId } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import cn from 'src/utils/cn';
 
@@ -19,7 +18,10 @@ const TextInput: React.FC<TextInputProps> = ({
     error = false,
     ref,
 }) => {
-    const id = useMemo(() => uniqueId(`${label}-text-input-`), [label]);
+    const id = useMemo(
+        () => `${label}-text-input-${crypto.randomUUID}`,
+        [label],
+    );
     const onChangeInput = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
             onChange(event.target.value);

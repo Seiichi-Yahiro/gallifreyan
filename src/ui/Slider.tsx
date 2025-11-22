@@ -1,5 +1,5 @@
 import useEventListener from '@/utils/useEventListener';
-import { clamp } from 'lodash';
+import { clamp } from 'es-toolkit';
 import React, { useCallback, useRef, useState } from 'react';
 
 interface SliderProps {

@@ -1,5 +1,5 @@
 import cn from '@/utils/cn';
-import { debounce } from 'lodash';
+import { debounce } from 'es-toolkit';
 import { ChevronRight, Dot } from 'lucide-react';
 import React, {
     type KeyboardEvent,

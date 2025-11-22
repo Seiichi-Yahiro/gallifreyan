@@ -1,5 +1,4 @@
 import mAngle, { type Angle, type Radian } from '@/math/angle';
-import { isNumber } from 'lodash';
 
 export interface Vec2 {
     x: number;
@@ -13,7 +12,7 @@ const vec2Op =
     (a: Vec2, ...bs: (Vec2 | number)[]): Vec2 =>
         bs.reduce<Vec2>(
             (result, b) =>
-                isNumber(b)
+                typeof b === 'number'
                     ? create(op(result.x, b), op(result.y, b))
                     : create(op(result.x, b.x), op(result.y, b.y)),
             a,
