@@ -1,7 +1,7 @@
 import { type AppStore, setupStore } from '@/redux/store';
 import { resetIdCounters } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
-import { TextElementType } from '@/redux/text/textTypes';
+import { TextElementType } from '@/redux/text/textElements';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('svg', () => {

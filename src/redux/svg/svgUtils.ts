@@ -5,7 +5,7 @@ import {
 } from '@/math/circle';
 import mVec2, { type Vec2 } from '@/math/vec';
 import type { CircleI, PositionData } from '@/redux/svg/svgTypes';
-import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letterTypes';
+import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letters';
 import { chunk } from 'es-toolkit';
 import { match } from 'ts-pattern';
 

@@ -29,9 +29,9 @@ import {
     ConsonantPlacement,
     LetterType,
     VocalDecoration,
-} from '@/redux/text/letterTypes';
+} from '@/redux/text/letters';
 import textActions from '@/redux/text/textActions';
-import { TextElementType } from '@/redux/text/textTypes';
+import { TextElementType } from '@/redux/text/textElements';
 import { type ActionReducerMapBuilder, isAnyOf } from '@reduxjs/toolkit';
 
 export interface SvgState {

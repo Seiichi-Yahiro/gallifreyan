@@ -11,7 +11,7 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/text/ids';
-import type { TextElementType } from '@/redux/text/textTypes';
+import type { TextElementType } from '@/redux/text/textElements';
 
 export type Arc = [Vec2, Vec2];
 

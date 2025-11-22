@@ -1,6 +1,7 @@
 import type { MainState } from '@/redux/reducer';
 import { type SentenceId } from '@/redux/text/ids';
 import textActions from '@/redux/text/textActions';
+import type { SplitLettersOptions } from '@/redux/text/textAnalysis';
 import {
     type DotElement,
     type LetterElement,
@@ -9,8 +10,7 @@ import {
     type TextElementsDict,
     TextElementType,
     type WordElement,
-} from '@/redux/text/textTypes';
-import type { SplitLettersOptions } from '@/redux/text/textUtils';
+} from '@/redux/text/textElements';
 import { type ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 export interface TextState {

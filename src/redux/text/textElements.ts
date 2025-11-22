@@ -6,7 +6,7 @@ import type {
     TextElementId,
     WordId,
 } from '@/redux/text/ids';
-import type { Letter } from '@/redux/text/letterTypes';
+import type { Letter } from '@/redux/text/letters';
 
 export enum TextElementType {
     Sentence = 'Sentence',
@@ -52,17 +52,6 @@ export interface LineSlotElement {
     id: LineSlotId;
     parent: LetterId; // TODO can also be word or sentence
 }
-
-export interface RawLetterElement {
-    text: string;
-    letter: Letter;
-}
-
-export type TextElement =
-    | SentenceElement
-    | WordElement
-    | DotElement
-    | LineSlotElement;
 
 // prettier-ignore
 export type TextElementDictValue<K extends string> =

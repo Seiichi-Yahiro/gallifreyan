@@ -13,16 +13,15 @@ import {
     type WordId,
     wordId,
 } from '@/redux/text/ids';
+import { dotAmount, lineSlotAmount } from '@/redux/text/letters';
 import textActions from '@/redux/text/textActions';
-import type { RawLetterElement } from '@/redux/text/textTypes';
 import {
     charToSingleLetter,
-    dotAmount,
-    lineSlotAmount,
+    type RawLetter,
     splitLetters,
     splitWords,
     textToDigraph,
-} from '@/redux/text/textUtils';
+} from '@/redux/text/textAnalysis';
 import { range, zip } from 'es-toolkit';
 
 const updateTree =
@@ -113,7 +112,7 @@ const compareWord =
 const compareLetter =
     (
         parent: WordId,
-        newRawLetter?: RawLetterElement,
+        newRawLetter?: RawLetter,
         existingId?: LetterId,
     ): AppThunkAction =>
     (dispatch, getState) => {
@@ -227,11 +226,7 @@ const addWord =
     };
 
 const addLetter =
-    (
-        rawLetter: RawLetterElement,
-        parent: WordId,
-        index?: number,
-    ): AppThunkAction =>
+    (rawLetter: RawLetter, parent: WordId, index?: number): AppThunkAction =>
     (dispatch, _getState) => {
         const id = letterId();
 

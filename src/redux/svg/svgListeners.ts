@@ -1,7 +1,7 @@
 import type { AppStartListening } from '@/redux/listener';
 import svgActions from '@/redux/svg/svgActions';
 import type { WordId } from '@/redux/text/ids';
-import { TextElementType } from '@/redux/text/textTypes';
+import { TextElementType } from '@/redux/text/textElements';
 
 export const resetCircleIntersections = (startListening: AppStartListening) =>
     startListening({

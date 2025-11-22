@@ -9,7 +9,7 @@ import {
     VocalDecoration,
     VocalPlacement,
     VocalValue,
-} from '@/redux/text/letterTypes';
+} from '@/redux/text/letters';
 import textActions from '@/redux/text/textActions';
 import textThunks from '@/redux/text/textThunks';
 import { spyOnAction } from 'test/testHelpers';

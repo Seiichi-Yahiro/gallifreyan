@@ -5,8 +5,8 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/text/ids';
-import type { Letter } from '@/redux/text/letterTypes';
-import type { SplitLettersOptions } from '@/redux/text/textUtils';
+import type { Letter } from '@/redux/text/letters';
+import type { SplitLettersOptions } from '@/redux/text/textAnalysis';
 import { createAction } from '@reduxjs/toolkit';
 
 const setText = createAction<string>('TEXT/SET_TEXT');

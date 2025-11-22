@@ -1,69 +1,110 @@
-import {
-    type Consonant,
-    ConsonantDecoration,
-    ConsonantPlacement,
-    ConsonantValue,
-    type Digraph,
-    DigraphValue,
-    LetterType,
-    type Vocal,
-    VocalDecoration,
-    VocalPlacement,
-    VocalValue,
-} from '@/redux/text/letterTypes';
-import type { RawLetterElement } from '@/redux/text/textTypes';
 import { match } from 'ts-pattern';
 
-export const isDigraphText = (text: string): boolean =>
-    Object.values(DigraphValue).includes(text.toUpperCase() as DigraphValue);
-
-export const splitWords = (sentence: string): string[] => sentence.split(' ');
-
-export interface SplitLettersOptions {
-    digraphs?: boolean;
+export enum LetterType {
+    Vocal = 'Vocal',
+    Consonant = 'Consonant',
+    Digraph = 'Digraph',
 }
 
-export const splitLetters = (
-    word: string,
-    options?: SplitLettersOptions,
-): RawLetterElement[] => {
-    let letters = word.split('').map(
-        (letterText): RawLetterElement => ({
-            text: letterText,
-            letter: charToSingleLetter(letterText)!,
-        }),
-    );
+export enum VocalValue {
+    A = 'A',
+    E = 'E',
+    I = 'I',
+    O = 'O',
+    U = 'U',
+}
 
-    if (options?.digraphs) {
-        letters = letters.reduce(digraphReducer, []);
-    }
+export enum ConsonantValue {
+    B = 'B',
+    J = 'J',
+    T = 'T',
+    K = 'K',
+    Y = 'Y',
+    D = 'D',
+    L = 'L',
+    R = 'R',
+    Z = 'Z',
+    C = 'C',
+    Q = 'Q',
+    G = 'G',
+    N = 'N',
+    V = 'V',
+    H = 'H',
+    P = 'P',
+    W = 'W',
+    X = 'X',
+    F = 'F',
+    M = 'M',
+    S = 'S',
+}
 
-    return letters;
-};
+export enum DigraphValue {
+    TH = 'TH',
+    PH = 'PH',
+    WH = 'WH',
+    GH = 'GH',
+    CH = 'CH',
+    SH = 'SH',
+    ND = 'ND',
+    NT = 'NT',
+    QU = 'QU',
+    NG = 'NG',
+}
 
-export const sanitizeSentence = (sentence: string): string => {
-    const vocals = Object.values<string>(VocalValue);
-    const consonants = Object.values<string>(ConsonantValue);
+export enum VocalDecoration {
+    None = 'None',
+    LineInside = 'LineInside',
+    LineOutside = 'LineOutside',
+}
 
-    return sentence
-        .split(' ')
-        .filter((word) => word.length > 0)
-        .map((word) =>
-            word
-                .split('')
-                .filter((letter) => {
-                    const upperCaseLetter = letter.toUpperCase();
-                    return (
-                        vocals.includes(upperCaseLetter) ||
-                        consonants.includes(upperCaseLetter)
-                    );
-                })
-                .join(''),
-        )
-        .join(' ');
-};
+export enum ConsonantDecoration {
+    None = 'None',
+    SingleDot = 'SingleDot',
+    DoubleDot = 'DoubleDot',
+    TripleDot = 'TripleDot',
+    QuadrupleDot = 'QuadrupleDot',
+    SingleLine = 'SingleLine',
+    DoubleLine = 'DoubleLine',
+    TripleLine = 'TripleLine',
+}
 
-const vocalDecoration = (vocal: VocalValue): VocalDecoration =>
+export enum VocalPlacement {
+    Inside = 'Inside',
+    OnLine = 'OnLine',
+    Outside = 'Outside',
+}
+
+export enum ConsonantPlacement {
+    DeepCut = 'DeepCut',
+    Inside = 'Inside',
+    ShallowCut = 'ShallowCut',
+    OnLine = 'OnLine',
+}
+
+export interface Vocal {
+    letterType: LetterType.Vocal;
+    value: VocalValue;
+    decoration: VocalDecoration;
+    placement: VocalPlacement;
+}
+
+export interface Consonant {
+    letterType: LetterType.Consonant;
+    value: ConsonantValue;
+    decoration: ConsonantDecoration;
+    placement: ConsonantPlacement;
+}
+
+export interface Digraph {
+    letterType: LetterType.Digraph;
+    value: DigraphValue;
+    decoration: ConsonantDecoration;
+    placement: ConsonantPlacement;
+}
+
+export type Letter = Vocal | Consonant | Digraph;
+
+export const vocalDecoration = (vocal: VocalValue): VocalDecoration =>
     match(vocal)
         .with(VocalValue.I, () => VocalDecoration.LineInside)
         .with(VocalValue.U, () => VocalDecoration.LineOutside)
@@ -75,7 +116,7 @@ const vocalDecoration = (vocal: VocalValue): VocalDecoration =>
         )
         .exhaustive();
 
-const consonantDecoration = (
+export const consonantDecoration = (
     consonant: ConsonantValue | DigraphValue,
 ): ConsonantDecoration =>
     match(consonant)
@@ -136,7 +177,7 @@ const consonantDecoration = (
         )
         .exhaustive();
 
-const vocalPlacement = (vocal: VocalValue): VocalPlacement =>
+export const vocalPlacement = (vocal: VocalValue): VocalPlacement =>
     match(vocal)
         .with(VocalValue.A, () => VocalPlacement.Outside)
         .with(VocalValue.O, () => VocalPlacement.Inside)
@@ -148,7 +189,7 @@ const vocalPlacement = (vocal: VocalValue): VocalPlacement =>
         )
         .exhaustive();
 
-const consonantPlacement = (
+export const consonantPlacement = (
     consonant: ConsonantValue | DigraphValue,
 ): ConsonantPlacement =>
     match(consonant)
@@ -220,79 +261,3 @@ export const lineSlotAmount = (
         .with(ConsonantDecoration.DoubleLine, () => 2)
         .with(ConsonantDecoration.TripleLine, () => 3)
         .otherwise(() => 0);
-
-const charToVocal = (char: string): Vocal | null => {
-    if (Object.values(VocalValue).includes(char as VocalValue)) {
-        const value = char as VocalValue;
-
-        return {
-            letterType: LetterType.Vocal,
-            value,
-            decoration: vocalDecoration(value),
-            placement: vocalPlacement(value),
-        };
-    }
-
-    return null;
-};
-
-const charToConsonant = (char: string): Consonant | null => {
-    if (Object.values(ConsonantValue).includes(char as ConsonantValue)) {
-        const value = char as ConsonantValue;
-
-        return {
-            letterType: LetterType.Consonant,
-            value,
-            decoration: consonantDecoration(value),
-            placement: consonantPlacement(value),
-        };
-    }
-
-    return null;
-};
-
-export const charToSingleLetter = (char: string): Vocal | Consonant | null => {
-    const upperCaseChar = char.toUpperCase();
-    return charToVocal(upperCaseChar) ?? charToConsonant(upperCaseChar);
-};
-
-export const textToDigraph = (text: string): Digraph | null => {
-    if (!isDigraphText(text)) {
-        return null;
-    }
-
-    const value = text.toUpperCase() as DigraphValue;
-
-    return {
-        letterType: LetterType.Digraph,
-        value,
-        decoration: consonantDecoration(value),
-        placement: consonantPlacement(value),
-    };
-};
-
-export const digraphReducer = (
-    acc: RawLetterElement[],
-    next: RawLetterElement,
-): RawLetterElement[] => {
-    const prev = acc.pop();
-
-    if (!prev) {
-        acc.push(next);
-        return acc;
-    }
-
-    const text = prev.text + next.text;
-    const digraph = textToDigraph(text);
-
-    if (digraph) {
-        acc.push({
-            text,
-            letter: digraph,
-        });
-    } else {
-        acc.push(prev, next);
-    }
-
-    return acc;
-};
