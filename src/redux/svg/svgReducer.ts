@@ -7,12 +7,7 @@ import mCircle, {
 import mVec2 from '@/math/vec';
 import type { MainState } from '@/redux/reducer';
 import svgActions from '@/redux/svg/svgActions';
-import type {
-    CirclesDict,
-    ConsonantCircle,
-    LineSlotDict,
-    VocalCircle,
-} from '@/redux/svg/svgTypes';
+import type { CirclesDict, LineSlotDict } from '@/redux/svg/svgTypes';
 import {
     circleTransform,
     defaultCircle,
@@ -31,20 +26,13 @@ import {
     wordArcsFromIntersections,
 } from '@/redux/svg/svgUtils';
 import {
-    convertConsonantIdToVocalId,
-    convertVocalIdToConsonantId,
-    isConsonantId,
-    isVocalId,
-} from '@/redux/text/ids';
-import { ConsonantPlacement, VocalDecoration } from '@/redux/text/letterTypes';
+    ConsonantPlacement,
+    LetterType,
+    VocalDecoration,
+} from '@/redux/text/letterTypes';
 import textActions from '@/redux/text/textActions';
-import {
-    type ConsonantElement,
-    TextElementType,
-    type VocalElement,
-} from '@/redux/text/textTypes';
+import { TextElementType } from '@/redux/text/textTypes';
 import { type ActionReducerMapBuilder, isAnyOf } from '@reduxjs/toolkit';
-import { match, P } from 'ts-pattern';
 
 export interface SvgState {
     size: number;
@@ -90,79 +78,62 @@ export const createSvgReducerCases = (
                 );
 
                 word.letters.forEach((letterId, letterIndex) => {
-                    const resetLineSlots = (
-                        letter: VocalElement | ConsonantElement,
-                        letterCircle: VocalCircle | ConsonantCircle,
-                    ) => {
-                        letter.lineSlots.forEach(
-                            (lineSlotId, lineSlotIndex) => {
-                                state.svg.lineSlots[lineSlotId].position =
-                                    defaultLineSlotPosition(
-                                        letterCircle.radius,
-                                        letter.lineSlots.length,
-                                        lineSlotIndex,
-                                        letter.letter.decoration ===
-                                            VocalDecoration.LineOutside,
-                                    );
-                            },
+                    const letter = state.text.elements[letterId];
+                    const letterCircle = state.svg.circles[letterId];
+
+                    if (letter.letter.letterType === LetterType.Vocal) {
+                        letterCircle.radius = defaultVocalRadius(
+                            wordCircle.radius,
+                            word.letters.length,
                         );
-                    };
 
-                    match(letterId)
-                        .when(isVocalId, (vocalId) => {
-                            const letter = state.text.elements[vocalId];
-                            const letterCircle = state.svg.circles[vocalId];
+                        letterCircle.position = defaultVocalPosition(
+                            wordCircle.radius,
+                            letterCircle.radius,
+                            word.letters.length,
+                            letter.letter.placement,
+                            letterIndex,
+                        );
+                    } else {
+                        letterCircle.radius = defaultConsonantRadius(
+                            wordCircle.radius,
+                            word.letters.length,
+                        );
 
-                            letterCircle.radius = defaultVocalRadius(
-                                wordCircle.radius,
-                                word.letters.length,
-                            );
+                        letterCircle.position = defaultConsonantPosition(
+                            wordCircle.radius,
+                            letterCircle.radius,
+                            word.letters.length,
+                            letter.letter.placement,
+                            letterIndex,
+                        );
+                    }
 
-                            letterCircle.position = defaultVocalPosition(
-                                wordCircle.radius,
+                    letter.dots.forEach((dotId, dotIndex) => {
+                        const dotCircle = state.svg.circles[dotId];
+
+                        dotCircle.radius = defaultDotRadius(
+                            letterCircle.radius,
+                        );
+
+                        dotCircle.position = defaultDotPosition(
+                            letterCircle.radius,
+                            dotCircle.radius,
+                            letter.dots.length,
+                            dotIndex,
+                        );
+                    });
+
+                    letter.lineSlots.forEach((lineSlotId, lineSlotIndex) => {
+                        state.svg.lineSlots[lineSlotId].position =
+                            defaultLineSlotPosition(
                                 letterCircle.radius,
-                                word.letters.length,
-                                letter.letter.placement,
-                                letterIndex,
+                                letter.lineSlots.length,
+                                lineSlotIndex,
+                                letter.letter.decoration ===
+                                    VocalDecoration.LineOutside,
                             );
-
-                            resetLineSlots(letter, letterCircle);
-                        })
-                        .when(isConsonantId, (consonantId) => {
-                            const letter = state.text.elements[consonantId];
-                            const letterCircle = state.svg.circles[consonantId];
-
-                            letterCircle.radius = defaultConsonantRadius(
-                                wordCircle.radius,
-                                word.letters.length,
-                            );
-
-                            letterCircle.position = defaultConsonantPosition(
-                                wordCircle.radius,
-                                letterCircle.radius,
-                                word.letters.length,
-                                letter.letter.placement,
-                                letterIndex,
-                            );
-
-                            letter.dots.forEach((dotId, dotIndex) => {
-                                const dotCircle = state.svg.circles[dotId];
-
-                                dotCircle.radius = defaultDotRadius(
-                                    letterCircle.radius,
-                                );
-
-                                dotCircle.position = defaultDotPosition(
-                                    letterCircle.radius,
-                                    dotCircle.radius,
-                                    letter.dots.length,
-                                    dotIndex,
-                                );
-                            });
-
-                            resetLineSlots(letter, letterCircle);
-                        })
-                        .exhaustive();
+                    });
                 });
             });
         })
@@ -178,10 +149,6 @@ export const createSvgReducerCases = (
             const letters = state.text.elements[action.payload].letters;
 
             for (const letterId of letters) {
-                if (isVocalId(letterId)) {
-                    continue;
-                }
-
                 const letter = state.text.elements[letterId].letter;
                 const letterCircle = state.svg.circles[letterId];
 
@@ -207,71 +174,49 @@ export const createSvgReducerCases = (
                     letterMCircle,
                 );
 
-                match(intersections)
-                    .with(
-                        { type: CircleIntersectionType.Two },
-                        (intersections) => {
-                            const sortedIntersections =
-                                sortIntersectionsByAngle(
-                                    wordMCircle,
-                                    letterMCircle,
-                                    intersections.values,
-                                );
+                if (intersections.type === CircleIntersectionType.Two) {
+                    const sortedIntersections = sortIntersectionsByAngle(
+                        wordMCircle,
+                        letterMCircle,
+                        intersections.values,
+                    );
 
-                            wordCircle.intersections.push(sortedIntersections);
+                    wordCircle.intersections.push(sortedIntersections);
 
-                            const transformedIntersections = sortedIntersections
-                                .map((pos) =>
-                                    mVec2.sub(pos, letterMCircle.position),
-                                )
-                                .map((pos) =>
-                                    mVec2.rotate(pos, {
-                                        ...letterCircle.position.angle,
-                                        value: -letterCircle.position.angle
-                                            .value,
-                                    }),
-                                ) as TwoCircleIntersections['values'];
+                    const transformedIntersections = sortedIntersections
+                        .map((pos) => mVec2.sub(pos, letterMCircle.position))
+                        .map((pos) =>
+                            mVec2.rotate(pos, {
+                                ...letterCircle.position.angle,
+                                value: -letterCircle.position.angle.value,
+                            }),
+                        ) as TwoCircleIntersections['values'];
 
-                            letterCircle.intersections = {
-                                type: CircleIntersectionType.Two,
-                                values: transformedIntersections,
-                            };
-                        },
-                    )
-                    .with(
-                        { type: CircleIntersectionType.One },
-                        (intersection) => {
-                            const transformedIntersection = mVec2.sub(
-                                intersection.value,
-                                letterMCircle.position,
-                            );
+                    letterCircle.intersections = {
+                        type: CircleIntersectionType.Two,
+                        values: transformedIntersections,
+                    };
+                } else if (intersections.type === CircleIntersectionType.One) {
+                    const transformedIntersection = mVec2.sub(
+                        intersections.value,
+                        letterMCircle.position,
+                    );
 
-                            const rotatedIntersection = mVec2.rotate(
-                                transformedIntersection,
-                                {
-                                    ...letterCircle.position.angle,
-                                    value: -letterCircle.position.angle.value,
-                                },
-                            );
-
-                            letterCircle.intersections = {
-                                type: CircleIntersectionType.One,
-                                value: rotatedIntersection,
-                            };
-                        },
-                    )
-                    .with(
+                    const rotatedIntersection = mVec2.rotate(
+                        transformedIntersection,
                         {
-                            type: P.union(
-                                CircleIntersectionType.None,
-                                CircleIntersectionType.Infinity,
-                            ),
+                            ...letterCircle.position.angle,
+                            value: -letterCircle.position.angle.value,
                         },
-                        (intersections) => {
-                            letterCircle.intersections = intersections;
-                        },
-                    )
-                    .exhaustive();
+                    );
+
+                    letterCircle.intersections = {
+                        type: CircleIntersectionType.One,
+                        value: rotatedIntersection,
+                    };
+                } else {
+                    letterCircle.intersections = intersections;
+                }
             }
 
             wordCircle.arcs = wordArcsFromIntersections(
@@ -298,50 +243,15 @@ export const createSvgReducerMatches = (
                 arcs: [],
             };
         })
-        .addMatcher(textActions.addVocal.match, (state, action) => {
+        .addMatcher(textActions.addLetter.match, (state, action) => {
             state.svg.circles[action.payload.id] = {
                 ...defaultCircle(),
-                type: TextElementType.Vocal,
-            };
-        })
-        .addMatcher(
-            textActions.convertConsonantToVocal.match,
-            (state, action) => {
-                state.svg.circles[
-                    convertConsonantIdToVocalId(action.payload.oldId)
-                ] = {
-                    ...defaultCircle(),
-                    type: TextElementType.Vocal,
-                };
-
-                delete state.svg.circles[action.payload.oldId];
-            },
-        )
-        .addMatcher(textActions.addConsonant.match, (state, action) => {
-            state.svg.circles[action.payload.id] = {
-                ...defaultCircle(),
-                type: TextElementType.Consonant,
+                type: TextElementType.Letter,
                 intersections: {
                     type: CircleIntersectionType.None,
                 },
             };
         })
-        .addMatcher(
-            textActions.convertVocalToConsonant.match,
-            (state, action) => {
-                state.svg.circles[
-                    convertVocalIdToConsonantId(action.payload.oldId)
-                ] = {
-                    ...defaultCircle(),
-                    type: TextElementType.Consonant,
-                    intersections: {
-                        type: CircleIntersectionType.None,
-                    },
-                };
-
-                delete state.svg.circles[action.payload.oldId];
-            },
-        )
         .addMatcher(textActions.addDot.match, (state, action) => {
             state.svg.circles[action.payload.id] = {
                 ...defaultCircle(),
@@ -359,7 +269,7 @@ export const createSvgReducerMatches = (
                 delete state.svg.circles[action.payload];
             },
         )
-        .addMatcher(textActions.addLineSlot.match, (state, action) => {
+        .addMatcher(isAnyOf(textActions.addLineSlot), (state, action) => {
             state.svg.lineSlots[action.payload.id] = {
                 position: {
                     distance: 0,
@@ -367,7 +277,7 @@ export const createSvgReducerMatches = (
                 },
             };
         })
-        .addMatcher(textActions.removeLineSlot.match, (state, action) => {
+        .addMatcher(isAnyOf(textActions.removeLineSlot), (state, action) => {
             delete state.svg.lineSlots[action.payload];
         });
 };

@@ -1,12 +1,11 @@
 import { useRedux } from '@/redux/hooks';
-import {
-    type DotId,
-    type LetterId,
-    type LineSlotId,
-    type SentenceId,
-    type WordId,
+import type {
+    DotId,
+    LetterId,
+    LineSlotId,
+    SentenceId,
+    WordId,
 } from '@/redux/text/ids';
-import { TextElementType } from '@/redux/text/textTypes';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import { Tree, TreeItem } from '@/ui/Tree';
@@ -110,15 +109,7 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
                 'bg-hover-accent-strong': isSelected,
             })}
         >
-            {letter.elementType === TextElementType.Consonant &&
-                letter.dots.map((dot) => (
-                    <TextDotTreeItem key={dot} dotId={dot} />
-                ))}
-            {letter.lineSlots.map((lineSlot) => (
-                <TextLineSlotTreeItem key={lineSlot} lineSlotId={lineSlot} />
-            ))}
-
-            {/* {letter.dots.length > 0
+            {letter.dots.length > 0
                 ? letter.dots.map((dot) => (
                       <TextDotTreeItem key={dot} dotId={dot} />
                   ))
@@ -129,7 +120,7 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
                             lineSlotId={lineSlot}
                         />
                     ))
-                  : null}*/}
+                  : null}
         </TreeItem>
     );
 };

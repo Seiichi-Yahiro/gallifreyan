@@ -1,13 +1,11 @@
 import type {
-    ConsonantId,
     DotId,
     LetterId,
     LineSlotId,
     SentenceId,
-    VocalId,
     WordId,
 } from '@/redux/text/ids';
-import type { Consonant, Digraph, Vocal } from '@/redux/text/letterTypes';
+import type { Letter } from '@/redux/text/letterTypes';
 import type { SplitLettersOptions } from '@/redux/text/textUtils';
 import { createAction } from '@reduxjs/toolkit';
 
@@ -29,49 +27,21 @@ const updateWordText = createAction<{ id: WordId; text: string }>(
     'TEXT/UPDATE_WORD',
 );
 
-const addConsonant = createAction<{
-    id: ConsonantId;
+const addLetter = createAction<{
+    id: LetterId;
     parent: WordId;
     text: string;
-    letter: Consonant | Digraph;
+    letter: Letter;
     index?: number;
-}>('TEXT/ADD_CONSONANT');
-
-const addVocal = createAction<{
-    id: VocalId;
-    parent: WordId;
-    text: string;
-    letter: Vocal;
-    index?: number;
-}>('TEXT/ADD_VOCAL');
-
+}>('TEXT/ADD_LETTER');
 const removeLetter = createAction<LetterId>('TEXT/REMOVE_LETTER');
-
-const convertConsonantToVocal = createAction<{
-    oldId: ConsonantId;
+const updateLetterText = createAction<{
+    id: LetterId;
     text: string;
-    letter: Vocal;
-}>('TEXT/CONVERT_CONSONANT_TO_VOCAL');
+    letter: Letter;
+}>('TEXT/UPDATE_LETTER');
 
-const convertVocalToConsonant = createAction<{
-    oldId: VocalId;
-    text: string;
-    letter: Consonant | Digraph;
-}>('TEXT/CONVERT_VOCAL_TO_CONSONANT');
-
-const updateConsonantText = createAction<{
-    id: ConsonantId;
-    text: string;
-    letter: Consonant | Digraph;
-}>('TEXT/UPDATE_CONSONANT');
-
-const updateVocalText = createAction<{
-    id: VocalId;
-    text: string;
-    letter: Vocal;
-}>('TEXT/UPDATE_VOCAL');
-
-const addDot = createAction<{ id: DotId; parent: ConsonantId }>('TEXT/ADD_DOT');
+const addDot = createAction<{ id: DotId; parent: LetterId }>('TEXT/ADD_DOT');
 const removeDot = createAction<DotId>('TEXT/REMOVE_DOT');
 
 const addLineSlot = createAction<{ id: LineSlotId; parent: LetterId }>(
@@ -91,13 +61,9 @@ const textActions = {
     addWord,
     removeWord,
     updateWordText,
-    addConsonant,
-    addVocal,
+    addLetter,
     removeLetter,
-    updateConsonantText,
-    updateVocalText,
-    convertConsonantToVocal,
-    convertVocalToConsonant,
+    updateLetterText,
     addDot,
     removeDot,
     addLineSlot,

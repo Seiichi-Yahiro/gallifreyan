@@ -576,11 +576,10 @@ describe('textUtils', () => {
 
         it('should not combine other consonants', () => {
             const letters = Object.values(ConsonantValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
+                (text): RawLetterElement => ({
+                    text,
+                    letter: charToSingleLetter(text)!,
+                }),
             );
 
             const result = letters.reduce(digraphReducer, []);
@@ -590,11 +589,10 @@ describe('textUtils', () => {
 
         it('should not combine vocals', () => {
             const letters = Object.values(VocalValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
+                (text): RawLetterElement => ({
+                    text,
+                    letter: charToSingleLetter(text)!,
+                }),
             );
 
             const result = letters.reduce(digraphReducer, []);
@@ -604,11 +602,10 @@ describe('textUtils', () => {
 
         it('should not combine digraphs', () => {
             const letters = Object.values(DigraphValue).map(
-                (text): RawLetterElement =>
-                    ({
-                        text,
-                        letter: charToSingleLetter(text)!,
-                    }) as RawLetterElement,
+                (text): RawLetterElement => ({
+                    text,
+                    letter: charToSingleLetter(text)!,
+                }),
             );
 
             const result = letters.reduce(digraphReducer, []);
