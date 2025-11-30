@@ -13,6 +13,9 @@ export default defineConfig([
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
+            parserOptions: {
+                projectService: true,
+            },
         },
         settings: {
             react: {
@@ -20,7 +23,7 @@ export default defineConfig([
             },
         },
         extends: [
-            ...tseslint.configs.recommended,
+            ...tseslint.configs.recommendedTypeChecked,
             pluginReactRefresh.configs.vite,
             pluginReact.configs.flat.recommended,
             pluginReact.configs.flat['jsx-runtime'],

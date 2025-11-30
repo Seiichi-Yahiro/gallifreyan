@@ -19,7 +19,7 @@ const ExportButton: React.FC = () => {
         <IconButton
             title="Export as Svg"
             disabled={filename.length === 0}
-            onClick={async () => {
+            onClick={() => {
                 const svg = document.getElementById('gallifreyan');
 
                 if (!svg) {
@@ -29,7 +29,7 @@ const ExportButton: React.FC = () => {
                 const svgString = convertSvgHtmlElementToString(svg);
 
                 if ('showSaveFilePicker' in window) {
-                    await saveAsFile(svgString, filename);
+                    void saveAsFile(svgString, filename);
                 } else {
                     downloadAsFile(svgString, filename);
                 }
