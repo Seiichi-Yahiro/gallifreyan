@@ -46,7 +46,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
                 angle = mAngle.toDegree(angle);
             }
 
-            if (step) {
+            if (step !== undefined && step > 0) {
                 angle.value = Math.round(angle.value / step) * step;
                 angle = mAngle.normalize(angle);
             }

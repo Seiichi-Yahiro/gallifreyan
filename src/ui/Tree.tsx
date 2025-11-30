@@ -35,21 +35,23 @@ export const TreeItem: React.FC<TreeItemProps> = ({
     const [open, setOpen] = useState(defaultOpen);
     const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
 
+    const hasChildren = React.Children.count(children) > 0;
+
     return (
         <div className="relative">
             <div className="absolute flex h-full flex-col gap-1">
                 <TreeItemTrigger
                     open={open}
                     toggleOpen={toggleOpen}
-                    hasChildren={!!children}
+                    hasChildren={hasChildren}
                 />
-                {children && (
+                {hasChildren && (
                     <div className="border-border ml-[0.5px] w-3 grow border-r" />
                 )}
             </div>
             <div className="flex grow flex-col">
                 <TreeItemTitle title={title} className={className} {...props} />
-                {children && (
+                {hasChildren && (
                     <TreeItemContent open={open}>{children}</TreeItemContent>
                 )}
             </div>

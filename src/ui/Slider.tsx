@@ -27,7 +27,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
             const x = clientX - rect.left;
             let factor = clamp(x / rect.width, 0, 1);
 
-            if (step) {
+            if (step !== undefined && step > 0) {
                 const stepFactor = step / range;
                 factor = Math.round(factor / stepFactor) * stepFactor;
             }

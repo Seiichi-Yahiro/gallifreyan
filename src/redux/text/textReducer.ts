@@ -81,7 +81,7 @@ export const createTextReducerCases = (
             state.text.elements[action.payload.id].text = action.payload.text;
         })
         .addCase(textActions.addLetter, (state, action) => {
-            if (action.payload.index) {
+            if (action.payload.index !== undefined) {
                 state.text.elements[action.payload.parent].letters.splice(
                     action.payload.index,
                     0,
