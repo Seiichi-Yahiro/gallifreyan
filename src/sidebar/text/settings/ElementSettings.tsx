@@ -1,4 +1,6 @@
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
+import svgActions from '@/redux/svg/svgActions';
+import svgThunks from '@/redux/svg/svgThunks';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import {
     isDotId,
@@ -138,6 +140,8 @@ interface CircleSettingsProps {
 }
 
 const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
+    const dispatch = useAppDispatch();
+
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const parentAngle = useRedux((state) =>
@@ -150,10 +154,18 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
     return (
         <>
             <RadiusSettings radius={circle.radius} />
-            <DistanceSettings distance={circle.position.distance} />
+            <DistanceSettings
+                distance={circle.position.distance}
+                onChange={(distance) =>
+                    dispatch(svgThunks.setCirclePositionData(id, { distance }))
+                }
+            />
             <AngleSettings
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
+                onChange={(angle) => {
+                    dispatch(svgThunks.setCirclePositionData(id, { angle }));
+                }}
             />
         </>
     );
@@ -164,6 +176,8 @@ interface LineSlotSettingsProps {
 }
 
 const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
+    const dispatch = useAppDispatch();
+
     const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
 
     const parentAngle = useRedux(
@@ -176,6 +190,14 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
         <AngleSettings
             angle={lineSlot.position.angle}
             parentAngle={parentAngle}
+            onChange={(angle) =>
+                dispatch(
+                    svgActions.setLineSlotPositionData({
+                        id,
+                        position: { angle },
+                    }),
+                )
+            }
         />
     );
 };

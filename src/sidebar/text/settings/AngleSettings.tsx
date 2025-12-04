@@ -6,11 +6,13 @@ import React from 'react';
 interface AngleSettingsProps {
     angle: Angle;
     parentAngle?: Angle;
+    onChange: (angle: Angle) => void;
 }
 
 const AngleSettings: React.FC<AngleSettingsProps> = ({
     angle,
     parentAngle = mAngle.degree(0),
+    onChange,
 }) => {
     return (
         <div className="flex flex-col gap-1">
@@ -26,8 +28,17 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
                         unit={angle.unit}
                         step={1}
                         value={angle.value}
-                        onChange={() => {
-                            // TODO
+                        onChange={(value) => {
+                            const valueAngle: Angle = {
+                                value,
+                                unit: angle.unit,
+                            };
+
+                            onChange(
+                                mAngle.normalize(
+                                    mAngle.sub(valueAngle, parentAngle),
+                                ),
+                            );
                         }}
                         className="max-w-60"
                     />

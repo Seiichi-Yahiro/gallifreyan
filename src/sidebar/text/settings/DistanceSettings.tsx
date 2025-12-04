@@ -4,9 +4,13 @@ import React from 'react';
 
 interface DistanceSettingsProps {
     distance: number;
+    onChange: (distance: number) => void;
 }
 
-const DistanceSettings: React.FC<DistanceSettingsProps> = ({ distance }) => {
+const DistanceSettings: React.FC<DistanceSettingsProps> = ({
+    distance,
+    onChange,
+}) => {
     return (
         <div className="flex flex-col gap-1">
             <div>{`Distance: ${formatDecimal(distance)} px`}</div>
@@ -15,9 +19,7 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ distance }) => {
                 max={1000}
                 step={1}
                 value={distance}
-                onChange={() => {
-                    // TODO
-                }}
+                onChange={onChange}
             />
         </div>
     );

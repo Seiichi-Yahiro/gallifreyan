@@ -222,6 +222,24 @@ export const createSvgReducerCases = (
             wordCircle.arcs = wordArcsFromIntersections(
                 wordCircle.intersections,
             );
+        })
+        .addCase(svgActions.setCirclePositionData, (state, action) => {
+            const currentPosition =
+                state.svg.circles[action.payload.id].position;
+
+            state.svg.circles[action.payload.id].position = {
+                ...currentPosition,
+                ...action.payload.position,
+            };
+        })
+        .addCase(svgActions.setLineSlotPositionData, (state, action) => {
+            const currentPosition =
+                state.svg.lineSlots[action.payload.id].position;
+
+            state.svg.lineSlots[action.payload.id].position = {
+                ...currentPosition,
+                ...action.payload.position,
+            };
         });
 };
 
