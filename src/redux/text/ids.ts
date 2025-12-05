@@ -19,6 +19,8 @@ export const sentenceId: () => SentenceId = sentenceCounter.generator;
 export type WordId = IdGenerator<'WRD'>;
 const wordCounter = createIdCounter('WRD');
 export const wordId: () => WordId = wordCounter.generator;
+export const isWordId = (id: TextElementId): id is WordId =>
+    id.startsWith('WRD');
 
 export type LetterId = IdGenerator<'LTR'>;
 const letterCounter = createIdCounter('LTR');

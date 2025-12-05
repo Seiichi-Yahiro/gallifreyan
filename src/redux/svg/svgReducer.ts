@@ -223,6 +223,9 @@ export const createSvgReducerCases = (
                 wordCircle.intersections,
             );
         })
+        .addCase(svgActions.setCircleRadius, (state, action) => {
+            state.svg.circles[action.payload.id].radius = action.payload.radius;
+        })
         .addCase(svgActions.setCirclePositionData, (state, action) => {
             const currentPosition =
                 state.svg.circles[action.payload.id].position;

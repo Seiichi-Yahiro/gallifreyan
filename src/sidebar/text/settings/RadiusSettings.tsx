@@ -4,9 +4,13 @@ import React from 'react';
 
 interface RadiusSettingsProps {
     radius: number;
+    onChange: (radius: number) => void;
 }
 
-const RadiusSettings: React.FC<RadiusSettingsProps> = ({ radius }) => {
+const RadiusSettings: React.FC<RadiusSettingsProps> = ({
+    radius,
+    onChange,
+}) => {
     return (
         <div className="flex flex-col gap-1">
             <div>{`Radius: ${formatDecimal(radius)} px`}</div>
@@ -15,9 +19,7 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ radius }) => {
                 max={500}
                 step={1}
                 value={radius}
-                onChange={() => {
-                    // TODO
-                }}
+                onChange={onChange}
             />
         </div>
     );

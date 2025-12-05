@@ -153,7 +153,12 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
 
     return (
         <>
-            <RadiusSettings radius={circle.radius} />
+            <RadiusSettings
+                radius={circle.radius}
+                onChange={(radius) =>
+                    dispatch(svgThunks.setCircleRadius(id, radius))
+                }
+            />
             <DistanceSettings
                 distance={circle.position.distance}
                 onChange={(distance) =>
