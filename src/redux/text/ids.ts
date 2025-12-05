@@ -15,6 +15,8 @@ const createIdCounter = <Prefix extends string>(prefix: Prefix) => {
 export type SentenceId = IdGenerator<'SNT'>;
 const sentenceCounter = createIdCounter('SNT');
 export const sentenceId: () => SentenceId = sentenceCounter.generator;
+export const isSentenceId = (id: TextElementId): id is SentenceId =>
+    id.startsWith('SNT');
 
 export type WordId = IdGenerator<'WRD'>;
 const wordCounter = createIdCounter('WRD');

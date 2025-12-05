@@ -6,10 +6,11 @@ import {
     isDotId,
     isLetterId,
     isLineSlotId,
+    isSentenceId,
     type LetterId,
     type LineSlotId,
 } from '@/redux/text/ids';
-import { LetterType } from '@/redux/text/letters';
+import { LetterPlacement, LetterType } from '@/redux/text/letters';
 import { isDigraphText } from '@/redux/text/textAnalysis';
 import textThunks from '@/redux/text/textThunks';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
@@ -27,7 +28,7 @@ interface PositionInputProps {
 const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
     const selected = useRedux((state) => state.main.selected);
 
-    if (!selected) {
+    if (!selected || isSentenceId(selected)) {
         return null;
     }
 
@@ -151,6 +152,15 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             : undefined,
     );
 
+    const canChangeDistance = useRedux(
+        (state) =>
+            !(
+                isLetterId(id) &&
+                state.main.text.elements[id].letter.placement ===
+                    LetterPlacement.OnLine
+            ),
+    );
+
     return (
         <>
             <RadiusSettings
@@ -159,12 +169,16 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                     dispatch(svgThunks.setCircleRadius(id, radius))
                 }
             />
-            <DistanceSettings
-                distance={circle.position.distance}
-                onChange={(distance) =>
-                    dispatch(svgThunks.setCirclePositionData(id, { distance }))
-                }
-            />
+            {canChangeDistance && (
+                <DistanceSettings
+                    distance={circle.position.distance}
+                    onChange={(distance) =>
+                        dispatch(
+                            svgThunks.setCirclePositionData(id, { distance }),
+                        )
+                    }
+                />
+            )}
             <AngleSettings
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
