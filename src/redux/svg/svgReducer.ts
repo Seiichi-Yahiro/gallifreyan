@@ -26,9 +26,9 @@ import {
     wordArcsFromIntersections,
 } from '@/redux/svg/svgUtils';
 import {
-    ConsonantPlacement,
+    LetterDecoration,
+    LetterPlacement,
     LetterType,
-    VocalDecoration,
 } from '@/redux/text/letters';
 import textActions from '@/redux/text/textActions';
 import { TextElementType } from '@/redux/text/textElements';
@@ -131,7 +131,7 @@ export const createSvgReducerCases = (
                                 letter.lineSlots.length,
                                 lineSlotIndex,
                                 letter.letter.decoration ===
-                                    VocalDecoration.LineOutside,
+                                    LetterDecoration.LineOutside,
                             );
                     });
                 });
@@ -154,8 +154,8 @@ export const createSvgReducerCases = (
 
                 if (
                     !(
-                        letter.placement === ConsonantPlacement.DeepCut ||
-                        letter.placement === ConsonantPlacement.ShallowCut
+                        letter.placement === LetterPlacement.DeepCut ||
+                        letter.placement === LetterPlacement.ShallowCut
                     )
                 ) {
                     letterCircle.intersections = {

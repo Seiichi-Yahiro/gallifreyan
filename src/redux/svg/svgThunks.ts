@@ -2,7 +2,7 @@ import type { AppThunkAction } from '@/redux/store';
 import svgActions from '@/redux/svg/svgActions';
 import type { CircleId, PositionData } from '@/redux/svg/svgTypes';
 import { isLetterId, isWordId } from '@/redux/text/ids';
-import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letters';
+import { LetterPlacement } from '@/redux/text/letters';
 import { match } from 'ts-pattern';
 
 const setCircleRadius =
@@ -20,21 +20,16 @@ const setCircleRadius =
 
             const newDistance = match(letter.letter.placement)
                 .with(
-                    ConsonantPlacement.ShallowCut,
-                    ConsonantPlacement.DeepCut,
-                    ConsonantPlacement.Inside,
-                    VocalPlacement.Inside,
+                    LetterPlacement.ShallowCut,
+                    LetterPlacement.DeepCut,
+                    LetterPlacement.Inside,
                     () => currentCircle.position.distance - deltaRadius,
                 )
                 .with(
-                    VocalPlacement.Outside,
+                    LetterPlacement.Outside,
                     () => currentCircle.position.distance + deltaRadius,
                 )
-                .with(
-                    ConsonantPlacement.OnLine,
-                    VocalPlacement.OnLine,
-                    () => null,
-                )
+                .with(LetterPlacement.OnLine, () => null)
                 .exhaustive();
 
             if (newDistance !== null) {

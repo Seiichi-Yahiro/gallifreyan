@@ -1,13 +1,11 @@
 import {
     type Consonant,
-    ConsonantDecoration,
-    ConsonantPlacement,
     ConsonantValue,
     DigraphValue,
+    LetterDecoration,
+    LetterPlacement,
     LetterType,
     type Vocal,
-    VocalDecoration,
-    VocalPlacement,
     VocalValue,
 } from '@/redux/text/letters';
 import {
@@ -65,8 +63,8 @@ describe('textAnalysis', () => {
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.A,
-                decoration: VocalDecoration.None,
-                placement: VocalPlacement.Outside,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.Outside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -82,8 +80,8 @@ describe('textAnalysis', () => {
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.E,
-                decoration: VocalDecoration.None,
-                placement: VocalPlacement.OnLine,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -94,8 +92,8 @@ describe('textAnalysis', () => {
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.I,
-                decoration: VocalDecoration.LineInside,
-                placement: VocalPlacement.OnLine,
+                decoration: LetterDecoration.LineInside,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -106,8 +104,8 @@ describe('textAnalysis', () => {
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.O,
-                decoration: VocalDecoration.None,
-                placement: VocalPlacement.Inside,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -123,8 +121,8 @@ describe('textAnalysis', () => {
             const expected: Vocal = {
                 letterType: LetterType.Vocal,
                 value: VocalValue.U,
-                decoration: VocalDecoration.LineOutside,
-                placement: VocalPlacement.OnLine,
+                decoration: LetterDecoration.LineOutside,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -140,8 +138,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.B,
-                decoration: ConsonantDecoration.None,
-                placement: ConsonantPlacement.DeepCut,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -152,8 +150,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.J,
-                decoration: ConsonantDecoration.None,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -164,8 +162,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.T,
-                decoration: ConsonantDecoration.None,
-                placement: ConsonantPlacement.ShallowCut,
+                decoration: LetterDecoration.None,
+                placement: LetterPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -176,8 +174,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.K,
-                decoration: ConsonantDecoration.DoubleDot,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.DoubleDot,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -188,8 +186,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Y,
-                decoration: ConsonantDecoration.DoubleDot,
-                placement: ConsonantPlacement.OnLine,
+                decoration: LetterDecoration.DoubleDot,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -200,8 +198,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.D,
-                decoration: ConsonantDecoration.TripleDot,
-                placement: ConsonantPlacement.DeepCut,
+                decoration: LetterDecoration.TripleDot,
+                placement: LetterPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -212,8 +210,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.L,
-                decoration: ConsonantDecoration.TripleDot,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.TripleDot,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -224,8 +222,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.R,
-                decoration: ConsonantDecoration.TripleDot,
-                placement: ConsonantPlacement.ShallowCut,
+                decoration: LetterDecoration.TripleDot,
+                placement: LetterPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -236,8 +234,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Z,
-                decoration: ConsonantDecoration.TripleDot,
-                placement: ConsonantPlacement.OnLine,
+                decoration: LetterDecoration.TripleDot,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -248,8 +246,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.C,
-                decoration: ConsonantDecoration.QuadrupleDot,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.QuadrupleDot,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -260,8 +258,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.Q,
-                decoration: ConsonantDecoration.QuadrupleDot,
-                placement: ConsonantPlacement.OnLine,
+                decoration: LetterDecoration.QuadrupleDot,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -272,8 +270,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.G,
-                decoration: ConsonantDecoration.SingleLine,
-                placement: ConsonantPlacement.DeepCut,
+                decoration: LetterDecoration.SingleLine,
+                placement: LetterPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -284,8 +282,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.N,
-                decoration: ConsonantDecoration.SingleLine,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.SingleLine,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -296,8 +294,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.V,
-                decoration: ConsonantDecoration.SingleLine,
-                placement: ConsonantPlacement.ShallowCut,
+                decoration: LetterDecoration.SingleLine,
+                placement: LetterPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -308,8 +306,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.H,
-                decoration: ConsonantDecoration.DoubleLine,
-                placement: ConsonantPlacement.DeepCut,
+                decoration: LetterDecoration.DoubleLine,
+                placement: LetterPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -320,8 +318,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.P,
-                decoration: ConsonantDecoration.DoubleLine,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.DoubleLine,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -332,8 +330,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.W,
-                decoration: ConsonantDecoration.DoubleLine,
-                placement: ConsonantPlacement.ShallowCut,
+                decoration: LetterDecoration.DoubleLine,
+                placement: LetterPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -344,8 +342,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.X,
-                decoration: ConsonantDecoration.DoubleLine,
-                placement: ConsonantPlacement.OnLine,
+                decoration: LetterDecoration.DoubleLine,
+                placement: LetterPlacement.OnLine,
             };
 
             expect(result).toStrictEqual(expected);
@@ -356,8 +354,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.F,
-                decoration: ConsonantDecoration.TripleLine,
-                placement: ConsonantPlacement.DeepCut,
+                decoration: LetterDecoration.TripleLine,
+                placement: LetterPlacement.DeepCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -368,8 +366,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.M,
-                decoration: ConsonantDecoration.TripleLine,
-                placement: ConsonantPlacement.Inside,
+                decoration: LetterDecoration.TripleLine,
+                placement: LetterPlacement.Inside,
             };
 
             expect(result).toStrictEqual(expected);
@@ -380,8 +378,8 @@ describe('textAnalysis', () => {
             const expected: Consonant = {
                 letterType: LetterType.Consonant,
                 value: ConsonantValue.S,
-                decoration: ConsonantDecoration.TripleLine,
-                placement: ConsonantPlacement.ShallowCut,
+                decoration: LetterDecoration.TripleLine,
+                placement: LetterPlacement.ShallowCut,
             };
 
             expect(result).toStrictEqual(expected);
@@ -403,8 +401,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.TH,
-                        decoration: ConsonantDecoration.None,
-                        placement: ConsonantPlacement.OnLine,
+                        decoration: LetterDecoration.None,
+                        placement: LetterPlacement.OnLine,
                     },
                 },
             ];
@@ -421,8 +419,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.PH,
-                        decoration: ConsonantDecoration.SingleDot,
-                        placement: ConsonantPlacement.Inside,
+                        decoration: LetterDecoration.SingleDot,
+                        placement: LetterPlacement.Inside,
                     },
                 },
             ];
@@ -439,8 +437,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.WH,
-                        decoration: ConsonantDecoration.SingleDot,
-                        placement: ConsonantPlacement.ShallowCut,
+                        decoration: LetterDecoration.SingleDot,
+                        placement: LetterPlacement.ShallowCut,
                     },
                 },
             ];
@@ -457,8 +455,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.GH,
-                        decoration: ConsonantDecoration.SingleDot,
-                        placement: ConsonantPlacement.OnLine,
+                        decoration: LetterDecoration.SingleDot,
+                        placement: LetterPlacement.OnLine,
                     },
                 },
             ];
@@ -475,8 +473,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.CH,
-                        decoration: ConsonantDecoration.DoubleDot,
-                        placement: ConsonantPlacement.DeepCut,
+                        decoration: LetterDecoration.DoubleDot,
+                        placement: LetterPlacement.DeepCut,
                     },
                 },
             ];
@@ -493,8 +491,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.SH,
-                        decoration: ConsonantDecoration.DoubleDot,
-                        placement: ConsonantPlacement.ShallowCut,
+                        decoration: LetterDecoration.DoubleDot,
+                        placement: LetterPlacement.ShallowCut,
                     },
                 },
             ];
@@ -511,8 +509,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.ND,
-                        decoration: ConsonantDecoration.QuadrupleDot,
-                        placement: ConsonantPlacement.DeepCut,
+                        decoration: LetterDecoration.QuadrupleDot,
+                        placement: LetterPlacement.DeepCut,
                     },
                 },
             ];
@@ -529,8 +527,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.NT,
-                        decoration: ConsonantDecoration.QuadrupleDot,
-                        placement: ConsonantPlacement.ShallowCut,
+                        decoration: LetterDecoration.QuadrupleDot,
+                        placement: LetterPlacement.ShallowCut,
                     },
                 },
             ];
@@ -547,8 +545,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.QU,
-                        decoration: ConsonantDecoration.SingleLine,
-                        placement: ConsonantPlacement.OnLine,
+                        decoration: LetterDecoration.SingleLine,
+                        placement: LetterPlacement.OnLine,
                     },
                 },
             ];
@@ -565,8 +563,8 @@ describe('textAnalysis', () => {
                     letter: {
                         letterType: LetterType.Digraph,
                         value: DigraphValue.NG,
-                        decoration: ConsonantDecoration.TripleLine,
-                        placement: ConsonantPlacement.OnLine,
+                        decoration: LetterDecoration.TripleLine,
+                        placement: LetterPlacement.OnLine,
                     },
                 },
             ];

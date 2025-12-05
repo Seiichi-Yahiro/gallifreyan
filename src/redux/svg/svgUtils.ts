@@ -5,7 +5,11 @@ import {
 } from '@/math/circle';
 import mVec2, { type Vec2 } from '@/math/vec';
 import type { CircleI, PositionData } from '@/redux/svg/svgTypes';
-import { ConsonantPlacement, VocalPlacement } from '@/redux/text/letters';
+import {
+    ConsonantPlacement,
+    LetterPlacement,
+    VocalPlacement,
+} from '@/redux/text/letters';
 import { chunk } from 'es-toolkit';
 import { match } from 'ts-pattern';
 
@@ -53,9 +57,9 @@ export const defaultVocalPosition = (
     index: number,
 ): PositionData => {
     const distance = match(placement)
-        .with(VocalPlacement.OnLine, () => wordRadius)
-        .with(VocalPlacement.Outside, () => wordRadius + letterRadius * 1.5)
-        .with(VocalPlacement.Inside, () =>
+        .with(LetterPlacement.OnLine, () => wordRadius)
+        .with(LetterPlacement.Outside, () => wordRadius + letterRadius * 1.5)
+        .with(LetterPlacement.Inside, () =>
             numberOfLetters > 1 ? wordRadius - letterRadius * 1.5 : 0,
         )
         .exhaustive();
@@ -81,16 +85,13 @@ export const defaultConsonantPosition = (
     index: number,
 ): PositionData => {
     const distance = match(placement)
-        .with(
-            ConsonantPlacement.DeepCut,
-            () => wordRadius - letterRadius * 0.75,
-        )
-        .with(ConsonantPlacement.Inside, () =>
+        .with(LetterPlacement.DeepCut, () => wordRadius - letterRadius * 0.75)
+        .with(LetterPlacement.Inside, () =>
             numberOfLetters > 1 ? wordRadius - letterRadius * 1.5 : 0,
         )
         .with(
-            ConsonantPlacement.ShallowCut,
-            ConsonantPlacement.OnLine,
+            LetterPlacement.ShallowCut,
+            LetterPlacement.OnLine,
             () => wordRadius,
         )
         .exhaustive();

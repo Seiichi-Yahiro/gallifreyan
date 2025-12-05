@@ -1,13 +1,11 @@
 import { type AppStore, setupStore } from '@/redux/store';
 import { resetIdCounters } from '@/redux/text/ids';
 import {
-    ConsonantDecoration,
-    ConsonantPlacement,
     ConsonantValue,
     DigraphValue,
+    LetterDecoration,
+    LetterPlacement,
     LetterType,
-    VocalDecoration,
-    VocalPlacement,
     VocalValue,
 } from '@/redux/text/letters';
 import textActions from '@/redux/text/textActions';
@@ -506,8 +504,8 @@ describe('text', () => {
                 letter: {
                     letterType: LetterType.Digraph,
                     value: DigraphValue.SH,
-                    decoration: ConsonantDecoration.DoubleDot,
-                    placement: ConsonantPlacement.ShallowCut,
+                    decoration: LetterDecoration.DoubleDot,
+                    placement: LetterPlacement.ShallowCut,
                 },
                 dots: ['DOT-0', 'DOT-1'],
                 lineSlots: [],
@@ -539,8 +537,8 @@ describe('text', () => {
                 letter: {
                     letterType: LetterType.Consonant,
                     value: ConsonantValue.Q,
-                    decoration: ConsonantDecoration.QuadrupleDot,
-                    placement: ConsonantPlacement.OnLine,
+                    decoration: LetterDecoration.QuadrupleDot,
+                    placement: LetterPlacement.OnLine,
                 },
                 dots: ['DOT-0', 'DOT-1', 'DOT-2', 'DOT-3'],
                 lineSlots: [],
@@ -550,8 +548,8 @@ describe('text', () => {
                 letter: {
                     letterType: LetterType.Vocal,
                     value: VocalValue.U,
-                    decoration: VocalDecoration.LineOutside,
-                    placement: VocalPlacement.OnLine,
+                    decoration: LetterDecoration.LineOutside,
+                    placement: LetterPlacement.OnLine,
                 },
                 dots: [],
                 lineSlots: ['LNS-1'],

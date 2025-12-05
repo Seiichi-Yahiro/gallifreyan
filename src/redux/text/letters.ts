@@ -51,13 +51,7 @@ export enum DigraphValue {
     NG = 'NG',
 }
 
-export enum VocalDecoration {
-    None = 'None',
-    LineInside = 'LineInside',
-    LineOutside = 'LineOutside',
-}
-
-export enum ConsonantDecoration {
+export enum LetterDecoration {
     None = 'None',
     SingleDot = 'SingleDot',
     DoubleDot = 'DoubleDot',
@@ -66,20 +60,43 @@ export enum ConsonantDecoration {
     SingleLine = 'SingleLine',
     DoubleLine = 'DoubleLine',
     TripleLine = 'TripleLine',
+    LineInside = 'LineInside',
+    LineOutside = 'LineOutside',
 }
 
-export enum VocalPlacement {
-    Inside = 'Inside',
-    OnLine = 'OnLine',
-    Outside = 'Outside',
-}
+export type VocalDecoration =
+    | LetterDecoration.None
+    | LetterDecoration.LineInside
+    | LetterDecoration.LineOutside;
 
-export enum ConsonantPlacement {
+export type ConsonantDecoration =
+    | LetterDecoration.None
+    | LetterDecoration.SingleDot
+    | LetterDecoration.DoubleDot
+    | LetterDecoration.TripleDot
+    | LetterDecoration.QuadrupleDot
+    | LetterDecoration.SingleLine
+    | LetterDecoration.DoubleLine
+    | LetterDecoration.TripleLine;
+
+export enum LetterPlacement {
     DeepCut = 'DeepCut',
     Inside = 'Inside',
     ShallowCut = 'ShallowCut',
     OnLine = 'OnLine',
+    Outside = 'Outside',
 }
+
+export type VocalPlacement =
+    | LetterPlacement.Inside
+    | LetterPlacement.OnLine
+    | LetterPlacement.Outside;
+
+export type ConsonantPlacement =
+    | LetterPlacement.DeepCut
+    | LetterPlacement.Inside
+    | LetterPlacement.ShallowCut
+    | LetterPlacement.OnLine;
 
 export interface Vocal {
     letterType: LetterType.Vocal;
@@ -106,13 +123,14 @@ export type Letter = Vocal | Consonant | Digraph;
 
 export const vocalDecoration = (vocal: VocalValue): VocalDecoration =>
     match(vocal)
-        .with(VocalValue.I, () => VocalDecoration.LineInside)
-        .with(VocalValue.U, () => VocalDecoration.LineOutside)
+        .returnType<VocalDecoration>()
+        .with(VocalValue.I, () => LetterDecoration.LineInside)
+        .with(VocalValue.U, () => LetterDecoration.LineOutside)
         .with(
             VocalValue.A,
             VocalValue.E,
             VocalValue.O,
-            () => VocalDecoration.None,
+            () => LetterDecoration.None,
         )
         .exhaustive();
 
@@ -120,72 +138,74 @@ export const consonantDecoration = (
     consonant: ConsonantValue | DigraphValue,
 ): ConsonantDecoration =>
     match(consonant)
+        .returnType<ConsonantDecoration>()
         .with(
             ConsonantValue.B,
             ConsonantValue.J,
             ConsonantValue.T,
             DigraphValue.TH,
-            () => ConsonantDecoration.None,
+            () => LetterDecoration.None,
         )
         .with(
             DigraphValue.PH,
             DigraphValue.WH,
             DigraphValue.GH,
-            () => ConsonantDecoration.SingleDot,
+            () => LetterDecoration.SingleDot,
         )
         .with(
             ConsonantValue.K,
             ConsonantValue.Y,
             DigraphValue.CH,
             DigraphValue.SH,
-            () => ConsonantDecoration.DoubleDot,
+            () => LetterDecoration.DoubleDot,
         )
         .with(
             ConsonantValue.D,
             ConsonantValue.L,
             ConsonantValue.R,
             ConsonantValue.Z,
-            () => ConsonantDecoration.TripleDot,
+            () => LetterDecoration.TripleDot,
         )
         .with(
             DigraphValue.ND,
             ConsonantValue.C,
             DigraphValue.NT,
             ConsonantValue.Q,
-            () => ConsonantDecoration.QuadrupleDot,
+            () => LetterDecoration.QuadrupleDot,
         )
         .with(
             ConsonantValue.G,
             ConsonantValue.N,
             ConsonantValue.V,
             DigraphValue.QU,
-            () => ConsonantDecoration.SingleLine,
+            () => LetterDecoration.SingleLine,
         )
         .with(
             ConsonantValue.H,
             ConsonantValue.P,
             ConsonantValue.W,
             ConsonantValue.X,
-            () => ConsonantDecoration.DoubleLine,
+            () => LetterDecoration.DoubleLine,
         )
         .with(
             ConsonantValue.F,
             ConsonantValue.M,
             ConsonantValue.S,
             DigraphValue.NG,
-            () => ConsonantDecoration.TripleLine,
+            () => LetterDecoration.TripleLine,
         )
         .exhaustive();
 
 export const vocalPlacement = (vocal: VocalValue): VocalPlacement =>
     match(vocal)
-        .with(VocalValue.A, () => VocalPlacement.Outside)
-        .with(VocalValue.O, () => VocalPlacement.Inside)
+        .returnType<VocalPlacement>()
+        .with(VocalValue.A, () => LetterPlacement.Outside)
+        .with(VocalValue.O, () => LetterPlacement.Inside)
         .with(
             VocalValue.E,
             VocalValue.I,
             VocalValue.U,
-            () => VocalPlacement.OnLine,
+            () => LetterPlacement.OnLine,
         )
         .exhaustive();
 
@@ -193,6 +213,7 @@ export const consonantPlacement = (
     consonant: ConsonantValue | DigraphValue,
 ): ConsonantPlacement =>
     match(consonant)
+        .returnType<ConsonantPlacement>()
         .with(
             ConsonantValue.B,
             DigraphValue.CH,
@@ -201,7 +222,7 @@ export const consonantPlacement = (
             ConsonantValue.G,
             ConsonantValue.H,
             ConsonantValue.F,
-            () => ConsonantPlacement.DeepCut,
+            () => LetterPlacement.DeepCut,
         )
         .with(
             ConsonantValue.J,
@@ -212,7 +233,7 @@ export const consonantPlacement = (
             ConsonantValue.N,
             ConsonantValue.P,
             ConsonantValue.M,
-            () => ConsonantPlacement.Inside,
+            () => LetterPlacement.Inside,
         )
         .with(
             ConsonantValue.T,
@@ -223,7 +244,7 @@ export const consonantPlacement = (
             ConsonantValue.V,
             ConsonantValue.W,
             ConsonantValue.S,
-            () => ConsonantPlacement.ShallowCut,
+            () => LetterPlacement.ShallowCut,
         )
         .with(
             DigraphValue.TH,
@@ -234,30 +255,26 @@ export const consonantPlacement = (
             DigraphValue.QU,
             ConsonantValue.X,
             DigraphValue.NG,
-            () => ConsonantPlacement.OnLine,
+            () => LetterPlacement.OnLine,
         )
         .exhaustive();
 
-export const dotAmount = (
-    decoration: VocalDecoration | ConsonantDecoration,
-): number =>
+export const dotAmount = (decoration: LetterDecoration): number =>
     match(decoration)
-        .with(ConsonantDecoration.SingleDot, () => 1)
-        .with(ConsonantDecoration.DoubleDot, () => 2)
-        .with(ConsonantDecoration.TripleDot, () => 3)
-        .with(ConsonantDecoration.QuadrupleDot, () => 4)
+        .with(LetterDecoration.SingleDot, () => 1)
+        .with(LetterDecoration.DoubleDot, () => 2)
+        .with(LetterDecoration.TripleDot, () => 3)
+        .with(LetterDecoration.QuadrupleDot, () => 4)
         .otherwise(() => 0);
 
-export const lineSlotAmount = (
-    decoration: VocalDecoration | ConsonantDecoration,
-): number =>
+export const lineSlotAmount = (decoration: LetterDecoration): number =>
     match(decoration)
         .with(
-            VocalDecoration.LineOutside,
-            VocalDecoration.LineInside,
-            ConsonantDecoration.SingleLine,
+            LetterDecoration.LineOutside,
+            LetterDecoration.LineInside,
+            LetterDecoration.SingleLine,
             () => 1,
         )
-        .with(ConsonantDecoration.DoubleLine, () => 2)
-        .with(ConsonantDecoration.TripleLine, () => 3)
+        .with(LetterDecoration.DoubleLine, () => 2)
+        .with(LetterDecoration.TripleLine, () => 3)
         .otherwise(() => 0);
