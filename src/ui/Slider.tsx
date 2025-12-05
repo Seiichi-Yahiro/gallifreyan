@@ -1,6 +1,6 @@
 import useEventListener from '@/utils/useEventListener';
 import { clamp } from 'es-toolkit';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 interface SliderProps {
     min: number;
@@ -17,46 +17,37 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     const [isDragging, setIsDragging] = useState(false);
     const percent = (value / range) * 100;
 
-    const calculateValue = useCallback(
-        (clientX: number) => {
-            if (!sliderRef.current) {
-                return;
-            }
+    const calculateValue = (clientX: number) => {
+        if (!sliderRef.current) {
+            return;
+        }
 
-            const rect = sliderRef.current.getBoundingClientRect();
-            const x = clientX - rect.left;
-            let factor = clamp(x / rect.width, 0, 1);
+        const rect = sliderRef.current.getBoundingClientRect();
+        const x = clientX - rect.left;
+        let factor = clamp(x / rect.width, 0, 1);
 
-            if (step !== undefined && step > 0) {
-                const stepFactor = step / range;
-                factor = Math.round(factor / stepFactor) * stepFactor;
-            }
+        if (step !== undefined && step > 0) {
+            const stepFactor = step / range;
+            factor = Math.round(factor / stepFactor) * stepFactor;
+        }
 
-            onChange(range * factor);
-        },
-        [onChange, range, step],
-    );
+        onChange(range * factor);
+    };
 
-    const onMouseDown = useCallback(
-        (event: React.MouseEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            sliderRef.current?.parentElement?.focus();
-            setIsDragging(true);
-            calculateValue(event.clientX);
-        },
-        [calculateValue],
-    );
+    const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        sliderRef.current?.parentElement?.focus();
+        setIsDragging(true);
+        calculateValue(event.clientX);
+    };
 
-    const onTouchStart = useCallback(
-        (event: React.TouchEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            sliderRef.current?.parentElement?.focus();
-            setIsDragging(true);
-            const touch = event.touches[0];
-            calculateValue(touch.clientX);
-        },
-        [calculateValue],
-    );
+    const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        sliderRef.current?.parentElement?.focus();
+        setIsDragging(true);
+        const touch = event.touches[0];
+        calculateValue(touch.clientX);
+    };
 
     const target = isDragging ? window : undefined;
 
@@ -87,21 +78,17 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
         target,
     );
 
-    const onKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLDivElement>) => {
-            const keyStep = step ?? range * 0.1;
+    const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const keyStep = step ?? range * 0.1;
 
-            if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-                const nextValue = Math.min(value + keyStep, max);
-                onChange(nextValue);
-            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
-                const nextValue = Math.max(min, value - keyStep);
-                onChange(nextValue);
-            }
-        },
-        [max, min, onChange, range, step, value],
-    );
-
+        if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+            const nextValue = Math.min(value + keyStep, max);
+            onChange(nextValue);
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+            const nextValue = Math.max(min, value - keyStep);
+            onChange(nextValue);
+        }
+    };
     return (
         <div
             className="border-border bg-hover-accent outline-accent h-4 rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"

@@ -1,12 +1,7 @@
 import cn from '@/utils/cn';
 import { debounce } from 'es-toolkit';
 import { ChevronRight, Dot } from 'lucide-react';
-import React, {
-    type KeyboardEvent,
-    useCallback,
-    useMemo,
-    useState,
-} from 'react';
+import React, { type KeyboardEvent, useMemo, useState } from 'react';
 
 interface TreeProps {
     children: React.ReactNode;
@@ -33,7 +28,7 @@ export const TreeItem: React.FC<TreeItemProps> = ({
     ...props
 }) => {
     const [open, setOpen] = useState(defaultOpen);
-    const toggleOpen = useCallback(() => setOpen((prev) => !prev), [setOpen]);
+    const toggleOpen = () => setOpen((prev) => !prev);
 
     const hasChildren = React.Children.count(children) > 0;
 
@@ -70,14 +65,11 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
     open,
     toggleOpen,
 }) => {
-    const onKeyDown = useCallback(
-        (event: KeyboardEvent<HTMLDivElement>) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                toggleOpen();
-            }
-        },
-        [toggleOpen],
-    );
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            toggleOpen();
+        }
+    };
 
     return (
         <div className="w-6 select-none">
@@ -144,7 +136,7 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
         } as React.CSSProperties;
     }, [height]);
 
-    const observeHeight = useCallback((div: HTMLDivElement | null) => {
+    const observeHeight = (div: HTMLDivElement | null) => {
         if (!div) {
             return;
         }
@@ -160,7 +152,7 @@ const TreeItemContent: React.FC<TreeItemContentProps> = ({
         return () => {
             observer.disconnect();
         };
-    }, []);
+    };
 
     return (
         <div

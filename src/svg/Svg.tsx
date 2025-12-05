@@ -14,14 +14,14 @@ import SvgGroup from '@/svg/SvgGroup';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
-import React, { useCallback } from 'react';
+import React from 'react';
 import './Svg.css';
 
 const Svg: React.FC = () => {
     const dispatch = useAppDispatch();
-    const deselect = useCallback(() => {
+    const deselect = () => {
         dispatch(actions.setSelection(null));
-    }, [dispatch]);
+    };
 
     const svgSize = useRedux((state) => state.main.svg.size);
     const sentenceId = useRedux((state) => state.main.text.rootElement);

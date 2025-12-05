@@ -3,7 +3,7 @@ import mVec2 from '@/math/vec';
 import { angleFromVec } from '@/redux/svg/svgUtils';
 import cn from '@/utils/cn';
 import useEventListener from '@/utils/useEventListener';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 interface AngleSliderProps {
     unit: AngleUnit;
@@ -27,57 +27,48 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
 
-    const calculateValue = useCallback(
-        (clientX: number, clientY: number) => {
-            if (!sliderRef.current) {
-                return;
-            }
+    const calculateValue = (clientX: number, clientY: number) => {
+        if (!sliderRef.current) {
+            return;
+        }
 
-            const rect = sliderRef.current.getBoundingClientRect();
+        const rect = sliderRef.current.getBoundingClientRect();
 
-            const mousePos = mVec2.create(
-                clientX - rect.left - rect.width / 2,
-                -(clientY - rect.top - rect.height / 2),
-            );
+        const mousePos = mVec2.create(
+            clientX - rect.left - rect.width / 2,
+            -(clientY - rect.top - rect.height / 2),
+        );
 
-            let angle: Angle = angleFromVec(mousePos);
+        let angle: Angle = angleFromVec(mousePos);
 
-            if (unit === AngleUnit.Degree) {
-                angle = mAngle.toDegree(angle);
-            }
+        if (unit === AngleUnit.Degree) {
+            angle = mAngle.toDegree(angle);
+        }
 
-            if (step !== undefined && step > 0) {
-                angle.value = Math.round(angle.value / step) * step;
-                angle = mAngle.normalize(angle);
-            }
+        if (step !== undefined && step > 0) {
+            angle.value = Math.round(angle.value / step) * step;
+            angle = mAngle.normalize(angle);
+        }
 
-            angle = mAngle.clamp(angle, min, max);
+        angle = mAngle.clamp(angle, min, max);
 
-            onChange(angle.value);
-        },
-        [max, min, onChange, step, unit],
-    );
+        onChange(angle.value);
+    };
 
-    const onMouseDown = useCallback(
-        (event: React.MouseEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            sliderRef.current?.focus();
-            setIsDragging(true);
-            calculateValue(event.clientX, event.clientY);
-        },
-        [calculateValue],
-    );
+    const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        sliderRef.current?.focus();
+        setIsDragging(true);
+        calculateValue(event.clientX, event.clientY);
+    };
 
-    const onTouchStart = useCallback(
-        (event: React.TouchEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            sliderRef.current?.focus();
-            setIsDragging(true);
-            const touch = event.touches[0];
-            calculateValue(touch.clientX, touch.clientY);
-        },
-        [calculateValue],
-    );
+    const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        sliderRef.current?.focus();
+        setIsDragging(true);
+        const touch = event.touches[0];
+        calculateValue(touch.clientX, touch.clientY);
+    };
 
     const target = isDragging ? window : undefined;
 
@@ -108,27 +99,24 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         target,
     );
 
-    const onKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLDivElement>) => {
-            const keyStep = step ?? Math.abs(max - min) * 0.1;
+    const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const keyStep = step ?? Math.abs(max - min) * 0.1;
 
-            const calculateNextValue = (step: number) => {
-                const nextValue = mAngle.clamp(
-                    mAngle.normalize({ value: value + step, unit }),
-                    min,
-                    max,
-                ).value;
-                onChange(nextValue);
-            };
+        const calculateNextValue = (step: number) => {
+            const nextValue = mAngle.clamp(
+                mAngle.normalize({ value: value + step, unit }),
+                min,
+                max,
+            ).value;
+            onChange(nextValue);
+        };
 
-            if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-                calculateNextValue(keyStep);
-            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
-                calculateNextValue(-keyStep);
-            }
-        },
-        [max, min, onChange, step, unit, value],
-    );
+        if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+            calculateNextValue(keyStep);
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+            calculateNextValue(-keyStep);
+        }
+    };
 
     return (
         <div

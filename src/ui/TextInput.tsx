@@ -1,4 +1,4 @@
-import React, { useCallback, useId } from 'react';
+import React, { useId } from 'react';
 import cn from 'src/utils/cn';
 
 interface TextInputProps {
@@ -20,12 +20,9 @@ const TextInput: React.FC<TextInputProps> = ({
 }) => {
     const id = useId();
 
-    const onChangeInput = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            onChange(event.target.value);
-        },
-        [onChange],
-    );
+    const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(event.target.value);
+    };
 
     return (
         <div
