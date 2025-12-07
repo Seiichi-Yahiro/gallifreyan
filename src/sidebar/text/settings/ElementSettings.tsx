@@ -1,3 +1,4 @@
+import { AngleUnit } from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import svgActions from '@/redux/svg/svgActions';
 import svgThunks from '@/redux/svg/svgThunks';
@@ -180,6 +181,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 />
             )}
             <AngleSettings
+                unit={AngleUnit.Degree}
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
                 onChange={(angle) => {
@@ -207,6 +209,7 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
 
     return (
         <AngleSettings
+            unit={AngleUnit.Degree}
             angle={lineSlot.position.angle}
             parentAngle={parentAngle}
             onChange={(angle) =>
