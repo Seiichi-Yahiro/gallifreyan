@@ -20,6 +20,7 @@ export interface MainState {
     svg: SvgState;
     hovered: CircleId | LineSlotId | null;
     selected: CircleId | LineSlotId | null;
+    dragging: boolean;
 }
 
 const createReducer = () =>
@@ -30,6 +31,7 @@ const createReducer = () =>
                 svg: createInitialSvgState(),
                 hovered: null,
                 selected: null,
+                dragging: false,
             },
             (builder) => {
                 builder
@@ -38,6 +40,12 @@ const createReducer = () =>
                     })
                     .addCase(actions.setSelection, (state, action) => {
                         state.selected = action.payload;
+                    })
+                    .addCase(actions.startDragging, (state) => {
+                        state.dragging = true;
+                    })
+                    .addCase(actions.stopDragging, (state) => {
+                        state.dragging = false;
                     });
 
                 createTextReducerCases(builder);

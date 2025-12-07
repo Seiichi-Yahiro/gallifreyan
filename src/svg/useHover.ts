@@ -6,7 +6,9 @@ import type { LineSlotId } from '@/redux/text/ids';
 const useHover = (id: CircleId | LineSlotId) => {
     const dispatch = useAppDispatch();
 
-    const isHovered = useRedux((state) => state.main.hovered === id);
+    const isHovered = useRedux(
+        (state) => state.main.hovered === id && !state.main.dragging,
+    );
 
     const onHover = () => {
         dispatch(actions.setHover(id));

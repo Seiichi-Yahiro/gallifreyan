@@ -33,6 +33,7 @@ const Svg: React.FC = () => {
             style={{
                 width: '100%',
                 height: '100%',
+                touchAction: 'pinch-zoom',
             }}
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
             onClick={deselect}
@@ -92,7 +93,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
-    const { isSelected, onSelect } = useSelect(id);
+    const { isSelected, onSelect, startDrag } = useSelect(id);
 
     return (
         <SvgGroup
@@ -119,6 +120,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                         onMouseEnter={onHover}
                         onMouseLeave={onHoverStop}
                         onClick={onSelect}
+                        onPointerDown={startDrag}
                     />
                 </>
             ) : (
@@ -128,6 +130,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
+                    onPointerDown={startDrag}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -153,7 +156,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
-    const { isSelected, onSelect } = useSelect(id);
+    const { isSelected, onSelect, startDrag } = useSelect(id);
 
     return (
         <SvgGroup
@@ -169,6 +172,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
+                    onPointerDown={startDrag}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -179,6 +183,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
+                    onPointerDown={startDrag}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -201,7 +206,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
     const circle = useRedux((state) => state.main.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
-    const { isSelected, onSelect } = useSelect(id);
+    const { isSelected, onSelect, startDrag } = useSelect(id);
 
     return (
         <SvgGroup
@@ -216,6 +221,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
                 onClick={onSelect}
+                onPointerDown={startDrag}
                 isHovered={isHovered}
                 isSelected={isSelected}
             />
@@ -231,7 +237,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
-    const { isSelected, onSelect } = useSelect(id);
+    const { isSelected, onSelect, startDrag } = useSelect(id);
 
     return (
         <SvgGroup
@@ -259,6 +265,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
                 onClick={onSelect}
+                onPointerDown={startDrag}
             />
         </SvgGroup>
     );
