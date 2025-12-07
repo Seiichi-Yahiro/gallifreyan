@@ -1,14 +1,24 @@
-import mAngle from '@/math/angle';
+import mAngle, { AngleUnit } from '@/math/angle';
 import { describe, expect, it } from 'vitest';
 
 describe('angle', () => {
-    it('should convert degrees to radian', () => {
+    it('should convert degrees directly to radian', () => {
         const result = mAngle.toRadian(mAngle.degree(180));
         expect(result.value).toBe(Math.PI);
     });
 
-    it('should convert radian to degrees', () => {
+    it('should convert radian directly to degrees', () => {
         const result = mAngle.toDegree(mAngle.radian(Math.PI));
+        expect(result.value).toBe(180);
+    });
+
+    it('should convert degrees to radian', () => {
+        const result = mAngle.toUnit(mAngle.degree(180), AngleUnit.Radian);
+        expect(result.value).toBe(Math.PI);
+    });
+
+    it('should convert radian to degrees', () => {
+        const result = mAngle.toUnit(mAngle.radian(Math.PI), AngleUnit.Degree);
         expect(result.value).toBe(180);
     });
 
