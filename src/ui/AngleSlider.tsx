@@ -1,6 +1,6 @@
 import mAngle, { type Angle, AngleUnit } from '@/math/angle';
+import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
-import { angleFromVec } from '@/redux/svg/svgUtils';
 import cn from '@/utils/cn';
 import useEventListener from '@/utils/useEventListener';
 import React, { useRef, useState } from 'react';
@@ -39,7 +39,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
             -(clientY - rect.top - rect.height / 2),
         );
 
-        let angle: Angle = angleFromVec(mousePos);
+        let angle: Angle = mPolar.angleFromCartesian(mousePos);
 
         if (unit === AngleUnit.Degree) {
             angle = mAngle.toDegree(angle);

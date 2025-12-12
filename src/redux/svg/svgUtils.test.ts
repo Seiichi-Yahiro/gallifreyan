@@ -1,75 +1,12 @@
-import mAngle from '@/math/angle';
 import { type Circle } from '@/math/circle';
 import mVec2 from '@/math/vec';
 import {
-    angleFromVec,
-    circleTransform,
     sortIntersectionsByAngle,
     wordArcsFromIntersections,
 } from '@/redux/svg/svgUtils';
 import { describe, expect, it } from 'vitest';
 
 describe('svgUtils', () => {
-    it('should create transform for bottom', () => {
-        const result = circleTransform({
-            distance: 10,
-            angle: mAngle.degree(0),
-        });
-
-        expect.soft(result.x).approximately(0, 0.00001);
-        expect.soft(result.y).approximately(-10, 0.00001);
-    });
-
-    it('should create transform for right', () => {
-        const result = circleTransform({
-            distance: 10,
-            angle: mAngle.degree(90),
-        });
-
-        expect.soft(result.x).approximately(10, 0.00001);
-        expect.soft(result.y).approximately(0, 0.00001);
-    });
-
-    it('should create transform for top', () => {
-        const result = circleTransform({
-            distance: 10,
-            angle: mAngle.degree(180),
-        });
-
-        expect.soft(result.x).approximately(0, 0.00001);
-        expect.soft(result.y).approximately(10, 0.00001);
-    });
-
-    it('should create transform for left', () => {
-        const result = circleTransform({
-            distance: 10,
-            angle: mAngle.degree(-90),
-        });
-
-        expect.soft(result.x).approximately(-10, 0.00001);
-        expect.soft(result.y).approximately(0, 0.00001);
-    });
-
-    it('should create angle for bottom', () => {
-        const result = angleFromVec(mVec2.create(0, -10));
-        expect(result.value).approximately(0, 0.00001);
-    });
-
-    it('should create angle for right', () => {
-        const result = angleFromVec(mVec2.create(10, 0));
-        expect(result.value).approximately(Math.PI / 2, 0.00001);
-    });
-
-    it('should create angle for top', () => {
-        const result = angleFromVec(mVec2.create(0, 10));
-        expect(result.value).approximately(Math.PI, 0.00001);
-    });
-
-    it('should create angle for left', () => {
-        const result = angleFromVec(mVec2.create(-10, 0));
-        expect(result.value).approximately(Math.PI + Math.PI / 2, 0.00001);
-    });
-
     it('should not swap intersections when angle origin is not in intersection', () => {
         const c1: Circle = {
             radius: 10,

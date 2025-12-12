@@ -1,10 +1,10 @@
 import mAngle from '@/math/angle';
 import mVec2, { type Vec2 } from '@/math/vec';
 
-export interface Circle {
+export type Circle = {
     radius: number;
     position: Vec2;
-}
+};
 
 export enum CircleIntersectionType {
     None = 'None',

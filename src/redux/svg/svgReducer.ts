@@ -4,12 +4,12 @@ import mCircle, {
     type Circle as MCircle,
     type TwoCircleIntersections,
 } from '@/math/circle';
+import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
 import type { MainState } from '@/redux/reducer';
 import svgActions from '@/redux/svg/svgActions';
 import type { CirclesDict, LineSlotDict } from '@/redux/svg/svgTypes';
 import {
-    circleTransform,
     defaultCircle,
     defaultConsonantPosition,
     defaultConsonantRadius,
@@ -166,7 +166,7 @@ export const createSvgReducerCases = (
 
                 const letterMCircle: MCircle = {
                     radius: letterCircle.radius,
-                    position: circleTransform(letterCircle.position),
+                    position: mPolar.toCartesian(letterCircle.position),
                 };
 
                 const intersections = mCircle.intersections(

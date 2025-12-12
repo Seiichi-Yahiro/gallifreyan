@@ -1,4 +1,5 @@
-import type { CircleId, PositionData } from '@/redux/svg/svgTypes';
+import type { PolarCoordinate } from '@/math/polar';
+import type { CircleId } from '@/redux/svg/svgTypes';
 import type { LineSlotId, WordId } from '@/redux/text/ids';
 import { createAction } from '@reduxjs/toolkit';
 
@@ -13,12 +14,12 @@ const setCircleRadius = createAction<{ id: CircleId; radius: number }>(
 
 const setCirclePositionData = createAction<{
     id: CircleId;
-    position: Partial<PositionData>;
+    position: Partial<PolarCoordinate>;
 }>('SVG/SET_CIRCLE_POSITION_DATA');
 
 const setLineSlotPositionData = createAction<{
     id: LineSlotId;
-    position: Partial<PositionData>;
+    position: Partial<PolarCoordinate>;
 }>('SVG/SET_LINE_SLOT_ANGLE');
 
 const svgActions = {

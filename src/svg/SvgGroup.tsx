@@ -1,5 +1,5 @@
 import type { Angle } from '@/math/angle';
-import { circleTransform } from '@/redux/svg/svgUtils';
+import mPolar from '@/math/polar';
 import cn from '@/utils/cn';
 import React, { useMemo } from 'react';
 
@@ -22,7 +22,7 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
         if (rotateInParent) {
             return `rotate(-${angle.value}${angle.unit}) translateY(${distance}px)`;
         } else {
-            const pos = circleTransform({ angle, distance });
+            const pos = mPolar.toCartesian({ angle, distance });
             return `translate(${pos.x}px, ${-pos.y}px)`;
         }
     }, [angle, distance, rotateInParent]);

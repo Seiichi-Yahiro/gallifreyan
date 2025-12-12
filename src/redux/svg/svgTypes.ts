@@ -1,8 +1,8 @@
-import type { Angle } from '@/math/angle';
 import type {
     CircleIntersections,
     TwoCircleIntersections,
 } from '@/math/circle';
+import type { PolarCoordinate } from '@/math/polar';
 import type { Vec2 } from '@/math/vec';
 import type {
     DotId,
@@ -15,32 +15,27 @@ import type { TextElementType } from '@/redux/text/textElements';
 
 export type Arc = [Vec2, Vec2];
 
-export interface PositionData {
-    angle: Angle;
-    distance: number;
-}
-
-export interface CircleI {
+export interface PolarCircle {
     radius: number;
-    position: PositionData;
+    position: PolarCoordinate;
 }
 
-export interface SentenceCircle extends CircleI {
+export interface SentenceCircle extends PolarCircle {
     type: TextElementType.Sentence;
 }
 
-export interface WordCircle extends CircleI {
+export interface WordCircle extends PolarCircle {
     type: TextElementType.Word;
     intersections: TwoCircleIntersections['values'][];
     arcs: Arc[];
 }
 
-export interface LetterCircle extends CircleI {
+export interface LetterCircle extends PolarCircle {
     type: TextElementType.Letter;
     intersections: CircleIntersections;
 }
 
-export interface DotCircle extends CircleI {
+export interface DotCircle extends PolarCircle {
     type: TextElementType.Dot;
 }
 
@@ -60,7 +55,7 @@ export type CirclesDict = {
 };
 
 export interface LineSlot {
-    position: PositionData;
+    position: PolarCoordinate;
 }
 
 export type LineSlotDict = {

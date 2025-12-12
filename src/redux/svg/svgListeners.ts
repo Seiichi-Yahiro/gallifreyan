@@ -1,11 +1,10 @@
 import mAngle from '@/math/angle';
+import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
 import actions from '@/redux/actions';
 import type { AppStartListening } from '@/redux/listener';
 import svgActions from '@/redux/svg/svgActions';
 import svgThunks from '@/redux/svg/svgThunks';
-import type { PositionData } from '@/redux/svg/svgTypes';
-import { angleFromVec, circleTransform } from '@/redux/svg/svgUtils';
 import {
     isLetterId,
     isLineSlotId,
@@ -79,10 +78,10 @@ export const startDragging = (startListening: AppStartListening) =>
                 });
 
             const calculateNewPosition = (
-                current: PositionData,
+                current: PolarCoordinate,
                 delta: Vec2,
             ) => {
-                const pos = circleTransform(current);
+                const pos = mPolar.toCartesian(current);
                 return mVec2.add(pos, rotateDelta(delta));
             };
 
@@ -96,7 +95,9 @@ export const startDragging = (startListening: AppStartListening) =>
                     api.dispatch(
                         svgActions.setLineSlotPositionData({
                             id,
-                            position: { angle: angleFromVec(next) },
+                            position: {
+                                angle: mPolar.angleFromCartesian(next),
+                            },
                         }),
                     );
                 } else {
@@ -106,7 +107,7 @@ export const startDragging = (startListening: AppStartListening) =>
                     api.dispatch(
                         svgThunks.setCirclePositionData(id, {
                             distance: mVec2.length(next),
-                            angle: angleFromVec(next),
+                            angle: mPolar.angleFromCartesian(next),
                         }),
                     );
                 }

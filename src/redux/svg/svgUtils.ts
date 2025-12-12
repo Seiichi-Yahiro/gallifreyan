@@ -3,8 +3,9 @@ import {
     type Circle as MCircle,
     type TwoCircleIntersections,
 } from '@/math/circle';
-import mVec2, { type Vec2 } from '@/math/vec';
-import type { CircleI, PositionData } from '@/redux/svg/svgTypes';
+import mPolar, { type PolarCoordinate } from '@/math/polar';
+import mVec2 from '@/math/vec';
+import type { PolarCircle } from '@/redux/svg/svgTypes';
 import {
     ConsonantPlacement,
     LetterPlacement,
@@ -13,7 +14,7 @@ import {
 import { chunk } from 'es-toolkit';
 import { match } from 'ts-pattern';
 
-export const defaultCircle = (): CircleI => ({
+export const defaultCircle = (): PolarCircle => ({
     radius: 0,
     position: {
         distance: 0,
@@ -24,7 +25,7 @@ export const defaultCircle = (): CircleI => ({
 export const defaultSentenceRadius = (svgSize: number): number =>
     (svgSize * 0.9) / 2;
 
-export const defaultSentencePosition = (): PositionData => ({
+export const defaultSentencePosition = (): PolarCoordinate => ({
     distance: 0,
     angle: mAngle.degree(0),
 });
@@ -39,7 +40,7 @@ export const defaultWordPosition = (
     wordRadius: number,
     numberOfWords: number,
     index: number,
-): PositionData => ({
+): PolarCoordinate => ({
     distance: numberOfWords > 1 ? sentenceRadius - wordRadius * 1.5 : 0,
     angle: mAngle.degree(index * (360 / numberOfWords)),
 });
@@ -55,7 +56,7 @@ export const defaultVocalPosition = (
     numberOfLetters: number,
     placement: VocalPlacement,
     index: number,
-): PositionData => {
+): PolarCoordinate => {
     const distance = match(placement)
         .with(LetterPlacement.OnLine, () => wordRadius)
         .with(LetterPlacement.Outside, () => wordRadius + letterRadius * 1.5)
@@ -83,7 +84,7 @@ export const defaultConsonantPosition = (
     numberOfLetters: number,
     placement: ConsonantPlacement,
     index: number,
-): PositionData => {
+): PolarCoordinate => {
     const distance = match(placement)
         .with(LetterPlacement.DeepCut, () => wordRadius - letterRadius * 0.75)
         .with(LetterPlacement.Inside, () =>
@@ -112,7 +113,7 @@ export const defaultDotPosition = (
     dotRadius: number,
     numberOfDots: number,
     index: number,
-): PositionData => {
+): PolarCoordinate => {
     const letterSideAngle = 180;
     const dotDistanceAngle = 45;
 
@@ -137,7 +138,7 @@ export const defaultLineSlotPosition = (
     numberOfLines: number,
     index: number,
     pointOutside: boolean,
-): PositionData => {
+): PolarCoordinate => {
     const letterSideAngle = pointOutside ? 0 : 180;
     const lineDistanceAngle = 45;
 
@@ -158,19 +159,6 @@ export const defaultLineSlotPosition = (
 };
 
 /**
- * Rotate counterclockwise starting from the bottom.
- */
-export const circleTransform = (positionData: PositionData): Vec2 =>
-    mVec2.rotate(mVec2.create(0, -positionData.distance), positionData.angle);
-
-/**
- * Rotate counterclockwise starting from the bottom.
- * Gives values in range [0, 2Pi].
- */
-export const angleFromVec = (vec: Vec2) =>
-    mAngle.normalize(mVec2.angleBetween(mVec2.create(0, -1), vec));
-
-/**
  * Sort angles counterclockwise.
  * Arcs should be drawn from bigger angle to smaller angle.
  * Except if the angle origin (bottom) is included.
@@ -180,8 +168,8 @@ export const sortIntersectionsByAngle = (
     circle2: MCircle,
     [intersection1, intersection2]: TwoCircleIntersections['values'],
 ): TwoCircleIntersections['values'] => {
-    const angle1 = angleFromVec(intersection1).value;
-    const angle2 = angleFromVec(intersection2).value;
+    const angle1 = mPolar.angleFromCartesian(intersection1).value;
+    const angle2 = mPolar.angleFromCartesian(intersection2).value;
 
     const angleOrigin = mVec2.add(
         circle1.position,

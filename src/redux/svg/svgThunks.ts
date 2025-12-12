@@ -1,6 +1,7 @@
+import type { PolarCoordinate } from '@/math/polar';
 import type { AppThunkAction } from '@/redux/store';
 import svgActions from '@/redux/svg/svgActions';
-import type { CircleId, PositionData } from '@/redux/svg/svgTypes';
+import type { CircleId } from '@/redux/svg/svgTypes';
 import { isLetterId, isWordId } from '@/redux/text/ids';
 import { LetterPlacement } from '@/redux/text/letters';
 import { match } from 'ts-pattern';
@@ -95,7 +96,7 @@ const setCircleRadius =
     };
 
 const setCirclePositionData =
-    (id: CircleId, position: Partial<PositionData>): AppThunkAction =>
+    (id: CircleId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         dispatch(svgActions.setCirclePositionData({ id, position }));
 

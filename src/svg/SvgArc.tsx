@@ -1,5 +1,5 @@
+import mPolar from '@/math/polar';
 import type { Arc } from '@/redux/svg/svgTypes';
-import { angleFromVec } from '@/redux/svg/svgUtils';
 import cn from '@/utils/cn';
 import React from 'react';
 
@@ -23,8 +23,8 @@ const SvgArc: React.FC<SvgArcProps> = ({
 }) => {
     const d = toArray(arcs)
         .map(([start, end]) => {
-            const startAngle = angleFromVec(start).value;
-            const endAngle = angleFromVec(end).value;
+            const startAngle = mPolar.angleFromCartesian(start).value;
+            const endAngle = mPolar.angleFromCartesian(end).value;
 
             const isLargeArc = Math.abs(endAngle - startAngle) > Math.PI;
             const largeArcFlag = !(isLargeArc !== startAngle < endAngle);
