@@ -3,7 +3,6 @@ import type { CircleId } from '@/redux/svg/svgTypes';
 import type { LineSlotId, WordId } from '@/redux/text/ids';
 import { createAction } from '@reduxjs/toolkit';
 
-const reset = createAction('SVG/RESET');
 const calculateCircleIntersections = createAction<WordId>(
     'SVG/CALCULATE_CIRCLE_INTERSECTIONS',
 );
@@ -20,7 +19,6 @@ const setLineSlotPosition = createAction<{
 }>('SVG/SET_LINE_SLOT_ANGLE');
 
 const svgActions = {
-    reset,
     calculateCircleIntersections,
     setCircle,
     setLineSlotPosition,

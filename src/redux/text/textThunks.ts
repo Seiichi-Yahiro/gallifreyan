@@ -1,6 +1,6 @@
 import actions from '@/redux/actions';
 import type { AppThunkAction } from '@/redux/store';
-import svgActions from '@/redux/svg/svgActions';
+import svgThunks from '@/redux/svg/svgThunks';
 import {
     type DotId,
     dotId,
@@ -39,7 +39,7 @@ const setText =
 
         rootElement = getState().main.text.rootElement;
         if (rootElement) {
-            dispatch(svgActions.reset());
+            dispatch(svgThunks.reset());
         }
     };
 
@@ -329,7 +329,7 @@ const splitDigraph =
             ),
         );
 
-        dispatch(svgActions.reset());
+        dispatch(svgThunks.reset());
     };
 
 const mergeToDigraph =
@@ -357,7 +357,7 @@ const mergeToDigraph =
         }
 
         dispatch(removeLetter(secondLetterId));
-        dispatch(svgActions.reset());
+        dispatch(svgThunks.reset());
     };
 
 const textThunks = {
