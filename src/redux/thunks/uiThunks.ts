@@ -63,10 +63,7 @@ const startDragging =
         };
 
         const rotateDelta = (delta: Vec2) =>
-            mVec2.rotate(mVec2.create(delta.x, -delta.y), {
-                value: -parentAngle.value,
-                unit: parentAngle.unit,
-            });
+            mVec2.rotate(mVec2.create(delta.x, -delta.y), parentAngle, true);
 
         const calculateNewPosition = (
             current: PolarCoordinate,

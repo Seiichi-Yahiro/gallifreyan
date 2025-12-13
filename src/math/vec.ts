@@ -30,8 +30,9 @@ const distance = (a: Vec2, b: Vec2): number => length(sub(a, b));
 /**
  * Rotates counterclockwise.
  */
-const rotate = (vec: Vec2, angle: Angle): Vec2 => {
-    const phi = mAngle.toRadian(angle).value;
+const rotate = (vec: Vec2, angle: Angle, revert = false): Vec2 => {
+    const sign = revert ? -1 : 1;
+    const phi = mAngle.toRadian(angle).value * sign;
     const cos = Math.cos(phi);
     const sin = Math.sin(phi);
 

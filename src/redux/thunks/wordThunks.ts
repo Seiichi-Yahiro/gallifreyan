@@ -134,10 +134,7 @@ const calculateIntersectionsWithLetters =
                 const intersectionsInLetter = sortedIntersectionsInWord
                     .map((pos) => mVec2.sub(pos, letterMCircle.position))
                     .map((pos) =>
-                        mVec2.rotate(pos, {
-                            unit: letterCircle.position.angle.unit,
-                            value: -letterCircle.position.angle.value,
-                        }),
+                        mVec2.rotate(pos, letterCircle.position.angle, true),
                     ) as TwoCircleIntersections['values'];
 
                 dispatch(
@@ -159,10 +156,11 @@ const calculateIntersectionsWithLetters =
                     letterMCircle.position,
                 );
 
-                intersectionInLetter = mVec2.rotate(intersectionInLetter, {
-                    unit: letterCircle.position.angle.unit,
-                    value: -letterCircle.position.angle.value,
-                });
+                intersectionInLetter = mVec2.rotate(
+                    intersectionInLetter,
+                    letterCircle.position.angle,
+                    true,
+                );
 
                 dispatch(
                     svgActions.setLetterIntersections({

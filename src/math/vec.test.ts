@@ -60,6 +60,26 @@ describe('vec', () => {
         expect(result.y).approximately(1, 0.000001);
     });
 
+    it('should rotate counterclockwise with revert', () => {
+        const result = mVec2.rotate(
+            mVec2.create(0, 1),
+            mAngle.degree(-90),
+            true,
+        );
+        expect(result.x).approximately(-1, 0.000001);
+        expect(result.y).approximately(0, 0.000001);
+    });
+
+    it('should rotate clockwise with revert', () => {
+        const result = mVec2.rotate(
+            mVec2.create(-1, 0),
+            mAngle.degree(90),
+            true,
+        );
+        expect(result.x).approximately(0, 0.000001);
+        expect(result.y).approximately(1, 0.000001);
+    });
+
     it('should calculate 90 degrees counterclockwise', () => {
         const result = mVec2.angleBetween(
             mVec2.create(0, -1),
