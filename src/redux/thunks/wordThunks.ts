@@ -6,7 +6,7 @@ import mCircle, {
 } from '@/math/circle';
 import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2 from '@/math/vec';
-import { type SentenceId, type WordId, wordId } from '@/redux/ids';
+import ids, { type SentenceId, type WordId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
@@ -21,7 +21,7 @@ import { splitLetters } from '@/redux/utils/textAnalysis';
 const add =
     (newWordText: string, parent: SentenceId): AppThunkAction =>
     (dispatch, getState) => {
-        const id = wordId();
+        const id = ids.word.create();
 
         dispatch(
             textActions.addWord({

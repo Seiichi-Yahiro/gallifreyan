@@ -1,5 +1,5 @@
 import type { PolarCoordinate } from '@/math/polar';
-import { isLetterId, isWordId } from '@/redux/ids';
+import ids from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import type { AppThunkAction } from '@/redux/store';
 import wordThunks from '@/redux/thunks/wordThunks';
@@ -16,7 +16,7 @@ const setCircleRadius =
 
         dispatch(svgActions.setCircle({ id, radius }));
 
-        if (isLetterId(id)) {
+        if (ids.letter.is(id)) {
             state = getState();
             const letter = state.text.elements[id];
 
@@ -75,7 +75,7 @@ const setCircleRadius =
                     }),
                 );
             }
-        } else if (isWordId(id)) {
+        } else if (ids.word.is(id)) {
             state = getState();
             const lettersIds = state.text.elements[id].letters;
 
@@ -102,7 +102,7 @@ const setCirclePosition =
     (dispatch, getState) => {
         dispatch(svgActions.setCircle({ id, position }));
 
-        if (isLetterId(id)) {
+        if (ids.letter.is(id)) {
             const wordId = getState().text.elements[id].parent;
             // TODO make letter specific
             dispatch(wordThunks.calculateIntersectionsWithLetters(wordId));

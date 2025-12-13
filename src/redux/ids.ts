@@ -1,53 +1,46 @@
-type IdGenerator<Prefix extends string> = `${Prefix}-${number}`;
+const ID_PREFIXES = {
+    sentence: 'SNT',
+    word: 'WRD',
+    letter: 'LTR',
+    dot: 'DOT',
+    lineSlot: 'LNS',
+} as const;
 
-const createIdCounter = <Prefix extends string>(prefix: Prefix) => {
+type IdPrefix = (typeof ID_PREFIXES)[keyof typeof ID_PREFIXES];
+
+type IdType<Prefix extends IdPrefix> = `${Prefix}-${number}`;
+
+const createIdFunctions = <Prefix extends IdPrefix>(prefix: Prefix) => {
     let counter = 0;
 
-    const generator = (): IdGenerator<Prefix> => `${prefix}-${counter++}`;
-
-    const reset = () => {
-        counter = 0;
+    return {
+        create: (): IdType<Prefix> => `${prefix}-${counter++}`,
+        reset: () => {
+            counter = 0;
+        },
+        is: (id: IdType<IdPrefix>): id is IdType<Prefix> =>
+            id.startsWith(prefix),
     };
-
-    return { generator, reset };
 };
 
-export type SentenceId = IdGenerator<'SNT'>;
-const sentenceCounter = createIdCounter('SNT');
-export const sentenceId: () => SentenceId = sentenceCounter.generator;
-export const isSentenceId = (id: TextElementId): id is SentenceId =>
-    id.startsWith('SNT');
+export type SentenceId = IdType<typeof ID_PREFIXES.sentence>;
+export type WordId = IdType<typeof ID_PREFIXES.word>;
+export type LetterId = IdType<typeof ID_PREFIXES.letter>;
+export type DotId = IdType<typeof ID_PREFIXES.dot>;
+export type LineSlotId = IdType<typeof ID_PREFIXES.lineSlot>;
 
-export type WordId = IdGenerator<'WRD'>;
-const wordCounter = createIdCounter('WRD');
-export const wordId: () => WordId = wordCounter.generator;
-export const isWordId = (id: TextElementId): id is WordId =>
-    id.startsWith('WRD');
+const ids = {
+    sentence: createIdFunctions(ID_PREFIXES.sentence),
+    word: createIdFunctions(ID_PREFIXES.word),
+    letter: createIdFunctions(ID_PREFIXES.letter),
+    dot: createIdFunctions(ID_PREFIXES.dot),
+    lineSlot: createIdFunctions(ID_PREFIXES.lineSlot),
+};
 
-export type LetterId = IdGenerator<'LTR'>;
-const letterCounter = createIdCounter('LTR');
-export const letterId: () => LetterId = letterCounter.generator;
-export const isLetterId = (id: TextElementId): id is LetterId =>
-    id.startsWith('LTR');
-
-export type DotId = IdGenerator<'DOT'>;
-const dotCounter = createIdCounter('DOT');
-export const dotId: () => DotId = dotCounter.generator;
-export const isDotId = (id: TextElementId): id is DotId => id.startsWith('DOT');
-
-export type LineSlotId = IdGenerator<'LNS'>;
-const lineSlotCounter = createIdCounter('LNS');
-export const lineSlotId: () => LineSlotId = lineSlotCounter.generator;
-export const isLineSlotId = (id: TextElementId): id is LineSlotId =>
-    id.startsWith('LNS');
-
-export type TextElementId = SentenceId | WordId | LetterId | DotId | LineSlotId;
-
-// For testing
 export const resetIdCounters = () => {
-    sentenceCounter.reset();
-    wordCounter.reset();
-    letterCounter.reset();
-    dotCounter.reset();
-    lineSlotCounter.reset();
+    Object.values(ids).forEach((obj) => {
+        obj.reset();
+    });
 };
+
+export default ids;

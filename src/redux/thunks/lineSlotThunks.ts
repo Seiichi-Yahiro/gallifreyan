@@ -1,6 +1,6 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import { type LetterId, type LineSlotId, lineSlotId } from '@/redux/ids';
+import ids, { type LetterId, type LineSlotId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
@@ -9,7 +9,7 @@ import { LetterDecoration } from '@/redux/types/letterTypes';
 const add =
     (parent: LetterId): AppThunkAction =>
     (dispatch, _getState) => {
-        const id = lineSlotId();
+        const id = ids.lineSlot.create();
 
         dispatch(textActions.addLineSlot({ id, parent }));
 

@@ -5,15 +5,7 @@ import {
     type TwoCircleIntersections,
 } from '@/math/circle';
 import type { PolarCoordinate } from '@/math/polar';
-import {
-    isDotId,
-    isLetterId,
-    isSentenceId,
-    isWordId,
-    type LetterId,
-    type LineSlotId,
-    type WordId,
-} from '@/redux/ids';
+import ids, { type LetterId, type LineSlotId, type WordId } from '@/redux/ids';
 import type {
     Arc,
     CircleId,
@@ -52,13 +44,13 @@ const svgSlice = createSlice({
             };
 
             match(action.payload)
-                .when(isSentenceId, (id) => {
+                .when(ids.sentence.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Sentence,
                         ...defaultCircle,
                     };
                 })
-                .when(isWordId, (id) => {
+                .when(ids.word.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Word,
                         ...defaultCircle,
@@ -66,7 +58,7 @@ const svgSlice = createSlice({
                         arcs: [],
                     };
                 })
-                .when(isLetterId, (id) => {
+                .when(ids.letter.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Letter,
                         intersections: {
@@ -75,7 +67,7 @@ const svgSlice = createSlice({
                         ...defaultCircle,
                     };
                 })
-                .when(isDotId, (id) => {
+                .when(ids.dot.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Dot,
                         ...defaultCircle,

@@ -1,6 +1,6 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import { type DotId, dotId, type LetterId } from '@/redux/ids';
+import ids, { type DotId, type LetterId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
@@ -8,7 +8,7 @@ import type { AppThunkAction } from '@/redux/store';
 const add =
     (parent: LetterId): AppThunkAction =>
     (dispatch, _getState) => {
-        const id = dotId();
+        const id = ids.dot.create();
 
         dispatch(textActions.addDot({ id, parent }));
         dispatch(svgActions.addCircle(id));

@@ -3,7 +3,6 @@ import type {
     LetterId,
     LineSlotId,
     SentenceId,
-    TextElementId,
     WordId,
 } from '@/redux/ids';
 import type { Letter } from '@/redux/types/letterTypes';
@@ -52,6 +51,8 @@ export interface LineSlotElement {
     id: LineSlotId;
     parent: LetterId; // TODO can also be word or sentence
 }
+
+export type TextElementId = SentenceId | WordId | LetterId | DotId | LineSlotId;
 
 // prettier-ignore
 export type TextElementDictValue<K extends string> =

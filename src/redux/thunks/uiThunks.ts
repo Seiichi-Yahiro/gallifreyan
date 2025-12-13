@@ -1,12 +1,7 @@
 import mAngle from '@/math/angle';
 import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
-import {
-    isLetterId,
-    isLineSlotId,
-    isSentenceId,
-    type LineSlotId,
-} from '@/redux/ids';
+import ids, { type LineSlotId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { uiActions } from '@/redux/slices/uiSlice';
 import type { AppThunkAction } from '@/redux/store';
@@ -28,7 +23,11 @@ const startDragging =
     (dispatch, getState) => {
         const state = getState();
 
-        if (state.ui.selected !== id || isSentenceId(id) || state.ui.dragging) {
+        if (
+            state.ui.selected !== id ||
+            ids.sentence.is(id) ||
+            state.ui.dragging
+        ) {
             return;
         }
 
@@ -43,7 +42,7 @@ const startDragging =
         dispatch(uiActions.setDragging(true));
 
         const parentId = state.text.elements[id].parent;
-        const parentAngle = isLetterId(parentId)
+        const parentAngle = ids.letter.is(parentId)
             ? state.svg.circles[parentId].position.angle
             : mAngle.radian(0);
 
@@ -80,7 +79,7 @@ const startDragging =
         const applyDelta = () => {
             const state = getState();
 
-            if (isLineSlotId(id)) {
+            if (ids.lineSlot.is(id)) {
                 const current = state.svg.lineSlots[id].position;
                 const next = calculateNewPosition(current, deltaSum);
 

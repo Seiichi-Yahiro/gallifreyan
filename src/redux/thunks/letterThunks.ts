@@ -1,6 +1,6 @@
 import mAngle from '@/math/angle';
 import { type PolarCoordinate } from '@/math/polar';
-import { type LetterId, letterId, type WordId } from '@/redux/ids';
+import ids, { type LetterId, type WordId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import { uiActions } from '@/redux/slices/uiSlice';
@@ -22,7 +22,7 @@ import { match } from 'ts-pattern';
 const add =
     (rawLetter: RawLetter, parent: WordId, index?: number): AppThunkAction =>
     (dispatch, _getState) => {
-        const id = letterId();
+        const id = ids.letter.create();
 
         dispatch(
             textActions.addLetter({

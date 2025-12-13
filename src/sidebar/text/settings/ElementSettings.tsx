@@ -1,13 +1,6 @@
 import { AngleUnit } from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
-import {
-    isDotId,
-    isLetterId,
-    isLineSlotId,
-    isSentenceId,
-    type LetterId,
-    type LineSlotId,
-} from '@/redux/ids';
+import ids, { type LetterId, type LineSlotId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import letterThunks from '@/redux/thunks/letterThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
@@ -29,14 +22,14 @@ interface PositionInputProps {
 const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
     const selected = useRedux((state) => state.ui.selected);
 
-    if (!selected || isSentenceId(selected)) {
+    if (!selected || ids.sentence.is(selected)) {
         return null;
     }
 
     return (
         <div className={cn('flex flex-col gap-1', className)}>
-            {isLetterId(selected) && <LetterSettings id={selected} />}
-            {isLineSlotId(selected) ? (
+            {ids.letter.is(selected) && <LetterSettings id={selected} />}
+            {ids.lineSlot.is(selected) ? (
                 <LineSlotSettings id={selected} />
             ) : (
                 <CircleSettings id={selected} />
@@ -147,7 +140,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
     const circle = useRedux((state) => state.svg.circles[id]);
 
     const parentAngle = useRedux((state) =>
-        isDotId(id)
+        ids.dot.is(id)
             ? state.svg.circles[state.text.elements[id].parent].position.angle
             : undefined,
     );
@@ -155,7 +148,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
     const canChangeDistance = useRedux(
         (state) =>
             !(
-                isLetterId(id) &&
+                ids.letter.is(id) &&
                 state.text.elements[id].letter.placement ===
                     LetterPlacement.OnLine
             ),

@@ -1,6 +1,6 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import { sentenceId, type SentenceId } from '@/redux/ids';
+import ids, { type SentenceId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
@@ -10,7 +10,7 @@ import { splitWords } from '@/redux/utils/textAnalysis';
 const add =
     (newSentenceText: string): AppThunkAction =>
     (dispatch, _getState) => {
-        const id = sentenceId();
+        const id = ids.sentence.create();
 
         dispatch(
             textActions.addSentence({
