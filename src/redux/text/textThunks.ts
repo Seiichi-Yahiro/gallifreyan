@@ -18,17 +18,29 @@ import textActions from '@/redux/text/textActions';
 import {
     charToSingleLetter,
     type RawLetter,
+    sanitizeSentence,
     splitLetters,
     splitWords,
     textToDigraph,
 } from '@/redux/text/textAnalysis';
 import { range, zip } from 'es-toolkit';
 
-const updateTree =
+const setText =
     (text: string): AppThunkAction =>
     (dispatch, getState) => {
-        const state = getState();
-        dispatch(compareSentence(text, state.main.text.rootElement));
+        dispatch(actions.setHover(null));
+        dispatch(actions.setSelection(null));
+
+        dispatch(textActions.setText(text));
+        const sanitizedText = sanitizeSentence(text);
+
+        let rootElement = getState().main.text.rootElement;
+        dispatch(compareSentence(sanitizedText, rootElement));
+
+        rootElement = getState().main.text.rootElement;
+        if (rootElement) {
+            dispatch(svgActions.reset());
+        }
     };
 
 const compareSentence =
@@ -349,7 +361,7 @@ const mergeToDigraph =
     };
 
 const textThunks = {
-    updateTree,
+    setText,
     splitDigraph,
     mergeToDigraph,
 };

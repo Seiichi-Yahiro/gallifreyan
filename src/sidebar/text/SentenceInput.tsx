@@ -1,5 +1,5 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import textActions from '@/redux/text/textActions';
+import textThunks from '@/redux/text/textThunks';
 import TextInput from '@/ui/TextInput';
 import React from 'react';
 
@@ -8,7 +8,7 @@ const SentenceInput: React.FC = () => {
     const text = useRedux((state) => state.main.text.value);
 
     const setText = (value: string) => {
-        dispatch(textActions.setText(value));
+        dispatch(textThunks.setText(value));
     };
 
     return <TextInput label="Sentence" value={text} onChange={setText} />;

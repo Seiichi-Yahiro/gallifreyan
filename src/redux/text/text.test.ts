@@ -38,13 +38,13 @@ describe('text', () => {
     });
 
     it('should set the text', () => {
-        store.dispatch(textActions.setText('text'));
+        store.dispatch(textThunks.setText('text'));
         const state = store.getState();
         expect(state.main.text.value).toBe('text');
     });
 
     it('should create the text tree', () => {
-        store.dispatch(textActions.setText('what ni'));
+        store.dispatch(textThunks.setText('what ni'));
 
         const state = store.getState();
 
@@ -133,7 +133,7 @@ describe('text', () => {
     });
 
     it('should not change the text tree when text is equal', () => {
-        store.dispatch(textActions.setText('this that'));
+        store.dispatch(textThunks.setText('this that'));
         const stateBefore = store.getState();
 
         const updateSentenceTextSpy = spyOnAction(
@@ -146,7 +146,7 @@ describe('text', () => {
             'updateLetterText',
         );
 
-        store.dispatch(textActions.setText('this that'));
+        store.dispatch(textThunks.setText('this that'));
         const stateAfter = store.getState();
 
         expect(stateBefore.main.text).toStrictEqual(stateAfter.main.text);
@@ -157,7 +157,7 @@ describe('text', () => {
     });
 
     it('should not create the text tree when sanitized text is empty', () => {
-        store.dispatch(textActions.setText('äöü'));
+        store.dispatch(textThunks.setText('äöü'));
 
         const state = store.getState();
 
@@ -166,8 +166,8 @@ describe('text', () => {
     });
 
     it('should delete the text tree', () => {
-        store.dispatch(textActions.setText('this that'));
-        store.dispatch(textActions.setText(''));
+        store.dispatch(textThunks.setText('this that'));
+        store.dispatch(textThunks.setText(''));
 
         const state = store.getState();
 
@@ -176,8 +176,8 @@ describe('text', () => {
     });
 
     it('should add word', () => {
-        store.dispatch(textActions.setText('this that'));
-        store.dispatch(textActions.setText('this and that'));
+        store.dispatch(textThunks.setText('this that'));
+        store.dispatch(textThunks.setText('this and that'));
 
         const state = store.getState();
 
@@ -199,8 +199,8 @@ describe('text', () => {
     });
 
     it('should remove word', () => {
-        store.dispatch(textActions.setText('this and that'));
-        store.dispatch(textActions.setText('this that'));
+        store.dispatch(textThunks.setText('this and that'));
+        store.dispatch(textThunks.setText('this that'));
 
         const state = store.getState();
 
@@ -221,8 +221,8 @@ describe('text', () => {
     });
 
     it('should remove word children', () => {
-        store.dispatch(textActions.setText('this that'));
-        store.dispatch(textActions.setText('this'));
+        store.dispatch(textThunks.setText('this that'));
+        store.dispatch(textThunks.setText('this'));
 
         const state = store.getState();
 
@@ -248,8 +248,8 @@ describe('text', () => {
     });
 
     it('should update word', () => {
-        store.dispatch(textActions.setText('this that'));
-        store.dispatch(textActions.setText('that this'));
+        store.dispatch(textThunks.setText('this that'));
+        store.dispatch(textThunks.setText('that this'));
 
         const state = store.getState();
 
@@ -268,8 +268,8 @@ describe('text', () => {
     });
 
     it('should add letter', () => {
-        store.dispatch(textActions.setText('b'));
-        store.dispatch(textActions.setText('bj'));
+        store.dispatch(textThunks.setText('b'));
+        store.dispatch(textThunks.setText('bj'));
 
         const state = store.getState();
 
@@ -288,8 +288,8 @@ describe('text', () => {
     });
 
     it('should remove letter', () => {
-        store.dispatch(textActions.setText('bj'));
-        store.dispatch(textActions.setText('b'));
+        store.dispatch(textThunks.setText('bj'));
+        store.dispatch(textThunks.setText('b'));
 
         const state = store.getState();
 
@@ -307,8 +307,8 @@ describe('text', () => {
     });
 
     it('should remove letter dots', () => {
-        store.dispatch(textActions.setText('bk'));
-        store.dispatch(textActions.setText('b'));
+        store.dispatch(textThunks.setText('bk'));
+        store.dispatch(textThunks.setText('b'));
 
         const state = store.getState();
 
@@ -318,8 +318,8 @@ describe('text', () => {
     });
 
     it('should remove letter line slots', () => {
-        store.dispatch(textActions.setText('bh'));
-        store.dispatch(textActions.setText('b'));
+        store.dispatch(textThunks.setText('bh'));
+        store.dispatch(textThunks.setText('b'));
 
         const state = store.getState();
 
@@ -329,8 +329,8 @@ describe('text', () => {
     });
 
     it('should update letter', () => {
-        store.dispatch(textActions.setText('bj'));
-        store.dispatch(textActions.setText('tj'));
+        store.dispatch(textThunks.setText('bj'));
+        store.dispatch(textThunks.setText('tj'));
 
         const state = store.getState();
 
@@ -349,8 +349,8 @@ describe('text', () => {
     });
 
     it('should add dot', () => {
-        store.dispatch(textActions.setText('bk'));
-        store.dispatch(textActions.setText('bc'));
+        store.dispatch(textThunks.setText('bk'));
+        store.dispatch(textThunks.setText('bc'));
 
         const state = store.getState();
 
@@ -375,8 +375,8 @@ describe('text', () => {
     });
 
     it('should remove dot', () => {
-        store.dispatch(textActions.setText('bl'));
-        store.dispatch(textActions.setText('bk'));
+        store.dispatch(textThunks.setText('bl'));
+        store.dispatch(textThunks.setText('bk'));
 
         const state = store.getState();
 
@@ -397,8 +397,8 @@ describe('text', () => {
     });
 
     it('should remain dots', () => {
-        store.dispatch(textActions.setText('bk'));
-        store.dispatch(textActions.setText('br'));
+        store.dispatch(textThunks.setText('bk'));
+        store.dispatch(textThunks.setText('br'));
 
         const state = store.getState();
 
@@ -420,8 +420,8 @@ describe('text', () => {
     });
 
     it('should add line slot', () => {
-        store.dispatch(textActions.setText('bh'));
-        store.dispatch(textActions.setText('bf'));
+        store.dispatch(textThunks.setText('bh'));
+        store.dispatch(textThunks.setText('bf'));
 
         const state = store.getState();
 
@@ -443,8 +443,8 @@ describe('text', () => {
     });
 
     it('should remove line slot', () => {
-        store.dispatch(textActions.setText('bf'));
-        store.dispatch(textActions.setText('bh'));
+        store.dispatch(textThunks.setText('bf'));
+        store.dispatch(textThunks.setText('bh'));
 
         const state = store.getState();
 
@@ -465,8 +465,8 @@ describe('text', () => {
     });
 
     it('should remain line slots', () => {
-        store.dispatch(textActions.setText('bf'));
-        store.dispatch(textActions.setText('bm'));
+        store.dispatch(textThunks.setText('bf'));
+        store.dispatch(textThunks.setText('bm'));
 
         const state = store.getState();
 
@@ -489,7 +489,7 @@ describe('text', () => {
 
     it('should merge consonants to a digraph', () => {
         store.dispatch(textActions.setSplitLetterOptions({ digraphs: false }));
-        store.dispatch(textActions.setText('sh'));
+        store.dispatch(textThunks.setText('sh'));
 
         store.dispatch(textThunks.mergeToDigraph('LTR-0', 'LTR-1'));
 
@@ -522,7 +522,7 @@ describe('text', () => {
 
     it('should split digraph to letters', () => {
         store.dispatch(textActions.setSplitLetterOptions({ digraphs: true }));
-        store.dispatch(textActions.setText('qu'));
+        store.dispatch(textThunks.setText('qu'));
 
         store.dispatch(textThunks.splitDigraph('LTR-0'));
 

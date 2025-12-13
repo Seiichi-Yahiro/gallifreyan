@@ -1,5 +1,5 @@
 import { type AppStore, setupStore } from '@/redux/store';
-import textActions from '@/redux/text/textActions';
+import textThunks from '@/redux/text/textThunks';
 import { convertSvgHtmlElementToString } from '@/sidebar/export/svgExport';
 import Svg from '@/svg/Svg';
 import { cleanup, render } from '@testing-library/react';
@@ -29,7 +29,7 @@ describe('svg export', async () => {
     });
 
     const snapshotTest = async (text: string) => {
-        store.dispatch(textActions.setText(text));
+        store.dispatch(textThunks.setText(text));
 
         const { container } = render(
             <Provider store={store}>

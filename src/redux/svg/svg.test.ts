@@ -1,7 +1,7 @@
 import { type AppStore, setupStore } from '@/redux/store';
 import { resetIdCounters } from '@/redux/text/ids';
-import textActions from '@/redux/text/textActions';
 import { TextElementType } from '@/redux/text/textElements';
+import textThunks from '@/redux/text/textThunks';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('svg', () => {
@@ -17,7 +17,7 @@ describe('svg', () => {
     });
 
     it('should add a sentence circle', () => {
-        store.dispatch(textActions.setText('text'));
+        store.dispatch(textThunks.setText('text'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -28,15 +28,15 @@ describe('svg', () => {
     });
 
     it('should remove a sentence circle', () => {
-        store.dispatch(textActions.setText('text'));
-        store.dispatch(textActions.setText(''));
+        store.dispatch(textThunks.setText('text'));
+        store.dispatch(textThunks.setText(''));
         const state = store.getState();
 
         expect(state.main.svg.circles['SNT-0']).toBeUndefined();
     });
 
     it('should add word circles', () => {
-        store.dispatch(textActions.setText('this that'));
+        store.dispatch(textThunks.setText('this that'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -50,8 +50,8 @@ describe('svg', () => {
     });
 
     it('should remove a word circle', () => {
-        store.dispatch(textActions.setText('this that'));
-        store.dispatch(textActions.setText('that'));
+        store.dispatch(textThunks.setText('this that'));
+        store.dispatch(textThunks.setText('that'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -64,7 +64,7 @@ describe('svg', () => {
     });
 
     it('should add letter circles', () => {
-        store.dispatch(textActions.setText('bj t'));
+        store.dispatch(textThunks.setText('bj t'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -81,8 +81,8 @@ describe('svg', () => {
     });
 
     it('should remove a letter circle', () => {
-        store.dispatch(textActions.setText('bj t'));
-        store.dispatch(textActions.setText('b t'));
+        store.dispatch(textThunks.setText('bj t'));
+        store.dispatch(textThunks.setText('b t'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -98,7 +98,7 @@ describe('svg', () => {
     });
 
     it('should add dot circles', () => {
-        store.dispatch(textActions.setText('l'));
+        store.dispatch(textThunks.setText('l'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -115,8 +115,8 @@ describe('svg', () => {
     });
 
     it('should remove a dot circle', () => {
-        store.dispatch(textActions.setText('l'));
-        store.dispatch(textActions.setText('k'));
+        store.dispatch(textThunks.setText('l'));
+        store.dispatch(textThunks.setText('k'));
         const state = store.getState();
 
         expect(state.main.svg.circles).toMatchObject({
@@ -132,7 +132,7 @@ describe('svg', () => {
     });
 
     it('should add line slots', () => {
-        store.dispatch(textActions.setText('m'));
+        store.dispatch(textThunks.setText('m'));
         const state = store.getState();
 
         expect(state.main.svg.lineSlots).toMatchObject({
@@ -143,8 +143,8 @@ describe('svg', () => {
     });
 
     it('should remove a line slot', () => {
-        store.dispatch(textActions.setText('m'));
-        store.dispatch(textActions.setText('p'));
+        store.dispatch(textThunks.setText('m'));
+        store.dispatch(textThunks.setText('p'));
         const state = store.getState();
 
         expect(state.main.svg.lineSlots).toMatchObject({

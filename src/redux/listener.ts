@@ -1,6 +1,5 @@
 import type { AppState } from '@/redux/store';
 import { setupSvgListeners } from '@/redux/svg/svgListeners';
-import { setupTextListeners } from '@/redux/text/textListeners';
 import {
     createListenerMiddleware,
     type ThunkDispatch,
@@ -22,7 +21,6 @@ export type AppAddListener = TypedAddListener<
 const setupListenerMiddleware = () => {
     const middleware = createListenerMiddleware();
 
-    setupTextListeners(middleware.startListening);
     setupSvgListeners(middleware.startListening);
 
     return middleware;
