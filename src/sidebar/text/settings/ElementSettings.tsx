@@ -174,9 +174,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 <DistanceSettings
                     distance={circle.position.distance}
                     onChange={(distance) =>
-                        dispatch(
-                            svgThunks.setCirclePositionData(id, { distance }),
-                        )
+                        dispatch(svgThunks.setCirclePosition(id, { distance }))
                     }
                 />
             )}
@@ -185,7 +183,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
                 onChange={(angle) => {
-                    dispatch(svgThunks.setCirclePositionData(id, { angle }));
+                    dispatch(svgThunks.setCirclePosition(id, { angle }));
                 }}
             />
         </>
@@ -214,7 +212,7 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
             parentAngle={parentAngle}
             onChange={(angle) =>
                 dispatch(
-                    svgActions.setLineSlotPositionData({
+                    svgActions.setLineSlotPosition({
                         id,
                         position: { angle },
                     }),

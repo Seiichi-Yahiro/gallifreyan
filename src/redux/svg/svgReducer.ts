@@ -237,7 +237,7 @@ export const createSvgReducerCases = (
                 };
             }
         })
-        .addCase(svgActions.setLineSlotPositionData, (state, action) => {
+        .addCase(svgActions.setLineSlotPosition, (state, action) => {
             const currentPosition =
                 state.svg.lineSlots[action.payload.id].position;
 

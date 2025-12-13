@@ -14,7 +14,7 @@ const setCircle = createAction<{
     position?: Partial<PolarCoordinate>;
 }>('SVG/SET_CIRCLE');
 
-const setLineSlotPositionData = createAction<{
+const setLineSlotPosition = createAction<{
     id: LineSlotId;
     position: Partial<PolarCoordinate>;
 }>('SVG/SET_LINE_SLOT_ANGLE');
@@ -23,7 +23,7 @@ const svgActions = {
     reset,
     calculateCircleIntersections,
     setCircle,
-    setLineSlotPositionData,
+    setLineSlotPosition,
 };
 
 export default svgActions;

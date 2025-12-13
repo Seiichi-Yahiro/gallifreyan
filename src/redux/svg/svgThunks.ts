@@ -51,7 +51,7 @@ const setCircleRadius =
 
             for (const lineSlotId of lineSlots) {
                 dispatch(
-                    svgActions.setLineSlotPositionData({
+                    svgActions.setLineSlotPosition({
                         id: lineSlotId,
                         position: { distance: radius },
                     }),
@@ -95,7 +95,7 @@ const setCircleRadius =
         }
     };
 
-const setCirclePositionData =
+const setCirclePosition =
     (id: CircleId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         dispatch(svgActions.setCircle({ id, position }));
@@ -110,7 +110,7 @@ const setCirclePositionData =
 
 const svgThunks = {
     setCircleRadius,
-    setCirclePositionData,
+    setCirclePosition,
 };
 
 export default svgThunks;

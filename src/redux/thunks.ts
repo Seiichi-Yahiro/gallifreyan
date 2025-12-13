@@ -89,7 +89,7 @@ const startDragging =
                 const next = calculateNewPosition(current, deltaSum);
 
                 dispatch(
-                    svgActions.setLineSlotPositionData({
+                    svgActions.setLineSlotPosition({
                         id,
                         position: { angle: mPolar.angleFromCartesian(next) },
                     }),
@@ -99,7 +99,7 @@ const startDragging =
                 const next = calculateNewPosition(current, deltaSum);
 
                 dispatch(
-                    svgThunks.setCirclePositionData(id, {
+                    svgThunks.setCirclePosition(id, {
                         distance: mVec2.length(next),
                         angle: mPolar.angleFromCartesian(next),
                     }),
