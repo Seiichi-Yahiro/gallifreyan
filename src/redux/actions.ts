@@ -8,14 +8,12 @@ const setSelection = createAction<CircleId | LineSlotId | null>(
     'MAIN/SET_SELECTION',
 );
 
-const startDragging = createAction('MAIN/START_DRAGGING');
-const stopDragging = createAction('MAIN/STOP_DRAGGING');
+const setDragging = createAction<boolean>('MAIN/SET_DRAGGING');
 
 const actions = {
     setHover,
     setSelection,
-    startDragging,
-    stopDragging,
+    setDragging,
 };
 
 export default actions;

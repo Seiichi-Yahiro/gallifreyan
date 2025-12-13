@@ -41,11 +41,8 @@ const createReducer = () =>
                     .addCase(actions.setSelection, (state, action) => {
                         state.selected = action.payload;
                     })
-                    .addCase(actions.startDragging, (state) => {
-                        state.dragging = true;
-                    })
-                    .addCase(actions.stopDragging, (state) => {
-                        state.dragging = false;
+                    .addCase(actions.setDragging, (state, action) => {
+                        state.dragging = action.payload;
                     });
 
                 createTextReducerCases(builder);

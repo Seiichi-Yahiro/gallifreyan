@@ -2,7 +2,7 @@ import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { CircleId } from '@/redux/svg/svgTypes';
 import type { LineSlotId } from '@/redux/text/ids';
 import thunks from '@/redux/thunks';
-import { type MouseEvent, type PointerEvent } from 'react';
+import { type MouseEvent } from 'react';
 
 const useSelect = (id: CircleId | LineSlotId) => {
     const dispatch = useAppDispatch();
@@ -14,17 +14,7 @@ const useSelect = (id: CircleId | LineSlotId) => {
         dispatch(thunks.setSelection(id));
     };
 
-    const startDrag = (event: PointerEvent) => {
-        if (!event.isPrimary) {
-            return;
-        }
-
-        event.stopPropagation();
-        event.preventDefault();
-        dispatch(thunks.startDrag(id));
-    };
-
-    return { isSelected, onSelect, startDrag };
+    return { isSelected, onSelect };
 };
 
 export default useSelect;
