@@ -1,17 +1,19 @@
 import {
     type Consonant,
-    consonantDecoration,
-    consonantPlacement,
     ConsonantValue,
     type Digraph,
     DigraphValue,
     type Letter,
     LetterType,
     type Vocal,
+    VocalValue,
+} from '@/redux/types/letterTypes';
+import {
+    consonantDecoration,
+    consonantPlacement,
     vocalDecoration,
     vocalPlacement,
-    VocalValue,
-} from '@/redux/text/letters';
+} from '@/redux/utils/letterUtils';
 
 export const splitWords = (sentence: string): string[] => sentence.split(' ');
 

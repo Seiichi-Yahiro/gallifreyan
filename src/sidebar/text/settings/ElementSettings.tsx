@@ -1,8 +1,5 @@
 import { AngleUnit } from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
-import svgActions from '@/redux/svg/svgActions';
-import svgThunks from '@/redux/svg/svgThunks';
-import type { CircleId } from '@/redux/svg/svgTypes';
 import {
     isDotId,
     isLetterId,
@@ -10,10 +7,13 @@ import {
     isSentenceId,
     type LetterId,
     type LineSlotId,
-} from '@/redux/text/ids';
-import { LetterPlacement, LetterType } from '@/redux/text/letters';
-import { isDigraphText } from '@/redux/text/textAnalysis';
-import textThunks from '@/redux/text/textThunks';
+} from '@/redux/ids';
+import { svgActions } from '@/redux/slices/svgSlice';
+import letterThunks from '@/redux/thunks/letterThunks';
+import svgThunks from '@/redux/thunks/svgThunks';
+import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
+import type { CircleId } from '@/redux/types/svgTypes';
+import { isDigraphText } from '@/redux/utils/textAnalysis';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
@@ -27,7 +27,7 @@ interface PositionInputProps {
 }
 
 const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
-    const selected = useRedux((state) => state.main.selected);
+    const selected = useRedux((state) => state.ui.selected);
 
     if (!selected || isSentenceId(selected)) {
         return null;
@@ -47,8 +47,8 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
 
 const selectLetterWithNeighbors = createReduxSelector(
     [
-        (state, id: LetterId) => state.main.text.elements[id],
-        (state) => state.main.text.elements,
+        (state, id: LetterId) => state.text.elements[id],
+        (state) => state.text.elements,
     ],
     (letterElement, elements) => {
         const parent = elements[letterElement.parent];
@@ -100,7 +100,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                 <IconButton
                     onClick={() => {
                         dispatch(
-                            textThunks.mergeToDigraph(
+                            letterThunks.mergeToDigraph(
                                 prevLetterElement!.id,
                                 id,
                             ),
@@ -113,7 +113,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
             {letterElement.letter.letterType === LetterType.Digraph && (
                 <IconButton
                     onClick={() => {
-                        dispatch(textThunks.splitDigraph(id));
+                        dispatch(letterThunks.splitDigraph(id));
                     }}
                 >
                     <Split />
@@ -123,7 +123,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                 <IconButton
                     onClick={() => {
                         dispatch(
-                            textThunks.mergeToDigraph(
+                            letterThunks.mergeToDigraph(
                                 id,
                                 nextLetterElement!.id,
                             ),
@@ -144,12 +144,11 @@ interface CircleSettingsProps {
 const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
     const dispatch = useAppDispatch();
 
-    const circle = useRedux((state) => state.main.svg.circles[id]);
+    const circle = useRedux((state) => state.svg.circles[id]);
 
     const parentAngle = useRedux((state) =>
         isDotId(id)
-            ? state.main.svg.circles[state.main.text.elements[id].parent]
-                  .position.angle
+            ? state.svg.circles[state.text.elements[id].parent].position.angle
             : undefined,
     );
 
@@ -157,7 +156,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
         (state) =>
             !(
                 isLetterId(id) &&
-                state.main.text.elements[id].letter.placement ===
+                state.text.elements[id].letter.placement ===
                     LetterPlacement.OnLine
             ),
     );
@@ -197,12 +196,11 @@ interface LineSlotSettingsProps {
 const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
     const dispatch = useAppDispatch();
 
-    const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
+    const lineSlot = useRedux((state) => state.svg.lineSlots[id]);
 
     const parentAngle = useRedux(
         (state) =>
-            state.main.svg.circles[state.main.text.elements[id].parent].position
-                .angle,
+            state.svg.circles[state.text.elements[id].parent].position.angle,
     );
 
     return (

@@ -1,25 +1,25 @@
 import mAngle from '@/math/angle';
 import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
-import actions from '@/redux/actions';
-import type { AppThunkAction } from '@/redux/store';
-import svgActions from '@/redux/svg/svgActions';
-import svgThunks from '@/redux/svg/svgThunks';
-import type { CircleId } from '@/redux/svg/svgTypes';
 import {
     isLetterId,
     isLineSlotId,
     isSentenceId,
     type LineSlotId,
-} from '@/redux/text/ids';
+} from '@/redux/ids';
+import { svgActions } from '@/redux/slices/svgSlice';
+import { uiActions } from '@/redux/slices/uiSlice';
+import type { AppThunkAction } from '@/redux/store';
+import svgThunks from '@/redux/thunks/svgThunks';
+import type { CircleId } from '@/redux/types/svgTypes';
 
 const setSelection =
     (id: CircleId | LineSlotId | null): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
 
-        if (state.main.selected !== id && !state.main.dragging) {
-            dispatch(actions.setSelection(id));
+        if (state.ui.selected !== id && !state.ui.dragging) {
+            dispatch(uiActions.setSelection(id));
         }
     };
 
@@ -28,11 +28,7 @@ const startDragging =
     (dispatch, getState) => {
         const state = getState();
 
-        if (
-            state.main.selected !== id ||
-            isSentenceId(id) ||
-            state.main.dragging
-        ) {
+        if (state.ui.selected !== id || isSentenceId(id) || state.ui.dragging) {
             return;
         }
 
@@ -44,11 +40,11 @@ const startDragging =
             throw new Error('SVG element not found');
         }
 
-        dispatch(actions.setDragging(true));
+        dispatch(uiActions.setDragging(true));
 
-        const parentId = state.main.text.elements[id].parent;
+        const parentId = state.text.elements[id].parent;
         const parentAngle = isLetterId(parentId)
-            ? state.main.svg.circles[parentId].position.angle
+            ? state.svg.circles[parentId].position.angle
             : mAngle.radian(0);
 
         const inverseDOMMatrix = svg.getScreenCTM()!.inverse();
@@ -85,7 +81,7 @@ const startDragging =
             const state = getState();
 
             if (isLineSlotId(id)) {
-                const current = state.main.svg.lineSlots[id].position;
+                const current = state.svg.lineSlots[id].position;
                 const next = calculateNewPosition(current, deltaSum);
 
                 dispatch(
@@ -95,7 +91,7 @@ const startDragging =
                     }),
                 );
             } else {
-                const current = state.main.svg.circles[id].position;
+                const current = state.svg.circles[id].position;
                 const next = calculateNewPosition(current, deltaSum);
 
                 dispatch(
@@ -147,7 +143,7 @@ const startDragging =
             window.removeEventListener('pointerup', onEnd);
             window.removeEventListener('pointercancel', onEnd);
 
-            dispatch(actions.setDragging(false));
+            dispatch(uiActions.setDragging(false));
         };
 
         window.addEventListener('pointermove', onMove);
@@ -155,9 +151,9 @@ const startDragging =
         window.addEventListener('pointercancel', onEnd);
     };
 
-const thunks = {
+const uiThunks = {
     setSelection,
     startDragging,
 };
 
-export default thunks;
+export default uiThunks;

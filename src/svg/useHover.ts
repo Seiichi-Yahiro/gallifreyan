@@ -1,21 +1,21 @@
-import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import type { CircleId } from '@/redux/svg/svgTypes';
-import type { LineSlotId } from '@/redux/text/ids';
+import type { LineSlotId } from '@/redux/ids';
+import { uiActions } from '@/redux/slices/uiSlice';
+import type { CircleId } from '@/redux/types/svgTypes';
 
 const useHover = (id: CircleId | LineSlotId) => {
     const dispatch = useAppDispatch();
 
     const isHovered = useRedux(
-        (state) => state.main.hovered === id && !state.main.dragging,
+        (state) => state.ui.hovered === id && !state.ui.dragging,
     );
 
     const onHover = () => {
-        dispatch(actions.setHover(id));
+        dispatch(uiActions.setHover(id));
     };
 
     const onHoverStop = () => {
-        dispatch(actions.setHover(null));
+        dispatch(uiActions.setHover(null));
     };
 
     return { isHovered, onHover, onHoverStop };

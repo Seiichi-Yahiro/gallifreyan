@@ -1,5 +1,5 @@
 import { type AppStore, setupStore } from '@/redux/store';
-import textThunks from '@/redux/text/textThunks';
+import textThunks from '@/redux/thunks/textThunks';
 import { convertSvgHtmlElementToString } from '@/sidebar/export/svgExport';
 import Svg from '@/svg/Svg';
 import { cleanup, render } from '@testing-library/react';

@@ -1,5 +1,4 @@
 import { CircleIntersectionType } from '@/math/circle';
-import actions from '@/redux/actions';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type {
     DotId,
@@ -7,7 +6,8 @@ import type {
     LineSlotId,
     SentenceId,
     WordId,
-} from '@/redux/text/ids';
+} from '@/redux/ids';
+import { uiActions } from '@/redux/slices/uiSlice';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
@@ -21,11 +21,11 @@ import './Svg.css';
 const Svg: React.FC = () => {
     const dispatch = useAppDispatch();
     const deselect = () => {
-        dispatch(actions.setSelection(null));
+        dispatch(uiActions.setSelection(null));
     };
 
-    const svgSize = useRedux((state) => state.main.svg.size);
-    const sentenceId = useRedux((state) => state.main.text.rootElement);
+    const svgSize = useRedux((state) => state.svg.size);
+    const sentenceId = useRedux((state) => state.text.rootElement);
 
     return (
         <svg
@@ -49,9 +49,9 @@ interface SvgSentenceProps {
 }
 
 const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
-    const words = useRedux((state) => state.main.text.elements[id].words);
+    const words = useRedux((state) => state.text.elements[id].words);
 
-    const circle = useRedux((state) => state.main.svg.circles[id]);
+    const circle = useRedux((state) => state.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -89,9 +89,9 @@ interface SvgWordProps {
 }
 
 const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
-    const letters = useRedux((state) => state.main.text.elements[id].letters);
+    const letters = useRedux((state) => state.text.elements[id].letters);
 
-    const circle = useRedux((state) => state.main.svg.circles[id]);
+    const circle = useRedux((state) => state.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -149,13 +149,11 @@ interface SvgLetterProps {
 }
 
 const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
-    const dots = useRedux((state) => state.main.text.elements[id].dots);
+    const dots = useRedux((state) => state.text.elements[id].dots);
 
-    const lineSlots = useRedux(
-        (state) => state.main.text.elements[id].lineSlots,
-    );
+    const lineSlots = useRedux((state) => state.text.elements[id].lineSlots);
 
-    const circle = useRedux((state) => state.main.svg.circles[id]);
+    const circle = useRedux((state) => state.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -206,7 +204,7 @@ interface SvgDotProps {
 }
 
 const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
-    const circle = useRedux((state) => state.main.svg.circles[id]);
+    const circle = useRedux((state) => state.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -238,7 +236,7 @@ interface SvgLineSlotProps {
 }
 
 const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
-    const lineSlot = useRedux((state) => state.main.svg.lineSlots[id]);
+    const lineSlot = useRedux((state) => state.svg.lineSlots[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);

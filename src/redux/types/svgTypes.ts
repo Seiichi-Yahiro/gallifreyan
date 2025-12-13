@@ -10,8 +10,8 @@ import type {
     LineSlotId,
     SentenceId,
     WordId,
-} from '@/redux/text/ids';
-import type { TextElementType } from '@/redux/text/textElements';
+} from '@/redux/ids';
+import { TextElementType } from '@/redux/types/textTypes';
 
 export type Arc = [Vec2, Vec2];
 

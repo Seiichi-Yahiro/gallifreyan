@@ -1,7 +1,7 @@
+import { resetIdCounters } from '@/redux/ids';
 import { type AppStore, setupStore } from '@/redux/store';
-import { resetIdCounters } from '@/redux/text/ids';
-import { TextElementType } from '@/redux/text/textElements';
-import textThunks from '@/redux/text/textThunks';
+import textThunks from '@/redux/thunks/textThunks';
+import { TextElementType } from '@/redux/types/textTypes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('svg', () => {
@@ -20,7 +20,7 @@ describe('svg', () => {
         store.dispatch(textThunks.setText('text'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'SNT-0': {
                 type: TextElementType.Sentence,
             },
@@ -32,14 +32,14 @@ describe('svg', () => {
         store.dispatch(textThunks.setText(''));
         const state = store.getState();
 
-        expect(state.main.svg.circles['SNT-0']).toBeUndefined();
+        expect(state.svg.circles['SNT-0']).toBeUndefined();
     });
 
     it('should add word circles', () => {
         store.dispatch(textThunks.setText('this that'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'WRD-0': {
                 type: TextElementType.Word,
             },
@@ -54,20 +54,20 @@ describe('svg', () => {
         store.dispatch(textThunks.setText('that'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'WRD-0': {
                 type: TextElementType.Word,
             },
         });
 
-        expect(state.main.svg.circles['WRD-1']).toBeUndefined();
+        expect(state.svg.circles['WRD-1']).toBeUndefined();
     });
 
     it('should add letter circles', () => {
         store.dispatch(textThunks.setText('bj t'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'LTR-0': {
                 type: TextElementType.Letter,
             },
@@ -85,7 +85,7 @@ describe('svg', () => {
         store.dispatch(textThunks.setText('b t'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'LTR-0': {
                 type: TextElementType.Letter,
             },
@@ -94,14 +94,14 @@ describe('svg', () => {
             },
         });
 
-        expect(state.main.svg.circles['LTR-1']).toBeUndefined();
+        expect(state.svg.circles['LTR-1']).toBeUndefined();
     });
 
     it('should add dot circles', () => {
         store.dispatch(textThunks.setText('l'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'DOT-0': {
                 type: TextElementType.Dot,
             },
@@ -119,7 +119,7 @@ describe('svg', () => {
         store.dispatch(textThunks.setText('k'));
         const state = store.getState();
 
-        expect(state.main.svg.circles).toMatchObject({
+        expect(state.svg.circles).toMatchObject({
             'DOT-0': {
                 type: TextElementType.Dot,
             },
@@ -128,14 +128,14 @@ describe('svg', () => {
             },
         });
 
-        expect(state.main.svg.circles['DOT-2']).toBeUndefined();
+        expect(state.svg.circles['DOT-2']).toBeUndefined();
     });
 
     it('should add line slots', () => {
         store.dispatch(textThunks.setText('m'));
         const state = store.getState();
 
-        expect(state.main.svg.lineSlots).toMatchObject({
+        expect(state.svg.lineSlots).toMatchObject({
             'LNS-0': {},
             'LNS-1': {},
             'LNS-2': {},
@@ -147,11 +147,11 @@ describe('svg', () => {
         store.dispatch(textThunks.setText('p'));
         const state = store.getState();
 
-        expect(state.main.svg.lineSlots).toMatchObject({
+        expect(state.svg.lineSlots).toMatchObject({
             'LNS-0': {},
             'LNS-1': {},
         });
 
-        expect(state.main.svg.lineSlots['LNS-2']).toBeUndefined();
+        expect(state.svg.lineSlots['LNS-2']).toBeUndefined();
     });
 });

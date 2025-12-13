@@ -10,8 +10,8 @@ import React from 'react';
 
 const ExportButton: React.FC = () => {
     const filename = useRedux((state) =>
-        state.main.text.rootElement
-            ? state.main.text.elements[state.main.text.rootElement].text
+        state.text.rootElement
+            ? state.text.elements[state.text.rootElement].text
             : '',
     );
 

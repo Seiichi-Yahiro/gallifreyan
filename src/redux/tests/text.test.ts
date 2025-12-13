@@ -1,5 +1,8 @@
+import { resetIdCounters } from '@/redux/ids';
+import { textActions } from '@/redux/slices/textSlice';
 import { type AppStore, setupStore } from '@/redux/store';
-import { resetIdCounters } from '@/redux/text/ids';
+import letterThunks from '@/redux/thunks/letterThunks';
+import textThunks from '@/redux/thunks/textThunks';
 import {
     ConsonantValue,
     DigraphValue,
@@ -7,9 +10,7 @@ import {
     LetterPlacement,
     LetterType,
     VocalValue,
-} from '@/redux/text/letters';
-import textActions from '@/redux/text/textActions';
-import textThunks from '@/redux/text/textThunks';
+} from '@/redux/types/letterTypes';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -27,7 +28,7 @@ describe('text', () => {
 
     it('should have initial state', () => {
         const state = store.getState();
-        expect(state.main.text).toStrictEqual({
+        expect(state.text).toStrictEqual({
             value: '',
             rootElement: null,
             elements: {},
@@ -40,7 +41,7 @@ describe('text', () => {
     it('should set the text', () => {
         store.dispatch(textThunks.setText('text'));
         const state = store.getState();
-        expect(state.main.text.value).toBe('text');
+        expect(state.text.value).toBe('text');
     });
 
     it('should create the text tree', () => {
@@ -48,9 +49,9 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.rootElement).toBe('SNT-0');
+        expect(state.text.rootElement).toBe('SNT-0');
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'SNT-0': {
                 text: 'what ni',
                 words: ['WRD-0', 'WRD-1'],
@@ -149,7 +150,7 @@ describe('text', () => {
         store.dispatch(textThunks.setText('this that'));
         const stateAfter = store.getState();
 
-        expect(stateBefore.main.text).toStrictEqual(stateAfter.main.text);
+        expect(stateBefore.text).toStrictEqual(stateAfter.text);
 
         expect(updateSentenceTextSpy).toHaveBeenCalledTimes(0);
         expect(updateWordTextSpy).toHaveBeenCalledTimes(0);
@@ -161,8 +162,8 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.rootElement).toBeNull();
-        expect(state.main.text.elements).toStrictEqual({});
+        expect(state.text.rootElement).toBeNull();
+        expect(state.text.elements).toStrictEqual({});
     });
 
     it('should delete the text tree', () => {
@@ -171,8 +172,8 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.rootElement).toBeNull();
-        expect(state.main.text.elements).toStrictEqual({});
+        expect(state.text.rootElement).toBeNull();
+        expect(state.text.elements).toStrictEqual({});
     });
 
     it('should add word', () => {
@@ -181,7 +182,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'SNT-0': {
                 text: 'this and that',
                 words: ['WRD-0', 'WRD-1', 'WRD-2'],
@@ -204,7 +205,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'SNT-0': {
                 text: 'this that',
                 words: ['WRD-0', 'WRD-1'],
@@ -217,7 +218,7 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['WRD-2']).toBeUndefined();
+        expect(state.text.elements['WRD-2']).toBeUndefined();
     });
 
     it('should remove word children', () => {
@@ -226,7 +227,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 text: 'this',
             },
@@ -241,10 +242,10 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['WRD-1']).toBeUndefined();
-        expect(state.main.text.elements['LTR-3']).toBeUndefined();
-        expect(state.main.text.elements['LTR-4']).toBeUndefined();
-        expect(state.main.text.elements['LTR-5']).toBeUndefined();
+        expect(state.text.elements['WRD-1']).toBeUndefined();
+        expect(state.text.elements['LTR-3']).toBeUndefined();
+        expect(state.text.elements['LTR-4']).toBeUndefined();
+        expect(state.text.elements['LTR-5']).toBeUndefined();
     });
 
     it('should update word', () => {
@@ -253,7 +254,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'SNT-0': {
                 text: 'that this',
                 words: ['WRD-0', 'WRD-1'],
@@ -273,7 +274,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 text: 'bj',
                 letters: ['LTR-0', 'LTR-1'],
@@ -293,7 +294,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 text: 'b',
                 letters: ['LTR-0'],
@@ -303,7 +304,7 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.text.elements['LTR-1']).toBeUndefined();
     });
 
     it('should remove letter dots', () => {
@@ -312,9 +313,9 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements['LTR-1']).toBeUndefined();
-        expect(state.main.text.elements['DOT-0']).toBeUndefined();
-        expect(state.main.text.elements['DOT-1']).toBeUndefined();
+        expect(state.text.elements['LTR-1']).toBeUndefined();
+        expect(state.text.elements['DOT-0']).toBeUndefined();
+        expect(state.text.elements['DOT-1']).toBeUndefined();
     });
 
     it('should remove letter line slots', () => {
@@ -323,9 +324,9 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements['LTR-1']).toBeUndefined();
-        expect(state.main.text.elements['LNS-0']).toBeUndefined();
-        expect(state.main.text.elements['LNS-1']).toBeUndefined();
+        expect(state.text.elements['LTR-1']).toBeUndefined();
+        expect(state.text.elements['LNS-0']).toBeUndefined();
+        expect(state.text.elements['LNS-1']).toBeUndefined();
     });
 
     it('should update letter', () => {
@@ -334,7 +335,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 text: 'tj',
                 letters: ['LTR-0', 'LTR-1'],
@@ -354,7 +355,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'c',
                 dots: ['DOT-0', 'DOT-1', 'DOT-2', 'DOT-3'],
@@ -380,7 +381,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'k',
                 dots: ['DOT-0', 'DOT-1'],
@@ -393,7 +394,7 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['DOT-2']).toBeUndefined();
+        expect(state.text.elements['DOT-2']).toBeUndefined();
     });
 
     it('should remain dots', () => {
@@ -402,7 +403,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'r',
                 dots: ['DOT-0', 'DOT-1', 'DOT-2'],
@@ -425,7 +426,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'f',
                 lineSlots: ['LNS-0', 'LNS-1', 'LNS-2'],
@@ -448,7 +449,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'h',
                 lineSlots: ['LNS-0', 'LNS-1'],
@@ -461,7 +462,7 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['LNS-2']).toBeUndefined();
+        expect(state.text.elements['LNS-2']).toBeUndefined();
     });
 
     it('should remain line slots', () => {
@@ -470,7 +471,7 @@ describe('text', () => {
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'LTR-1': {
                 text: 'm',
                 lineSlots: ['LNS-0', 'LNS-1', 'LNS-2'],
@@ -491,11 +492,11 @@ describe('text', () => {
         store.dispatch(textActions.setSplitLetterOptions({ digraphs: false }));
         store.dispatch(textThunks.setText('sh'));
 
-        store.dispatch(textThunks.mergeToDigraph('LTR-0', 'LTR-1'));
+        store.dispatch(letterThunks.mergeToDigraph('LTR-0', 'LTR-1'));
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 letters: ['LTR-0'],
             },
@@ -512,11 +513,9 @@ describe('text', () => {
             },
         });
 
-        expect(state.main.text.elements['LTR-1']).toBeUndefined();
+        expect(state.text.elements['LTR-1']).toBeUndefined();
         expect(
-            Object.keys(state.main.text.elements).some((id) =>
-                id.startsWith('LNS'),
-            ),
+            Object.keys(state.text.elements).some((id) => id.startsWith('LNS')),
         ).toBeFalsy();
     });
 
@@ -524,11 +523,11 @@ describe('text', () => {
         store.dispatch(textActions.setSplitLetterOptions({ digraphs: true }));
         store.dispatch(textThunks.setText('qu'));
 
-        store.dispatch(textThunks.splitDigraph('LTR-0'));
+        store.dispatch(letterThunks.splitDigraph('LTR-0'));
 
         const state = store.getState();
 
-        expect(state.main.text.elements).toMatchObject({
+        expect(state.text.elements).toMatchObject({
             'WRD-0': {
                 letters: ['LTR-0', 'LTR-1'],
             },
@@ -561,6 +560,6 @@ describe('text', () => {
             'LNS-1': {},
         });
 
-        expect(state.main.text.elements['LNS-0']).toBeUndefined();
+        expect(state.text.elements['LNS-0']).toBeUndefined();
     });
 });

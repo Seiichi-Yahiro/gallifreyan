@@ -5,7 +5,7 @@ import type {
     LineSlotId,
     SentenceId,
     WordId,
-} from '@/redux/text/ids';
+} from '@/redux/ids';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import { Tree, TreeItem } from '@/ui/Tree';
@@ -17,7 +17,7 @@ interface TextTreeProps {
 }
 
 const TextTree: React.FC<TextTreeProps> = ({ className }) => {
-    const root = useRedux((state) => state.main.text.rootElement);
+    const root = useRedux((state) => state.text.rootElement);
 
     return (
         <Tree className={className}>
@@ -36,7 +36,7 @@ const TextSentenceTreeItem: React.FC<TextSentenceTreeItemProps> = ({
     const { isHovered, onHover, onHoverStop } = useHover(sentenceId);
     const { isSelected, onSelect } = useSelect(sentenceId);
 
-    const sentence = useRedux((state) => state.main.text.elements[sentenceId]);
+    const sentence = useRedux((state) => state.text.elements[sentenceId]);
 
     return (
         <TreeItem
@@ -65,7 +65,7 @@ const TextWordTreeItem: React.FC<TextWordTreeItemProps> = ({ wordId }) => {
     const { isHovered, onHover, onHoverStop } = useHover(wordId);
     const { isSelected, onSelect } = useSelect(wordId);
 
-    const word = useRedux((state) => state.main.text.elements[wordId]);
+    const word = useRedux((state) => state.text.elements[wordId]);
 
     return (
         <TreeItem
@@ -96,7 +96,7 @@ const TextLetterTreeItem: React.FC<TextLetterTreeItemProps> = ({
     const { isHovered, onHover, onHoverStop } = useHover(letterId);
     const { isSelected, onSelect } = useSelect(letterId);
 
-    const letter = useRedux((state) => state.main.text.elements[letterId]);
+    const letter = useRedux((state) => state.text.elements[letterId]);
 
     return (
         <TreeItem

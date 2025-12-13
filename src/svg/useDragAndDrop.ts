@@ -1,7 +1,7 @@
 import { useAppDispatch } from '@/redux/hooks';
-import type { CircleId } from '@/redux/svg/svgTypes';
-import type { LineSlotId } from '@/redux/text/ids';
-import thunks from '@/redux/thunks';
+import type { LineSlotId } from '@/redux/ids';
+import uiThunks from '@/redux/thunks/uiThunks';
+import type { CircleId } from '@/redux/types/svgTypes';
 import type { PointerEvent } from 'react';
 
 const useDragAndDrop = (id: CircleId | LineSlotId) => {
@@ -14,7 +14,7 @@ const useDragAndDrop = (id: CircleId | LineSlotId) => {
 
         event.stopPropagation();
         event.preventDefault();
-        dispatch(thunks.startDragging(id));
+        dispatch(uiThunks.startDragging(id));
     };
 };
 

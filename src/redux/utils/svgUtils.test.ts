@@ -3,7 +3,7 @@ import mVec2 from '@/math/vec';
 import {
     sortIntersectionsByAngle,
     wordArcsFromIntersections,
-} from '@/redux/svg/svgUtils';
+} from '@/redux/utils/svgUtils';
 import { describe, expect, it } from 'vitest';
 
 describe('svgUtils', () => {

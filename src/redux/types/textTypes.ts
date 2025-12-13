@@ -5,8 +5,8 @@ import type {
     SentenceId,
     TextElementId,
     WordId,
-} from '@/redux/text/ids';
-import type { Letter } from '@/redux/text/letters';
+} from '@/redux/ids';
+import type { Letter } from '@/redux/types/letterTypes';
 
 export enum TextElementType {
     Sentence = 'Sentence',
