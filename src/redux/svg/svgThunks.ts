@@ -13,7 +13,7 @@ const setCircleRadius =
         const currentCircle = state.main.svg.circles[id];
         const deltaRadius = radius - currentCircle.radius;
 
-        dispatch(svgActions.setCircleRadius({ id, radius }));
+        dispatch(svgActions.setCircle({ id, radius }));
 
         if (isLetterId(id)) {
             state = getState();
@@ -35,7 +35,7 @@ const setCircleRadius =
 
             if (newDistance !== null) {
                 dispatch(
-                    svgActions.setCirclePositionData({
+                    svgActions.setCircle({
                         id,
                         position: {
                             distance: newDistance,
@@ -65,7 +65,7 @@ const setCircleRadius =
                     state.main.svg.circles[dotId].position.distance;
 
                 dispatch(
-                    svgActions.setCirclePositionData({
+                    svgActions.setCircle({
                         id: dotId,
                         position: {
                             distance: dotDistance + deltaRadius,
@@ -82,7 +82,7 @@ const setCircleRadius =
                     state.main.svg.circles[letterId].position.distance;
 
                 dispatch(
-                    svgActions.setCirclePositionData({
+                    svgActions.setCircle({
                         id: letterId,
                         position: {
                             distance: letterDistance + deltaRadius,
@@ -98,7 +98,7 @@ const setCircleRadius =
 const setCirclePositionData =
     (id: CircleId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
-        dispatch(svgActions.setCirclePositionData({ id, position }));
+        dispatch(svgActions.setCircle({ id, position }));
 
         if (isLetterId(id)) {
             const state = getState();

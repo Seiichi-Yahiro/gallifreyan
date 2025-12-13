@@ -8,14 +8,11 @@ const calculateCircleIntersections = createAction<WordId>(
     'SVG/CALCULATE_CIRCLE_INTERSECTIONS',
 );
 
-const setCircleRadius = createAction<{ id: CircleId; radius: number }>(
-    'SVG/SET_CIRCLE_RADIUS',
-);
-
-const setCirclePositionData = createAction<{
+const setCircle = createAction<{
     id: CircleId;
-    position: Partial<PolarCoordinate>;
-}>('SVG/SET_CIRCLE_POSITION_DATA');
+    radius?: number;
+    position?: Partial<PolarCoordinate>;
+}>('SVG/SET_CIRCLE');
 
 const setLineSlotPositionData = createAction<{
     id: LineSlotId;
@@ -25,8 +22,7 @@ const setLineSlotPositionData = createAction<{
 const svgActions = {
     reset,
     calculateCircleIntersections,
-    setCircleRadius,
-    setCirclePositionData,
+    setCircle,
     setLineSlotPositionData,
 };
 

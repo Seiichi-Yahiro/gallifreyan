@@ -223,17 +223,19 @@ export const createSvgReducerCases = (
                 wordCircle.intersections,
             );
         })
-        .addCase(svgActions.setCircleRadius, (state, action) => {
-            state.svg.circles[action.payload.id].radius = action.payload.radius;
-        })
-        .addCase(svgActions.setCirclePositionData, (state, action) => {
-            const currentPosition =
-                state.svg.circles[action.payload.id].position;
+        .addCase(svgActions.setCircle, (state, action) => {
+            const circle = state.svg.circles[action.payload.id];
 
-            state.svg.circles[action.payload.id].position = {
-                ...currentPosition,
-                ...action.payload.position,
-            };
+            if (action.payload.radius !== undefined) {
+                circle.radius = action.payload.radius;
+            }
+
+            if (action.payload.position !== undefined) {
+                circle.position = {
+                    ...circle.position,
+                    ...action.payload.position,
+                };
+            }
         })
         .addCase(svgActions.setLineSlotPositionData, (state, action) => {
             const currentPosition =
