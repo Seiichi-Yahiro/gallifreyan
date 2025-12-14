@@ -2,6 +2,7 @@ import { AngleUnit } from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, { type LetterId, type LineSlotId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
+import { uiActions } from '@/redux/slices/uiSlice';
 import letterThunks from '@/redux/thunks/letterThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
@@ -12,7 +13,7 @@ import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
-import { Merge, Split } from 'lucide-react';
+import { Merge, Split, X } from 'lucide-react';
 import React, { useMemo } from 'react';
 
 interface PositionInputProps {
@@ -22,12 +23,23 @@ interface PositionInputProps {
 const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
     const selected = useRedux((state) => state.ui.selected);
 
+    const dispatch = useAppDispatch();
+    const deselect = () => {
+        dispatch(uiActions.setSelection(null));
+    };
+
     if (!selected || ids.sentence.is(selected)) {
         return null;
     }
 
     return (
-        <div className={cn('flex flex-col gap-1', className)}>
+        <div className={cn('relative flex flex-col gap-1', className)}>
+            <div className="mb-1 flex flex-row items-center justify-between gap-1">
+                <div>Settings</div>
+                <IconButton onClick={deselect}>
+                    <X />
+                </IconButton>
+            </div>
             {ids.letter.is(selected) && <LetterSettings id={selected} />}
             {ids.lineSlot.is(selected) ? (
                 <LineSlotSettings id={selected} />

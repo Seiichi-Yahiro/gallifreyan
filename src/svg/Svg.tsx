@@ -1,4 +1,4 @@
-import { useAppDispatch, useRedux } from '@/redux/hooks';
+import { useRedux } from '@/redux/hooks';
 import type {
     DotId,
     LetterId,
@@ -6,7 +6,6 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/ids';
-import { uiActions } from '@/redux/slices/uiSlice';
 import { antiArcsToArcs } from '@/redux/utils/svgUtils';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
@@ -20,11 +19,6 @@ import React, { useMemo } from 'react';
 import './Svg.css';
 
 const Svg: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const deselect = () => {
-        dispatch(uiActions.setSelection(null));
-    };
-
     const svgSize = useRedux((state) => state.svg.size);
     const sentenceId = useRedux((state) => state.text.rootElement);
 
@@ -38,7 +32,6 @@ const Svg: React.FC = () => {
                 touchAction: 'pinch-zoom',
             }}
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
-            onClick={deselect}
         >
             {sentenceId && <SvgSentence id={sentenceId} />}
         </svg>
