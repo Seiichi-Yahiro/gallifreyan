@@ -4,21 +4,25 @@ import {
 } from '@/math/circle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
+import type { Arc } from '@/redux/types/svgTypes';
 import { chunk } from 'es-toolkit';
 
 /**
- * Sort angles counterclockwise.
- * Arcs should be drawn from bigger angle to smaller angle.
- * Except if the angle origin (bottom) is included.
+ * Converts intersections to polar coordinates and sorts them by angle.
+ * Arcs are drawn counterclockwise starting from the bottom.
+ * Usually arcs are sorted from small to big angle but
+ * if the second circle includes the 0 degrees location then the arc direction
+ * goes from big to small angle.
  */
-export const sortIntersectionsByAngle = (
+export const intersectionsToArc = (
     circle1: MCircle,
     circle2: MCircle,
     [intersection1, intersection2]: TwoCircleIntersections['values'],
-): TwoCircleIntersections['values'] => {
-    const angle1 = mPolar.angleFromCartesian(intersection1).value;
-    const angle2 = mPolar.angleFromCartesian(intersection2).value;
+): Arc => {
+    const angle1 = mPolar.angleFromCartesian(intersection1);
+    const angle2 = mPolar.angleFromCartesian(intersection2);
 
+    // point at bottom (0 degrees) of first circle
     const angleOrigin = mVec2.add(
         circle1.position,
         mVec2.create(0, -circle1.radius),
@@ -30,28 +34,35 @@ export const sortIntersectionsByAngle = (
     const isAngleOriginInside = distance <= 0;
 
     // truth table
-    // o & (a < b): a,b
-    // o & !(a < b): b,a
-    //!o & (a < b): b,a
-    //!o & !(a < b): a,b
-    if (isAngleOriginInside === angle1 <= angle2) {
-        return [intersection1, intersection2];
+    // o & (a < b): b,a
+    // o & !(a < b): a,b
+    //!o & (a < b): a,b
+    //!o & !(a < b): b,a
+    // its a XOR
+    if (isAngleOriginInside === angle1.value <= angle2.value) {
+        return {
+            start: angle2,
+            end: angle1,
+        };
     } else {
-        return [intersection2, intersection1];
+        return {
+            start: angle1,
+            end: angle2,
+        };
     }
 };
 
-export const wordArcsFromIntersections = (
-    intersections: TwoCircleIntersections['values'][],
-): TwoCircleIntersections['values'][] => {
-    if (intersections.length === 0) {
+export const antiArcsToArcs = (antiArcs: Arc[]): Arc[] => {
+    if (antiArcs.length === 0) {
         return [];
     }
 
-    const flatIntersections = intersections.map(([a, b]) => [b, a]).flat();
+    const flatAntiArcs = antiArcs.flatMap((arc) => [arc.start, arc.end]);
 
-    return chunk(
-        [...flatIntersections.slice(1), flatIntersections[0]],
-        2,
-    ) as TwoCircleIntersections['values'][];
+    return chunk([...flatAntiArcs.slice(1), flatAntiArcs[0]], 2).map(
+        (chunk): Arc => ({
+            start: chunk[0],
+            end: chunk[1],
+        }),
+    );
 };

@@ -1,5 +1,10 @@
 import mAngle from '@/math/angle';
-import { type PolarCoordinate } from '@/math/polar';
+import mCircle, {
+    CircleIntersectionType,
+    type Circle as MCircle,
+} from '@/math/circle';
+import mPolar, { type PolarCoordinate } from '@/math/polar';
+import mVec2 from '@/math/vec';
 import ids, { type LetterId, type WordId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
@@ -10,7 +15,9 @@ import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
 import textThunks from '@/redux/thunks/textThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
+import type { Arc } from '@/redux/types/svgTypes';
 import { dotAmount, lineSlotAmount } from '@/redux/utils/letterUtils';
+import { intersectionsToArc } from '@/redux/utils/svgUtils';
 import {
     charToSingleLetter,
     type RawLetter,
@@ -58,6 +65,13 @@ const remove =
             dispatch(lineSlotThunks.remove(lineSlotId)),
         );
 
+        dispatch(
+            svgActions.setWordAntiArc({
+                id: letter.parent,
+                letterId: id,
+                antiArc: undefined,
+            }),
+        );
         dispatch(svgActions.removeCircle(id));
         dispatch(textActions.removeLetter(id));
     };
@@ -185,12 +199,113 @@ const mergeToDigraph =
         dispatch(wordThunks.reset(firstLetter.parent));
     };
 
+const calculateIntersectionsWithWord =
+    (letterId: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letter = state.text.elements[letterId];
+        const wordId = letter.parent;
+
+        if (
+            letter.letter.placement !== LetterPlacement.DeepCut &&
+            letter.letter.placement !== LetterPlacement.ShallowCut
+        ) {
+            dispatch(
+                svgActions.setLetterArc({
+                    id: letterId,
+                    arc: null,
+                }),
+            );
+
+            dispatch(
+                svgActions.setWordAntiArc({
+                    id: wordId,
+                    letterId,
+                    antiArc: undefined,
+                }),
+            );
+
+            return;
+        }
+
+        const wordCircle = state.svg.circles[wordId];
+        const letterCircle = state.svg.circles[letterId];
+
+        const wordMCircle: MCircle = {
+            radius: wordCircle.radius,
+            position: mVec2.create(0, 0),
+        };
+
+        const letterMCircle: MCircle = {
+            radius: letterCircle.radius,
+            position: mPolar.toCartesian(letterCircle.position),
+        };
+
+        const intersectionsInWord = mCircle.intersections(
+            wordMCircle,
+            letterMCircle,
+        );
+
+        if (intersectionsInWord.type === CircleIntersectionType.Two) {
+            // these are the arcs of the word that should not be drawn because they are blocked by the letters
+            const antiArcsInWord = intersectionsToArc(
+                wordMCircle,
+                letterMCircle,
+                intersectionsInWord.values,
+            );
+
+            const intersectionsAnglesInLetter = intersectionsInWord.values
+                .map((pos) => mVec2.sub(pos, letterMCircle.position))
+                .map((pos) =>
+                    mVec2.rotate(pos, letterCircle.position.angle, true),
+                )
+                .map(mPolar.angleFromCartesian)
+                .sort((a, b) => a.value - b.value); // sorting is fine because intersections will never include the 0 degrees point
+
+            const letterArc: Arc = {
+                start: intersectionsAnglesInLetter[0],
+                end: intersectionsAnglesInLetter[1],
+            };
+
+            dispatch(
+                svgActions.setLetterArc({
+                    id: letterId,
+                    arc: letterArc,
+                }),
+            );
+
+            dispatch(
+                svgActions.setWordAntiArc({
+                    id: wordId,
+                    letterId,
+                    antiArc: antiArcsInWord,
+                }),
+            );
+        } else {
+            dispatch(
+                svgActions.setLetterArc({
+                    id: letterId,
+                    arc: null,
+                }),
+            );
+
+            dispatch(
+                svgActions.setWordAntiArc({
+                    id: wordId,
+                    letterId,
+                    antiArc: null,
+                }),
+            );
+        }
+    };
+
 const letterThunks = {
     add,
     remove,
     reset,
     splitDigraph,
     mergeToDigraph,
+    calculateIntersectionsWithWord,
 };
 
 export default letterThunks;

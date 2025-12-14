@@ -39,7 +39,7 @@
         <circle cx="0" cy="0" r="460" class="sentence__outer"/>
         <circle cx="0" cy="0" r="450" class="sentence__inner"/>
         <g class="" style="transform: translate(0px, 0px);">
-            <path d="M 152.71905625076255 -165.23283528970995 A 225 225 0 1 0 219.45536102559998 -49.642164710289926" class="word"/>
+            <path d="M 152.71905625076258 -165.23283528970995 A 225 225 0 1 0 219.4553610256 -49.64216471028997" class="word"/>
             <g class="" style="transform: rotate(-0deg) translateY(123.75px);">
                 <circle cx="0" cy="0" r="67.5" class="letter"/>
                 <g class="" style="transform: translate(6.6130927153957075e-15px, -54px);">
@@ -47,7 +47,7 @@
                 </g>
             </g>
             <g class="" style="transform: rotate(-120deg) translateY(225px);">
-                <path d="M 66.73630477483748 -10.124999999999975 A 67.5 67.5 0 0 0 -66.73630477483749 -10.12500000000001" class="letter"/>
+                <path d="M 66.73630477483752 -10.124999999999991 A 67.5 67.5 0 0 0 -66.7363047748375 -10.125000000000037" class="letter"/>
                 <g class="" style="transform: translate(6.6130927153957075e-15px, -54px);">
                     <circle cx="0" cy="0" r="6.75" class="dot"/>
                 </g>

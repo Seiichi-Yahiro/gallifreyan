@@ -1,9 +1,4 @@
 import mAngle from '@/math/angle';
-import {
-    type CircleIntersections,
-    CircleIntersectionType,
-    type TwoCircleIntersections,
-} from '@/math/circle';
 import type { PolarCoordinate } from '@/math/polar';
 import ids, { type LetterId, type LineSlotId, type WordId } from '@/redux/ids';
 import type {
@@ -54,16 +49,13 @@ const svgSlice = createSlice({
                     state.circles[id] = {
                         type: TextElementType.Word,
                         ...defaultCircle,
-                        intersections: [],
-                        arcs: [],
+                        antiArcs: {},
                     };
                 })
                 .when(ids.letter.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Letter,
-                        intersections: {
-                            type: CircleIntersectionType.None,
-                        },
+                        arc: null,
                         ...defaultCircle,
                     };
                 })
@@ -99,28 +91,31 @@ const svgSlice = createSlice({
                 };
             }
         },
-        setWordIntersections: (
+        setWordAntiArc: (
             state,
             action: PayloadAction<{
                 id: WordId;
-                intersections: TwoCircleIntersections['values'][];
-                arcs: Arc[];
+                letterId: LetterId;
+                antiArc: Arc | null | undefined;
             }>,
         ) => {
             const circle = state.circles[action.payload.id];
+            const antiArc = action.payload.antiArc;
 
-            circle.intersections = action.payload.intersections;
-            circle.arcs = action.payload.arcs;
+            if (antiArc === undefined) {
+                delete circle.antiArcs[action.payload.letterId];
+            } else {
+                circle.antiArcs[action.payload.letterId] = antiArc;
+            }
         },
-        setLetterIntersections: (
+        setLetterArc: (
             state,
             action: PayloadAction<{
                 id: LetterId;
-                intersections: CircleIntersections;
+                arc: Arc | null;
             }>,
         ) => {
-            state.circles[action.payload.id].intersections =
-                action.payload.intersections;
+            state.circles[action.payload.id].arc = action.payload.arc;
         },
         addLineSlot: (
             state,

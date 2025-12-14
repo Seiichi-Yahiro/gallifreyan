@@ -1,4 +1,3 @@
-import { CircleIntersectionType } from '@/math/circle';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type {
     DotId,
@@ -8,6 +7,7 @@ import type {
     WordId,
 } from '@/redux/ids';
 import { uiActions } from '@/redux/slices/uiSlice';
+import { antiArcsToArcs } from '@/redux/utils/svgUtils';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
@@ -15,7 +15,8 @@ import useDragAndDrop from '@/svg/useDragAndDrop';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
-import React from 'react';
+import { isNotNil } from 'es-toolkit';
+import React, { useMemo } from 'react';
 import './Svg.css';
 
 const Svg: React.FC = () => {
@@ -93,6 +94,14 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
 
     const circle = useRedux((state) => state.svg.circles[id]);
 
+    const arcs = useMemo(() => {
+        const antiArcs = Object.values(circle.antiArcs)
+            .filter(isNotNil)
+            .sort((a, b) => a.end.value - b.end.value);
+
+        return antiArcsToArcs(antiArcs);
+    }, [circle.antiArcs]);
+
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const startDragging = useDragAndDrop(id);
@@ -103,11 +112,11 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={false}
         >
-            {circle.intersections.length > 0 ? (
+            {arcs.length > 0 ? (
                 <>
                     <SvgArc
                         radius={circle.radius}
-                        arcs={circle.arcs}
+                        arcs={arcs}
                         className="word"
                         isHovered={isHovered}
                         isSelected={isSelected}
@@ -165,10 +174,10 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={true}
         >
-            {circle.intersections.type === CircleIntersectionType.Two ? (
+            {circle.arc ? (
                 <SvgArc
                     radius={circle.radius}
-                    arcs={circle.intersections.values}
+                    arcs={[circle.arc]}
                     className="letter"
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}

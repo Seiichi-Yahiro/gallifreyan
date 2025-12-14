@@ -1,9 +1,9 @@
+import mAngle from '@/math/angle';
 import { type Circle } from '@/math/circle';
+import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
-import {
-    sortIntersectionsByAngle,
-    wordArcsFromIntersections,
-} from '@/redux/utils/svgUtils';
+import type { Arc } from '@/redux/types/svgTypes';
+import { antiArcsToArcs, intersectionsToArc } from '@/redux/utils/svgUtils';
 import { describe, expect, it } from 'vitest';
 
 describe('svgUtils', () => {
@@ -24,12 +24,18 @@ describe('svgUtils', () => {
             },
         };
 
-        const a = mVec2.create(8.75, 4.8412285); // above, bigger angle
-        const b = mVec2.create(8.75, -4.8412285); // below, smaller angle
+        const posA = mVec2.create(8.75, -4.8412285); // below, smaller angle
+        const posB = mVec2.create(8.75, 4.8412285); // above, bigger angle
 
-        const result = sortIntersectionsByAngle(c1, c2, [a, b]);
+        const angleA = mPolar.angleFromCartesian(posA);
+        const angleB = mPolar.angleFromCartesian(posB);
 
-        expect(result).toStrictEqual([a, b]);
+        const result = intersectionsToArc(c1, c2, [posA, posB]);
+
+        expect(result).toStrictEqual({
+            start: angleA,
+            end: angleB,
+        } satisfies Arc);
     });
 
     it('should swap intersections when angle origin is not in intersection', () => {
@@ -49,12 +55,18 @@ describe('svgUtils', () => {
             },
         };
 
-        const a = mVec2.create(8.75, -4.8412285); // below, smaller angle
-        const b = mVec2.create(8.75, 4.8412285); // above, bigger angle
+        const posA = mVec2.create(8.75, 4.8412285); // above, bigger angle
+        const posB = mVec2.create(8.75, -4.8412285); // below, smaller angle
 
-        const result = sortIntersectionsByAngle(c1, c2, [a, b]);
+        const angleA = mPolar.angleFromCartesian(posA);
+        const angleB = mPolar.angleFromCartesian(posB);
 
-        expect(result).toStrictEqual([b, a]);
+        const result = intersectionsToArc(c1, c2, [posA, posB]);
+
+        expect(result).toStrictEqual({
+            start: angleB,
+            end: angleA,
+        } satisfies Arc);
     });
 
     it('should not swap intersections when angle origin is in intersection', () => {
@@ -74,12 +86,18 @@ describe('svgUtils', () => {
             },
         };
 
-        const a = mVec2.create(4.8412285, -8.75); // right of angle origin, smaller angle
-        const b = mVec2.create(-4.8412285, -8.75); // left of angle origin, bigger angle
+        const posA = mVec2.create(-4.8412285, -8.75); // left of angle origin, bigger angle
+        const posB = mVec2.create(4.8412285, -8.75); // right of angle origin, smaller angle
 
-        const result = sortIntersectionsByAngle(c1, c2, [a, b]);
+        const angleA = mPolar.angleFromCartesian(posA);
+        const angleB = mPolar.angleFromCartesian(posB);
 
-        expect(result).toStrictEqual([a, b]);
+        const result = intersectionsToArc(c1, c2, [posA, posB]);
+
+        expect(result).toStrictEqual({
+            start: angleA,
+            end: angleB,
+        } satisfies Arc);
     });
 
     it('should swap intersections when angle origin is in intersection', () => {
@@ -99,26 +117,32 @@ describe('svgUtils', () => {
             },
         };
 
-        const a = mVec2.create(-4.8412285, -8.75); // left of angle origin, bigger angle
-        const b = mVec2.create(4.8412285, -8.75); // right of angle origin, smaller angle
+        const posA = mVec2.create(4.8412285, -8.75); // right of angle origin, smaller angle
+        const posB = mVec2.create(-4.8412285, -8.75); // left of angle origin, bigger angle
 
-        const result = sortIntersectionsByAngle(c1, c2, [a, b]);
+        const angleA = mPolar.angleFromCartesian(posA);
+        const angleB = mPolar.angleFromCartesian(posB);
 
-        expect(result).toStrictEqual([b, a]);
+        const result = intersectionsToArc(c1, c2, [posA, posB]);
+
+        expect(result).toStrictEqual({
+            start: angleB,
+            end: angleA,
+        } satisfies Arc);
     });
 
     it('should create word arcs from intersections', () => {
         // 6 points sorted by sortIntersectionsByAngle
-        const result = wordArcsFromIntersections([
-            [mVec2.create(1, 1), mVec2.create(6, 6)], // at angle origin
-            [mVec2.create(3, 3), mVec2.create(2, 2)],
-            [mVec2.create(5, 5), mVec2.create(4, 4)],
+        const result = antiArcsToArcs([
+            { start: mAngle.degree(350), end: mAngle.degree(10) },
+            { start: mAngle.degree(90), end: mAngle.degree(180) },
+            { start: mAngle.degree(270), end: mAngle.degree(280) },
         ]);
 
         expect(result).toStrictEqual([
-            [mVec2.create(1, 1), mVec2.create(2, 2)],
-            [mVec2.create(3, 3), mVec2.create(4, 4)],
-            [mVec2.create(5, 5), mVec2.create(6, 6)],
+            { start: mAngle.degree(10), end: mAngle.degree(90) },
+            { start: mAngle.degree(180), end: mAngle.degree(270) },
+            { start: mAngle.degree(280), end: mAngle.degree(350) },
         ]);
     });
 });

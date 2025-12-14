@@ -5,13 +5,10 @@ import React from 'react';
 
 interface SvgArcProps extends React.SVGProps<SVGPathElement> {
     radius: number;
-    arcs: Arc | Arc[];
+    arcs: Arc[];
     isHovered?: boolean;
     isSelected?: boolean;
 }
-
-const toArray = (arcs: Arc | Arc[]): Arc[] =>
-    Array.isArray(arcs.at(0)) ? (arcs as Arc[]) : [arcs as Arc];
 
 const SvgArc: React.FC<SvgArcProps> = ({
     radius,
@@ -21,15 +18,18 @@ const SvgArc: React.FC<SvgArcProps> = ({
     isSelected = false,
     ...props
 }) => {
-    const d = toArray(arcs)
-        .map(([start, end]) => {
-            const startAngle = mPolar.angleFromCartesian(start).value;
-            const endAngle = mPolar.angleFromCartesian(end).value;
+    const d = arcs
+        .map(({ start, end }) => {
+            const startPos = mPolar.toCartesian({
+                angle: start,
+                distance: radius,
+            });
+            const endPos = mPolar.toCartesian({ angle: end, distance: radius });
 
-            const isLargeArc = Math.abs(endAngle - startAngle) > Math.PI;
-            const largeArcFlag = !(isLargeArc !== startAngle < endAngle);
+            const isLargeArc = Math.abs(end.value - start.value) > Math.PI;
+            const largeArcFlag = !(isLargeArc !== start.value < end.value);
 
-            return `M ${start.x} ${-start.y} A ${radius} ${radius} 0 ${Number(largeArcFlag)} 0 ${end.x} ${-end.y}`;
+            return `M ${startPos.x} ${-startPos.y} A ${radius} ${radius} 0 ${Number(largeArcFlag)} 0 ${endPos.x} ${-endPos.y}`;
         })
         .join(' ');
 

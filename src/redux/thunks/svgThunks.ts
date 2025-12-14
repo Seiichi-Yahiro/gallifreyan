@@ -2,6 +2,7 @@ import type { PolarCoordinate } from '@/math/polar';
 import ids from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import type { AppThunkAction } from '@/redux/store';
+import letterThunks from '@/redux/thunks/letterThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement } from '@/redux/types/letterTypes';
 import type { CircleId } from '@/redux/types/svgTypes';
@@ -45,10 +46,7 @@ const setCircleRadius =
                 );
             }
 
-            // TODO make letter specific
-            dispatch(
-                wordThunks.calculateIntersectionsWithLetters(letter.parent),
-            );
+            dispatch(letterThunks.calculateIntersectionsWithWord(id));
 
             const lineSlots = letter.lineSlots;
 
@@ -99,13 +97,11 @@ const setCircleRadius =
 
 const setCirclePosition =
     (id: CircleId, position: Partial<PolarCoordinate>): AppThunkAction =>
-    (dispatch, getState) => {
+    (dispatch, _getState) => {
         dispatch(svgActions.setCircle({ id, position }));
 
         if (ids.letter.is(id)) {
-            const wordId = getState().text.elements[id].parent;
-            // TODO make letter specific
-            dispatch(wordThunks.calculateIntersectionsWithLetters(wordId));
+            dispatch(letterThunks.calculateIntersectionsWithWord(id));
         }
     };
 

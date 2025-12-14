@@ -1,9 +1,5 @@
-import type {
-    CircleIntersections,
-    TwoCircleIntersections,
-} from '@/math/circle';
+import type { Angle } from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import type { Vec2 } from '@/math/vec';
 import type {
     DotId,
     LetterId,
@@ -13,7 +9,13 @@ import type {
 } from '@/redux/ids';
 import { TextElementType } from '@/redux/types/textTypes';
 
-export type Arc = [Vec2, Vec2];
+/**
+ * An Arc should be drawn counterclockwise.
+ */
+export type Arc = {
+    start: Angle;
+    end: Angle;
+};
 
 export interface PolarCircle {
     radius: number;
@@ -26,13 +28,15 @@ export interface SentenceCircle extends PolarCircle {
 
 export interface WordCircle extends PolarCircle {
     type: TextElementType.Word;
-    intersections: TwoCircleIntersections['values'][];
-    arcs: Arc[];
+    // anti arcs are the parts that should not be drawn
+    antiArcs: {
+        [K in LetterId]: Arc | null;
+    };
 }
 
 export interface LetterCircle extends PolarCircle {
     type: TextElementType.Letter;
-    intersections: CircleIntersections;
+    arc: Arc | null;
 }
 
 export interface DotCircle extends PolarCircle {
