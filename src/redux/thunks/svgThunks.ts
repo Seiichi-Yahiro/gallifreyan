@@ -97,11 +97,25 @@ const setCircleRadius =
 
 const setCirclePosition =
     (id: CircleId, position: Partial<PolarCoordinate>): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(svgActions.setCircle({ id, position }));
-
+    (dispatch, getState) => {
         if (ids.letter.is(id)) {
+            const state = getState();
+            const placement = state.text.elements[id].letter.placement;
+
+            if (placement === LetterPlacement.OnLine) {
+                dispatch(
+                    svgActions.setCircle({
+                        id,
+                        position: { angle: position.angle },
+                    }),
+                );
+            } else {
+                dispatch(svgActions.setCircle({ id, position }));
+            }
+
             dispatch(letterThunks.calculateIntersectionsWithWord(id));
+        } else {
+            dispatch(svgActions.setCircle({ id, position }));
         }
     };
 
