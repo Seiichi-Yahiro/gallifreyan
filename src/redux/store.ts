@@ -1,3 +1,4 @@
+import historySlice from '@/redux/slices/historySlice';
 import settingsSlice from '@/redux/slices/settingsSlice';
 import svgSlice from '@/redux/slices/svgSlice';
 import textSlice from '@/redux/slices/textSlice';
@@ -15,6 +16,7 @@ export const setupStore = () => {
             text: textSlice,
             svg: svgSlice,
             ui: uiSlice,
+            history: historySlice,
         },
         middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
         devTools: { actionsDenylist: [uiActions.setHover.type] },

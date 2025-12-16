@@ -1,6 +1,7 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
 import ids, { type LetterId, type LineSlotId, type WordId } from '@/redux/ids';
+import { historyActions } from '@/redux/slices/historySlice';
 import type {
     Arc,
     CircleId,
@@ -10,7 +11,7 @@ import type {
     PolarCircle,
 } from '@/redux/types/svgTypes';
 import { TextElementType } from '@/redux/types/textTypes';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import { match } from 'ts-pattern';
 
 export type SvgSlice = {
@@ -140,6 +141,14 @@ const svgSlice = createSlice({
                 ...action.payload.position,
             };
         },
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            isAnyOf(historyActions.undo, historyActions.redo),
+            (_state, action) => {
+                return action.payload.load.svg;
+            },
+        );
     },
 });
 

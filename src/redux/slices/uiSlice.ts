@@ -1,6 +1,7 @@
 import type { LineSlotId } from '@/redux/ids';
+import { historyActions } from '@/redux/slices/historySlice';
 import type { CircleId } from '@/redux/types/svgTypes';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type UiSlice = {
     hovered: CircleId | LineSlotId | null;
@@ -33,6 +34,14 @@ const uiSlice = createSlice({
         setDragging: (state, action: PayloadAction<boolean>) => {
             state.dragging = action.payload;
         },
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            isAnyOf(historyActions.undo, historyActions.redo),
+            (_state, action) => {
+                return action.payload.load.ui;
+            },
+        );
     },
 });
 

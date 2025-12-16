@@ -5,6 +5,7 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/ids';
+import { historyActions } from '@/redux/slices/historySlice';
 import type { Letter } from '@/redux/types/letterTypes';
 import {
     type DotElement,
@@ -15,7 +16,7 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/types/textTypes';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type TextSlice = {
     value: string;
@@ -193,6 +194,14 @@ const textSlice = createSlice({
 
             delete state.elements[action.payload];
         },
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            isAnyOf(historyActions.undo, historyActions.redo),
+            (_state, action) => {
+                return action.payload.load.text;
+            },
+        );
     },
 });
 
