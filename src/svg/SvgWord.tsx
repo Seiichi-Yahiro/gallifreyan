@@ -5,9 +5,9 @@ import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import SvgLetter from '@/svg/SvgLetter';
-import useHover from '@/svg/useHover';
-import useSelect from '@/svg/useSelect';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
+import useHover from '@/utils/useHover';
+import useSelect from '@/utils/useSelect';
 import { isNotNil } from 'es-toolkit';
 import React, { useMemo } from 'react';
 

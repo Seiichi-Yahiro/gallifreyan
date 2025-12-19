@@ -1,10 +1,10 @@
 import { useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
 import SvgGroup from '@/svg/SvgGroup';
-import useHover from '@/svg/useHover';
-import useSelect from '@/svg/useSelect';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
 import cn from '@/utils/cn';
+import useHover from '@/utils/useHover';
+import useSelect from '@/utils/useSelect';
 import React from 'react';
 
 interface SvgLineSlotProps {

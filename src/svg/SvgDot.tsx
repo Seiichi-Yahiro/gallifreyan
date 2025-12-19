@@ -2,9 +2,9 @@ import { useRedux } from '@/redux/hooks';
 import type { DotId } from '@/redux/ids';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
-import useHover from '@/svg/useHover';
-import useSelect from '@/svg/useSelect';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
+import useHover from '@/utils/useHover';
+import useSelect from '@/utils/useSelect';
 import React from 'react';
 
 interface SvgDotProps {

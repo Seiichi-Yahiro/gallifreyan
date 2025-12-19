@@ -5,9 +5,9 @@ import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';
 import SvgGroup from '@/svg/SvgGroup';
 import SvgLineSlot from '@/svg/SvgLineSlot';
-import useHover from '@/svg/useHover';
-import useSelect from '@/svg/useSelect';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
+import useHover from '@/utils/useHover';
+import useSelect from '@/utils/useSelect';
 import React from 'react';
 
 interface SvgLetterProps {

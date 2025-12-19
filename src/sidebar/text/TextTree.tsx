@@ -6,10 +6,10 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/ids';
-import useHover from '@/svg/useHover';
-import useSelect from '@/svg/useSelect';
 import { Tree, TreeItem } from '@/ui/Tree';
 import cn from '@/utils/cn';
+import useHover from '@/utils/useHover';
+import useSelect from '@/utils/useSelect';
 import React from 'react';
 
 interface TextTreeProps {
