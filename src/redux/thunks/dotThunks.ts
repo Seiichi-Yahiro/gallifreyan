@@ -5,7 +5,6 @@ import ids, { type DotId, type LetterId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
-import svgThunks from '@/redux/thunks/svgThunks';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 
 const add =
@@ -74,7 +73,19 @@ const drag =
             parentAngle,
         );
 
-        dispatch(svgThunks.setCirclePosition(id, newPos));
+        dispatch(svgActions.setCircle({ id, position: newPos }));
+    };
+
+const setCircleRadius =
+    (id: DotId, radius: number): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(svgActions.setCircle({ id, radius }));
+    };
+
+const setCirclePosition =
+    (id: DotId, position: Partial<PolarCoordinate>): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(svgActions.setCircle({ id, position }));
     };
 
 const dotThunks = {
@@ -82,6 +93,8 @@ const dotThunks = {
     remove,
     reset,
     drag,
+    setCircleRadius,
+    setCirclePosition,
 };
 
 export default dotThunks;

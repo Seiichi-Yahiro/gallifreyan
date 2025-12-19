@@ -12,7 +12,6 @@ import { uiActions } from '@/redux/slices/uiSlice';
 import type { AppThunkAction } from '@/redux/store';
 import dotThunks from '@/redux/thunks/dotThunks';
 import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
-import svgThunks from '@/redux/thunks/svgThunks';
 import textThunks from '@/redux/thunks/textThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
@@ -307,10 +306,95 @@ const drag =
         const state = getState();
 
         const lineSlot = state.svg.circles[id];
-
         const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
 
-        dispatch(svgThunks.setCirclePosition(id, newPos));
+        dispatch(svgActions.setCircle({ id, position: newPos }));
+        dispatch(letterThunks.calculateIntersectionsWithWord(id));
+    };
+
+const setCircleRadius =
+    (id: LetterId, radius: number): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letter = state.text.elements[id];
+        const currentCircle = state.svg.circles[id];
+        const deltaRadius = radius - currentCircle.radius;
+
+        const newDistance = match(letter.letter.placement)
+            .with(
+                LetterPlacement.ShallowCut,
+                LetterPlacement.DeepCut,
+                LetterPlacement.Inside,
+                () => currentCircle.position.distance - deltaRadius,
+            )
+            .with(
+                LetterPlacement.Outside,
+                () => currentCircle.position.distance + deltaRadius,
+            )
+            .with(LetterPlacement.OnLine, () => null)
+            .exhaustive();
+
+        if (newDistance !== null) {
+            dispatch(
+                svgActions.setCircle({
+                    id,
+                    radius,
+                    position: {
+                        distance: newDistance,
+                    },
+                }),
+            );
+        } else {
+            dispatch(svgActions.setCircle({ id, radius }));
+        }
+
+        dispatch(letterThunks.calculateIntersectionsWithWord(id));
+
+        const lineSlots = letter.lineSlots;
+
+        for (const lineSlotId of lineSlots) {
+            dispatch(
+                svgActions.setLineSlotPosition({
+                    id: lineSlotId,
+                    position: { distance: radius },
+                }),
+            );
+        }
+
+        const dotIds = letter.dots;
+
+        for (const dotId of dotIds) {
+            const dotDistance = state.svg.circles[dotId].position.distance;
+
+            dispatch(
+                svgActions.setCircle({
+                    id: dotId,
+                    position: {
+                        distance: dotDistance + deltaRadius,
+                    },
+                }),
+            );
+        }
+    };
+
+const setCirclePosition =
+    (id: LetterId, position: Partial<PolarCoordinate>): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const placement = state.text.elements[id].letter.placement;
+
+        if (placement === LetterPlacement.OnLine) {
+            dispatch(
+                svgActions.setCircle({
+                    id,
+                    position: { angle: position.angle },
+                }),
+            );
+        } else {
+            dispatch(svgActions.setCircle({ id, position }));
+        }
+
+        dispatch(letterThunks.calculateIntersectionsWithWord(id));
     };
 
 const letterThunks = {
@@ -321,6 +405,8 @@ const letterThunks = {
     mergeToDigraph,
     calculateIntersectionsWithWord,
     drag,
+    setCircleRadius,
+    setCirclePosition,
 };
 
 export default letterThunks;

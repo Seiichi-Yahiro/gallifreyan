@@ -6,7 +6,6 @@ import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
 import letterThunks from '@/redux/thunks/letterThunks';
-import svgThunks from '@/redux/thunks/svgThunks';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 import { splitLetters } from '@/redux/utils/textAnalysis';
 
@@ -88,10 +87,42 @@ const drag =
         const state = getState();
 
         const lineSlot = state.svg.circles[id];
-
         const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
 
-        dispatch(svgThunks.setCirclePosition(id, newPos));
+        dispatch(svgActions.setCircle({ id, position: newPos }));
+    };
+
+const setCircleRadius =
+    (id: WordId, radius: number): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letterIds = state.text.elements[id].letters;
+        const currentCircle = state.svg.circles[id];
+        const deltaRadius = radius - currentCircle.radius;
+
+        dispatch(svgActions.setCircle({ id, radius }));
+
+        for (const letterId of letterIds) {
+            const letterDistance =
+                state.svg.circles[letterId].position.distance;
+
+            dispatch(
+                svgActions.setCircle({
+                    id: letterId,
+                    position: {
+                        distance: letterDistance + deltaRadius,
+                    },
+                }),
+            );
+        }
+
+        dispatch(wordThunks.calculateIntersectionsWithLetters(id));
+    };
+
+const setCirclePosition =
+    (id: WordId, position: Partial<PolarCoordinate>): AppThunkAction =>
+    (dispatch, _getState) => {
+        dispatch(svgActions.setCircle({ id, position }));
     };
 
 const wordThunks = {
@@ -100,6 +131,8 @@ const wordThunks = {
     reset,
     calculateIntersectionsWithLetters,
     drag,
+    setCircleRadius,
+    setCirclePosition,
 };
 
 export default wordThunks;

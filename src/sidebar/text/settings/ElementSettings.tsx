@@ -1,10 +1,15 @@
 import { AngleUnit } from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
-import ids, { type LetterId, type LineSlotId } from '@/redux/ids';
+import ids, {
+    type LetterId,
+    type LineSlotId,
+    type SentenceId,
+} from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { uiActions } from '@/redux/slices/uiSlice';
+import dotThunks from '@/redux/thunks/dotThunks';
 import letterThunks from '@/redux/thunks/letterThunks';
-import svgThunks from '@/redux/thunks/svgThunks';
+import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
 import type { CircleId } from '@/redux/types/svgTypes';
 import { isDigraphText } from '@/redux/utils/textAnalysis';
@@ -13,8 +18,10 @@ import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
+import { partial } from 'es-toolkit';
 import { Merge, Split, X } from 'lucide-react';
 import React, { useMemo } from 'react';
+import { match } from 'ts-pattern';
 
 interface PositionInputProps {
     className?: string;
@@ -143,7 +150,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
 };
 
 interface CircleSettingsProps {
-    id: CircleId;
+    id: Exclude<CircleId, SentenceId>;
 }
 
 const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
@@ -166,19 +173,35 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             ),
     );
 
+    const { setCircleRadius, setCirclePosition } = match(id)
+        .when(ids.word.is, (wordId) => ({
+            setCircleRadius: partial(wordThunks.setCircleRadius, wordId),
+            setCirclePosition: partial(wordThunks.setCirclePosition, wordId),
+        }))
+        .when(ids.letter.is, (letterId) => ({
+            setCircleRadius: partial(letterThunks.setCircleRadius, letterId),
+            setCirclePosition: partial(
+                letterThunks.setCirclePosition,
+                letterId,
+            ),
+        }))
+        .when(ids.dot.is, (dotId) => ({
+            setCircleRadius: partial(dotThunks.setCircleRadius, dotId),
+            setCirclePosition: partial(dotThunks.setCirclePosition, dotId),
+        }))
+        .exhaustive();
+
     return (
         <>
             <RadiusSettings
                 radius={circle.radius}
-                onChange={(radius) =>
-                    dispatch(svgThunks.setCircleRadius(id, radius))
-                }
+                onChange={(radius) => dispatch(setCircleRadius(radius))}
             />
             {canChangeDistance && (
                 <DistanceSettings
                     distance={circle.position.distance}
                     onChange={(distance) =>
-                        dispatch(svgThunks.setCirclePosition(id, { distance }))
+                        dispatch(setCirclePosition({ distance }))
                     }
                 />
             )}
@@ -187,7 +210,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
                 onChange={(angle) => {
-                    dispatch(svgThunks.setCirclePosition(id, { angle }));
+                    dispatch(setCirclePosition({ angle }));
                 }}
             />
         </>
