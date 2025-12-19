@@ -1,5 +1,6 @@
-import { useRedux } from '@/redux/hooks';
+import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId } from '@/redux/ids';
+import letterThunks from '@/redux/thunks/letterThunks';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';
@@ -15,6 +16,8 @@ interface SvgLetterProps {
 }
 
 const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
+    const dispatch = useAppDispatch();
+
     const dots = useRedux((state) => state.text.elements[id].dots);
 
     const lineSlots = useRedux((state) => state.text.elements[id].lineSlots);
@@ -23,7 +26,9 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
-    const { onPointerDown } = useSvgDragAndDrop(id);
+    const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
+        dispatch(letterThunks.drag(id, pointerData.movement));
+    });
 
     return (
         <SvgGroup

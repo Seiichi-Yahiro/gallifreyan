@@ -1,23 +1,16 @@
 import mVec2 from '@/math/vec';
-import { useAppDispatch } from '@/redux/hooks';
-import type { LineSlotId, SentenceId } from '@/redux/ids';
-import uiThunks from '@/redux/thunks/uiThunks';
-import type { CircleId } from '@/redux/types/svgTypes';
 import SvgContext from '@/svg/svgContext';
-import useDragAndDrop from '@/utils/useDragAndDrop';
+import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
 import { useContext } from 'react';
 
-const useSvgDragAndDrop = (id: Exclude<CircleId, SentenceId> | LineSlotId) => {
-    const dispatch = useAppDispatch();
+const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
     const svg = useContext(SvgContext);
 
     return useDragAndDrop({
         onDown: () => {
             svg.calculateInverseSvgMatrix();
         },
-        onMove: (pointerData) => {
-            dispatch(uiThunks.onDrag(id, pointerData.movement));
-        },
+        onMove,
         transform: (client) => {
             const inverseSvgMatrix = svg.getInverseSvgMatrix();
 
@@ -29,7 +22,7 @@ const useSvgDragAndDrop = (id: Exclude<CircleId, SentenceId> | LineSlotId) => {
                 inverseSvgMatrix,
             );
 
-            return mVec2.create(domPoint.x, domPoint.y);
+            return mVec2.create(domPoint.x, -domPoint.y);
         },
     });
 };

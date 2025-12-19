@@ -1,9 +1,12 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
+import type { Vec2 } from '@/math/vec';
 import ids, { type DotId, type LetterId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
+import svgThunks from '@/redux/thunks/svgThunks';
+import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 
 const add =
     (parent: LetterId): AppThunkAction =>
@@ -56,10 +59,29 @@ const reset =
         dispatch(svgActions.setCircle({ id, radius, position }));
     };
 
+const drag =
+    (id: DotId, delta: Vec2): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const lineSlot = state.svg.circles[id];
+        const parentId = state.text.elements[id].parent;
+        const parentAngle = state.svg.circles[parentId].position.angle;
+
+        const newPos = calculatePositionAfterDrag(
+            lineSlot.position,
+            delta,
+            parentAngle,
+        );
+
+        dispatch(svgThunks.setCirclePosition(id, newPos));
+    };
+
 const dotThunks = {
     add,
     remove,
     reset,
+    drag,
 };
 
 export default dotThunks;

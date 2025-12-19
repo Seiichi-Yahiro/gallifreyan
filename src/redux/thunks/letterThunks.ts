@@ -4,7 +4,7 @@ import mCircle, {
     type Circle as MCircle,
 } from '@/math/circle';
 import mPolar, { type PolarCoordinate } from '@/math/polar';
-import mVec2 from '@/math/vec';
+import mVec2, { type Vec2 } from '@/math/vec';
 import ids, { type LetterId, type WordId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
@@ -12,10 +12,12 @@ import { uiActions } from '@/redux/slices/uiSlice';
 import type { AppThunkAction } from '@/redux/store';
 import dotThunks from '@/redux/thunks/dotThunks';
 import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
+import svgThunks from '@/redux/thunks/svgThunks';
 import textThunks from '@/redux/thunks/textThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
 import type { Arc } from '@/redux/types/svgTypes';
+import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 import { dotAmount, lineSlotAmount } from '@/redux/utils/letterUtils';
 import { intersectionsToArc } from '@/redux/utils/svgUtils';
 import {
@@ -299,6 +301,18 @@ const calculateIntersectionsWithWord =
         }
     };
 
+const drag =
+    (id: LetterId, delta: Vec2): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const lineSlot = state.svg.circles[id];
+
+        const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
+
+        dispatch(svgThunks.setCirclePosition(id, newPos));
+    };
+
 const letterThunks = {
     add,
     remove,
@@ -306,6 +320,7 @@ const letterThunks = {
     splitDigraph,
     mergeToDigraph,
     calculateIntersectionsWithWord,
+    drag,
 };
 
 export default letterThunks;

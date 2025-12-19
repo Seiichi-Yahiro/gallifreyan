@@ -31,7 +31,7 @@ const angleFromCartesian = (vec: Vec2): Radian => {
     return mAngle.radian(phi < 0 ? phi + 2 * Math.PI : phi);
 };
 
-const distanceFromCartesian = (vec: Vec2): number => Math.hypot(vec.x, vec.y);
+const distanceFromCartesian = mVec2.length;
 
 /**
  * Angle will be between [0, 2PI). 0 is at the bottom rotating counterclockwise.

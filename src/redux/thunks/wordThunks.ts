@@ -1,10 +1,13 @@
 import mAngle from '@/math/angle';
 import { type PolarCoordinate } from '@/math/polar';
+import type { Vec2 } from '@/math/vec';
 import ids, { type SentenceId, type WordId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
 import letterThunks from '@/redux/thunks/letterThunks';
+import svgThunks from '@/redux/thunks/svgThunks';
+import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 import { splitLetters } from '@/redux/utils/textAnalysis';
 
 const add =
@@ -79,11 +82,24 @@ const calculateIntersectionsWithLetters =
             .forEach(dispatch);
     };
 
+const drag =
+    (id: WordId, delta: Vec2): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+
+        const lineSlot = state.svg.circles[id];
+
+        const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
+
+        dispatch(svgThunks.setCirclePosition(id, newPos));
+    };
+
 const wordThunks = {
     add,
     remove,
     reset,
     calculateIntersectionsWithLetters,
+    drag,
 };
 
 export default wordThunks;
