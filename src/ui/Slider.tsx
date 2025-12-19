@@ -1,6 +1,6 @@
-import useEventListener from '@/utils/useEventListener';
+import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
 import { clamp } from 'es-toolkit';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 interface SliderProps {
     min: number;
@@ -14,16 +14,15 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     const range = max - min;
 
     const sliderRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
     const percent = (value / range) * 100;
 
-    const calculateValue = (clientX: number) => {
+    const calculateValue = (pointerData: PointerData) => {
         if (!sliderRef.current) {
             return;
         }
 
         const rect = sliderRef.current.getBoundingClientRect();
-        const x = clientX - rect.left;
+        const x = pointerData.client.x - rect.left;
         let factor = clamp(x / rect.width, 0, 1);
 
         if (step !== undefined && step > 0) {
@@ -34,49 +33,10 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
         onChange(range * factor);
     };
 
-    const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        sliderRef.current?.parentElement?.focus();
-        setIsDragging(true);
-        calculateValue(event.clientX);
-    };
-
-    const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        sliderRef.current?.parentElement?.focus();
-        setIsDragging(true);
-        const touch = event.touches[0];
-        calculateValue(touch.clientX);
-    };
-
-    const target = isDragging ? window : undefined;
-
-    useEventListener(
-        'mousemove',
-        (event: MouseEvent) => {
-            event.preventDefault();
-            calculateValue(event.clientX);
-        },
-        target,
-    );
-
-    useEventListener(
-        'touchmove',
-        (event: TouchEvent) => {
-            event.preventDefault();
-            const touch = event.touches[0];
-            calculateValue(touch.clientX);
-        },
-        target,
-    );
-
-    useEventListener(
-        'mouseup touchend',
-        () => {
-            setIsDragging(false);
-        },
-        target,
-    );
+    const { onPointerDown } = useDragAndDrop({
+        onDown: calculateValue,
+        onMove: calculateValue,
+    });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const keyStep = step ?? range * 0.1;
@@ -89,17 +49,17 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
             onChange(nextValue);
         }
     };
+
     return (
         <div
-            className="border-border bg-hover-accent outline-accent h-4 rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"
+            className="border-border bg-hover-accent outline-accent h-4 touch-pinch-zoom rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"
             tabIndex={0}
             onKeyDown={onKeyDown}
         >
             <div
                 ref={sliderRef}
                 className="relative size-full cursor-pointer"
-                onMouseDown={onMouseDown}
-                onTouchStart={onTouchStart}
+                onPointerDown={onPointerDown}
             >
                 <div
                     className="bg-text absolute h-full w-[1px] transform-[translate(-50%,0)] rounded-sm"

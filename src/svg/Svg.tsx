@@ -1,4 +1,5 @@
-import { useRedux } from '@/redux/hooks';
+import mVec2 from '@/math/vec';
+import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type {
     DotId,
     LetterId,
@@ -6,34 +7,89 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/ids';
+import uiThunks from '@/redux/thunks/uiThunks';
+import type { CircleId } from '@/redux/types/svgTypes';
 import { antiArcsToArcs } from '@/redux/utils/svgUtils';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
-import useDragAndDrop from '@/svg/useDragAndDrop';
 import useHover from '@/svg/useHover';
 import useSelect from '@/svg/useSelect';
 import cn from '@/utils/cn';
+import useDragAndDrop from '@/utils/useDragAndDrop';
 import { isNotNil } from 'es-toolkit';
-import React, { useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useRef } from 'react';
 import './Svg.css';
 
+const SvgContext = createContext({
+    calculateInverseSvgMatrix: () => {},
+    getInverseSvgMatrix: (): DOMMatrix | null => null,
+});
+
+const useSvgDragAndDrop = (id: Exclude<CircleId, SentenceId> | LineSlotId) => {
+    const dispatch = useAppDispatch();
+    const svg = useContext(SvgContext);
+
+    return useDragAndDrop({
+        onDown: () => {
+            svg.calculateInverseSvgMatrix();
+        },
+        onMove: (pointerData) => {
+            dispatch(uiThunks.onDrag(id, pointerData.movement));
+        },
+        transform: (client) => {
+            const inverseSvgMatrix = svg.getInverseSvgMatrix();
+
+            if (!inverseSvgMatrix) {
+                return client;
+            }
+
+            const domPoint = new DOMPoint(client.x, client.y).matrixTransform(
+                inverseSvgMatrix,
+            );
+
+            return mVec2.create(domPoint.x, domPoint.y);
+        },
+    });
+};
+
 const Svg: React.FC = () => {
+    const svgRef = useRef<SVGSVGElement>(null);
+    const inverseSvgMatrix = useRef<DOMMatrix>(null);
+
+    const calculateInverseSvgMatrix = () => {
+        const ctm = svgRef.current?.getScreenCTM();
+
+        if (!ctm) {
+            inverseSvgMatrix.current = null;
+            return;
+        }
+
+        inverseSvgMatrix.current = ctm.inverse();
+    };
+
+    const getInverseSvgMatrix = () => inverseSvgMatrix.current;
+
     const svgSize = useRedux((state) => state.svg.size);
     const sentenceId = useRedux((state) => state.text.rootElement);
 
     return (
         <svg
+            ref={svgRef}
             id="gallifreyan"
             xmlns="http://www.w3.org/2000/svg"
             style={{
                 width: '100%',
                 height: '100%',
-                touchAction: 'pinch-zoom',
             }}
+            className="touch-pinch-zoom"
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
         >
-            {sentenceId && <SvgSentence id={sentenceId} />}
+            <SvgContext.Provider
+                value={{ calculateInverseSvgMatrix, getInverseSvgMatrix }}
+            >
+                {sentenceId && <SvgSentence id={sentenceId} />}
+            </SvgContext.Provider>
         </svg>
     );
 };
@@ -97,7 +153,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
-    const startDragging = useDragAndDrop(id);
+    const { onPointerDown } = useSvgDragAndDrop(id);
 
     return (
         <SvgGroup
@@ -124,7 +180,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                         onMouseEnter={onHover}
                         onMouseLeave={onHoverStop}
                         onClick={onSelect}
-                        onPointerDown={startDragging}
+                        onPointerDown={isSelected ? onPointerDown : undefined}
                     />
                 </>
             ) : (
@@ -134,7 +190,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
-                    onPointerDown={startDragging}
+                    onPointerDown={isSelected ? onPointerDown : undefined}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -159,7 +215,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
-    const startDragging = useDragAndDrop(id);
+    const { onPointerDown } = useSvgDragAndDrop(id);
 
     return (
         <SvgGroup
@@ -175,7 +231,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
-                    onPointerDown={startDragging}
+                    onPointerDown={isSelected ? onPointerDown : undefined}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -186,7 +242,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}
                     onClick={onSelect}
-                    onPointerDown={startDragging}
+                    onPointerDown={isSelected ? onPointerDown : undefined}
                     isHovered={isHovered}
                     isSelected={isSelected}
                 />
@@ -210,7 +266,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
-    const startDragging = useDragAndDrop(id);
+    const { onPointerDown } = useSvgDragAndDrop(id);
 
     return (
         <SvgGroup
@@ -225,7 +281,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
                 onClick={onSelect}
-                onPointerDown={startDragging}
+                onPointerDown={isSelected ? onPointerDown : undefined}
                 isHovered={isHovered}
                 isSelected={isSelected}
             />
@@ -242,7 +298,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
-    const startDragging = useDragAndDrop(id);
+    const { onPointerDown } = useSvgDragAndDrop(id);
 
     return (
         <SvgGroup
@@ -270,7 +326,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
                 onMouseEnter={onHover}
                 onMouseLeave={onHoverStop}
                 onClick={onSelect}
-                onPointerDown={startDragging}
+                onPointerDown={isSelected ? onPointerDown : undefined}
             />
         </SvgGroup>
     );

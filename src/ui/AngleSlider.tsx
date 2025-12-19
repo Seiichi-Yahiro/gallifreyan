@@ -2,8 +2,8 @@ import mAngle, { type Angle, AngleUnit } from '@/math/angle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
 import cn from '@/utils/cn';
-import useEventListener from '@/utils/useEventListener';
-import React, { useRef, useState } from 'react';
+import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
+import React, { useRef } from 'react';
 
 interface AngleSliderProps {
     unit: AngleUnit;
@@ -25,9 +25,8 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     className,
 }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
 
-    const calculateValue = (clientX: number, clientY: number) => {
+    const calculateValue = (pointerData: PointerData) => {
         if (!sliderRef.current) {
             return;
         }
@@ -35,8 +34,8 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         const rect = sliderRef.current.getBoundingClientRect();
 
         const mousePos = mVec2.create(
-            clientX - rect.left - rect.width / 2,
-            -(clientY - rect.top - rect.height / 2),
+            pointerData.client.x - rect.left - rect.width / 2,
+            -(pointerData.client.y - rect.top - rect.height / 2),
         );
 
         let angle: Angle = mPolar.angleFromCartesian(mousePos);
@@ -55,49 +54,10 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         onChange(angle.value);
     };
 
-    const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        sliderRef.current?.focus();
-        setIsDragging(true);
-        calculateValue(event.clientX, event.clientY);
-    };
-
-    const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        sliderRef.current?.focus();
-        setIsDragging(true);
-        const touch = event.touches[0];
-        calculateValue(touch.clientX, touch.clientY);
-    };
-
-    const target = isDragging ? window : undefined;
-
-    useEventListener(
-        'mousemove',
-        (event: MouseEvent) => {
-            event.preventDefault();
-            calculateValue(event.clientX, event.clientY);
-        },
-        target,
-    );
-
-    useEventListener(
-        'touchmove',
-        (event: TouchEvent) => {
-            event.preventDefault();
-            const touch = event.touches[0];
-            calculateValue(touch.clientX, touch.clientY);
-        },
-        target,
-    );
-
-    useEventListener(
-        'mouseup touchend',
-        () => {
-            setIsDragging(false);
-        },
-        target,
-    );
+    const { onPointerDown } = useDragAndDrop({
+        onDown: calculateValue,
+        onMove: calculateValue,
+    });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const keyStep = step ?? Math.abs(max - min) * 0.1;
@@ -122,11 +82,10 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         <div
             ref={sliderRef}
             className={cn(
-                'border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer rounded-full border focus:outline-2 focus:-outline-offset-2',
+                'border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer touch-pinch-zoom rounded-full border focus:outline-2 focus:-outline-offset-2',
                 className,
             )}
-            onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
+            onPointerDown={onPointerDown}
             onKeyDown={onKeyDown}
             tabIndex={0}
         >
