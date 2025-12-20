@@ -33,7 +33,7 @@ const Svg: React.FC = () => {
                 width: '100%',
                 height: '100%',
             }}
-            className="touch-pinch-zoom"
+            className="touch-pinch-zoom--not-print"
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
         >
             <SvgContext.Provider

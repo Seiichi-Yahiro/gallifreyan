@@ -6,13 +6,16 @@ export const convertSvgHtmlElementToString = (svg: HTMLElement): string => {
 
     svgClone.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
 
-    svgClone.querySelectorAll('[class]').forEach((el) => {
+    const removeNotPrintClasses = (el: Element) => {
         el.classList.forEach((cls) => {
             if (cls.endsWith('--not-print')) {
                 el.classList.remove(cls);
             }
         });
-    });
+    };
+
+    removeNotPrintClasses(svgClone);
+    svgClone.querySelectorAll('[class]').forEach(removeNotPrintClasses);
 
     const style = document.createElementNS(
         'http://www.w3.org/2000/svg',

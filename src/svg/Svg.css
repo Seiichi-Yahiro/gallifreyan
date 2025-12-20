@@ -38,6 +38,10 @@
 }
 
 @media not print {
+    .touch-pinch-zoom--not-print {
+        touch-action: pinch-zoom;
+    }
+
     .hovered__stroke--not-print {
         stroke: var(--color-hover-accent-strong);
     }
@@ -53,10 +57,10 @@
     .selected__fill--not-print {
         fill: var(--color-accent);
     }
-}
 
-.transition-colors--not-print {
-    transition-property: stroke, fill;
-    transition-timing-function: var(--default-transition-timing-function);
-    transition-duration: var(--default-transition-duration);
+    .transition-colors--not-print {
+        transition-property: stroke, fill;
+        transition-timing-function: var(--default-transition-timing-function);
+        transition-duration: var(--default-transition-duration);
+    }
 }
