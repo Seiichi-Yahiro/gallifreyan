@@ -1,8 +1,8 @@
 import mAngle, { type Angle, AngleUnit } from '@/math/angle';
 import mPolar from '@/math/polar';
-import mVec2 from '@/math/vec';
+import mVec2, { type Vec2 } from '@/math/vec';
 import cn from '@/utils/cn';
-import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
+import useDragAndDrop from '@/utils/useDragAndDrop';
 import React, { useRef } from 'react';
 
 interface AngleSliderProps {
@@ -26,7 +26,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
 }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
 
-    const calculateValue = (pointerData: PointerData) => {
+    const calculateValue = (cursorPos: Vec2) => {
         if (!sliderRef.current) {
             return;
         }
@@ -34,8 +34,8 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         const rect = sliderRef.current.getBoundingClientRect();
 
         const mousePos = mVec2.create(
-            pointerData.client.x - rect.left - rect.width / 2,
-            -(pointerData.client.y - rect.top - rect.height / 2),
+            cursorPos.x - rect.left - rect.width / 2,
+            -(cursorPos.y - rect.top - rect.height / 2),
         );
 
         let angle: Angle = mPolar.angleFromCartesian(mousePos);
@@ -56,7 +56,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
 
     const { onPointerDown } = useDragAndDrop({
         onDown: calculateValue,
-        onMove: calculateValue,
+        onMove: ({ client }) => calculateValue(client),
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

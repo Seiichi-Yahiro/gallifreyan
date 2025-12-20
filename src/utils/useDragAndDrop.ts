@@ -4,10 +4,9 @@ import { uiActions } from '@/redux/slices/uiSlice';
 import React, { useEffect, useRef, useState } from 'react';
 
 type UseDragAndDropProps = {
-    onDown?: (pointerData: PointerData) => void;
+    onDown?: (client: Vec2) => void;
     onMove?: (pointerData: PointerData) => void;
-    onEnd?: (pointerData: PointerData) => void;
-    transform?: (client: Vec2) => Vec2;
+    onEnd?: (client: Vec2) => void;
 };
 
 export type PointerData = {
@@ -22,9 +21,9 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
     const frameScheduled = useRef(false);
     const frameId = useRef<number | null>(null);
 
-    const pointerData = useRef<PointerData>({
-        client: mVec2.create(0, 0),
-        movement: mVec2.create(0, 0),
+    const pointerData = useRef({
+        previousPos: mVec2.create(0, 0),
+        currentPos: mVec2.create(0, 0),
     });
 
     const onPointerDown = (event: React.PointerEvent) => {
@@ -32,19 +31,16 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
             return;
         }
 
-        props.onDown?.(pointerData.current);
-
         event.stopPropagation();
 
-        pointerData.current.client = mVec2.create(event.clientX, event.clientY);
+        pointerData.current.currentPos = mVec2.create(
+            event.clientX,
+            event.clientY,
+        );
 
-        if (props.transform) {
-            pointerData.current.client = props.transform(
-                pointerData.current.client,
-            );
-        }
+        pointerData.current.previousPos = pointerData.current.currentPos;
 
-        pointerData.current.movement = mVec2.create(0, 0);
+        props.onDown?.(pointerData.current.currentPos);
 
         setIsDragging(true);
         dispatch(uiActions.setDragging(true));
@@ -62,26 +58,28 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
 
             event.preventDefault();
 
-            let pos = mVec2.create(event.clientX, event.clientY);
-
-            if (props.transform) {
-                pos = props.transform(pos);
-            }
-
-            // calculate delta
-            pointerData.current.movement = mVec2.add(
-                pointerData.current.movement,
-                mVec2.sub(pos, pointerData.current.client),
+            pointerData.current.currentPos = mVec2.create(
+                event.clientX,
+                event.clientY,
             );
-
-            pointerData.current.client = pos;
 
             if (!frameScheduled.current) {
                 frameScheduled.current = true;
 
                 frameId.current = requestAnimationFrame(() => {
-                    props.onMove?.(pointerData.current);
-                    pointerData.current.movement = mVec2.create(0, 0);
+                    const deltaMovement = mVec2.sub(
+                        pointerData.current.currentPos,
+                        pointerData.current.previousPos,
+                    );
+
+                    props.onMove?.({
+                        client: pointerData.current.currentPos,
+                        movement: deltaMovement,
+                    });
+
+                    pointerData.current.previousPos =
+                        pointerData.current.currentPos;
+
                     frameScheduled.current = false;
                 });
             }
@@ -92,7 +90,7 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
                 return;
             }
 
-            props.onEnd?.(pointerData.current);
+            props.onEnd?.(mVec2.create(event.clientX, event.clientY));
 
             if (frameId.current !== null) {
                 cancelAnimationFrame(frameId.current);

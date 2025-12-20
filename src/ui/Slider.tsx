@@ -1,4 +1,5 @@
-import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
+import type { Vec2 } from '@/math/vec';
+import useDragAndDrop from '@/utils/useDragAndDrop';
 import { clamp } from 'es-toolkit';
 import React, { useRef } from 'react';
 
@@ -16,13 +17,13 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const percent = (value / range) * 100;
 
-    const calculateValue = (pointerData: PointerData) => {
+    const calculateValue = (cursorPos: Vec2) => {
         if (!sliderRef.current) {
             return;
         }
 
         const rect = sliderRef.current.getBoundingClientRect();
-        const x = pointerData.client.x - rect.left;
+        const x = cursorPos.x - rect.left;
         let factor = clamp(x / rect.width, 0, 1);
 
         if (step !== undefined && step > 0) {
@@ -35,7 +36,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, step, onChange }) => {
 
     const { onPointerDown } = useDragAndDrop({
         onDown: calculateValue,
-        onMove: calculateValue,
+        onMove: ({ client }) => calculateValue(client),
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
