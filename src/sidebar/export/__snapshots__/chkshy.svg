@@ -35,44 +35,44 @@
             fill: currentColor;
         }
     </style>
-    <g class="" style="transform: translate(0px, 0px);">
+    <g style="transform: translate(0px, 0px);">
         <circle cx="0" cy="0" r="460" class="sentence__outer"/>
         <circle cx="0" cy="0" r="450" class="sentence__inner"/>
-        <g class="" style="transform: translate(0px, 0px);">
+        <g style="transform: translate(0px, 0px);">
             <path d="M 41.10221075184363 221.21394230769232 A 225 225 0 0 0 55.808816717768764 -217.96875 M -55.80881671776861 -217.96875000000003 A 225 225 0 0 0 -41.10221075184376 221.2139423076923" class="word"/>
-            <g class="" style="transform: rotate(-0deg) translateY(182.8125px);">
+            <g style="transform: rotate(-0deg) translateY(182.8125px);">
                 <path d="M 41.102210751843685 38.40144230769237 A 56.25 56.25 0 1 0 -41.1022107518437 38.40144230769235" class="letter"/>
-                <g class="" style="transform: translate(17.220754456429045px, -41.5745789630079px);">
+                <g style="transform: translate(17.220754456429045px, -41.5745789630079px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
-                <g class="" style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
+                <g style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
             </g>
-            <g class="" style="transform: rotate(-90deg) translateY(140.625px);">
+            <g style="transform: rotate(-90deg) translateY(140.625px);">
                 <circle cx="0" cy="0" r="56.25" class="letter"/>
-                <g class="" style="transform: translate(17.220754456429045px, -41.5745789630079px);">
+                <g style="transform: translate(17.220754456429045px, -41.5745789630079px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
-                <g class="" style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
+                <g style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
             </g>
-            <g class="" style="transform: rotate(-180deg) translateY(225px);">
+            <g style="transform: rotate(-180deg) translateY(225px);">
                 <path d="M 55.80881671776871 -7.031250000000012 A 56.25 56.25 0 0 0 -55.80881671776871 -7.031250000000014" class="letter"/>
-                <g class="" style="transform: translate(17.220754456429045px, -41.5745789630079px);">
+                <g style="transform: translate(17.220754456429045px, -41.5745789630079px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
-                <g class="" style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
+                <g style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
             </g>
-            <g class="" style="transform: rotate(-270deg) translateY(225px);">
+            <g style="transform: rotate(-270deg) translateY(225px);">
                 <circle cx="0" cy="0" r="56.25" class="letter"/>
-                <g class="" style="transform: translate(17.220754456429045px, -41.5745789630079px);">
+                <g style="transform: translate(17.220754456429045px, -41.5745789630079px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
-                <g class="" style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
+                <g style="transform: translate(-17.220754456429034px, -41.57457896300791px);">
                     <circle cx="0" cy="0" r="5.625" class="dot"/>
                 </g>
             </g>

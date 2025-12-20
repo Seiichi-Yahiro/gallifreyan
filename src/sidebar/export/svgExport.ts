@@ -4,14 +4,22 @@ import styleString from './style.css?raw';
 export const convertSvgHtmlElementToString = (svg: HTMLElement): string => {
     const svgClone = svg.cloneNode(true) as SVGSVGElement;
 
-    svgClone.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
+    svgClone
+        .querySelectorAll('.print\\:hidden')
+        .forEach((element) => element.remove());
 
-    const removeNotPrintClasses = (el: Element) => {
-        el.classList.forEach((cls) => {
-            if (cls.endsWith('--not-print')) {
-                el.classList.remove(cls);
-            }
-        });
+    const removeNotPrintClasses = (element: Element) => {
+        const classesToRemove = Array.from(element.classList).filter(
+            (className) => className.endsWith('--not-print'),
+        );
+
+        if (element.classList.length === classesToRemove.length) {
+            element.removeAttribute('class');
+        } else {
+            classesToRemove.forEach((className) => {
+                element.classList.remove(className);
+            });
+        }
     };
 
     removeNotPrintClasses(svgClone);
