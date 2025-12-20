@@ -73,7 +73,7 @@ const drag =
             parentAngle,
         );
 
-        dispatch(svgActions.setCircle({ id, position: newPos }));
+        dispatch(setCirclePosition(id, newPos));
     };
 
 const setCircleRadius =

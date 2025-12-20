@@ -89,7 +89,7 @@ const drag =
         const lineSlot = state.svg.circles[id];
         const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
 
-        dispatch(svgActions.setCircle({ id, position: newPos }));
+        dispatch(setCirclePosition(id, newPos));
     };
 
 const setCircleRadius =
