@@ -26,7 +26,7 @@ const add =
 
         const state = getState();
 
-        splitLetters(newWordText, state.text.splitLetterOptions).forEach(
+        splitLetters(newWordText, state.settings.splitLetterOptions).forEach(
             (pair) => dispatch(letterThunks.add(pair, id)),
         );
     };

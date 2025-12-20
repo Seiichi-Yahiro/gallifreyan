@@ -1,4 +1,5 @@
 import { resetIdCounters } from '@/redux/ids';
+import { settingsActions } from '@/redux/slices/settingsSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import { type AppStore, setupStore } from '@/redux/store';
 import letterThunks from '@/redux/thunks/letterThunks';
@@ -32,9 +33,6 @@ describe('text', () => {
             value: '',
             rootElement: null,
             elements: {},
-            splitLetterOptions: {
-                digraphs: true,
-            },
         });
     });
 
@@ -489,7 +487,9 @@ describe('text', () => {
     });
 
     it('should merge consonants to a digraph', () => {
-        store.dispatch(textActions.setSplitLetterOptions({ digraphs: false }));
+        store.dispatch(
+            settingsActions.setSplitLetterOptions({ digraphs: false }),
+        );
         store.dispatch(textThunks.setText('sh'));
 
         store.dispatch(letterThunks.mergeToDigraph('LTR-0', 'LTR-1'));
@@ -520,7 +520,9 @@ describe('text', () => {
     });
 
     it('should split digraph to letters', () => {
-        store.dispatch(textActions.setSplitLetterOptions({ digraphs: true }));
+        store.dispatch(
+            settingsActions.setSplitLetterOptions({ digraphs: true }),
+        );
         store.dispatch(textThunks.setText('qu'));
 
         store.dispatch(letterThunks.splitDigraph('LTR-0'));

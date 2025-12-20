@@ -15,23 +15,18 @@ import {
     TextElementType,
     type WordElement,
 } from '@/redux/types/textTypes';
-import type { SplitLettersOptions } from '@/redux/utils/textAnalysis';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type TextSlice = {
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
-    splitLetterOptions: Required<SplitLettersOptions>;
 };
 
 const createInitialState = (): TextSlice => ({
     value: '',
     rootElement: null,
     elements: {},
-    splitLetterOptions: {
-        digraphs: true,
-    },
 });
 
 const textSlice = createSlice({
@@ -197,15 +192,6 @@ const textSlice = createSlice({
             );
 
             delete state.elements[action.payload];
-        },
-        setSplitLetterOptions: (
-            state,
-            action: PayloadAction<SplitLettersOptions>,
-        ) => {
-            state.splitLetterOptions = {
-                ...state.splitLetterOptions,
-                ...action.payload,
-            };
         },
     },
 });

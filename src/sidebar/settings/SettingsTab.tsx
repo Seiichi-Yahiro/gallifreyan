@@ -1,16 +1,16 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import { textActions } from '@/redux/slices/textSlice';
+import { settingsActions } from '@/redux/slices/settingsSlice';
 import Checkbox from '@/ui/Checkbox';
 import React from 'react';
 
 const SettingsTab: React.FC = () => {
     const dispatch = useAppDispatch();
     const splitLetterOptions = useRedux(
-        (state) => state.text.splitLetterOptions,
+        (state) => state.settings.splitLetterOptions,
     );
 
     const toggleDigraphs = (checked: boolean) => {
-        dispatch(textActions.setSplitLetterOptions({ digraphs: checked }));
+        dispatch(settingsActions.setSplitLetterOptions({ digraphs: checked }));
     };
 
     return (

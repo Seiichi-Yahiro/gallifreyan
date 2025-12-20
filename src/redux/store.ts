@@ -1,3 +1,4 @@
+import settingsSlice from '@/redux/slices/settingsSlice';
 import svgSlice from '@/redux/slices/svgSlice';
 import textSlice from '@/redux/slices/textSlice';
 import uiSlice, { uiActions } from '@/redux/slices/uiSlice';
@@ -10,6 +11,7 @@ import {
 export const setupStore = () => {
     return configureStore({
         reducer: {
+            settings: settingsSlice,
             text: textSlice,
             svg: svgSlice,
             ui: uiSlice,

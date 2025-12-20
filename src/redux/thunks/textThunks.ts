@@ -110,7 +110,7 @@ const compareWord =
             );
 
             zip(
-                splitLetters(newWordText, state.text.splitLetterOptions),
+                splitLetters(newWordText, state.settings.splitLetterOptions),
                 wordElement.letters,
             ).forEach(([newLetterText, letterId]) =>
                 dispatch(compareLetter(existingId, newLetterText, letterId)),
