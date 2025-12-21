@@ -1,39 +1,48 @@
-import { historyActions } from '@/redux/slices/historySlice';
-import type { AppThunkAction } from '@/redux/store';
+import { historyActions, type HistoryState } from '@/redux/slices/historySlice';
+import type { AppState, AppThunkAction } from '@/redux/store';
+
+const extractHistoryState = (state: AppState): HistoryState => {
+    return {
+        text: state.text,
+        svg: state.svg,
+        ui: state.ui,
+    };
+};
 
 const undo = (): AppThunkAction => (dispatch, getState) => {
-    const { history, ...state } = getState();
+    const state = getState();
 
-    if (history.past.length === 0) {
+    if (state.history.past.length === 0) {
         return;
     }
 
     dispatch(
         historyActions.undo({
-            store: state,
-            load: history.past[history.past.length - 1],
+            store: extractHistoryState(state),
+            load: state.history.past[state.history.past.length - 1],
         }),
     );
 };
 
 const redo = (): AppThunkAction => (dispatch, getState) => {
-    const { history, ...state } = getState();
+    const state = getState();
 
-    if (history.future.length === 0) {
+    if (state.history.future.length === 0) {
         return;
     }
 
     dispatch(
         historyActions.redo({
-            store: state,
-            load: history.future[0],
+            store: extractHistoryState(state),
+            load: state.history.future[0],
         }),
     );
 };
 
 const save = (): AppThunkAction => (dispatch, getState) => {
-    const { history: _history, ...state } = getState();
-    dispatch(historyActions.save(state));
+    const state = getState();
+    const historyState = extractHistoryState(state);
+    dispatch(historyActions.save(historyState));
 };
 
 const historyThunks = {

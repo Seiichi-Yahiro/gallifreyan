@@ -3,15 +3,15 @@ import { type TextSlice } from '@/redux/slices/textSlice';
 import type { UiSlice } from '@/redux/slices/uiSlice';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-export type State = {
+export type HistoryState = {
     text: TextSlice;
     svg: SvgSlice;
     ui: UiSlice;
 };
 
 export type HistorySlice = {
-    past: State[];
-    future: State[];
+    past: HistoryState[];
+    future: HistoryState[];
 };
 
 const createInitialState = (): HistorySlice => ({
@@ -23,15 +23,21 @@ const historySlice = createSlice({
     name: 'history',
     initialState: createInitialState,
     reducers: {
-        undo: (state, action: PayloadAction<{ store: State; load: State }>) => {
+        undo: (
+            state,
+            action: PayloadAction<{ store: HistoryState; load: HistoryState }>,
+        ) => {
             state.past.pop();
             state.future = [action.payload.store, ...state.future];
         },
-        redo: (state, action: PayloadAction<{ store: State; load: State }>) => {
+        redo: (
+            state,
+            action: PayloadAction<{ store: HistoryState; load: HistoryState }>,
+        ) => {
             state.future = state.future.slice(1);
             state.past.push(action.payload.store);
         },
-        save: (state, action: PayloadAction<State>) => {
+        save: (state, action: PayloadAction<HistoryState>) => {
             state.past.push(action.payload);
             state.future = [];
         },
