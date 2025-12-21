@@ -19,6 +19,8 @@ const createInitialState = (): HistorySlice => ({
     future: [],
 });
 
+const maxHistorySize = 30;
+
 const historySlice = createSlice({
     name: 'history',
     initialState: createInitialState,
@@ -38,6 +40,10 @@ const historySlice = createSlice({
             state.past.push(action.payload.store);
         },
         save: (state, action: PayloadAction<HistoryState>) => {
+            if (state.past.length >= maxHistorySize) {
+                state.past.shift();
+            }
+
             state.past.push(action.payload);
             state.future = [];
         },
