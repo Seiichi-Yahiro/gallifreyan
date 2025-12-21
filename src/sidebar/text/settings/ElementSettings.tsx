@@ -208,9 +208,13 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 radius={circle.radius}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
+                    dispatch(uiActions.setDragging(true));
                 }}
                 onChange={(radius) => {
                     dispatch(setCircleRadius(radius));
+                }}
+                onPointerUp={() => {
+                    dispatch(uiActions.setDragging(false));
                 }}
             />
             {canChangeDistance && (
@@ -218,9 +222,13 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                     distance={circle.position.distance}
                     onPointerDown={() => {
                         dispatch(historyThunks.save());
+                        dispatch(uiActions.setDragging(true));
                     }}
                     onChange={(distance) => {
                         dispatch(setCirclePosition({ distance }));
+                    }}
+                    onPointerUp={() => {
+                        dispatch(uiActions.setDragging(false));
                     }}
                 />
             )}
@@ -230,9 +238,13 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 parentAngle={parentAngle}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
+                    dispatch(uiActions.setDragging(true));
                 }}
                 onChange={(angle) => {
                     dispatch(setCirclePosition({ angle }));
+                }}
+                onPointerUp={() => {
+                    dispatch(uiActions.setDragging(false));
                 }}
             />
         </>

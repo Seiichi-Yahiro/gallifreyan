@@ -5,12 +5,14 @@ import React, { useId } from 'react';
 interface RadiusSettingsProps {
     radius: number;
     onPointerDown?: () => void;
+    onPointerUp?: () => void;
     onChange: (radius: number) => void;
 }
 
 const RadiusSettings: React.FC<RadiusSettingsProps> = ({
     radius,
     onPointerDown,
+    onPointerUp,
     onChange,
 }) => {
     const labelId = useId();
@@ -34,6 +36,7 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({
                 step={1}
                 value={radius}
                 onPointerDown={onPointerDown}
+                onPointerUp={onPointerUp}
                 onChange={onChange}
             />
         </div>

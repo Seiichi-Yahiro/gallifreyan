@@ -8,7 +8,7 @@ import React, { useRef } from 'react';
 interface AngleSliderProps
     extends Omit<
         React.HTMLAttributes<HTMLDivElement>,
-        'onChange' | 'onPointerDown'
+        'onChange' | 'onPointerDown' | 'onPointerUp'
     > {
     unit: AngleUnit;
     min?: number;
@@ -16,6 +16,7 @@ interface AngleSliderProps
     value: number;
     step?: number;
     onPointerDown?: () => void;
+    onPointerUp?: () => void;
     onChange: (value: number) => void;
     className?: string;
 }
@@ -27,6 +28,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     value,
     step,
     onPointerDown: externalOnPointerDown,
+    onPointerUp: externalOnPointerUp,
     onChange,
     className,
     ...props
@@ -67,6 +69,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
             calculateValue(client);
         },
         onMove: ({ client }) => calculateValue(client),
+        onUp: externalOnPointerUp,
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

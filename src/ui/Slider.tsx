@@ -6,13 +6,14 @@ import React, { useRef } from 'react';
 interface SliderProps
     extends Omit<
         React.HTMLAttributes<HTMLDivElement>,
-        'onChange' | 'onPointerDown'
+        'onChange' | 'onPointerDown' | 'onPointerUp'
     > {
     min: number;
     max: number;
     value: number;
     step?: number;
     onPointerDown?: () => void;
+    onPointerUp?: () => void;
     onChange: (value: number) => void;
 }
 
@@ -22,6 +23,7 @@ const Slider: React.FC<SliderProps> = ({
     value,
     step,
     onPointerDown: externalOnPointerDown,
+    onPointerUp: externalOnPointerUp,
     onChange,
     ...props
 }) => {
@@ -53,6 +55,7 @@ const Slider: React.FC<SliderProps> = ({
             calculateValue(client);
         },
         onMove: ({ client }) => calculateValue(client),
+        onUp: externalOnPointerUp,
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

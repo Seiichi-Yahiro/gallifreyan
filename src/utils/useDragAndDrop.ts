@@ -1,12 +1,10 @@
 import mVec2, { type Vec2 } from '@/math/vec';
-import { useAppDispatch } from '@/redux/hooks';
-import { uiActions } from '@/redux/slices/uiSlice';
 import React, { useEffect, useRef, useState } from 'react';
 
 type UseDragAndDropProps = {
     onDown?: (client: Vec2) => void;
     onMove?: (pointerData: PointerData) => void;
-    onEnd?: (client: Vec2) => void;
+    onUp?: (client: Vec2) => void;
 };
 
 export type PointerData = {
@@ -15,8 +13,6 @@ export type PointerData = {
 };
 
 const useDragAndDrop = (props: UseDragAndDropProps) => {
-    const dispatch = useAppDispatch();
-
     const [isDragging, setIsDragging] = useState(false);
     const frameScheduled = useRef(false);
     const frameId = useRef<number | null>(null);
@@ -41,9 +37,7 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
         pointerData.current.previousPos = pointerData.current.currentPos;
 
         props.onDown?.(pointerData.current.currentPos);
-
         setIsDragging(true);
-        dispatch(uiActions.setDragging(true));
     };
 
     useEffect(() => {
@@ -90,7 +84,7 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
                 return;
             }
 
-            props.onEnd?.(mVec2.create(event.clientX, event.clientY));
+            props.onUp?.(mVec2.create(event.clientX, event.clientY));
 
             if (frameId.current !== null) {
                 cancelAnimationFrame(frameId.current);
@@ -98,8 +92,6 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
             }
 
             setIsDragging(false);
-            dispatch(uiActions.setDragging(false));
-
             frameScheduled.current = false;
         };
 
@@ -112,7 +104,7 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
             window.removeEventListener('pointerup', onPointerUp);
             window.removeEventListener('pointercancel', onPointerUp);
         };
-    }, [dispatch, isDragging, props]);
+    }, [isDragging, props]);
 
     return { onPointerDown, isDragging };
 };
