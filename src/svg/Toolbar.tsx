@@ -17,12 +17,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ className }) => {
     return (
         <div className={cn(className)}>
             <IconButton
+                aria-label="Undo"
                 disabled={!canUndo}
                 onClick={() => dispatch(historyThunks.undo())}
             >
                 <Undo />
             </IconButton>
             <IconButton
+                aria-label="Redo"
                 disabled={!canRedo}
                 onClick={() => dispatch(historyThunks.redo())}
             >
