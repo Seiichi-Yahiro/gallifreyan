@@ -25,18 +25,21 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         >
             <TabsList className="bg-background border-border rounded-none border-r">
                 <TabsTrigger
+                    aria-label="Text"
                     value={TabName.Text}
                     className="data-[state=inactive]:hover:bg-hover-accent data-[state=active]:bg-hover-accent-strong"
                 >
                     <Type />
                 </TabsTrigger>
                 <TabsTrigger
+                    aria-label="Settings"
                     value={TabName.Settings}
                     className="data-[state=inactive]:hover:bg-hover-accent data-[state=active]:bg-hover-accent-strong"
                 >
                     <Settings />
                 </TabsTrigger>
                 <TabsTrigger
+                    aria-label="Export"
                     value={TabName.Export}
                     className="data-[state=inactive]:hover:bg-hover-accent data-[state=active]:bg-hover-accent-strong"
                 >

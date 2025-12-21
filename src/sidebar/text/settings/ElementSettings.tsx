@@ -39,11 +39,18 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
         return null;
     }
 
+    const id = 'element-settings';
+
     return (
-        <div className={cn('relative flex flex-col gap-1', className)}>
+        <section
+            aria-labelledby={id}
+            className={cn('relative flex flex-col gap-1', className)}
+        >
             <div className="mb-1 flex flex-row items-center justify-between gap-1">
-                <div>Settings</div>
-                <IconButton onClick={deselect}>
+                <h2 id={id} className="font-semibold">
+                    Settings
+                </h2>
+                <IconButton aria-label="Close settings" onClick={deselect}>
                     <X />
                 </IconButton>
             </div>
@@ -53,7 +60,7 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
             ) : (
                 <CircleSettings id={selected} />
             )}
-        </div>
+        </section>
     );
 };
 

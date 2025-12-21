@@ -5,7 +5,8 @@ import cn from '@/utils/cn';
 import useDragAndDrop from '@/utils/useDragAndDrop';
 import React, { useRef } from 'react';
 
-interface AngleSliderProps {
+interface AngleSliderProps
+    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     unit: AngleUnit;
     min?: number;
     max?: number;
@@ -23,6 +24,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     step,
     onChange,
     className,
+    ...props
 }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +82,11 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
 
     return (
         <div
+            role="slider"
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-valuetext={`${value.toFixed(2)} ${unit}`}
             ref={sliderRef}
             className={cn(
                 'border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer touch-pinch-zoom rounded-full border focus:outline-2 focus:-outline-offset-2',
@@ -88,6 +95,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
             onPointerDown={onPointerDown}
             onKeyDown={onKeyDown}
             tabIndex={0}
+            {...props}
         >
             <AngleArm
                 value={min}

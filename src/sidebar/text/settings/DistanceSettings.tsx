@@ -1,6 +1,6 @@
 import Slider from '@/ui/Slider';
 import { formatDecimal } from '@/utils/format';
-import React from 'react';
+import React, { useId } from 'react';
 
 interface DistanceSettingsProps {
     distance: number;
@@ -11,10 +11,22 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({
     distance,
     onChange,
 }) => {
+    const labelId = useId();
+    const describeId = useId();
+
     return (
         <div className="flex flex-col gap-1">
-            <div>{`Distance: ${formatDecimal(distance)} px`}</div>
+            <span>
+                <label id={labelId}>Distance</label>
+                <span aria-hidden={true}>: </span>
+                <span
+                    id={describeId}
+                    aria-hidden={true}
+                >{`${formatDecimal(distance)} px`}</span>
+            </span>
             <Slider
+                aria-labelledby={labelId}
+                aria-describedby={describeId}
                 min={0}
                 max={1000}
                 step={1}

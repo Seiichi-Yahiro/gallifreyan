@@ -1,7 +1,7 @@
 import cn from '@/utils/cn';
 import { debounce } from 'es-toolkit';
 import { ChevronRight, Dot } from 'lucide-react';
-import React, { type KeyboardEvent, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 interface TreeProps {
     children: React.ReactNode;
@@ -14,7 +14,7 @@ export const Tree: React.FC<TreeProps> = ({ children, className }) => {
     );
 };
 
-interface TreeItemProps extends React.HTMLProps<HTMLDivElement> {
+interface TreeItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     title: string;
     defaultOpen?: boolean;
     children?: React.ReactNode;
@@ -65,27 +65,22 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
     open,
     toggleOpen,
 }) => {
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            toggleOpen();
-        }
-    };
-
     return (
         <div className="w-6 select-none">
             {hasChildren ? (
-                <div
-                    className="outline-accent cursor-pointer focus-visible:rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
-                    tabIndex={0}
+                <button
+                    aria-label="Toggle"
+                    aria-expanded={open}
+                    className="outline-accent cursor-pointer appearance-none focus-visible:rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
                     onClick={toggleOpen}
-                    onKeyDown={onKeyDown}
+                    type="button"
                 >
                     <ChevronRight
                         className={cn('transition-[rotate]', {
                             'rotate-90': open,
                         })}
                     />
-                </div>
+                </button>
             ) : (
                 <div>
                     <Dot />
@@ -95,7 +90,8 @@ const TreeItemTrigger: React.FC<TreeItemTriggerProps> = ({
     );
 };
 
-interface TreeItemTitleProps extends React.HTMLProps<HTMLDivElement> {
+interface TreeItemTitleProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     title: string;
     className?: string;
 }
@@ -106,16 +102,16 @@ const TreeItemTitle: React.FC<TreeItemTitleProps> = ({
     ...props
 }) => {
     return (
-        <div
+        <button
+            type="button"
             className={cn(
-                'border-border hover:bg-hover-accent outline-accent ml-7 rounded-sm border px-1 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2',
+                'border-border hover:bg-hover-accent outline-accent ml-7 appearance-none rounded-sm border px-1 text-left transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2',
                 className,
             )}
-            tabIndex={0}
             {...props}
         >
             {title}
-        </div>
+        </button>
     );
 };
 

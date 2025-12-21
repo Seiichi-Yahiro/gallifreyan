@@ -15,8 +15,13 @@ const SettingsTab: React.FC = () => {
 
     return (
         <div className="flex flex-row flex-wrap items-center gap-1">
-            <div>Convert Digraphs:</div>
+            <span>
+                <label id="convert-digraphs">Convert Digraphs</label>
+                <span aria-hidden={true}>:</span>
+            </span>
             <Checkbox
+                aria-labelledby="convert-digraphs"
+                aria-checked={splitLetterOptions.digraphs}
                 checked={splitLetterOptions.digraphs}
                 onCheckedChange={toggleDigraphs}
             />

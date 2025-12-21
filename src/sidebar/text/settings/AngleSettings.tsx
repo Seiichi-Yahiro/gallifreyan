@@ -1,7 +1,7 @@
 import mAngle, { type Angle, AngleUnit } from '@/math/angle';
 import AngleSlider from '@/ui/AngleSlider';
 import { formatDecimal } from '@/utils/format';
-import React from 'react';
+import React, { useId } from 'react';
 
 interface AngleSettingsProps {
     unit: AngleUnit;
@@ -33,15 +33,27 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
         onChange(mAngle.normalize(mAngle.sub(valueAngle, parent)));
     };
 
+    const labelId = useId();
+    const describeId = useId();
+
     return (
         <div className="flex flex-col gap-1">
-            <div>{`Angle: ${formatDecimal(current.value)} ${current.unit}`}</div>
+            <span>
+                <label id={labelId}>Angle</label>
+                <span aria-hidden={true}>: </span>
+                <span
+                    id={describeId}
+                    aria-hidden={true}
+                >{`${formatDecimal(current.value)} ${current.unit}`}</span>
+            </span>
             <div className="overflow-hidden">
                 <div
                     className="flex flex-row items-center justify-center"
                     style={{ rotate: -parent.value + parent.unit }}
                 >
                     <AngleSlider
+                        aria-labelledby={labelId}
+                        aria-describedby={describeId}
                         min={0}
                         max={max}
                         unit={current.unit}
