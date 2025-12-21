@@ -112,25 +112,33 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
                 value={min}
                 unit={unit}
                 className="bg-hover-accent-strong"
+                testId="slider-arm-min"
             />
             <AngleArm
                 value={max}
                 unit={unit}
                 className="bg-hover-accent-strong"
+                testId="slider-arm-max"
             />
-            <AngleArm value={value} unit={unit} />
+            <AngleArm value={value} unit={unit} testId="slider-arm-value" />
             <div className="bg-text absolute top-[50%] left-[50%] size-1 transform-[translate(-50%,-50%)] rounded-full" />
         </div>
     );
 };
 
-interface AngleArmProps {
+interface AngleArmProps extends React.HTMLAttributes<HTMLDivElement> {
     value: number;
     unit: AngleUnit;
     className?: string;
+    testId?: string;
 }
 
-const AngleArm: React.FC<AngleArmProps> = ({ value, unit, className }) => {
+const AngleArm: React.FC<AngleArmProps> = ({
+    value,
+    unit,
+    className,
+    testId,
+}) => {
     return (
         <div
             className={cn(
@@ -140,6 +148,7 @@ const AngleArm: React.FC<AngleArmProps> = ({ value, unit, className }) => {
             style={{
                 rotate: -value + unit,
             }}
+            data-testid={testId}
         />
     );
 };
