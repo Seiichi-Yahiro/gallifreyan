@@ -7,6 +7,7 @@ interface AngleSettingsProps {
     unit: AngleUnit;
     angle: Angle;
     parentAngle?: Angle;
+    onPointerDown?: () => void;
     onChange: (angle: Angle) => void;
 }
 
@@ -14,6 +15,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
     unit,
     angle,
     parentAngle,
+    onPointerDown,
     onChange,
 }) => {
     const current = mAngle.toUnit(angle, unit);
@@ -59,6 +61,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
                         unit={current.unit}
                         step={step}
                         value={current.value}
+                        onPointerDown={onPointerDown}
                         onChange={onValueChange}
                         className="max-w-60"
                     />

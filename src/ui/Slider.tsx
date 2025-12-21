@@ -4,11 +4,15 @@ import { clamp } from 'es-toolkit';
 import React, { useRef } from 'react';
 
 interface SliderProps
-    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+    extends Omit<
+        React.HTMLAttributes<HTMLDivElement>,
+        'onChange' | 'onPointerDown'
+    > {
     min: number;
     max: number;
     value: number;
     step?: number;
+    onPointerDown?: () => void;
     onChange: (value: number) => void;
 }
 
@@ -17,6 +21,7 @@ const Slider: React.FC<SliderProps> = ({
     max,
     value,
     step,
+    onPointerDown: externalOnPointerDown,
     onChange,
     ...props
 }) => {
@@ -43,7 +48,10 @@ const Slider: React.FC<SliderProps> = ({
     };
 
     const { onPointerDown } = useDragAndDrop({
-        onDown: calculateValue,
+        onDown: (client) => {
+            externalOnPointerDown?.();
+            calculateValue(client);
+        },
         onMove: ({ client }) => calculateValue(client),
     });
 

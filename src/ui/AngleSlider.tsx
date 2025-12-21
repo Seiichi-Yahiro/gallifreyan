@@ -6,12 +6,16 @@ import useDragAndDrop from '@/utils/useDragAndDrop';
 import React, { useRef } from 'react';
 
 interface AngleSliderProps
-    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+    extends Omit<
+        React.HTMLAttributes<HTMLDivElement>,
+        'onChange' | 'onPointerDown'
+    > {
     unit: AngleUnit;
     min?: number;
     max?: number;
     value: number;
     step?: number;
+    onPointerDown?: () => void;
     onChange: (value: number) => void;
     className?: string;
 }
@@ -22,6 +26,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     max = unit === AngleUnit.Degree ? 360 : Math.PI * 2,
     value,
     step,
+    onPointerDown: externalOnPointerDown,
     onChange,
     className,
     ...props
@@ -57,7 +62,10 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     };
 
     const { onPointerDown } = useDragAndDrop({
-        onDown: calculateValue,
+        onDown: (client) => {
+            externalOnPointerDown?.();
+            calculateValue(client);
+        },
         onMove: ({ client }) => calculateValue(client),
     });
 

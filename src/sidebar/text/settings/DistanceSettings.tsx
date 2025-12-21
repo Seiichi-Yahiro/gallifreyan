@@ -4,11 +4,13 @@ import React, { useId } from 'react';
 
 interface DistanceSettingsProps {
     distance: number;
+    onPointerDown?: () => void;
     onChange: (distance: number) => void;
 }
 
 const DistanceSettings: React.FC<DistanceSettingsProps> = ({
     distance,
+    onPointerDown,
     onChange,
 }) => {
     const labelId = useId();
@@ -31,6 +33,7 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({
                 max={1000}
                 step={1}
                 value={distance}
+                onPointerDown={onPointerDown}
                 onChange={onChange}
             />
         </div>

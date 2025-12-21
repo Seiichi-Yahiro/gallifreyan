@@ -1,9 +1,12 @@
 import mVec2, { type Vec2 } from '@/math/vec';
+import { useAppDispatch } from '@/redux/hooks';
+import historyThunks from '@/redux/thunks/historyThunks';
 import SvgContext from '@/svg/svgContext';
 import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
 import { useContext } from 'react';
 
 const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
+    const dispatch = useAppDispatch();
     const svg = useContext(SvgContext);
 
     const applySvgMatrixToPoint = (svgMatrix: DOMMatrix, point: Vec2): Vec2 => {
@@ -16,6 +19,7 @@ const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
 
     return useDragAndDrop({
         onDown: () => {
+            dispatch(historyThunks.save());
             svg.calculateInverseSvgMatrix();
         },
         onMove: (pointerData) => {

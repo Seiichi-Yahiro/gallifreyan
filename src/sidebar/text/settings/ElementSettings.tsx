@@ -8,6 +8,7 @@ import ids, {
 import { svgActions } from '@/redux/slices/svgSlice';
 import { uiActions } from '@/redux/slices/uiSlice';
 import dotThunks from '@/redux/thunks/dotThunks';
+import historyThunks from '@/redux/thunks/historyThunks';
 import letterThunks from '@/redux/thunks/letterThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
@@ -118,6 +119,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
             {canMergeWithPrevToDigraph && (
                 <IconButton
                     onClick={() => {
+                        dispatch(historyThunks.save());
                         dispatch(
                             letterThunks.mergeToDigraph(
                                 prevLetterElement!.id,
@@ -132,6 +134,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
             {letterElement.letter.letterType === LetterType.Digraph && (
                 <IconButton
                     onClick={() => {
+                        dispatch(historyThunks.save());
                         dispatch(letterThunks.splitDigraph(id));
                     }}
                 >
@@ -141,6 +144,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
             {canMergeWithNextToDigraph && (
                 <IconButton
                     onClick={() => {
+                        dispatch(historyThunks.save());
                         dispatch(
                             letterThunks.mergeToDigraph(
                                 id,
@@ -202,20 +206,31 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
         <>
             <RadiusSettings
                 radius={circle.radius}
-                onChange={(radius) => dispatch(setCircleRadius(radius))}
+                onPointerDown={() => {
+                    dispatch(historyThunks.save());
+                }}
+                onChange={(radius) => {
+                    dispatch(setCircleRadius(radius));
+                }}
             />
             {canChangeDistance && (
                 <DistanceSettings
                     distance={circle.position.distance}
-                    onChange={(distance) =>
-                        dispatch(setCirclePosition({ distance }))
-                    }
+                    onPointerDown={() => {
+                        dispatch(historyThunks.save());
+                    }}
+                    onChange={(distance) => {
+                        dispatch(setCirclePosition({ distance }));
+                    }}
                 />
             )}
             <AngleSettings
                 unit={AngleUnit.Degree}
                 angle={circle.position.angle}
                 parentAngle={parentAngle}
+                onPointerDown={() => {
+                    dispatch(historyThunks.save());
+                }}
                 onChange={(angle) => {
                     dispatch(setCirclePosition({ angle }));
                 }}
@@ -243,14 +258,17 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
             unit={AngleUnit.Degree}
             angle={lineSlot.position.angle}
             parentAngle={parentAngle}
-            onChange={(angle) =>
+            onPointerDown={() => {
+                dispatch(historyThunks.save());
+            }}
+            onChange={(angle) => {
                 dispatch(
                     svgActions.setLineSlotPosition({
                         id,
                         position: { angle },
                     }),
-                )
-            }
+                );
+            }}
         />
     );
 };
