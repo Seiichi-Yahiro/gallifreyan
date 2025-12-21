@@ -30,7 +30,7 @@ const Slider: React.FC<SliderProps> = ({
     const range = max - min;
 
     const sliderRef = useRef<HTMLDivElement>(null);
-    const percent = (value / range) * 100;
+    const percent = range === 0 ? 0 : ((value - min) / range) * 100;
 
     const calculateValue = (cursorPos: Vec2) => {
         if (!sliderRef.current) {
@@ -46,7 +46,7 @@ const Slider: React.FC<SliderProps> = ({
             factor = Math.round(factor / stepFactor) * stepFactor;
         }
 
-        onChange(range * factor);
+        onChange(min + range * factor);
     };
 
     const { onPointerDown } = useDragAndDrop({
@@ -77,17 +77,20 @@ const Slider: React.FC<SliderProps> = ({
             aria-valuemax={max}
             aria-valuenow={value}
             aria-valuetext={value.toFixed(2)}
+            aria-orientation="horizontal"
             className="border-border bg-hover-accent outline-accent h-4 touch-pinch-zoom rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"
             tabIndex={0}
             onKeyDown={onKeyDown}
             {...props}
         >
             <div
+                data-testid="slider-track"
                 ref={sliderRef}
                 className="relative size-full cursor-pointer"
                 onPointerDown={onPointerDown}
             >
                 <div
+                    data-testid="slider-value-indicator"
                     className="bg-text absolute h-full w-[1px] transform-[translate(-50%,0)] rounded-sm"
                     style={{ left: `${percent}%` }}
                 />
