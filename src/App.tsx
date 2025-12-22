@@ -1,4 +1,4 @@
-import { setupStore } from '@/redux/store';
+import { type AppStore, setupStore } from '@/redux/store';
 import Sidebar from '@/sidebar/Sidebar';
 import Svg from '@/svg/Svg';
 import Toolbar from '@/svg/Toolbar';
@@ -8,17 +8,20 @@ import {
     ResizablePanelGroup,
 } from '@/ui/Resizeable';
 import { ThemeProvider } from 'next-themes';
-import React, { useMemo } from 'react';
+import React, { useRef } from 'react';
 import { Provider } from 'react-redux';
 import './App.css';
 
 const App: React.FC = () => {
-    const store = useMemo(() => {
-        return setupStore();
-    }, []);
+    const storeRef = useRef<AppStore | null>(null);
+
+    if (storeRef.current === null) {
+        storeRef.current = setupStore();
+    }
 
     return (
-        <Provider store={store}>
+        // eslint-disable-next-line react-hooks/refs
+        <Provider store={storeRef.current}>
             <ThemeProvider enableSystem={true}>
                 <ResizablePanelGroup direction="horizontal">
                     <ResizablePanel
