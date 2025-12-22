@@ -9,7 +9,7 @@ export type UiSlice = {
     dragging: boolean;
 };
 
-const createInitialState = (): UiSlice => ({
+export const createInitialUiState = (): UiSlice => ({
     hovered: null,
     selected: null,
     dragging: false,
@@ -17,7 +17,7 @@ const createInitialState = (): UiSlice => ({
 
 const uiSlice = createSlice({
     name: 'ui',
-    initialState: createInitialState,
+    initialState: createInitialUiState,
     reducers: {
         setHover: (
             state,

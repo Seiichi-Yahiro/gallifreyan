@@ -24,7 +24,7 @@ export type TextSlice = {
     elements: TextElementsDict;
 };
 
-const createInitialState = (): TextSlice => ({
+export const createInitialTextState = (): TextSlice => ({
     value: '',
     rootElement: null,
     elements: {},
@@ -32,7 +32,7 @@ const createInitialState = (): TextSlice => ({
 
 const textSlice = createSlice({
     name: 'text',
-    initialState: createInitialState,
+    initialState: createInitialTextState,
     reducers: {
         setText: (state, action: PayloadAction<string>) => {
             state.value = action.payload;

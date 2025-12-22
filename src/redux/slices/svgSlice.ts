@@ -20,7 +20,7 @@ export type SvgSlice = {
     lineSlots: LineSlotDict;
 };
 
-const createInitialState = (): SvgSlice => ({
+export const createInitialSvgState = (): SvgSlice => ({
     size: 1000,
     circles: {},
     lineSlots: {},
@@ -28,7 +28,7 @@ const createInitialState = (): SvgSlice => ({
 
 const svgSlice = createSlice({
     name: 'svg',
-    initialState: createInitialState,
+    initialState: createInitialSvgState,
     reducers: {
         addCircle: (state, action: PayloadAction<CircleId>) => {
             const defaultCircle: PolarCircle = {

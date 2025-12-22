@@ -14,7 +14,7 @@ export type HistorySlice = {
     future: HistoryState[];
 };
 
-const createInitialState = (): HistorySlice => ({
+export const createInitialHistoryState = (): HistorySlice => ({
     past: [],
     future: [],
 });
@@ -23,7 +23,7 @@ const maxHistorySize = 30;
 
 const historySlice = createSlice({
     name: 'history',
-    initialState: createInitialState,
+    initialState: createInitialHistoryState,
     reducers: {
         undo: (
             state,

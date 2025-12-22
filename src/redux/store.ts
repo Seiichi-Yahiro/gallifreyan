@@ -4,20 +4,24 @@ import svgSlice from '@/redux/slices/svgSlice';
 import textSlice from '@/redux/slices/textSlice';
 import uiSlice, { uiActions } from '@/redux/slices/uiSlice';
 import {
+    combineReducers,
     configureStore,
     type ThunkAction,
     type UnknownAction,
 } from '@reduxjs/toolkit';
 
-export const setupStore = () => {
+const reducer = combineReducers({
+    settings: settingsSlice,
+    text: textSlice,
+    svg: svgSlice,
+    ui: uiSlice,
+    history: historySlice,
+});
+
+export const setupStore = (preloadedState?: AppState) => {
     return configureStore({
-        reducer: {
-            settings: settingsSlice,
-            text: textSlice,
-            svg: svgSlice,
-            ui: uiSlice,
-            history: historySlice,
-        },
+        preloadedState,
+        reducer,
         middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
         devTools: { actionsDenylist: [uiActions.setHover.type] },
     });
@@ -25,7 +29,7 @@ export const setupStore = () => {
 
 export type AppStore = ReturnType<typeof setupStore>;
 
-export type AppState = ReturnType<AppStore['getState']>;
+export type AppState = ReturnType<typeof reducer>;
 export type AppDispatch = AppStore['dispatch'];
 export type AppThunkAction<R = void> = ThunkAction<
     R,

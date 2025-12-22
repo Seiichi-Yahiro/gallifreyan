@@ -5,7 +5,7 @@ export type SettingsSlice = {
     splitLetterOptions: Required<SplitLettersOptions>;
 };
 
-const createInitialSate = (): SettingsSlice => ({
+export const createInitialSettingsSate = (): SettingsSlice => ({
     splitLetterOptions: {
         digraphs: true,
     },
@@ -13,7 +13,7 @@ const createInitialSate = (): SettingsSlice => ({
 
 const settingsSlice = createSlice({
     name: 'settings',
-    initialState: createInitialSate,
+    initialState: createInitialSettingsSate,
     reducers: {
         setSplitLetterOptions: (
             state,
