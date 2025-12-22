@@ -92,7 +92,7 @@ const intersections = (a: Circle, b: Circle): CircleIntersections => {
 
     // translate intersection points x and y back into original coordinate system
     const xUnit = mVec2.div(aToB, distance); // normalize
-    const yUnit = mVec2.rotate(xUnit, mAngle.degree(90)); // rotate 90° left;
+    const yUnit = mVec2.rotate(xUnit, mAngle.radian(Math.PI * 0.5)); // rotate 90° left;
 
     const xTranslation = mVec2.mul(xUnit, x);
     const yTranslation = mVec2.mul(yUnit, y);

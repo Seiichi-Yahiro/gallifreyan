@@ -40,19 +40,19 @@
         <circle cx="0" cy="0" r="450" class="sentence__inner"/>
         <g style="transform: translate(0px, 0px);">
             <path d="M 152.71905625076258 -165.23283528970995 A 225 225 0 1 0 219.4553610256 -49.64216471028997" class="word"/>
-            <g style="transform: rotate(-0deg) translateY(123.75px);">
+            <g style="transform: rotate(-0rad) translateY(123.75px);">
                 <circle cx="0" cy="0" r="67.5" class="letter"/>
                 <g style="transform: translate(6.6130927153957075e-15px, -54px);">
                     <circle cx="0" cy="0" r="6.75" class="dot"/>
                 </g>
             </g>
-            <g style="transform: rotate(-120deg) translateY(225px);">
+            <g style="transform: rotate(-2.0943951023931953rad) translateY(225px);">
                 <path d="M 66.73630477483752 -10.124999999999991 A 67.5 67.5 0 0 0 -66.7363047748375 -10.125000000000037" class="letter"/>
                 <g style="transform: translate(6.6130927153957075e-15px, -54px);">
                     <circle cx="0" cy="0" r="6.75" class="dot"/>
                 </g>
             </g>
-            <g style="transform: rotate(-240deg) translateY(225px);">
+            <g style="transform: rotate(-4.1887902047863905rad) translateY(225px);">
                 <circle cx="0" cy="0" r="67.5" class="letter"/>
                 <g style="transform: translate(6.6130927153957075e-15px, -54px);">
                     <circle cx="0" cy="0" r="6.75" class="dot"/>

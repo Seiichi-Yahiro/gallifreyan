@@ -1,12 +1,12 @@
-import mAngle, { type Angle, type Radian } from '@/math/angle';
+import mAngle, { type Radian } from '@/math/angle';
 import mVec2, { type Vec2 } from '@/math/vec';
 
 export type PolarCoordinate = {
-    angle: Angle;
+    angle: Radian;
     distance: number;
 };
 
-const create = (distance: number, angle: Angle): PolarCoordinate => {
+const create = (distance: number, angle: Radian): PolarCoordinate => {
     return {
         distance,
         angle,
@@ -17,7 +17,7 @@ const create = (distance: number, angle: Angle): PolarCoordinate => {
  * This will rotate counterclockwise starting from the bottom.
  */
 const toCartesian = (polar: PolarCoordinate): Vec2 => {
-    const phi = mAngle.toRadian(polar.angle).value;
+    const phi = polar.angle.value;
     const x = polar.distance * Math.sin(phi);
     const y = -polar.distance * Math.cos(phi);
     return mVec2.create(x, y);

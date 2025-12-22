@@ -134,15 +134,33 @@ describe('svgUtils', () => {
     it('should create word arcs from intersections', () => {
         // 6 points sorted by sortIntersectionsByAngle
         const result = antiArcsToArcs([
-            { start: mAngle.degree(350), end: mAngle.degree(10) },
-            { start: mAngle.degree(90), end: mAngle.degree(180) },
-            { start: mAngle.degree(270), end: mAngle.degree(280) },
+            {
+                start: mAngle.radian(Math.PI * 1.9),
+                end: mAngle.radian(Math.PI * 0.1),
+            },
+            {
+                start: mAngle.radian(Math.PI * 0.5),
+                end: mAngle.radian(Math.PI),
+            },
+            {
+                start: mAngle.radian(Math.PI * 1.5),
+                end: mAngle.radian(Math.PI * 1.6),
+            },
         ]);
 
         expect(result).toStrictEqual([
-            { start: mAngle.degree(10), end: mAngle.degree(90) },
-            { start: mAngle.degree(180), end: mAngle.degree(270) },
-            { start: mAngle.degree(280), end: mAngle.degree(350) },
+            {
+                start: mAngle.radian(Math.PI * 0.1),
+                end: mAngle.radian(Math.PI * 0.5),
+            },
+            {
+                start: mAngle.radian(Math.PI),
+                end: mAngle.radian(Math.PI * 1.5),
+            },
+            {
+                start: mAngle.radian(Math.PI * 1.6),
+                end: mAngle.radian(Math.PI * 1.9),
+            },
         ]);
     });
 });

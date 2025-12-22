@@ -60,7 +60,7 @@ const reset =
 
         const position: PolarCoordinate = {
             distance: wordCount > 1 ? sentenceRadius - radius * 1.5 : 0,
-            angle: mAngle.degree(index * (360 / wordCount)),
+            angle: mAngle.toRadian(mAngle.degree(index * (360 / wordCount))),
         };
 
         dispatch(svgActions.setCircle({ id, radius, position }));

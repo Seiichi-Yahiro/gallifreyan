@@ -108,7 +108,7 @@ const reset =
 
             position = {
                 distance,
-                angle: mAngle.degree(angle),
+                angle: mAngle.toRadian(mAngle.degree(angle)),
             };
         } else {
             radius = (wordRadius * 0.75) / (1 + letterCount / 2);
@@ -129,7 +129,7 @@ const reset =
 
             position = {
                 distance,
-                angle: mAngle.degree(angle),
+                angle: mAngle.toRadian(mAngle.degree(angle)),
             };
         }
 

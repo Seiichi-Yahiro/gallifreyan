@@ -49,13 +49,19 @@ describe('vec', () => {
     });
 
     it('should rotate counterclockwise', () => {
-        const result = mVec2.rotate(mVec2.create(0, 1), mAngle.degree(90));
+        const result = mVec2.rotate(
+            mVec2.create(0, 1),
+            mAngle.radian(Math.PI * 0.5),
+        );
         expect(result.x).approximately(-1, 0.000001);
         expect(result.y).approximately(0, 0.000001);
     });
 
     it('should rotate clockwise', () => {
-        const result = mVec2.rotate(mVec2.create(-1, 0), mAngle.degree(-90));
+        const result = mVec2.rotate(
+            mVec2.create(-1, 0),
+            mAngle.radian(-Math.PI * 0.5),
+        );
         expect(result.x).approximately(0, 0.000001);
         expect(result.y).approximately(1, 0.000001);
     });
@@ -63,7 +69,7 @@ describe('vec', () => {
     it('should rotate counterclockwise with revert', () => {
         const result = mVec2.rotate(
             mVec2.create(0, 1),
-            mAngle.degree(-90),
+            mAngle.radian(-Math.PI * 0.5),
             true,
         );
         expect(result.x).approximately(-1, 0.000001);
@@ -73,7 +79,7 @@ describe('vec', () => {
     it('should rotate clockwise with revert', () => {
         const result = mVec2.rotate(
             mVec2.create(-1, 0),
-            mAngle.degree(90),
+            mAngle.radian(Math.PI * 0.5),
             true,
         );
         expect(result.x).approximately(0, 0.000001);

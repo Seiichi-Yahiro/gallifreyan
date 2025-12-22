@@ -1,11 +1,11 @@
-import type { Angle } from '@/math/angle';
+import type { Radian } from '@/math/angle';
 import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
 
 export const calculatePositionAfterDrag = (
     currentPos: PolarCoordinate,
     delta: Vec2,
-    parentAngle?: Angle,
+    parentAngle?: Radian,
 ): PolarCoordinate => {
     const pos = mPolar.toCartesian(currentPos);
 

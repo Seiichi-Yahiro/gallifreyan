@@ -40,19 +40,19 @@
         <circle cx="0" cy="0" r="450" class="sentence__inner"/>
         <g style="transform: translate(0px, 0px);">
             <circle cx="0" cy="0" r="225" class="word"/>
-            <g style="transform: rotate(-0deg) translateY(253.92857142857142px);">
+            <g style="transform: rotate(-0rad) translateY(253.92857142857142px);">
                 <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
             </g>
-            <g style="transform: rotate(-72deg) translateY(225px);">
+            <g style="transform: rotate(-1.2566370614359172rad) translateY(225px);">
                 <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
             </g>
-            <g style="transform: rotate(-144deg) translateY(225px);">
+            <g style="transform: rotate(-2.5132741228718345rad) translateY(225px);">
                 <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
             </g>
-            <g style="transform: rotate(-216deg) translateY(196.07142857142858px);">
+            <g style="transform: rotate(-3.7699111843077517rad) translateY(196.07142857142858px);">
                 <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
             </g>
-            <g style="transform: rotate(-288deg) translateY(225px);">
+            <g style="transform: rotate(-5.026548245743669rad) translateY(225px);">
                 <circle cx="0" cy="0" r="19.285714285714285" class="letter"/>
             </g>
         </g>

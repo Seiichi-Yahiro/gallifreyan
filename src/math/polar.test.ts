@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('Polar coordinates', () => {
     it('should convert 0 degrees to 0,-1', () => {
-        const polar = mPolar.create(1, mAngle.degree(0));
+        const polar = mPolar.create(1, mAngle.radian(0));
         const cartesian = mPolar.toCartesian(polar);
 
         expect(cartesian.x).approximately(0, 0.00001);
@@ -13,7 +13,7 @@ describe('Polar coordinates', () => {
     });
 
     it('should convert 90 degrees to 1,0', () => {
-        const polar = mPolar.create(1, mAngle.degree(90));
+        const polar = mPolar.create(1, mAngle.radian(Math.PI * 0.5));
         const cartesian = mPolar.toCartesian(polar);
 
         expect(cartesian.x).approximately(1, 0.00001);
@@ -21,7 +21,7 @@ describe('Polar coordinates', () => {
     });
 
     it('should convert 180 degrees to 0,1', () => {
-        const polar = mPolar.create(1, mAngle.degree(180));
+        const polar = mPolar.create(1, mAngle.radian(Math.PI));
         const cartesian = mPolar.toCartesian(polar);
 
         expect(cartesian.x).approximately(0, 0.00001);
@@ -29,7 +29,7 @@ describe('Polar coordinates', () => {
     });
 
     it('should convert 270 degrees to -1,0', () => {
-        const polar = mPolar.create(1, mAngle.degree(270));
+        const polar = mPolar.create(1, mAngle.radian(Math.PI * 1.5));
         const cartesian = mPolar.toCartesian(polar);
 
         expect(cartesian.x).approximately(-1, 0.00001);

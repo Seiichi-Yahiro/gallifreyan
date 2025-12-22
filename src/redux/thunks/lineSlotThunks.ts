@@ -21,7 +21,7 @@ const add =
                 lineSlot: {
                     position: {
                         distance: 0,
-                        angle: mAngle.degree(0),
+                        angle: mAngle.radian(0),
                     },
                 },
             }),
@@ -64,7 +64,7 @@ const reset =
 
         const position: PolarCoordinate = {
             distance,
-            angle: mAngle.degree(angle),
+            angle: mAngle.toRadian(mAngle.degree(angle)),
         };
 
         dispatch(svgActions.setLineSlotPosition({ id, position }));

@@ -1,4 +1,4 @@
-import mAngle, { type Angle, type Radian } from '@/math/angle';
+import mAngle, { type Radian } from '@/math/angle';
 
 export type Vec2 = {
     x: number;
@@ -30,9 +30,9 @@ const distance = (a: Vec2, b: Vec2): number => length(sub(a, b));
 /**
  * Rotates counterclockwise.
  */
-const rotate = (vec: Vec2, angle: Angle, revert = false): Vec2 => {
+const rotate = (vec: Vec2, angle: Radian, revert = false): Vec2 => {
     const sign = revert ? -1 : 1;
-    const phi = mAngle.toRadian(angle).value * sign;
+    const phi = angle.value * sign;
     const cos = Math.cos(phi);
     const sin = Math.sin(phi);
 

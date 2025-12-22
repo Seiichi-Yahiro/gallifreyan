@@ -1,4 +1,4 @@
-import type { Angle } from '@/math/angle';
+import mAngle, { type Angle } from '@/math/angle';
 import mPolar from '@/math/polar';
 import cn from '@/utils/cn';
 import React, { useMemo } from 'react';
@@ -22,7 +22,10 @@ const SvgGroup: React.FC<SvgGroupProps> = ({
         if (rotateInParent) {
             return `rotate(-${angle.value}${angle.unit}) translateY(${distance}px)`;
         } else {
-            const pos = mPolar.toCartesian({ angle, distance });
+            const pos = mPolar.toCartesian({
+                angle: mAngle.toRadian(angle),
+                distance,
+            });
             return `translate(${pos.x}px, ${-pos.y}px)`;
         }
     }, [angle, distance, rotateInParent]);

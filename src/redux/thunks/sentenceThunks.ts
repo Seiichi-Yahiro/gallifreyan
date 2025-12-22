@@ -49,7 +49,7 @@ const reset =
 
         const position: PolarCoordinate = {
             distance: 0,
-            angle: mAngle.degree(0),
+            angle: mAngle.radian(0),
         };
 
         dispatch(svgActions.setCircle({ id, radius, position }));

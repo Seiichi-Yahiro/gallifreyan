@@ -1,4 +1,4 @@
-import { AngleUnit } from '@/math/angle';
+import mAngle from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, {
     type LetterId,
@@ -19,6 +19,7 @@ import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
+import { mapOptional } from '@/utils/optional';
 import { partial } from 'es-toolkit';
 import { Merge, Split, X } from 'lucide-react';
 import React, { useMemo } from 'react';
@@ -233,15 +234,16 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 />
             )}
             <AngleSettings
-                unit={AngleUnit.Degree}
-                angle={circle.position.angle}
-                parentAngle={parentAngle}
+                angle={mAngle.toDegree(circle.position.angle)}
+                parentAngle={mapOptional(mAngle.toDegree)(parentAngle)}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
                     dispatch(uiActions.setDragging(true));
                 }}
                 onChange={(angle) => {
-                    dispatch(setCirclePosition({ angle }));
+                    dispatch(
+                        setCirclePosition({ angle: mAngle.toRadian(angle) }),
+                    );
                 }}
                 onPointerUp={() => {
                     dispatch(uiActions.setDragging(false));
@@ -267,9 +269,8 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
 
     return (
         <AngleSettings
-            unit={AngleUnit.Degree}
-            angle={lineSlot.position.angle}
-            parentAngle={parentAngle}
+            angle={mAngle.toDegree(lineSlot.position.angle)}
+            parentAngle={mAngle.toDegree(parentAngle)}
             onPointerDown={() => {
                 dispatch(historyThunks.save());
             }}
@@ -277,7 +278,7 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
                 dispatch(
                     svgActions.setLineSlotPosition({
                         id,
-                        position: { angle },
+                        position: { angle: mAngle.toRadian(angle) },
                     }),
                 );
             }}

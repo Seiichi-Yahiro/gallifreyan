@@ -35,7 +35,7 @@ const svgSlice = createSlice({
                 radius: 0,
                 position: {
                     distance: 0,
-                    angle: mAngle.degree(0),
+                    angle: mAngle.radian(0),
                 },
             };
 

@@ -1,4 +1,4 @@
-import type { Angle } from '@/math/angle';
+import type { Radian } from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
 import type {
     DotId,
@@ -13,8 +13,8 @@ import { TextElementType } from '@/redux/types/textTypes';
  * An Arc should be drawn counterclockwise.
  */
 export type Arc = {
-    start: Angle;
-    end: Angle;
+    start: Radian;
+    end: Radian;
 };
 
 export interface PolarCircle {

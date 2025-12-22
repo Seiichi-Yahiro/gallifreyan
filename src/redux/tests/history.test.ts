@@ -78,7 +78,7 @@ describe('history', () => {
                         type: TextElementType.Sentence,
                         radius: 1,
                         position: {
-                            angle: mAngle.degree(0),
+                            angle: mAngle.radian(0),
                             distance: 0,
                         },
                     },
@@ -108,7 +108,7 @@ describe('history', () => {
                         type: TextElementType.Sentence,
                         radius: 10,
                         position: {
-                            angle: mAngle.degree(10),
+                            angle: mAngle.toRadian(mAngle.degree(10)),
                             distance: 10,
                         },
                     },
@@ -187,7 +187,7 @@ describe('history', () => {
                         type: TextElementType.Sentence,
                         radius: 1,
                         position: {
-                            angle: mAngle.degree(0),
+                            angle: mAngle.radian(0),
                             distance: 0,
                         },
                     },
@@ -217,7 +217,7 @@ describe('history', () => {
                         type: TextElementType.Sentence,
                         radius: 10,
                         position: {
-                            angle: mAngle.degree(10),
+                            angle: mAngle.toRadian(mAngle.degree(10)),
                             distance: 10,
                         },
                     },
