@@ -63,12 +63,12 @@ const drag =
     (dispatch, getState) => {
         const state = getState();
 
-        const lineSlot = state.svg.circles[id];
+        const dotCircle = state.svg.circles[id];
         const parentId = state.text.elements[id].parent;
         const parentAngle = state.svg.circles[parentId].position.angle;
 
         const newPos = calculatePositionAfterDrag(
-            lineSlot.position,
+            dotCircle.position,
             delta,
             parentAngle,
         );

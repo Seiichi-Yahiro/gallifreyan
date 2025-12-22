@@ -305,8 +305,8 @@ const drag =
     (dispatch, getState) => {
         const state = getState();
 
-        const lineSlot = state.svg.circles[id];
-        const newPos = calculatePositionAfterDrag(lineSlot.position, delta);
+        const letterCircle = state.svg.circles[id];
+        const newPos = calculatePositionAfterDrag(letterCircle.position, delta);
 
         dispatch(setCirclePosition(id, newPos));
     };
