@@ -12,6 +12,7 @@ import letterThunks from '@/redux/thunks/letterThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
 import type { CircleId } from '@/redux/types/svgTypes';
+import { selectPositionConstraints } from '@/redux/utils/constraints';
 import { isDigraphText } from '@/redux/utils/textAnalysis';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
@@ -182,9 +183,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             ),
     );
 
-    const positionConstraints = useRedux(
-        (state) => state.interaction.positionConstraints,
-    );
+    const positionConstraints = useRedux(selectPositionConstraints);
 
     return (
         <>

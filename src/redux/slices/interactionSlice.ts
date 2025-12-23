@@ -1,6 +1,5 @@
 import type { LineSlotId } from '@/redux/ids';
 import { historyActions } from '@/redux/slices/historySlice';
-import type { PositionConstraints } from '@/redux/types/interactionTypes';
 import type { CircleId } from '@/redux/types/svgTypes';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
@@ -8,14 +7,12 @@ export type InteractionSlice = {
     hovered: CircleId | LineSlotId | null;
     selected: CircleId | LineSlotId | null;
     dragging: boolean;
-    positionConstraints: PositionConstraints | null;
 };
 
 export const createInitialInteractionState = (): InteractionSlice => ({
     hovered: null,
     selected: null,
     dragging: false,
-    positionConstraints: null,
 });
 
 const interactionSlice = createSlice({
@@ -36,12 +33,6 @@ const interactionSlice = createSlice({
         },
         setDragging: (state, action: PayloadAction<boolean>) => {
             state.dragging = action.payload;
-        },
-        setPositionConstraints: (
-            state,
-            action: PayloadAction<PositionConstraints | null>,
-        ) => {
-            state.positionConstraints = action.payload;
         },
     },
     extraReducers: (builder) => {
