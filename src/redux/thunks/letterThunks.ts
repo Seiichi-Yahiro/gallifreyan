@@ -14,6 +14,7 @@ import dotThunks from '@/redux/thunks/dotThunks';
 import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
 import textThunks from '@/redux/thunks/textThunks';
 import wordThunks from '@/redux/thunks/wordThunks';
+import type { DistanceConstraints } from '@/redux/types/interactionTypes';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
 import type { Arc } from '@/redux/types/svgTypes';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
@@ -24,7 +25,7 @@ import {
     type RawLetter,
     textToDigraph,
 } from '@/redux/utils/textAnalysis';
-import { range } from 'es-toolkit';
+import { clamp, range } from 'es-toolkit';
 import { match } from 'ts-pattern';
 
 const add =
@@ -380,20 +381,108 @@ const setCirclePosition =
     (id: LetterId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const placement = state.text.elements[id].letter.placement;
+        const letterCircle = state.svg.circles[id];
+        const positionConstraints = state.interaction.positionConstraints;
 
-        if (placement === LetterPlacement.OnLine) {
-            dispatch(
-                svgActions.setCircle({
-                    id,
-                    position: { angle: position.angle },
-                }),
-            );
-        } else {
-            dispatch(svgActions.setCircle({ id, position }));
+        if (positionConstraints === null) {
+            throw new Error('Position constraints are not set');
         }
 
+        const newDistance = clamp(
+            position.distance ?? letterCircle.position.distance,
+            positionConstraints.distance.min,
+            positionConstraints.distance.max,
+        );
+
+        const newAngle = mAngle.clamp(
+            mAngle.toRadian(position.angle ?? letterCircle.position.angle),
+            mAngle.toRadian(positionConstraints.angle.min).value,
+            mAngle.toRadian(positionConstraints.angle.max).value,
+        );
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                position: {
+                    distance: newDistance,
+                    angle: newAngle,
+                },
+            }),
+        );
+
         dispatch(letterThunks.calculateIntersectionsWithWord(id));
+    };
+
+const calculatePositionConstraints =
+    (id: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letter = state.text.elements[id];
+        const letterCircle = state.svg.circles[id];
+        const wordCircle = state.svg.circles[letter.parent];
+        const placement = letter.letter.placement;
+        const letterIds = state.text.elements[letter.parent].letters;
+        const index = letterIds.indexOf(id);
+
+        let minAngle = mAngle.radian(0);
+        let maxAngle = mAngle.radian(Math.PI * 2.0);
+
+        if (index > 0) {
+            const previousWordId = letterIds[index - 1];
+            minAngle = state.svg.circles[previousWordId].position.angle;
+        }
+
+        if (index < letterIds.length - 1) {
+            const nextWordId = letterIds[index + 1];
+            maxAngle = state.svg.circles[nextWordId].position.angle;
+        }
+
+        const distanceConstraints = match(placement)
+            .returnType<DistanceConstraints>()
+            .with(LetterPlacement.OnLine, () => {
+                return {
+                    min: wordCircle.radius,
+                    max: wordCircle.radius,
+                };
+            })
+            .with(LetterPlacement.ShallowCut, () => {
+                return {
+                    min: wordCircle.radius + letterCircle.radius * 0.05,
+                    max: wordCircle.radius + letterCircle.radius * 0.95,
+                };
+            })
+            .with(LetterPlacement.DeepCut, () => {
+                return {
+                    min: wordCircle.radius - letterCircle.radius * 0.95,
+                    max: wordCircle.radius - letterCircle.radius * 0.55,
+                };
+            })
+            .with(LetterPlacement.Inside, () => {
+                return {
+                    min: 0,
+                    max: wordCircle.radius - letterCircle.radius,
+                };
+            })
+            .with(LetterPlacement.Outside, () => {
+                return {
+                    min: wordCircle.radius + letterCircle.radius,
+                    max:
+                        wordCircle.radius +
+                        letterCircle.radius +
+                        wordCircle.radius * 0.2,
+                };
+            })
+            .exhaustive();
+
+        dispatch(
+            interactionActions.setPositionConstraints({
+                distance: distanceConstraints,
+                angle: {
+                    min: minAngle,
+                    max: maxAngle,
+                },
+            }),
+        );
     };
 
 const letterThunks = {
@@ -406,6 +495,7 @@ const letterThunks = {
     drag,
     setCircleRadius,
     setCirclePosition,
+    calculatePositionConstraints,
 };
 
 export default letterThunks;
