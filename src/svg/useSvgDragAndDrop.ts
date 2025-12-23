@@ -1,6 +1,6 @@
 import mVec2, { type Vec2 } from '@/math/vec';
 import { useAppDispatch } from '@/redux/hooks';
-import { uiActions } from '@/redux/slices/uiSlice';
+import { interactionActions } from '@/redux/slices/interactionSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import SvgContext from '@/svg/svgContext';
 import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
@@ -21,7 +21,7 @@ const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
     return useDragAndDrop({
         onDown: () => {
             dispatch(historyThunks.save());
-            dispatch(uiActions.setDragging(true));
+            dispatch(interactionActions.setDragging(true));
             svg.calculateInverseSvgMatrix();
         },
         onMove: (pointerData) => {
@@ -51,7 +51,7 @@ const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
             onMove({ client: currentSvgPos, movement: delta });
         },
         onUp: () => {
-            dispatch(uiActions.setDragging(false));
+            dispatch(interactionActions.setDragging(false));
         },
     });
 };

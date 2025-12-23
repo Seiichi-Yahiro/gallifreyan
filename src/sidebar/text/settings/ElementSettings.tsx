@@ -5,8 +5,8 @@ import ids, {
     type LineSlotId,
     type SentenceId,
 } from '@/redux/ids';
+import { interactionActions } from '@/redux/slices/interactionSlice';
 import { svgActions } from '@/redux/slices/svgSlice';
-import { uiActions } from '@/redux/slices/uiSlice';
 import dotThunks from '@/redux/thunks/dotThunks';
 import historyThunks from '@/redux/thunks/historyThunks';
 import letterThunks from '@/redux/thunks/letterThunks';
@@ -30,11 +30,11 @@ interface PositionInputProps {
 }
 
 const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
-    const selected = useRedux((state) => state.ui.selected);
+    const selected = useRedux((state) => state.interaction.selected);
 
     const dispatch = useAppDispatch();
     const deselect = () => {
-        dispatch(uiActions.setSelection(null));
+        dispatch(interactionActions.setSelection(null));
     };
 
     if (!selected || ids.sentence.is(selected)) {
@@ -209,13 +209,13 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 radius={circle.radius}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
-                    dispatch(uiActions.setDragging(true));
+                    dispatch(interactionActions.setDragging(true));
                 }}
                 onChange={(radius) => {
                     dispatch(setCircleRadius(radius));
                 }}
                 onPointerUp={() => {
-                    dispatch(uiActions.setDragging(false));
+                    dispatch(interactionActions.setDragging(false));
                 }}
             />
             {canChangeDistance && (
@@ -223,13 +223,13 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                     distance={circle.position.distance}
                     onPointerDown={() => {
                         dispatch(historyThunks.save());
-                        dispatch(uiActions.setDragging(true));
+                        dispatch(interactionActions.setDragging(true));
                     }}
                     onChange={(distance) => {
                         dispatch(setCirclePosition({ distance }));
                     }}
                     onPointerUp={() => {
-                        dispatch(uiActions.setDragging(false));
+                        dispatch(interactionActions.setDragging(false));
                     }}
                 />
             )}
@@ -238,7 +238,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                 parentAngle={mapOptional(mAngle.toDegree)(parentAngle)}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
-                    dispatch(uiActions.setDragging(true));
+                    dispatch(interactionActions.setDragging(true));
                 }}
                 onChange={(angle) => {
                     dispatch(
@@ -246,7 +246,7 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
                     );
                 }}
                 onPointerUp={() => {
-                    dispatch(uiActions.setDragging(false));
+                    dispatch(interactionActions.setDragging(false));
                 }}
             />
         </>

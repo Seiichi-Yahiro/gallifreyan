@@ -1,8 +1,8 @@
 import mAngle from '@/math/angle';
 import { resetIdCounters } from '@/redux/ids';
 import type { HistoryState } from '@/redux/slices/historySlice';
+import { createInitialInteractionState } from '@/redux/slices/interactionSlice';
 import { createInitialSettingsSate } from '@/redux/slices/settingsSlice';
-import { createInitialUiState } from '@/redux/slices/uiSlice';
 import { type AppStore, setupStore } from '@/redux/store';
 import historyThunks from '@/redux/thunks/historyThunks';
 import textThunks from '@/redux/thunks/textThunks';
@@ -37,12 +37,12 @@ describe('history', () => {
             {
                 text: states[0].text,
                 svg: states[0].svg,
-                ui: states[0].ui,
+                interaction: states[0].interaction,
             },
             {
                 text: states[1].text,
                 svg: states[1].svg,
-                ui: states[1].ui,
+                interaction: states[1].interaction,
             },
         ]);
 
@@ -85,7 +85,7 @@ describe('history', () => {
                 },
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         const past1: HistoryState = {
@@ -115,7 +115,7 @@ describe('history', () => {
                 },
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         const present = {
@@ -129,7 +129,7 @@ describe('history', () => {
                 circles: {},
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         store = setupStore({
@@ -149,13 +149,13 @@ describe('history', () => {
 
         expect(state.text).toStrictEqual(past1.text);
         expect(state.svg).toStrictEqual(past1.svg);
-        expect(state.ui).toStrictEqual(past1.ui);
+        expect(state.interaction).toStrictEqual(past1.interaction);
 
         expect(state.history.future).toStrictEqual([
             {
                 text: present.text,
                 svg: present.svg,
-                ui: present.ui,
+                interaction: present.interaction,
             },
         ]);
     });
@@ -194,7 +194,7 @@ describe('history', () => {
                 },
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         const present: HistoryState = {
@@ -224,7 +224,7 @@ describe('history', () => {
                 },
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         const future = {
@@ -238,7 +238,7 @@ describe('history', () => {
                 circles: {},
                 lineSlots: {},
             },
-            ui: createInitialUiState(),
+            interaction: createInitialInteractionState(),
         };
 
         store = setupStore({
@@ -258,7 +258,7 @@ describe('history', () => {
 
         expect(state.text).toStrictEqual(future.text);
         expect(state.svg).toStrictEqual(future.svg);
-        expect(state.ui).toStrictEqual(future.ui);
+        expect(state.interaction).toStrictEqual(future.interaction);
 
         expect(state.history.future).toStrictEqual([]);
     });

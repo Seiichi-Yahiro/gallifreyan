@@ -3,21 +3,21 @@ import { historyActions } from '@/redux/slices/historySlice';
 import type { CircleId } from '@/redux/types/svgTypes';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
-export type UiSlice = {
+export type InteractionSlice = {
     hovered: CircleId | LineSlotId | null;
     selected: CircleId | LineSlotId | null;
     dragging: boolean;
 };
 
-export const createInitialUiState = (): UiSlice => ({
+export const createInitialInteractionState = (): InteractionSlice => ({
     hovered: null,
     selected: null,
     dragging: false,
 });
 
-const uiSlice = createSlice({
-    name: 'ui',
-    initialState: createInitialUiState,
+const interactionSlice = createSlice({
+    name: 'interaction',
+    initialState: createInitialInteractionState,
     reducers: {
         setHover: (
             state,
@@ -39,11 +39,11 @@ const uiSlice = createSlice({
         builder.addMatcher(
             isAnyOf(historyActions.undo, historyActions.redo),
             (_state, action) => {
-                return action.payload.load.ui;
+                return action.payload.load.interaction;
             },
         );
     },
 });
 
-export const uiActions = uiSlice.actions;
-export default uiSlice.reducer;
+export const interactionActions = interactionSlice.actions;
+export default interactionSlice.reducer;

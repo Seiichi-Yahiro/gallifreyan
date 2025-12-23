@@ -5,8 +5,8 @@ import {
     type SentenceId,
     type WordId,
 } from '@/redux/ids';
+import { interactionActions } from '@/redux/slices/interactionSlice';
 import { textActions } from '@/redux/slices/textSlice';
-import { uiActions } from '@/redux/slices/uiSlice';
 import type { AppThunkAction } from '@/redux/store';
 import dotThunks from '@/redux/thunks/dotThunks';
 import letterThunks from '@/redux/thunks/letterThunks';
@@ -25,8 +25,8 @@ import { range, zip } from 'es-toolkit';
 const setText =
     (text: string): AppThunkAction =>
     (dispatch, getState) => {
-        dispatch(uiActions.setHover(null));
-        dispatch(uiActions.setSelection(null));
+        dispatch(interactionActions.setHover(null));
+        dispatch(interactionActions.setSelection(null));
 
         dispatch(textActions.setText(text));
         const sanitizedText = sanitizeSentence(text);

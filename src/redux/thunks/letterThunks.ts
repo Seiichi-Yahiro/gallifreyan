@@ -6,9 +6,9 @@ import mCircle, {
 import mPolar, { type PolarCoordinate } from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
 import ids, { type LetterId, type WordId } from '@/redux/ids';
+import { interactionActions } from '@/redux/slices/interactionSlice';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
-import { uiActions } from '@/redux/slices/uiSlice';
 import type { AppThunkAction } from '@/redux/store';
 import dotThunks from '@/redux/thunks/dotThunks';
 import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
@@ -192,8 +192,8 @@ const mergeToDigraph =
             ),
         );
 
-        if (state.ui.selected === secondLetterId) {
-            dispatch(uiActions.setSelection(firstLetterId));
+        if (state.interaction.selected === secondLetterId) {
+            dispatch(interactionActions.setSelection(firstLetterId));
         }
 
         dispatch(remove(secondLetterId));

@@ -1,8 +1,10 @@
 import historySlice from '@/redux/slices/historySlice';
+import interactionSlice, {
+    interactionActions,
+} from '@/redux/slices/interactionSlice';
 import settingsSlice from '@/redux/slices/settingsSlice';
 import svgSlice from '@/redux/slices/svgSlice';
 import textSlice from '@/redux/slices/textSlice';
-import uiSlice, { uiActions } from '@/redux/slices/uiSlice';
 import {
     combineReducers,
     configureStore,
@@ -14,7 +16,7 @@ const reducer = combineReducers({
     settings: settingsSlice,
     text: textSlice,
     svg: svgSlice,
-    ui: uiSlice,
+    interaction: interactionSlice,
     history: historySlice,
 });
 
@@ -23,7 +25,7 @@ export const setupStore = (preloadedState?: AppState) => {
         preloadedState,
         reducer,
         middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
-        devTools: { actionsDenylist: [uiActions.setHover.type] },
+        devTools: { actionsDenylist: [interactionActions.setHover.type] },
     });
 };
 

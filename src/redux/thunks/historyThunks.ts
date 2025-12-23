@@ -5,7 +5,7 @@ const extractHistoryState = (state: AppState): HistoryState => {
     return {
         text: state.text,
         svg: state.svg,
-        ui: state.ui,
+        interaction: state.interaction,
     };
 };
 
