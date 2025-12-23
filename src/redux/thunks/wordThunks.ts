@@ -2,12 +2,14 @@ import mAngle from '@/math/angle';
 import { type PolarCoordinate } from '@/math/polar';
 import type { Vec2 } from '@/math/vec';
 import ids, { type SentenceId, type WordId } from '@/redux/ids';
+import { interactionActions } from '@/redux/slices/interactionSlice';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
 import letterThunks from '@/redux/thunks/letterThunks';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 import { splitLetters } from '@/redux/utils/textAnalysis';
+import { clamp } from 'es-toolkit';
 
 const add =
     (newWordText: string, parent: SentenceId): AppThunkAction =>
@@ -121,8 +123,73 @@ const setCircleRadius =
 
 const setCirclePosition =
     (id: WordId, position: Partial<PolarCoordinate>): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(svgActions.setCircle({ id, position }));
+    (dispatch, getState) => {
+        const state = getState();
+        const wordCircle = state.svg.circles[id];
+        const positionConstraints = state.interaction.positionConstraints;
+
+        if (positionConstraints === null) {
+            throw new Error('Position constraints are not set');
+        }
+
+        const newDistance = clamp(
+            position.distance ?? wordCircle.position.distance,
+            positionConstraints.distance.min,
+            positionConstraints.distance.max,
+        );
+
+        const newAngle = mAngle.clamp(
+            mAngle.toRadian(position.angle ?? wordCircle.position.angle),
+            mAngle.toRadian(positionConstraints.angle.min).value,
+            mAngle.toRadian(positionConstraints.angle.max).value,
+        );
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                position: {
+                    distance: newDistance,
+                    angle: newAngle,
+                },
+            }),
+        );
+    };
+
+const calculatePositionConstraints =
+    (id: WordId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const word = state.text.elements[id];
+        const wordCircle = state.svg.circles[id];
+        const sentenceCircle = state.svg.circles[word.parent];
+        const wordIds = state.text.elements[word.parent].words;
+        const index = wordIds.indexOf(id);
+
+        let minAngle = mAngle.radian(0);
+        let maxAngle = mAngle.radian(Math.PI * 2.0);
+
+        if (index > 0) {
+            const previousWordId = wordIds[index - 1];
+            minAngle = state.svg.circles[previousWordId].position.angle;
+        }
+
+        if (index < wordIds.length - 1) {
+            const nextWordId = wordIds[index + 1];
+            maxAngle = state.svg.circles[nextWordId].position.angle;
+        }
+
+        dispatch(
+            interactionActions.setPositionConstraints({
+                distance: {
+                    min: 0,
+                    max: sentenceCircle.radius - wordCircle.radius,
+                },
+                angle: {
+                    min: minAngle,
+                    max: maxAngle,
+                },
+            }),
+        );
     };
 
 const wordThunks = {
@@ -133,6 +200,7 @@ const wordThunks = {
     drag,
     setCircleRadius,
     setCirclePosition,
+    calculatePositionConstraints,
 };
 
 export default wordThunks;

@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
-import { interactionActions } from '@/redux/slices/interactionSlice';
+import interactionThunks from '@/redux/thunks/interactionThunks';
 import type { CircleId } from '@/redux/types/svgTypes';
 import { type MouseEvent } from 'react';
 
@@ -11,7 +11,7 @@ const useSelect = (id: CircleId | LineSlotId) => {
 
     const onSelect = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch(interactionActions.setSelection(id));
+        dispatch(interactionThunks.select(id));
     };
 
     return { isSelected, onSelect };

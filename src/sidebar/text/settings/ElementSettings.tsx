@@ -182,6 +182,10 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             ),
     );
 
+    const positionConstraints = useRedux(
+        (state) => state.interaction.positionConstraints,
+    );
+
     return (
         <>
             <RadiusSettings
@@ -200,6 +204,8 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             {canChangeDistance && (
                 <DistanceSettings
                     distance={circle.position.distance}
+                    min={positionConstraints?.distance.min ?? 0}
+                    max={positionConstraints?.distance.max ?? 1000}
                     onPointerDown={() => {
                         dispatch(historyThunks.save());
                         dispatch(interactionActions.setDragging(true));
@@ -215,6 +221,12 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
             <AngleSettings
                 angle={mAngle.toDegree(circle.position.angle)}
                 parentAngle={mapOptional(mAngle.toDegree)(parentAngle)}
+                min={mapOptional(mAngle.toDegree)(
+                    positionConstraints?.angle.min,
+                )}
+                max={mapOptional(mAngle.toDegree)(
+                    positionConstraints?.angle.max,
+                )}
                 onPointerDown={() => {
                     dispatch(historyThunks.save());
                     dispatch(interactionActions.setDragging(true));

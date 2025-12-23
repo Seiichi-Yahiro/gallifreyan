@@ -4,6 +4,8 @@ import React, { useId } from 'react';
 
 interface DistanceSettingsProps {
     distance: number;
+    min: number;
+    max: number;
     onPointerDown?: () => void;
     onPointerUp?: () => void;
     onChange: (distance: number) => void;
@@ -11,6 +13,8 @@ interface DistanceSettingsProps {
 
 const DistanceSettings: React.FC<DistanceSettingsProps> = ({
     distance,
+    min,
+    max,
     onPointerDown,
     onPointerUp,
     onChange,
@@ -31,8 +35,8 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({
             <Slider
                 aria-labelledby={labelId}
                 aria-describedby={describeId}
-                min={0}
-                max={1000}
+                min={min}
+                max={max}
                 step={1}
                 value={distance}
                 onPointerDown={onPointerDown}
