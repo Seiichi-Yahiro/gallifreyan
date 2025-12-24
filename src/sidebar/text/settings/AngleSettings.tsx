@@ -6,15 +6,17 @@ import { svgActions } from '@/redux/slices/svgSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import type { CircleId } from '@/redux/types/svgTypes';
-import AngleSlider from '@/ui/AngleSlider';
+import AngleSlider, { type AngleSliderRef } from '@/ui/AngleSlider';
 import { formatDecimal } from '@/utils/format';
-import React, { useId } from 'react';
+import React, { useId, useRef } from 'react';
 
 interface AngleSettingsProps {
     id: CircleId | LineSlotId;
 }
 
 const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
+    const sliderRef = useRef<AngleSliderRef>(null);
+
     const dispatch = useAppDispatch();
 
     const angle = useRedux((state) =>
@@ -38,7 +40,11 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
 
     return (
         <div className="flex flex-col gap-1">
-            <span>
+            <span
+                onClick={() => {
+                    sliderRef.current?.focus();
+                }}
+            >
                 <label id={labelId}>Angle</label>
                 <span aria-hidden={true}>: </span>
                 <span
@@ -54,6 +60,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                     }}
                 >
                     <AngleSlider
+                        ref={sliderRef}
                         aria-labelledby={labelId}
                         aria-describedby={describeId}
                         className="max-w-60"

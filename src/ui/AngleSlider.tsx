@@ -3,13 +3,18 @@ import mPolar from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
 import cn from '@/utils/cn';
 import useDragAndDrop from '@/utils/useDragAndDrop';
-import React, { useRef } from 'react';
+import React, { useImperativeHandle, useRef } from 'react';
+
+export type AngleSliderRef = {
+    focus: () => void;
+};
 
 interface AngleSliderProps
     extends Omit<
         React.HTMLAttributes<HTMLDivElement>,
         'onChange' | 'onPointerDown' | 'onPointerUp'
     > {
+    ref?: React.Ref<AngleSliderRef | null>;
     unit: AngleUnit;
     min?: number;
     max?: number;
@@ -22,6 +27,7 @@ interface AngleSliderProps
 }
 
 const AngleSlider: React.FC<AngleSliderProps> = ({
+    ref,
     unit,
     min = 0,
     max = unit === AngleUnit.Degree ? 360 : Math.PI * 2,
@@ -34,6 +40,21 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     ...props
 }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
+
+    useImperativeHandle<AngleSliderRef | null, AngleSliderRef | null>(
+        ref,
+        (): AngleSliderRef | null => {
+            if (sliderRef.current === null) {
+                return null;
+            }
+
+            return {
+                focus: () => {
+                    sliderRef.current?.focus();
+                },
+            };
+        },
+    );
 
     const calculateValue = (cursorPos: Vec2) => {
         if (!sliderRef.current) {
