@@ -320,6 +320,8 @@ const setCircleRadius =
         const currentCircle = state.svg.circles[id];
         const deltaRadius = radius - currentCircle.radius;
 
+        dispatch(svgActions.setCircle({ id, radius }));
+
         const newDistance = match(letter.letter.placement)
             .with(
                 LetterPlacement.ShallowCut,
@@ -336,16 +338,10 @@ const setCircleRadius =
 
         if (newDistance !== null) {
             dispatch(
-                svgActions.setCircle({
-                    id,
-                    radius,
-                    position: {
-                        distance: newDistance,
-                    },
+                setCirclePosition(id, {
+                    distance: newDistance,
                 }),
             );
-        } else {
-            dispatch(svgActions.setCircle({ id, radius }));
         }
 
         dispatch(letterThunks.calculateIntersectionsWithWord(id));
