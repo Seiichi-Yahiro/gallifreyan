@@ -5,7 +5,9 @@ import ids, { type DotId, type LetterId } from '@/redux/ids';
 import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
+import { calculateDotPositionConstraints } from '@/redux/utils/constraints';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
+import { clamp } from 'es-toolkit';
 
 const add =
     (parent: LetterId): AppThunkAction =>
@@ -84,8 +86,32 @@ const setCircleRadius =
 
 const setCirclePosition =
     (id: DotId, position: Partial<PolarCoordinate>): AppThunkAction =>
-    (dispatch, _getState) => {
-        dispatch(svgActions.setCircle({ id, position }));
+    (dispatch, getState) => {
+        const state = getState();
+        const dotCircle = state.svg.circles[id];
+        const positionConstraints = calculateDotPositionConstraints(state, id);
+
+        const newDistance = clamp(
+            position.distance ?? dotCircle.position.distance,
+            positionConstraints.distance.min,
+            positionConstraints.distance.max,
+        );
+
+        const newAngle = mAngle.clamp(
+            mAngle.toRadian(position.angle ?? dotCircle.position.angle),
+            mAngle.toRadian(positionConstraints.angle.min).value,
+            mAngle.toRadian(positionConstraints.angle.max).value,
+        );
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                position: {
+                    distance: newDistance,
+                    angle: newAngle,
+                },
+            }),
+        );
     };
 
 const dotThunks = {

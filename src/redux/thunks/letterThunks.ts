@@ -363,11 +363,8 @@ const setCircleRadius =
             const dotDistance = state.svg.circles[dotId].position.distance;
 
             dispatch(
-                svgActions.setCircle({
-                    id: dotId,
-                    position: {
-                        distance: dotDistance + deltaRadius,
-                    },
+                dotThunks.setCirclePosition(dotId, {
+                    distance: dotDistance + deltaRadius,
                 }),
             );
         }

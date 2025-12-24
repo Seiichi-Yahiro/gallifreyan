@@ -1,6 +1,6 @@
 import mAngle from '@/math/angle';
 import { createReduxSelector } from '@/redux/hooks';
-import ids, { type LetterId, type WordId } from '@/redux/ids';
+import ids, { type DotId, type LetterId, type WordId } from '@/redux/ids';
 import type { AppState } from '@/redux/store';
 import type {
     DistanceConstraints,
@@ -110,6 +110,26 @@ export const calculateLetterPositionConstraints = (
         angle: {
             min: minAngle,
             max: maxAngle,
+        },
+    };
+};
+
+export const calculateDotPositionConstraints = (
+    state: Pick<AppState, 'text' | 'svg'>,
+    id: DotId,
+): PositionConstraints => {
+    const dot = state.text.elements[id];
+    const dotCircle = state.svg.circles[id];
+    const letterCircle = state.svg.circles[dot.parent];
+
+    return {
+        distance: {
+            min: 0,
+            max: letterCircle.radius - dotCircle.radius,
+        },
+        angle: {
+            min: mAngle.radian(0),
+            max: mAngle.radian(Math.PI * 2.0),
         },
     };
 };
