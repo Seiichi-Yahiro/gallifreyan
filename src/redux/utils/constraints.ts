@@ -78,7 +78,7 @@ export const calculateLetterPositionConstraints = (
         })
         .with(LetterPlacement.ShallowCut, () => {
             return {
-                min: wordCircle.radius + letterCircle.radius * 0.05,
+                min: wordCircle.radius,
                 max: wordCircle.radius + letterCircle.radius * 0.95,
             };
         })
@@ -100,7 +100,7 @@ export const calculateLetterPositionConstraints = (
                 max:
                     wordCircle.radius +
                     letterCircle.radius +
-                    wordCircle.radius * 0.2,
+                    letterCircle.radius * 0.5,
             };
         })
         .exhaustive();
