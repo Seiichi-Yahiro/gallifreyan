@@ -109,11 +109,8 @@ const setCircleRadius =
                 state.svg.circles[letterId].position.distance;
 
             dispatch(
-                svgActions.setCircle({
-                    id: letterId,
-                    position: {
-                        distance: letterDistance + deltaRadius,
-                    },
+                letterThunks.setCirclePosition(letterId, {
+                    distance: letterDistance + deltaRadius,
                 }),
             );
         }
