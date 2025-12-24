@@ -1,4 +1,4 @@
-import mAngle from '@/math/angle';
+import mAngle, { type Radian } from '@/math/angle';
 import { type PolarCoordinate } from '@/math/polar';
 import type { Vec2 } from '@/math/vec';
 import ids, { type LetterId, type LineSlotId } from '@/redux/ids';
@@ -6,6 +6,7 @@ import { svgActions } from '@/redux/slices/svgSlice';
 import { textActions } from '@/redux/slices/textSlice';
 import type { AppThunkAction } from '@/redux/store';
 import { LetterDecoration } from '@/redux/types/letterTypes';
+import { calculateLineSlotPositionConstraints } from '@/redux/utils/constraints';
 import { calculatePositionAfterDrag } from '@/redux/utils/dragUtils';
 
 const add =
@@ -85,10 +86,28 @@ const drag =
             parentAngle,
         );
 
+        dispatch(setAngle(id, newPos.angle));
+    };
+
+const setAngle =
+    (id: LineSlotId, angle: Radian): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const positionConstraints = calculateLineSlotPositionConstraints(
+            state,
+            id,
+        );
+
+        const newAngle = mAngle.clamp(
+            mAngle.toRadian(angle),
+            mAngle.toRadian(positionConstraints.angle.min).value,
+            mAngle.toRadian(positionConstraints.angle.max).value,
+        );
+
         dispatch(
             svgActions.setLineSlotPosition({
                 id,
-                position: { angle: newPos.angle },
+                position: { angle: newAngle },
             }),
         );
     };

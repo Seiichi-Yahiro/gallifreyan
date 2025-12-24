@@ -1,12 +1,18 @@
 import mAngle from '@/math/angle';
 import { createReduxSelector } from '@/redux/hooks';
-import ids, { type DotId, type LetterId, type WordId } from '@/redux/ids';
+import ids, {
+    type DotId,
+    type LetterId,
+    type LineSlotId,
+    type WordId,
+} from '@/redux/ids';
 import type { AppState } from '@/redux/store';
 import type {
+    AngleConstraints,
     DistanceConstraints,
     PositionConstraints,
 } from '@/redux/types/constraintTypes';
-import { LetterPlacement } from '@/redux/types/letterTypes';
+import { LetterDecoration, LetterPlacement } from '@/redux/types/letterTypes';
 import { match } from 'ts-pattern';
 
 export const calculateWordPositionConstraints = (
@@ -134,6 +140,74 @@ export const calculateDotPositionConstraints = (
     };
 };
 
+export const calculateLineSlotPositionConstraints = (
+    state: Pick<AppState, 'text' | 'svg'>,
+    id: LineSlotId,
+): PositionConstraints => {
+    const lineSlot = state.text.elements[id];
+    const letter = state.text.elements[lineSlot.parent];
+    const letterCircle = state.svg.circles[lineSlot.parent];
+
+    const angleConstraints = match(letter.letter.decoration)
+        .returnType<AngleConstraints>()
+        .with(LetterDecoration.LineInside, () => {
+            return {
+                min: mAngle.radian(Math.PI * 0.6),
+                max: mAngle.radian(Math.PI * 1.4),
+            };
+        })
+        .with(LetterDecoration.LineOutside, () => {
+            return {
+                min: mAngle.radian(Math.PI * 1.6),
+                max: mAngle.radian(Math.PI * 0.4),
+            };
+        })
+        .with(
+            LetterDecoration.SingleLine,
+            LetterDecoration.DoubleLine,
+            LetterDecoration.TripleLine,
+            () =>
+                match(letter.letter.placement)
+                    .with(
+                        LetterPlacement.DeepCut,
+                        LetterPlacement.ShallowCut,
+                        () => {
+                            return {
+                                // TODO
+                                min: mAngle.radian(0),
+                                max: mAngle.radian(Math.PI * 2.0),
+                            };
+                        },
+                    )
+                    .with(
+                        LetterPlacement.OnLine,
+                        LetterPlacement.Inside,
+                        LetterPlacement.Outside,
+                        () => {
+                            return {
+                                min: mAngle.radian(0),
+                                max: mAngle.radian(Math.PI * 2.0),
+                            };
+                        },
+                    )
+                    .exhaustive(),
+        )
+        .otherwise(() => {
+            return {
+                min: mAngle.radian(0),
+                max: mAngle.radian(Math.PI * 2.0),
+            };
+        });
+
+    return {
+        distance: {
+            min: letterCircle.radius,
+            max: letterCircle.radius,
+        },
+        angle: angleConstraints,
+    };
+};
+
 export const selectPositionConstraints = createReduxSelector(
     [
         (state: AppState) => state.text,
@@ -152,8 +226,12 @@ export const selectPositionConstraints = createReduxSelector(
             .when(ids.letter.is, (letterId) =>
                 calculateLetterPositionConstraints(state, letterId),
             )
-            .when(ids.dot.is, (_dotId) => null)
-            .when(ids.lineSlot.is, (_lineSlotId) => null)
+            .when(ids.dot.is, (dotId) =>
+                calculateDotPositionConstraints(state, dotId),
+            )
+            .when(ids.lineSlot.is, (lineSlotId) =>
+                calculateLineSlotPositionConstraints(state, lineSlotId),
+            )
             .exhaustive();
     },
 );

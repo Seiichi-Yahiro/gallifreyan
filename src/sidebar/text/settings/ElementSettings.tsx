@@ -259,10 +259,14 @@ const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
             state.svg.circles[state.text.elements[id].parent].position.angle,
     );
 
+    const positionConstraints = useRedux(selectPositionConstraints);
+
     return (
         <AngleSettings
             angle={mAngle.toDegree(lineSlot.position.angle)}
             parentAngle={mAngle.toDegree(parentAngle)}
+            min={mapOptional(mAngle.toDegree)(positionConstraints?.angle.min)}
+            max={mapOptional(mAngle.toDegree)(positionConstraints?.angle.max)}
             onPointerDown={() => {
                 dispatch(historyThunks.save());
             }}
