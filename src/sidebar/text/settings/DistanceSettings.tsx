@@ -3,15 +3,17 @@ import { interactionActions } from '@/redux/slices/interactionSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import type { CircleId } from '@/redux/types/svgTypes';
-import Slider from '@/ui/Slider';
+import Slider, { type SliderRef } from '@/ui/Slider';
 import { formatDecimal } from '@/utils/format';
-import React, { useId } from 'react';
+import React, { useId, useRef } from 'react';
 
 interface DistanceSettingsProps {
     id: CircleId;
 }
 
 const DistanceSettings: React.FC<DistanceSettingsProps> = ({ id }) => {
+    const sliderRef = useRef<SliderRef>(null);
+
     const dispatch = useAppDispatch();
 
     const distance = useRedux(
@@ -23,7 +25,11 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ id }) => {
 
     return (
         <div className="flex flex-col gap-1">
-            <span>
+            <span
+                onClick={() => {
+                    sliderRef.current?.focus();
+                }}
+            >
                 <label id={labelId}>Distance</label>
                 <span aria-hidden={true}>: </span>
                 <span
@@ -32,6 +38,7 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ id }) => {
                 >{`${formatDecimal(distance)} px`}</span>
             </span>
             <Slider
+                ref={sliderRef}
                 aria-labelledby={labelId}
                 aria-describedby={describeId}
                 min={0}
