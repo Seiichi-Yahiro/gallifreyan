@@ -1,4 +1,3 @@
-import mAngle from '@/math/angle';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, {
     type LetterId,
@@ -6,10 +5,8 @@ import ids, {
     type SentenceId,
 } from '@/redux/ids';
 import { interactionActions } from '@/redux/slices/interactionSlice';
-import { svgActions } from '@/redux/slices/svgSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import letterThunks from '@/redux/thunks/letterThunks';
-import svgThunks from '@/redux/thunks/svgThunks';
 import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
 import type { CircleId } from '@/redux/types/svgTypes';
 import { isDigraphText } from '@/redux/utils/textAnalysis';
@@ -18,7 +15,6 @@ import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
-import { mapOptional } from '@/utils/optional';
 import { Merge, Split, X } from 'lucide-react';
 import React, { useMemo } from 'react';
 
@@ -163,16 +159,6 @@ interface CircleSettingsProps {
 }
 
 const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
-    const dispatch = useAppDispatch();
-
-    const circle = useRedux((state) => state.svg.circles[id]);
-
-    const parentAngle = useRedux((state) =>
-        ids.dot.is(id)
-            ? state.svg.circles[state.text.elements[id].parent].position.angle
-            : undefined,
-    );
-
     const canChangeDistance = useRedux(
         (state) =>
             !(
@@ -184,52 +170,9 @@ const CircleSettings: React.FC<CircleSettingsProps> = ({ id }) => {
 
     return (
         <>
-            <RadiusSettings
-                radius={circle.radius}
-                onPointerDown={() => {
-                    dispatch(historyThunks.save());
-                    dispatch(interactionActions.setDragging(true));
-                }}
-                onChange={(radius) => {
-                    dispatch(svgThunks.setCircleRadius(id, radius));
-                }}
-                onPointerUp={() => {
-                    dispatch(interactionActions.setDragging(false));
-                }}
-            />
-            {canChangeDistance && (
-                <DistanceSettings
-                    distance={circle.position.distance}
-                    onPointerDown={() => {
-                        dispatch(historyThunks.save());
-                        dispatch(interactionActions.setDragging(true));
-                    }}
-                    onChange={(distance) => {
-                        dispatch(svgThunks.setCirclePosition(id, { distance }));
-                    }}
-                    onPointerUp={() => {
-                        dispatch(interactionActions.setDragging(false));
-                    }}
-                />
-            )}
-            <AngleSettings
-                angle={mAngle.toDegree(circle.position.angle)}
-                parentAngle={mapOptional(mAngle.toDegree)(parentAngle)}
-                onPointerDown={() => {
-                    dispatch(historyThunks.save());
-                    dispatch(interactionActions.setDragging(true));
-                }}
-                onChange={(angle) => {
-                    dispatch(
-                        svgThunks.setCirclePosition(id, {
-                            angle: mAngle.toRadian(angle),
-                        }),
-                    );
-                }}
-                onPointerUp={() => {
-                    dispatch(interactionActions.setDragging(false));
-                }}
-            />
+            <RadiusSettings id={id} />
+            {canChangeDistance && <DistanceSettings id={id} />}
+            <AngleSettings id={id} />
         </>
     );
 };
@@ -239,32 +182,7 @@ interface LineSlotSettingsProps {
 }
 
 const LineSlotSettings: React.FC<LineSlotSettingsProps> = ({ id }) => {
-    const dispatch = useAppDispatch();
-
-    const lineSlot = useRedux((state) => state.svg.lineSlots[id]);
-
-    const parentAngle = useRedux(
-        (state) =>
-            state.svg.circles[state.text.elements[id].parent].position.angle,
-    );
-
-    return (
-        <AngleSettings
-            angle={mAngle.toDegree(lineSlot.position.angle)}
-            parentAngle={mAngle.toDegree(parentAngle)}
-            onPointerDown={() => {
-                dispatch(historyThunks.save());
-            }}
-            onChange={(angle) => {
-                dispatch(
-                    svgActions.setLineSlotPosition({
-                        id,
-                        position: { angle: mAngle.toRadian(angle) },
-                    }),
-                );
-            }}
-        />
-    );
+    return <AngleSettings id={id} />;
 };
 
 export default ElementSettings;

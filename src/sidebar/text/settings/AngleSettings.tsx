@@ -1,34 +1,37 @@
-import mAngle, { type Degree } from '@/math/angle';
+import mAngle, { AngleUnit } from '@/math/angle';
+import { useAppDispatch, useRedux } from '@/redux/hooks';
+import ids, { type LineSlotId } from '@/redux/ids';
+import { interactionActions } from '@/redux/slices/interactionSlice';
+import { svgActions } from '@/redux/slices/svgSlice';
+import historyThunks from '@/redux/thunks/historyThunks';
+import svgThunks from '@/redux/thunks/svgThunks';
+import type { CircleId } from '@/redux/types/svgTypes';
 import AngleSlider from '@/ui/AngleSlider';
 import { formatDecimal } from '@/utils/format';
 import React, { useId } from 'react';
 
 interface AngleSettingsProps {
-    angle: Degree;
-    parentAngle?: Degree;
-    min?: Degree;
-    max?: Degree;
-    onPointerDown?: () => void;
-    onPointerUp?: () => void;
-    onChange: (angle: Degree) => void;
+    id: CircleId | LineSlotId;
 }
 
-const AngleSettings: React.FC<AngleSettingsProps> = ({
-    angle,
-    parentAngle = mAngle.degree(0),
-    min,
-    max,
-    onPointerDown,
-    onPointerUp,
-    onChange,
-}) => {
-    const step = mAngle.degree(1);
+const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
+    const dispatch = useAppDispatch();
 
-    const onValueChange = (value: number) => {
-        onChange(
-            mAngle.normalize(mAngle.sub(mAngle.degree(value), parentAngle)),
-        );
-    };
+    const angle = useRedux((state) =>
+        ids.lineSlot.is(id)
+            ? state.svg.lineSlots[id].position.angle
+            : state.svg.circles[id].position.angle,
+    );
+
+    const angleInDegree = mAngle.toDegree(angle);
+
+    const parentAngle =
+        useRedux((state) =>
+            ids.dot.is(id) || ids.lineSlot.is(id)
+                ? state.svg.circles[state.text.elements[id].parent].position
+                      .angle
+                : undefined,
+        ) ?? mAngle.radian(0);
 
     const labelId = useId();
     const describeId = useId();
@@ -41,7 +44,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
                 <span
                     id={describeId}
                     aria-hidden={true}
-                >{`${formatDecimal(angle.value)} ${angle.unit}`}</span>
+                >{`${formatDecimal(angleInDegree.value)} ${angleInDegree.unit}`}</span>
             </span>
             <div className="overflow-hidden">
                 <div
@@ -53,15 +56,42 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({
                     <AngleSlider
                         aria-labelledby={labelId}
                         aria-describedby={describeId}
-                        unit={angle.unit}
-                        value={angle.value}
-                        step={step.value}
-                        min={min?.value}
-                        max={max?.value}
-                        onPointerDown={onPointerDown}
-                        onPointerUp={onPointerUp}
-                        onChange={onValueChange}
                         className="max-w-60"
+                        unit={AngleUnit.Radian}
+                        value={angle.value}
+                        step={mAngle.toRadian(mAngle.degree(1)).value}
+                        onPointerDown={() => {
+                            dispatch(historyThunks.save());
+                            dispatch(interactionActions.setDragging(true));
+                        }}
+                        onChange={(newAngleValue) => {
+                            const newAngle = mAngle.normalize(
+                                mAngle.sub(
+                                    mAngle.radian(newAngleValue),
+                                    parentAngle,
+                                ),
+                            );
+
+                            if (ids.lineSlot.is(id)) {
+                                dispatch(
+                                    svgActions.setLineSlotPosition({
+                                        id,
+                                        position: {
+                                            angle: newAngle,
+                                        },
+                                    }),
+                                );
+                            } else {
+                                dispatch(
+                                    svgThunks.setCirclePosition(id, {
+                                        angle: newAngle,
+                                    }),
+                                );
+                            }
+                        }}
+                        onPointerUp={() => {
+                            dispatch(interactionActions.setDragging(false));
+                        }}
                     />
                 </div>
             </div>
