@@ -90,6 +90,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
 
     const { onPointerDown } = useDragAndDrop({
         onDown: (client) => {
+            sliderRef.current?.focus();
             externalOnPointerDown?.();
             calculateValue(client);
         },

@@ -74,6 +74,7 @@ const Slider: React.FC<SliderProps> = ({
 
     const { onPointerDown } = useDragAndDrop({
         onDown: (client) => {
+            sliderRef.current?.focus();
             externalOnPointerDown?.();
             calculateValue(client);
         },

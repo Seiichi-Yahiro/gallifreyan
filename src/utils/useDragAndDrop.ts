@@ -27,6 +27,7 @@ const useDragAndDrop = (props: UseDragAndDropProps) => {
             return;
         }
 
+        event.preventDefault();
         event.stopPropagation();
 
         pointerData.current.currentPos = mVec2.create(
