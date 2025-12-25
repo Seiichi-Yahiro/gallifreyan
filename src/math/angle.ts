@@ -48,7 +48,7 @@ const toUnit = (angle: Angle, unit: AngleUnit): Angle =>
  * Maps the angle to the range [0, 360) or [0, 2PI).
  */
 const normalize = <T extends Angle>(angle: T): T => {
-    const max = angle.unit === AngleUnit.Degree ? 360 : Math.PI * 2;
+    const max = angle.unit === AngleUnit.Degree ? MAX_DEG : MAX_RAD;
 
     return {
         unit: angle.unit,

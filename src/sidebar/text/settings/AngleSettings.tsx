@@ -53,12 +53,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                 >{`${formatDecimal(angleInDegree.value)} ${angleInDegree.unit}`}</span>
             </span>
             <div className="overflow-hidden">
-                <div
-                    className="flex flex-row items-center justify-center"
-                    style={{
-                        rotate: `${-parentAngle.value}${parentAngle.unit}`,
-                    }}
-                >
+                <div className="flex flex-row items-center justify-center">
                     <AngleSlider
                         ref={sliderRef}
                         aria-labelledby={labelId}
@@ -67,17 +62,13 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                         unit={AngleUnit.Radian}
                         value={angle.value}
                         step={mAngle.toRadian(mAngle.degree(1)).value}
+                        rotation={parentAngle.value}
                         onPointerDown={() => {
                             dispatch(historyThunks.save());
                             dispatch(interactionActions.setDragging(true));
                         }}
                         onChange={(newAngleValue) => {
-                            const newAngle = mAngle.normalize(
-                                mAngle.sub(
-                                    mAngle.radian(newAngleValue),
-                                    parentAngle,
-                                ),
-                            );
+                            const newAngle = mAngle.radian(newAngleValue);
 
                             if (ids.lineSlot.is(id)) {
                                 dispatch(

@@ -20,6 +20,7 @@ interface AngleSliderProps
     max?: number;
     value: number;
     step?: number;
+    rotation?: number;
     onPointerDown?: () => void;
     onPointerUp?: () => void;
     onChange: (value: number) => void;
@@ -33,6 +34,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     max = unit === AngleUnit.Degree ? 360 : Math.PI * 2,
     value,
     step,
+    rotation = 0,
     onPointerDown: externalOnPointerDown,
     onPointerUp: externalOnPointerUp,
     onChange,
@@ -73,6 +75,8 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
         if (unit === AngleUnit.Degree) {
             angle = mAngle.toDegree(angle);
         }
+
+        angle = mAngle.sub(angle, rotation);
 
         if (step !== undefined && step > 0) {
             angle.value = Math.round(angle.value / step) * step;
@@ -124,6 +128,9 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
                 'border-border bg-hover-accent outline-accent relative aspect-square w-full cursor-pointer touch-pinch-zoom rounded-full border focus:outline-2 focus:-outline-offset-2',
                 className,
             )}
+            style={{
+                rotate: `${-rotation}${unit}`,
+            }}
             onPointerDown={onPointerDown}
             onKeyDown={onKeyDown}
             tabIndex={0}

@@ -188,6 +188,50 @@ describe('AngleSlider', () => {
         expect(onChange).toHaveBeenLastCalledWith(90);
     });
 
+    it('should go from 359 -> 0', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={359}
+                step={1}
+                onChange={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        slider.focus();
+
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should go from 0 -> 359', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={0}
+                step={1}
+                onChange={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        slider.focus();
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenLastCalledWith(359);
+    });
+
     it('uses steps for keyboard interaction when provided', async () => {
         const user = userEvent.setup();
         const onChange = vi.fn();
@@ -386,5 +430,86 @@ describe('AngleSlider', () => {
         ]);
 
         expect(onChange).toHaveBeenCalledWith(90);
+    });
+
+    it('should rotate the slider when rotation is applied', () => {
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={90}
+                rotation={90}
+                onChange={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        expect(slider).toHaveStyle({ rotate: '-90deg' });
+    });
+
+    it('calculates correct angle from pointer position when rotation is applied', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={90}
+                rotation={90}
+                onChange={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+
+        vi.spyOn(slider, 'getBoundingClientRect').mockReturnValue({
+            left: 0,
+            top: 0,
+            width: 100,
+            height: 100,
+            right: 100,
+            bottom: 100,
+            x: 0,
+            y: 0,
+            toJSON: () => {},
+        });
+
+        await user.pointer([
+            {
+                keys: '[MouseLeft]',
+                target: slider,
+                coords: { x: 0, y: 50 },
+            },
+        ]);
+
+        expect(onChange).toHaveBeenCalledWith(180);
+    });
+
+    it('rotation does not affect calculated value from keyboard input', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={90}
+                step={1}
+                rotation={90}
+                onChange={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        slider.focus();
+
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenLastCalledWith(91);
     });
 });

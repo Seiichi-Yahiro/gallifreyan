@@ -20,7 +20,7 @@ const reducer = combineReducers({
     history: historySlice,
 });
 
-export const setupStore = (preloadedState?: AppState) => {
+export const setupStore = (preloadedState?: Partial<AppState>) => {
     return configureStore({
         preloadedState,
         reducer,
