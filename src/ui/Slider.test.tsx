@@ -150,4 +150,67 @@ describe('Slider', () => {
 
         expect(onChange).toHaveBeenCalledWith(expect.closeTo(30, 0.0001));
     });
+
+    it('commits value on pointer up', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <Slider
+                min={0}
+                max={100}
+                value={0}
+                step={1}
+                onChangeCommitted={onChange}
+            />,
+        );
+
+        const track = screen.getByTestId('slider-track');
+
+        vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
+            left: 100,
+            top: 0,
+            width: 100,
+            height: 100,
+            right: 200,
+            bottom: 100,
+            x: 0,
+            y: 0,
+            toJSON: () => {},
+        });
+
+        await user.pointer([
+            {
+                keys: '[MouseLeft]',
+                target: track,
+                coords: { x: 125, y: 0 },
+            },
+        ]);
+
+        expect(onChange).toHaveBeenCalledWith(25);
+    });
+
+    it('commits value on key up', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <Slider
+                min={0}
+                max={100}
+                value={20}
+                step={1}
+                onChangeCommitted={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        slider.focus();
+
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenCalledWith(21);
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenCalledWith(19);
+    });
 });

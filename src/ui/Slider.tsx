@@ -1,5 +1,6 @@
 import type { Vec2 } from '@/math/vec';
 import useDragAndDrop from '@/utils/useDragAndDrop';
+import useUiTransaction from '@/utils/useUiTransaction';
 import { clamp } from 'es-toolkit';
 import React, { useImperativeHandle, useRef } from 'react';
 
@@ -17,10 +18,12 @@ interface SliderProps
     max: number;
     value: number;
     step?: number;
-    onPointerDown?: () => void;
-    onPointerUp?: () => void;
-    onChange: (value: number) => void;
+    onChange?: (value: number) => void;
+    onChangeCommitted?: (value: number) => void;
 }
+
+const increaseArrowKeys = ['ArrowRight', 'ArrowUp'];
+const decreaseArrowKeys = ['ArrowLeft', 'ArrowDown'];
 
 const Slider: React.FC<SliderProps> = ({
     ref,
@@ -28,9 +31,8 @@ const Slider: React.FC<SliderProps> = ({
     max,
     value,
     step,
-    onPointerDown: externalOnPointerDown,
-    onPointerUp: externalOnPointerUp,
     onChange,
+    onChangeCommitted,
     ...props
 }) => {
     const range = max - min;
@@ -53,6 +55,12 @@ const Slider: React.FC<SliderProps> = ({
         },
     );
 
+    const { updateTransactionValue, commitTransaction } = useUiTransaction({
+        onChange,
+        onChangeCommitted,
+        value,
+    });
+
     const percent = range === 0 ? 0 : ((value - min) / range) * 100;
 
     const calculateValue = (cursorPos: Vec2) => {
@@ -69,28 +77,49 @@ const Slider: React.FC<SliderProps> = ({
             factor = Math.round(factor / stepFactor) * stepFactor;
         }
 
-        onChange(min + range * factor);
+        return min + range * factor;
     };
 
     const { onPointerDown } = useDragAndDrop({
         onDown: (client) => {
             sliderRef.current?.focus();
-            externalOnPointerDown?.();
-            calculateValue(client);
+
+            const nextValue = calculateValue(client);
+
+            if (nextValue !== undefined) {
+                updateTransactionValue(nextValue);
+            }
         },
-        onMove: ({ client }) => calculateValue(client),
-        onUp: externalOnPointerUp,
+        onMove: ({ client }) => {
+            const nextValue = calculateValue(client);
+
+            if (nextValue !== undefined) {
+                updateTransactionValue(nextValue);
+            }
+        },
+        onUp: () => {
+            commitTransaction();
+        },
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const keyStep = step ?? range * 0.1;
 
-        if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+        if (increaseArrowKeys.includes(event.key)) {
             const nextValue = Math.min(value + keyStep, max);
-            onChange(nextValue);
-        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+            updateTransactionValue(nextValue);
+        } else if (decreaseArrowKeys.includes(event.key)) {
             const nextValue = Math.max(min, value - keyStep);
-            onChange(nextValue);
+            updateTransactionValue(nextValue);
+        }
+    };
+
+    const onKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (
+            increaseArrowKeys.includes(event.key) ||
+            decreaseArrowKeys.includes(event.key)
+        ) {
+            commitTransaction();
         }
     };
 
@@ -106,6 +135,7 @@ const Slider: React.FC<SliderProps> = ({
             className="border-border bg-hover-accent outline-accent h-4 touch-pinch-zoom rounded-sm border p-0.5 focus:outline-2 focus:-outline-offset-2"
             tabIndex={0}
             onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             {...props}
         >
             <div

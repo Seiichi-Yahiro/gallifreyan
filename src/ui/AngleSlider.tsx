@@ -3,6 +3,7 @@ import mPolar from '@/math/polar';
 import mVec2, { type Vec2 } from '@/math/vec';
 import cn from '@/utils/cn';
 import useDragAndDrop from '@/utils/useDragAndDrop';
+import useUiTransaction from '@/utils/useUiTransaction';
 import React, { useImperativeHandle, useRef } from 'react';
 
 export type AngleSliderRef = {
@@ -10,10 +11,7 @@ export type AngleSliderRef = {
 };
 
 interface AngleSliderProps
-    extends Omit<
-        React.HTMLAttributes<HTMLDivElement>,
-        'onChange' | 'onPointerDown' | 'onPointerUp'
-    > {
+    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     ref?: React.Ref<AngleSliderRef | null>;
     unit: AngleUnit;
     min?: number;
@@ -21,11 +19,13 @@ interface AngleSliderProps
     value: number;
     step?: number;
     rotation?: number;
-    onPointerDown?: () => void;
-    onPointerUp?: () => void;
-    onChange: (value: number) => void;
+    onChange?: (value: number) => void;
+    onChangeCommitted?: (value: number) => void;
     className?: string;
 }
+
+const increaseArrowKeys = ['ArrowRight', 'ArrowUp'];
+const decreaseArrowKeys = ['ArrowLeft', 'ArrowDown'];
 
 const AngleSlider: React.FC<AngleSliderProps> = ({
     ref,
@@ -35,9 +35,8 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
     value,
     step,
     rotation = 0,
-    onPointerDown: externalOnPointerDown,
-    onPointerUp: externalOnPointerUp,
     onChange,
+    onChangeCommitted,
     className,
     ...props
 }) => {
@@ -57,6 +56,12 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
             };
         },
     );
+
+    const { updateTransactionValue, commitTransaction } = useUiTransaction({
+        onChange,
+        onChangeCommitted,
+        value,
+    });
 
     const calculateValue = (cursorPos: Vec2) => {
         if (!sliderRef.current) {
@@ -85,35 +90,59 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
 
         angle = mAngle.clamp(angle, min, max);
 
-        onChange(angle.value);
+        return angle.value;
     };
 
     const { onPointerDown } = useDragAndDrop({
         onDown: (client) => {
             sliderRef.current?.focus();
-            externalOnPointerDown?.();
-            calculateValue(client);
+
+            const nextValue = calculateValue(client);
+
+            if (nextValue !== undefined) {
+                updateTransactionValue(nextValue);
+            }
         },
-        onMove: ({ client }) => calculateValue(client),
-        onUp: externalOnPointerUp,
+        onMove: ({ client }) => {
+            const nextValue = calculateValue(client);
+
+            if (nextValue !== undefined) {
+                updateTransactionValue(nextValue);
+            }
+        },
+        onUp: () => {
+            commitTransaction();
+        },
     });
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const keyStep = step ?? Math.abs(max - min) * 0.1;
 
-        const calculateNextValue = (step: number) => {
-            const nextValue = mAngle.clamp(
-                mAngle.normalize({ value: value + step, unit }),
-                min,
-                max,
-            ).value;
-            onChange(nextValue);
-        };
+        let delta = 0;
 
-        if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-            calculateNextValue(keyStep);
-        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
-            calculateNextValue(-keyStep);
+        if (increaseArrowKeys.includes(event.key)) {
+            delta = keyStep;
+        } else if (decreaseArrowKeys.includes(event.key)) {
+            delta = -keyStep;
+        } else {
+            return;
+        }
+
+        const nextValue = mAngle.clamp(
+            mAngle.normalize({ value: value + delta, unit }),
+            min,
+            max,
+        ).value;
+
+        updateTransactionValue(nextValue);
+    };
+
+    const onKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (
+            increaseArrowKeys.includes(event.key) ||
+            decreaseArrowKeys.includes(event.key)
+        ) {
+            commitTransaction();
         }
     };
 
@@ -134,6 +163,7 @@ const AngleSlider: React.FC<AngleSliderProps> = ({
             }}
             onPointerDown={onPointerDown}
             onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             tabIndex={0}
             {...props}
         >

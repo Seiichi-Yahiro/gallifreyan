@@ -157,10 +157,10 @@ describe('AngleSlider', () => {
         slider.focus();
 
         await user.keyboard('{ArrowRight}');
-        expect(onChange).toHaveBeenLastCalledWith(270);
+        expect(onChange).not.toHaveBeenCalled();
 
         await user.keyboard('{ArrowUp}');
-        expect(onChange).toHaveBeenLastCalledWith(270);
+        expect(onChange).not.toHaveBeenCalled();
     });
 
     it('clamps value at min with arrow keys', async () => {
@@ -182,10 +182,10 @@ describe('AngleSlider', () => {
         slider.focus();
 
         await user.keyboard('{ArrowLeft}');
-        expect(onChange).toHaveBeenLastCalledWith(90);
+        expect(onChange).not.toHaveBeenCalled();
 
         await user.keyboard('{ArrowDown}');
-        expect(onChange).toHaveBeenLastCalledWith(90);
+        expect(onChange).not.toHaveBeenCalled();
     });
 
     it('should go from 359 -> 0', async () => {
@@ -511,5 +511,69 @@ describe('AngleSlider', () => {
 
         await user.keyboard('{ArrowUp}');
         expect(onChange).toHaveBeenLastCalledWith(91);
+    });
+
+    it('commits value on pointer up', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={90}
+                onChangeCommitted={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+
+        vi.spyOn(slider, 'getBoundingClientRect').mockReturnValue({
+            left: 0,
+            top: 0,
+            width: 100,
+            height: 100,
+            right: 100,
+            bottom: 100,
+            x: 0,
+            y: 0,
+            toJSON: () => {},
+        });
+
+        await user.pointer([
+            {
+                keys: '[MouseLeft]',
+                target: slider,
+                coords: { x: 0, y: 50 },
+            },
+        ]);
+
+        expect(onChange).toHaveBeenCalledWith(270);
+    });
+
+    it('commits value on key up', async () => {
+        const user = userEvent.setup();
+        const onChange = vi.fn();
+
+        render(
+            <AngleSlider
+                unit={AngleUnit.Degree}
+                min={0}
+                max={360}
+                value={90}
+                step={1}
+                onChangeCommitted={onChange}
+            />,
+        );
+
+        const slider = screen.getByRole('slider');
+        slider.focus();
+
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenCalledWith(91);
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenCalledWith(89);
     });
 });

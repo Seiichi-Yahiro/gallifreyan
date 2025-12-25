@@ -1,5 +1,4 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import { interactionActions } from '@/redux/slices/interactionSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import type { CircleId } from '@/redux/types/svgTypes';
@@ -19,6 +18,8 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ id }) => {
     const distance = useRedux(
         (state) => state.svg.circles[id].position.distance,
     );
+
+    const isEditing = useRef(false);
 
     const labelId = useId();
     const describeId = useId();
@@ -45,15 +46,16 @@ const DistanceSettings: React.FC<DistanceSettingsProps> = ({ id }) => {
                 max={1000}
                 step={1}
                 value={distance}
-                onPointerDown={() => {
-                    dispatch(historyThunks.save());
-                    dispatch(interactionActions.setDragging(true));
-                }}
                 onChange={(distance) => {
+                    if (!isEditing.current) {
+                        dispatch(historyThunks.save());
+                        isEditing.current = true;
+                    }
+
                     dispatch(svgThunks.setCirclePosition(id, { distance }));
                 }}
-                onPointerUp={() => {
-                    dispatch(interactionActions.setDragging(false));
+                onChangeCommitted={() => {
+                    isEditing.current = false;
                 }}
             />
         </div>

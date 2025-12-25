@@ -1,5 +1,4 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import { interactionActions } from '@/redux/slices/interactionSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
 import type { CircleId } from '@/redux/types/svgTypes';
@@ -17,6 +16,8 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ id }) => {
     const dispatch = useAppDispatch();
 
     const radius = useRedux((state) => state.svg.circles[id].radius);
+
+    const isEditing = useRef(false);
 
     const labelId = useId();
     const describeId = useId();
@@ -43,15 +44,16 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ id }) => {
                 max={500}
                 step={1}
                 value={radius}
-                onPointerDown={() => {
-                    dispatch(historyThunks.save());
-                    dispatch(interactionActions.setDragging(true));
-                }}
                 onChange={(radius) => {
+                    if (!isEditing.current) {
+                        dispatch(historyThunks.save());
+                        isEditing.current = true;
+                    }
+
                     dispatch(svgThunks.setCircleRadius(id, radius));
                 }}
-                onPointerUp={() => {
-                    dispatch(interactionActions.setDragging(false));
+                onChangeCommitted={() => {
+                    isEditing.current = false;
                 }}
             />
         </div>

@@ -1,7 +1,6 @@
 import mAngle, { AngleUnit } from '@/math/angle';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, { type LineSlotId } from '@/redux/ids';
-import { interactionActions } from '@/redux/slices/interactionSlice';
 import { svgActions } from '@/redux/slices/svgSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import svgThunks from '@/redux/thunks/svgThunks';
@@ -35,6 +34,8 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                 : undefined,
         ) ?? mAngle.radian(0);
 
+    const isEditing = useRef(false);
+
     const labelId = useId();
     const describeId = useId();
 
@@ -63,11 +64,12 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                         value={angle.value}
                         step={mAngle.toRadian(mAngle.degree(1)).value}
                         rotation={parentAngle.value}
-                        onPointerDown={() => {
-                            dispatch(historyThunks.save());
-                            dispatch(interactionActions.setDragging(true));
-                        }}
                         onChange={(newAngleValue) => {
+                            if (!isEditing.current) {
+                                dispatch(historyThunks.save());
+                                isEditing.current = true;
+                            }
+
                             const newAngle = mAngle.radian(newAngleValue);
 
                             if (ids.lineSlot.is(id)) {
@@ -87,8 +89,8 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                                 );
                             }
                         }}
-                        onPointerUp={() => {
-                            dispatch(interactionActions.setDragging(false));
+                        onChangeCommitted={() => {
+                            isEditing.current = false;
                         }}
                     />
                 </div>
