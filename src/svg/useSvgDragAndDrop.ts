@@ -4,7 +4,7 @@ import { interactionActions } from '@/redux/slices/interactionSlice';
 import historyThunks from '@/redux/thunks/historyThunks';
 import SvgContext from '@/svg/svgContext';
 import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 
 const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
     const dispatch = useAppDispatch();
@@ -18,13 +18,19 @@ const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
         return mVec2.create(domPoint.x, -domPoint.y);
     };
 
+    const isEditing = useRef(false);
+
     return useDragAndDrop({
         onDown: () => {
-            dispatch(historyThunks.save());
             dispatch(interactionActions.setDragging(true));
             svg.calculateInverseSvgMatrix();
         },
         onMove: (pointerData) => {
+            if (!isEditing.current) {
+                dispatch(historyThunks.save());
+                isEditing.current = true;
+            }
+
             const inverseSvgMatrix = svg.getInverseSvgMatrix();
 
             if (!inverseSvgMatrix) {
@@ -52,6 +58,7 @@ const useSvgDragAndDrop = (onMove: (pointerData: PointerData) => void) => {
         },
         onUp: () => {
             dispatch(interactionActions.setDragging(false));
+            isEditing.current = false;
         },
     });
 };
