@@ -10,6 +10,10 @@ const useSelect = (id: CircleId | LineSlotId) => {
     const isSelected = useRedux((state) => state.interaction.selected === id);
 
     const onSelect = (event: MouseEvent) => {
+        if (isSelected) {
+            return;
+        }
+
         event.stopPropagation();
         dispatch(interactionActions.setSelection(id));
     };
