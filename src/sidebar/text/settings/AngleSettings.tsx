@@ -53,47 +53,45 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                     aria-hidden={true}
                 >{`${formatDecimal(angleInDegree.value)} ${angleInDegree.unit}`}</span>
             </span>
-            <div className="overflow-hidden">
-                <div className="flex flex-row items-center justify-center">
-                    <AngleSlider
-                        ref={sliderRef}
-                        aria-labelledby={labelId}
-                        aria-describedby={describeId}
-                        className="max-w-60"
-                        unit={AngleUnit.Radian}
-                        value={angle.value}
-                        step={mAngle.toRadian(mAngle.degree(1)).value}
-                        rotation={parentAngle.value}
-                        onChange={(newAngleValue) => {
-                            if (!isEditing.current) {
-                                dispatch(historyThunks.save());
-                                isEditing.current = true;
-                            }
+            <div className="flex flex-row items-center justify-center">
+                <AngleSlider
+                    ref={sliderRef}
+                    aria-labelledby={labelId}
+                    aria-describedby={describeId}
+                    className="max-w-60"
+                    unit={AngleUnit.Radian}
+                    value={angle.value}
+                    step={mAngle.toRadian(mAngle.degree(1)).value}
+                    rotation={parentAngle.value}
+                    onChange={(newAngleValue) => {
+                        if (!isEditing.current) {
+                            dispatch(historyThunks.save());
+                            isEditing.current = true;
+                        }
 
-                            const newAngle = mAngle.radian(newAngleValue);
+                        const newAngle = mAngle.radian(newAngleValue);
 
-                            if (ids.lineSlot.is(id)) {
-                                dispatch(
-                                    svgActions.setLineSlotPosition({
-                                        id,
-                                        position: {
-                                            angle: newAngle,
-                                        },
-                                    }),
-                                );
-                            } else {
-                                dispatch(
-                                    svgThunks.setCirclePosition(id, {
+                        if (ids.lineSlot.is(id)) {
+                            dispatch(
+                                svgActions.setLineSlotPosition({
+                                    id,
+                                    position: {
                                         angle: newAngle,
-                                    }),
-                                );
-                            }
-                        }}
-                        onChangeCommitted={() => {
-                            isEditing.current = false;
-                        }}
-                    />
-                </div>
+                                    },
+                                }),
+                            );
+                        } else {
+                            dispatch(
+                                svgThunks.setCirclePosition(id, {
+                                    angle: newAngle,
+                                }),
+                            );
+                        }
+                    }}
+                    onChangeCommitted={() => {
+                        isEditing.current = false;
+                    }}
+                />
             </div>
         </div>
     );

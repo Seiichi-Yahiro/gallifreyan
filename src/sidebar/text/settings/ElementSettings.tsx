@@ -39,7 +39,10 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
     return (
         <section
             aria-labelledby={id}
-            className={cn('relative flex flex-col gap-1', className)}
+            className={cn(
+                'relative flex flex-col gap-1 overflow-y-auto',
+                className,
+            )}
         >
             <div className="mb-1 flex flex-row items-center justify-between gap-1">
                 <h2 id={id} className="font-semibold">
