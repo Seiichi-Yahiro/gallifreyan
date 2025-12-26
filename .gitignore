@@ -11,3 +11,7 @@
 
 # production
 /build
+
+# Playwright
+/playwright/.cache/
+/playwright/.auth/

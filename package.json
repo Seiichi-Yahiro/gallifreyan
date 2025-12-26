@@ -9,6 +9,9 @@
         "build": "vite build",
         "lint": "eslint --config eslint.config.js",
         "test": "vitest",
+        "test:e2e": "pnpm exec playwright test",
+        "test:e2e:ui": "pnpm exec playwright test --ui",
+        "test:e2e:codegen": "npx playwright codegen",
         "test:coverage": "vitest run --coverage",
         "test:mutation": "npx stryker run",
         "pretty-quick": "pretty-quick",
@@ -34,6 +37,7 @@
         "xml-formatter": "3.6.4"
     },
     "devDependencies": {
+        "@playwright/test": "1.57.0",
         "@stryker-mutator/core": "9.3.0",
         "@stryker-mutator/typescript-checker": "9.3.0",
         "@stryker-mutator/vitest-runner": "9.3.0",
