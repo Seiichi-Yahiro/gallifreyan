@@ -66,19 +66,6 @@ const reset =
         dispatch(svgActions.setCircle({ id, radius, position }));
 
         word.letters.map(letterThunks.reset).forEach(dispatch);
-
-        dispatch(calculateIntersectionsWithLetters(id));
-    };
-
-const calculateIntersectionsWithLetters =
-    (wordId: WordId): AppThunkAction =>
-    (dispatch, getState) => {
-        const state = getState();
-        const letterIds = state.text.elements[wordId].letters;
-
-        letterIds
-            .map(letterThunks.calculateIntersectionsWithWord)
-            .forEach(dispatch);
     };
 
 const drag =
@@ -115,8 +102,6 @@ const setCircleRadius =
                 }),
             );
         }
-
-        dispatch(wordThunks.calculateIntersectionsWithLetters(id));
     };
 
 const setCirclePosition =
@@ -129,7 +114,6 @@ const wordThunks = {
     add,
     remove,
     reset,
-    calculateIntersectionsWithLetters,
     drag,
     setCircleRadius,
     setCirclePosition,

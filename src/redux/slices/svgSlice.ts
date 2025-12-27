@@ -1,9 +1,8 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import ids, { type LetterId, type LineSlotId, type WordId } from '@/redux/ids';
+import ids, { type LineSlotId } from '@/redux/ids';
 import { historyActions } from '@/redux/slices/historySlice';
 import type {
-    Arc,
     CircleId,
     CirclesDict,
     LineSlot,
@@ -50,13 +49,11 @@ const svgSlice = createSlice({
                     state.circles[id] = {
                         type: TextElementType.Word,
                         ...defaultCircle,
-                        antiArcs: {},
                     };
                 })
                 .when(ids.letter.is, (id) => {
                     state.circles[id] = {
                         type: TextElementType.Letter,
-                        arc: null,
                         ...defaultCircle,
                     };
                 })
@@ -91,32 +88,6 @@ const svgSlice = createSlice({
                     ...action.payload.position,
                 };
             }
-        },
-        setWordAntiArc: (
-            state,
-            action: PayloadAction<{
-                id: WordId;
-                letterId: LetterId;
-                antiArc: Arc | null | undefined;
-            }>,
-        ) => {
-            const circle = state.circles[action.payload.id];
-            const antiArc = action.payload.antiArc;
-
-            if (antiArc === undefined) {
-                delete circle.antiArcs[action.payload.letterId];
-            } else {
-                circle.antiArcs[action.payload.letterId] = antiArc;
-            }
-        },
-        setLetterArc: (
-            state,
-            action: PayloadAction<{
-                id: LetterId;
-                arc: Arc | null;
-            }>,
-        ) => {
-            state.circles[action.payload.id].arc = action.payload.arc;
         },
         addLineSlot: (
             state,

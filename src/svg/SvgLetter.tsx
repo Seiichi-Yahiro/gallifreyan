@@ -1,6 +1,9 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId } from '@/redux/ids';
 import letterThunks from '@/redux/thunks/letterThunks';
+import { LetterPlacement } from '@/redux/types/letterTypes';
+import type { Arc } from '@/redux/types/svgTypes';
+import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/utils/intersections';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';
@@ -9,20 +12,51 @@ import SvgLineSlot from '@/svg/SvgLineSlot';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
 import useHover from '@/utils/useHover';
 import useSelect from '@/utils/useSelect';
-import React from 'react';
+import React, { useLayoutEffect, useMemo } from 'react';
 
 interface SvgLetterProps {
     id: LetterId;
+    setWordAntiArc: (letterId: LetterId, arc: Arc | undefined) => void;
 }
 
-const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
+const SvgLetter: React.FC<SvgLetterProps> = ({ id, setWordAntiArc }) => {
     const dispatch = useAppDispatch();
 
     const dots = useRedux((state) => state.text.elements[id].dots);
 
     const lineSlots = useRedux((state) => state.text.elements[id].lineSlots);
 
+    const placement = useRedux(
+        (state) => state.text.elements[id].letter.placement,
+    );
+
     const circle = useRedux((state) => state.svg.circles[id]);
+
+    const wordCircleRadius = useRedux(
+        (state) => state.svg.circles[state.text.elements[id].parent].radius,
+    );
+
+    const intersections = useMemo(() => {
+        if (
+            placement !== LetterPlacement.DeepCut &&
+            placement !== LetterPlacement.ShallowCut
+        ) {
+            return;
+        }
+
+        return calculateIntersectionsBetweenLetterAndWord(
+            wordCircleRadius,
+            circle,
+        );
+    }, [circle, placement, wordCircleRadius]);
+
+    useLayoutEffect(() => {
+        setWordAntiArc(id, intersections?.wordAntiArc);
+
+        return () => {
+            setWordAntiArc(id, undefined);
+        };
+    }, [id, intersections, setWordAntiArc]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -36,10 +70,10 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id }) => {
             angle={circle.position.angle}
             rotateInParent={true}
         >
-            {circle.arc ? (
+            {intersections ? (
                 <SvgArc
                     radius={circle.radius}
-                    arcs={[circle.arc]}
+                    arcs={[intersections.letterArc]}
                     className="letter"
                     onMouseEnter={onHover}
                     onMouseLeave={onHoverStop}

@@ -1,7 +1,8 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import type { WordId } from '@/redux/ids';
+import type { LetterId, WordId } from '@/redux/ids';
 import wordThunks from '@/redux/thunks/wordThunks';
-import { antiArcsToArcs } from '@/redux/utils/svgUtils';
+import type { Arc } from '@/redux/types/svgTypes';
+import { antiArcsToArcs } from '@/redux/utils/intersections';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
@@ -9,8 +10,7 @@ import SvgLetter from '@/svg/SvgLetter';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
 import useHover from '@/utils/useHover';
 import useSelect from '@/utils/useSelect';
-import { isNotNil } from 'es-toolkit';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 interface SvgWordProps {
     id: WordId;
@@ -23,13 +23,33 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
 
     const circle = useRedux((state) => state.svg.circles[id]);
 
-    const arcs = useMemo(() => {
-        const antiArcs = Object.values(circle.antiArcs)
-            .filter(isNotNil)
-            .sort((a, b) => a.end.value - b.end.value);
+    const [antiArcs, setAntiArcs] = useState<Record<LetterId, Arc>>({});
 
-        return antiArcsToArcs(antiArcs);
-    }, [circle.antiArcs]);
+    // useCallback seems necessary for stryker to not get stuck in an infinite loop with the letter's useLayoutEffect
+    const setAntiArc = useCallback(
+        (letterId: LetterId, arc: Arc | undefined) => {
+            setAntiArcs((prevState) => {
+                const clone = { ...prevState };
+
+                if (arc) {
+                    clone[letterId] = arc;
+                } else {
+                    delete clone[letterId];
+                }
+
+                return clone;
+            });
+        },
+        [],
+    );
+
+    const arcs = useMemo(() => {
+        const sortedAntiArcs = Object.values(antiArcs).sort(
+            (a, b) => a.end.value - b.end.value,
+        );
+
+        return antiArcsToArcs(sortedAntiArcs);
+    }, [antiArcs]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
@@ -78,7 +98,11 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
                 />
             )}
             {letters.map((letterId) => (
-                <SvgLetter key={letterId} id={letterId} />
+                <SvgLetter
+                    key={letterId}
+                    id={letterId}
+                    setWordAntiArc={setAntiArc}
+                />
             ))}
         </SvgGroup>
     );

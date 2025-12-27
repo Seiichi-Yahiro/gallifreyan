@@ -3,7 +3,10 @@ import { type Circle } from '@/math/circle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
 import type { Arc } from '@/redux/types/svgTypes';
-import { antiArcsToArcs, intersectionsToArc } from '@/redux/utils/svgUtils';
+import {
+    antiArcsToArcs,
+    intersectionsToArc,
+} from '@/redux/utils/intersections';
 import { describe, expect, it } from 'vitest';
 
 describe('svgUtils', () => {

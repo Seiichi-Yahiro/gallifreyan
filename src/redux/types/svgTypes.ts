@@ -28,15 +28,10 @@ export interface SentenceCircle extends PolarCircle {
 
 export interface WordCircle extends PolarCircle {
     type: TextElementType.Word;
-    // anti arcs are the parts that should not be drawn
-    antiArcs: {
-        [K in LetterId]: Arc | null;
-    };
 }
 
 export interface LetterCircle extends PolarCircle {
     type: TextElementType.Letter;
-    arc: Arc | null;
 }
 
 export interface DotCircle extends PolarCircle {

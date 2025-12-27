@@ -1,10 +1,11 @@
-import {
+import mCircle, {
+    CircleIntersectionType,
     type Circle as MCircle,
     type TwoCircleIntersections,
 } from '@/math/circle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
-import type { Arc } from '@/redux/types/svgTypes';
+import type { Arc, PolarCircle } from '@/redux/types/svgTypes';
 import { chunk } from 'es-toolkit';
 
 /**
@@ -65,4 +66,56 @@ export const antiArcsToArcs = (antiArcs: Arc[]): Arc[] => {
             end: chunk[1],
         }),
     );
+};
+
+export type LetterWordIntersections = {
+    letterArc: Arc;
+    wordAntiArc: Arc;
+};
+
+export const calculateIntersectionsBetweenLetterAndWord = (
+    wordRadius: number,
+    letterCircle: PolarCircle,
+): LetterWordIntersections | undefined => {
+    const wordMCircle: MCircle = {
+        radius: wordRadius,
+        position: mVec2.create(0, 0),
+    };
+
+    const letterMCircle: MCircle = {
+        radius: letterCircle.radius,
+        position: mPolar.toCartesian(letterCircle.position),
+    };
+
+    const intersectionsInWord = mCircle.intersections(
+        wordMCircle,
+        letterMCircle,
+    );
+
+    if (intersectionsInWord.type !== CircleIntersectionType.Two) {
+        return;
+    }
+
+    // these are the arcs of the word that should not be drawn because they are blocked by the letters
+    const antiArcInWord = intersectionsToArc(
+        wordMCircle,
+        letterMCircle,
+        intersectionsInWord.values,
+    );
+
+    const intersectionsAnglesInLetter = intersectionsInWord.values
+        .map((pos) => mVec2.sub(pos, letterMCircle.position))
+        .map((pos) => mVec2.rotate(pos, letterCircle.position.angle, true))
+        .map(mPolar.angleFromCartesian)
+        .sort((a, b) => a.value - b.value); // sorting is fine because intersections will never include the 0 degrees point
+
+    const letterArc: Arc = {
+        start: intersectionsAnglesInLetter[0],
+        end: intersectionsAnglesInLetter[1],
+    };
+
+    return {
+        letterArc: letterArc,
+        wordAntiArc: antiArcInWord,
+    };
 };

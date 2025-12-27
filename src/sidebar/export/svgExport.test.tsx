@@ -25,6 +25,7 @@ describe('svg export', async () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.resetAllMocks();
         cleanup();
     });
 
