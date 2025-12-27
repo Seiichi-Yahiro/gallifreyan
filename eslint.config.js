@@ -7,7 +7,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-    { ignores: ['node_modules', 'build', 'reports', '.striker-tmp'] },
+    { ignores: ['node_modules', 'build', 'reports', '.stryker-tmp'] },
     {
         files: ['src/**/*.{ts,tsx}'],
         languageOptions: {
