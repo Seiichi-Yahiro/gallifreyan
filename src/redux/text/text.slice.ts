@@ -1,4 +1,4 @@
-import { historyActions } from '@/redux/history/historySlice';
+import { historyActions } from '@/redux/history/history.slice';
 import type {
     DotId,
     LetterId,
@@ -6,7 +6,7 @@ import type {
     SentenceId,
     WordId,
 } from '@/redux/ids';
-import type { Letter } from '@/redux/text/letterTypes';
+import type { Letter } from '@/redux/text/letter.types';
 import {
     type DotElement,
     type LetterElement,
@@ -15,7 +15,7 @@ import {
     type TextElementsDict,
     TextElementType,
     type WordElement,
-} from '@/redux/text/textTypes';
+} from '@/redux/text/text.types';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type TextSlice = {

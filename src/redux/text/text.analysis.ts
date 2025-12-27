@@ -7,13 +7,13 @@ import {
     LetterType,
     type Vocal,
     VocalValue,
-} from '@/redux/text/letterTypes';
+} from '@/redux/text/letter.types';
 import {
     consonantDecoration,
     consonantPlacement,
     vocalDecoration,
     vocalPlacement,
-} from '@/redux/text/letterUtils';
+} from '@/redux/text/letter.utils';
 
 export const splitWords = (sentence: string): string[] => sentence.split(' ');
 

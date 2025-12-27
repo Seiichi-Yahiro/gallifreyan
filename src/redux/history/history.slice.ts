@@ -1,6 +1,6 @@
-import type { InteractionSlice } from '@/redux/interactions/interactionSlice';
-import type { SvgSlice } from '@/redux/svg/svgSlice';
-import { type TextSlice } from '@/redux/text/textSlice';
+import type { InteractionSlice } from '@/redux/interactions/interaction.slice';
+import type { SvgSlice } from '@/redux/svg/svg.slice';
+import { type TextSlice } from '@/redux/text/text.slice';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type HistoryState = {

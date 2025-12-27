@@ -1,5 +1,5 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import { settingsActions } from '@/redux/settings/settingsSlice';
+import { settingsActions } from '@/redux/settings/settings.slice';
 import Checkbox from '@/ui/Checkbox';
 import React from 'react';
 

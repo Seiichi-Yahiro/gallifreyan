@@ -1,4 +1,4 @@
-import historyThunks from '@/redux/history/historyThunks';
+import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';

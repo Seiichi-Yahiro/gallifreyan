@@ -1,6 +1,6 @@
-import historyThunks from '@/redux/history/historyThunks';
+import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import textThunks from '@/redux/text/textThunks';
+import textThunks from '@/redux/text/text.thunks';
 import TextInput from '@/ui/TextInput';
 import { debounce } from 'es-toolkit';
 import React from 'react';

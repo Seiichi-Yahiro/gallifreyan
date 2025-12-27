@@ -1,7 +1,7 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
-import { interactionActions } from '@/redux/interactions/interactionSlice';
-import type { CircleId } from '@/redux/svg/svgTypes';
+import { interactionActions } from '@/redux/interactions/interaction.slice';
+import type { CircleId } from '@/redux/svg/svg.types';
 
 const useHover = (id: CircleId | LineSlotId) => {
     const dispatch = useAppDispatch();

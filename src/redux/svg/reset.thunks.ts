@@ -8,12 +8,12 @@ import type {
     WordId,
 } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
-import { svgActions } from '@/redux/svg/svgSlice';
+import { svgActions } from '@/redux/svg/svg.slice';
 import {
     LetterDecoration,
     LetterPlacement,
     LetterType,
-} from '@/redux/text/letterTypes';
+} from '@/redux/text/letter.types';
 import { match } from 'ts-pattern';
 
 const sentence =

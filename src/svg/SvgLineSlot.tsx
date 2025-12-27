@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
-import dragThunks from '@/redux/svg/dragThunks';
+import dragThunks from '@/redux/svg/drag.thunks';
 import SvgGroup from '@/svg/SvgGroup';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
 import cn from '@/utils/cn';

@@ -1,7 +1,7 @@
-import historyThunks from '@/redux/history/historyThunks';
+import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import svgThunks from '@/redux/svg/svgThunks';
-import type { CircleId } from '@/redux/svg/svgTypes';
+import svgThunks from '@/redux/svg/svg.thunks';
+import type { CircleId } from '@/redux/svg/svg.types';
 import Slider, { type SliderRef } from '@/ui/Slider';
 import { formatDecimal } from '@/utils/format';
 import React, { useId, useRef } from 'react';

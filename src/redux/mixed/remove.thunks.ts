@@ -6,8 +6,8 @@ import type {
     WordId,
 } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
-import { svgActions } from '@/redux/svg/svgSlice';
-import { textActions } from '@/redux/text/textSlice';
+import { svgActions } from '@/redux/svg/svg.slice';
+import { textActions } from '@/redux/text/text.slice';
 
 const sentence =
     (id: SentenceId): AppThunkAction =>

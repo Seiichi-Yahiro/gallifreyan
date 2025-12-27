@@ -1,15 +1,15 @@
-import historyThunks from '@/redux/history/historyThunks';
+import historyThunks from '@/redux/history/history.thunks';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, {
     type LetterId,
     type LineSlotId,
     type SentenceId,
 } from '@/redux/ids';
-import { interactionActions } from '@/redux/interactions/interactionSlice';
-import type { CircleId } from '@/redux/svg/svgTypes';
-import { LetterPlacement, LetterType } from '@/redux/text/letterTypes';
-import { isDigraphText } from '@/redux/text/textAnalysis';
-import textThunks from '@/redux/text/textThunks';
+import { interactionActions } from '@/redux/interactions/interaction.slice';
+import type { CircleId } from '@/redux/svg/svg.types';
+import { LetterPlacement, LetterType } from '@/redux/text/letter.types';
+import { isDigraphText } from '@/redux/text/text.analysis';
+import textThunks from '@/redux/text/text.thunks';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';

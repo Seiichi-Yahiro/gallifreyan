@@ -5,12 +5,12 @@ import {
     type SentenceId,
     type WordId,
 } from '@/redux/ids';
-import { interactionActions } from '@/redux/interactions/interactionSlice';
-import addThunks from '@/redux/mixed/addThunks';
-import removeThunks from '@/redux/mixed/removeThunks';
+import { interactionActions } from '@/redux/interactions/interaction.slice';
+import addThunks from '@/redux/mixed/add.thunks';
+import removeThunks from '@/redux/mixed/remove.thunks';
 import type { AppThunkAction } from '@/redux/store';
-import resetThunks from '@/redux/svg/resetThunks';
-import { dotAmount, lineSlotAmount } from '@/redux/text/letterUtils';
+import resetThunks from '@/redux/svg/reset.thunks';
+import { dotAmount, lineSlotAmount } from '@/redux/text/letter.utils';
 import {
     charToSingleLetter,
     type RawLetter,
@@ -18,8 +18,8 @@ import {
     splitLetters,
     splitWords,
     textToDigraph,
-} from '@/redux/text/textAnalysis';
-import { textActions } from '@/redux/text/textSlice';
+} from '@/redux/text/text.analysis';
+import { textActions } from '@/redux/text/text.slice';
 import { range, zip } from 'es-toolkit';
 
 const setText =

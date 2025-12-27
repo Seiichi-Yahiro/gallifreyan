@@ -1,6 +1,6 @@
-import { historyActions } from '@/redux/history/historySlice';
+import { historyActions } from '@/redux/history/history.slice';
 import type { LineSlotId } from '@/redux/ids';
-import type { CircleId } from '@/redux/svg/svgTypes';
+import type { CircleId } from '@/redux/svg/svg.types';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type InteractionSlice = {

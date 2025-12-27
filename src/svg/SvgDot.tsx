@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { DotId } from '@/redux/ids';
-import dragThunks from '@/redux/svg/dragThunks';
+import dragThunks from '@/redux/svg/drag.thunks';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';

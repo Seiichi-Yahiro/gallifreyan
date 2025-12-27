@@ -1,9 +1,9 @@
 import type { PolarCoordinate } from '@/math/polar';
 import ids, { type DotId, type LetterId, type WordId } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
-import { svgActions } from '@/redux/svg/svgSlice';
-import type { CircleId } from '@/redux/svg/svgTypes';
-import { LetterPlacement } from '@/redux/text/letterTypes';
+import { svgActions } from '@/redux/svg/svg.slice';
+import type { CircleId } from '@/redux/svg/svg.types';
+import { LetterPlacement } from '@/redux/text/letter.types';
 import { match } from 'ts-pattern';
 
 const setCirclePosition =

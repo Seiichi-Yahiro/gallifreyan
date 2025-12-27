@@ -1,14 +1,14 @@
 import mAngle from '@/math/angle';
 import ids, { type LetterId, type SentenceId, type WordId } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
-import { svgActions } from '@/redux/svg/svgSlice';
-import { dotAmount, lineSlotAmount } from '@/redux/text/letterUtils';
+import { svgActions } from '@/redux/svg/svg.slice';
+import { dotAmount, lineSlotAmount } from '@/redux/text/letter.utils';
 import {
     type RawLetter,
     splitLetters,
     splitWords,
-} from '@/redux/text/textAnalysis';
-import { textActions } from '@/redux/text/textSlice';
+} from '@/redux/text/text.analysis';
+import { textActions } from '@/redux/text/text.slice';
 import { range } from 'es-toolkit';
 
 const sentence =

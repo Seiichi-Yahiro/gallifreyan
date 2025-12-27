@@ -1,8 +1,8 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId, WordId } from '@/redux/ids';
-import dragThunks from '@/redux/svg/dragThunks';
+import dragThunks from '@/redux/svg/drag.thunks';
 import { antiArcsToArcs } from '@/redux/svg/intersections';
-import type { Arc } from '@/redux/svg/svgTypes';
+import type { Arc } from '@/redux/svg/svg.types';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';

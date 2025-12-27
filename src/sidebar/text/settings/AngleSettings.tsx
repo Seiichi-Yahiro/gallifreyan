@@ -1,10 +1,10 @@
 import mAngle, { AngleUnit } from '@/math/angle';
-import historyThunks from '@/redux/history/historyThunks';
+import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, { type LineSlotId } from '@/redux/ids';
-import { svgActions } from '@/redux/svg/svgSlice';
-import svgThunks from '@/redux/svg/svgThunks';
-import type { CircleId } from '@/redux/svg/svgTypes';
+import { svgActions } from '@/redux/svg/svg.slice';
+import svgThunks from '@/redux/svg/svg.thunks';
+import type { CircleId } from '@/redux/svg/svg.types';
 import AngleSlider, { type AngleSliderRef } from '@/ui/AngleSlider';
 import { formatDecimal } from '@/utils/format';
 import React, { useId, useRef } from 'react';

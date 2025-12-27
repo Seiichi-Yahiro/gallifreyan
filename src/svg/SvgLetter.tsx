@@ -1,9 +1,9 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId } from '@/redux/ids';
-import dragThunks from '@/redux/svg/dragThunks';
+import dragThunks from '@/redux/svg/drag.thunks';
 import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/svg/intersections';
-import type { Arc } from '@/redux/svg/svgTypes';
-import { LetterPlacement } from '@/redux/text/letterTypes';
+import type { Arc } from '@/redux/svg/svg.types';
+import { LetterPlacement } from '@/redux/text/letter.types';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';

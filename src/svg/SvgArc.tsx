@@ -1,5 +1,5 @@
 import mPolar from '@/math/polar';
-import type { Arc } from '@/redux/svg/svgTypes';
+import type { Arc } from '@/redux/svg/svg.types';
 import cn from '@/utils/cn';
 import React from 'react';
 

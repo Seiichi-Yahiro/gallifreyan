@@ -1,4 +1,4 @@
-import type { SplitLettersOptions } from '@/redux/text/textAnalysis';
+import type { SplitLettersOptions } from '@/redux/text/text.analysis';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type SettingsSlice = {

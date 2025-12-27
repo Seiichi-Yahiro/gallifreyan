@@ -1,5 +1,5 @@
 import { resetIdCounters } from '@/redux/ids';
-import { settingsActions } from '@/redux/settings/settingsSlice';
+import { settingsActions } from '@/redux/settings/settings.slice';
 import { type AppStore, setupStore } from '@/redux/store';
 import {
     ConsonantValue,
@@ -8,9 +8,9 @@ import {
     LetterPlacement,
     LetterType,
     VocalValue,
-} from '@/redux/text/letterTypes';
-import { textActions } from '@/redux/text/textSlice';
-import textThunks from '@/redux/text/textThunks';
+} from '@/redux/text/letter.types';
+import { textActions } from '@/redux/text/text.slice';
+import textThunks from '@/redux/text/text.thunks';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

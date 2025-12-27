@@ -1,6 +1,6 @@
 import { resetIdCounters } from '@/redux/ids';
 import { type AppStore, setupStore } from '@/redux/store';
-import textThunks from '@/redux/text/textThunks';
+import textThunks from '@/redux/text/text.thunks';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('svg', () => {

@@ -1,10 +1,10 @@
-import historySlice from '@/redux/history/historySlice';
+import historySlice from '@/redux/history/history.slice';
 import interactionSlice, {
     interactionActions,
-} from '@/redux/interactions/interactionSlice';
-import settingsSlice from '@/redux/settings/settingsSlice';
-import svgSlice from '@/redux/svg/svgSlice';
-import textSlice from '@/redux/text/textSlice';
+} from '@/redux/interactions/interaction.slice';
+import settingsSlice from '@/redux/settings/settings.slice';
+import svgSlice from '@/redux/svg/svg.slice';
+import textSlice from '@/redux/text/text.slice';
 import {
     combineReducers,
     configureStore,
