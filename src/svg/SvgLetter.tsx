@@ -1,9 +1,9 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId } from '@/redux/ids';
-import letterThunks from '@/redux/thunks/letterThunks';
-import { LetterPlacement } from '@/redux/types/letterTypes';
-import type { Arc } from '@/redux/types/svgTypes';
-import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/utils/intersections';
+import dragThunks from '@/redux/svg/dragThunks';
+import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/svg/intersections';
+import type { Arc } from '@/redux/svg/svgTypes';
+import { LetterPlacement } from '@/redux/text/letterTypes';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';
@@ -61,7 +61,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id, setWordAntiArc }) => {
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
-        dispatch(letterThunks.drag(id, pointerData.movement));
+        dispatch(dragThunks.letter(id, pointerData.movement));
     });
 
     return (

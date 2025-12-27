@@ -1,4 +1,7 @@
-import { historyActions, type HistoryState } from '@/redux/slices/historySlice';
+import {
+    historyActions,
+    type HistoryState,
+} from '@/redux/history/historySlice';
 import type { AppState, AppThunkAction } from '@/redux/store';
 
 const extractHistoryState = (state: AppState): HistoryState => {

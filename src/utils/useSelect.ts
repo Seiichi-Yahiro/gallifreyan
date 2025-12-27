@@ -1,7 +1,7 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
-import { interactionActions } from '@/redux/slices/interactionSlice';
-import type { CircleId } from '@/redux/types/svgTypes';
+import { interactionActions } from '@/redux/interactions/interactionSlice';
+import type { CircleId } from '@/redux/svg/svgTypes';
 import { type MouseEvent } from 'react';
 
 const useSelect = (id: CircleId | LineSlotId) => {

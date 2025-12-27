@@ -1,12 +1,12 @@
 import mAngle from '@/math/angle';
+import type { HistoryState } from '@/redux/history/historySlice';
+import historyThunks from '@/redux/history/historyThunks';
 import { resetIdCounters } from '@/redux/ids';
-import type { HistoryState } from '@/redux/slices/historySlice';
-import { createInitialInteractionState } from '@/redux/slices/interactionSlice';
-import { createInitialSettingsSate } from '@/redux/slices/settingsSlice';
+import { createInitialInteractionState } from '@/redux/interactions/interactionSlice';
+import { createInitialSettingsSate } from '@/redux/settings/settingsSlice';
 import { type AppStore, setupStore } from '@/redux/store';
-import historyThunks from '@/redux/thunks/historyThunks';
-import textThunks from '@/redux/thunks/textThunks';
-import { TextElementType } from '@/redux/types/textTypes';
+import textThunks from '@/redux/text/textThunks';
+import { TextElementType } from '@/redux/text/textTypes';
 import { range } from 'es-toolkit';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

@@ -8,7 +8,7 @@ import {
     VocalDecoration,
     type VocalPlacement,
     VocalValue,
-} from '@/redux/types/letterTypes';
+} from '@/redux/text/letterTypes';
 import { match } from 'ts-pattern';
 
 export const vocalDecoration = (vocal: VocalValue): VocalDecoration =>

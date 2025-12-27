@@ -7,14 +7,14 @@ import {
     LetterType,
     type Vocal,
     VocalValue,
-} from '@/redux/types/letterTypes';
+} from '@/redux/text/letterTypes';
 import {
     charToSingleLetter,
     digraphReducer,
     type RawLetter,
     sanitizeSentence,
     splitLetters,
-} from '@/redux/utils/textAnalysis';
+} from '@/redux/text/textAnalysis';
 import { describe, expect, it } from 'vitest';
 
 describe('textAnalysis', () => {

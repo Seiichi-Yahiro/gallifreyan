@@ -5,7 +5,7 @@ import mCircle, {
 } from '@/math/circle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
-import type { Arc, PolarCircle } from '@/redux/types/svgTypes';
+import type { Arc, PolarCircle } from '@/redux/svg/svgTypes';
 import { chunk } from 'es-toolkit';
 
 /**

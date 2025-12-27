@@ -1,13 +1,13 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
+import { historyActions } from '@/redux/history/historySlice';
 import { type LineSlotId } from '@/redux/ids';
-import { historyActions } from '@/redux/slices/historySlice';
 import type {
     CircleId,
     CirclesDict,
     LineSlot,
     LineSlotDict,
-} from '@/redux/types/svgTypes';
+} from '@/redux/svg/svgTypes';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type SvgSlice = {

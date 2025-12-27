@@ -1,9 +1,6 @@
 import { resetIdCounters } from '@/redux/ids';
-import { settingsActions } from '@/redux/slices/settingsSlice';
-import { textActions } from '@/redux/slices/textSlice';
+import { settingsActions } from '@/redux/settings/settingsSlice';
 import { type AppStore, setupStore } from '@/redux/store';
-import letterThunks from '@/redux/thunks/letterThunks';
-import textThunks from '@/redux/thunks/textThunks';
 import {
     ConsonantValue,
     DigraphValue,
@@ -11,7 +8,9 @@ import {
     LetterPlacement,
     LetterType,
     VocalValue,
-} from '@/redux/types/letterTypes';
+} from '@/redux/text/letterTypes';
+import { textActions } from '@/redux/text/textSlice';
+import textThunks from '@/redux/text/textThunks';
 import { spyOnAction } from 'test/testHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -492,7 +491,7 @@ describe('text', () => {
         );
         store.dispatch(textThunks.setText('sh'));
 
-        store.dispatch(letterThunks.mergeToDigraph('LTR-0', 'LTR-1'));
+        store.dispatch(textThunks.mergeToDigraph('LTR-0', 'LTR-1'));
 
         const state = store.getState();
 
@@ -525,7 +524,7 @@ describe('text', () => {
         );
         store.dispatch(textThunks.setText('qu'));
 
-        store.dispatch(letterThunks.splitDigraph('LTR-0'));
+        store.dispatch(textThunks.splitDigraph('LTR-0'));
 
         const state = store.getState();
 

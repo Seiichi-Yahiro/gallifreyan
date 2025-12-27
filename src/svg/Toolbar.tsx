@@ -1,5 +1,5 @@
+import historyThunks from '@/redux/history/historyThunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import historyThunks from '@/redux/thunks/historyThunks';
 import IconButton from '@/ui/IconButton';
 import cn from '@/utils/cn';
 import { Redo, Undo } from 'lucide-react';

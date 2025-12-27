@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { DotId } from '@/redux/ids';
-import dotThunks from '@/redux/thunks/dotThunks';
+import dragThunks from '@/redux/svg/dragThunks';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
@@ -19,7 +19,7 @@ const SvgDot: React.FC<SvgDotProps> = ({ id }) => {
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
-        dispatch(dotThunks.drag(id, pointerData.movement));
+        dispatch(dragThunks.dot(id, pointerData.movement));
     });
 
     return (

@@ -1,15 +1,15 @@
+import historyThunks from '@/redux/history/historyThunks';
 import { createReduxSelector, useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, {
     type LetterId,
     type LineSlotId,
     type SentenceId,
 } from '@/redux/ids';
-import { interactionActions } from '@/redux/slices/interactionSlice';
-import historyThunks from '@/redux/thunks/historyThunks';
-import letterThunks from '@/redux/thunks/letterThunks';
-import { LetterPlacement, LetterType } from '@/redux/types/letterTypes';
-import type { CircleId } from '@/redux/types/svgTypes';
-import { isDigraphText } from '@/redux/utils/textAnalysis';
+import { interactionActions } from '@/redux/interactions/interactionSlice';
+import type { CircleId } from '@/redux/svg/svgTypes';
+import { LetterPlacement, LetterType } from '@/redux/text/letterTypes';
+import { isDigraphText } from '@/redux/text/textAnalysis';
+import textThunks from '@/redux/text/textThunks';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import DistanceSettings from '@/sidebar/text/settings/DistanceSettings';
 import RadiusSettings from '@/sidebar/text/settings/RadiusSettings';
@@ -118,7 +118,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                     onClick={() => {
                         dispatch(historyThunks.save());
                         dispatch(
-                            letterThunks.mergeToDigraph(
+                            textThunks.mergeToDigraph(
                                 prevLetterElement!.id,
                                 id,
                             ),
@@ -132,7 +132,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                 <IconButton
                     onClick={() => {
                         dispatch(historyThunks.save());
-                        dispatch(letterThunks.splitDigraph(id));
+                        dispatch(textThunks.splitDigraph(id));
                     }}
                 >
                     <Split />
@@ -143,7 +143,7 @@ const LetterSettings: React.FC<LetterSettingsProps> = ({ id }) => {
                     onClick={() => {
                         dispatch(historyThunks.save());
                         dispatch(
-                            letterThunks.mergeToDigraph(
+                            textThunks.mergeToDigraph(
                                 id,
                                 nextLetterElement!.id,
                             ),

@@ -1,7 +1,7 @@
 import mVec2, { type Vec2 } from '@/math/vec';
+import historyThunks from '@/redux/history/historyThunks';
 import { useAppDispatch } from '@/redux/hooks';
-import { interactionActions } from '@/redux/slices/interactionSlice';
-import historyThunks from '@/redux/thunks/historyThunks';
+import { interactionActions } from '@/redux/interactions/interactionSlice';
 import SvgContext from '@/svg/svgContext';
 import useDragAndDrop, { type PointerData } from '@/utils/useDragAndDrop';
 import { useContext, useRef } from 'react';

@@ -1,6 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LineSlotId } from '@/redux/ids';
-import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
+import dragThunks from '@/redux/svg/dragThunks';
 import SvgGroup from '@/svg/SvgGroup';
 import useSvgDragAndDrop from '@/svg/useSvgDragAndDrop';
 import cn from '@/utils/cn';
@@ -19,7 +19,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
-        dispatch(lineSlotThunks.drag(id, pointerData.movement));
+        dispatch(dragThunks.lineSlot(id, pointerData.movement));
     });
 
     return (

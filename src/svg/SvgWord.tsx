@@ -1,8 +1,8 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import type { LetterId, WordId } from '@/redux/ids';
-import wordThunks from '@/redux/thunks/wordThunks';
-import type { Arc } from '@/redux/types/svgTypes';
-import { antiArcsToArcs } from '@/redux/utils/intersections';
+import dragThunks from '@/redux/svg/dragThunks';
+import { antiArcsToArcs } from '@/redux/svg/intersections';
+import type { Arc } from '@/redux/svg/svgTypes';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgGroup from '@/svg/SvgGroup';
@@ -54,7 +54,7 @@ const SvgWord: React.FC<SvgWordProps> = ({ id }) => {
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
-        dispatch(wordThunks.drag(id, pointerData.movement));
+        dispatch(dragThunks.word(id, pointerData.movement));
     });
 
     return (

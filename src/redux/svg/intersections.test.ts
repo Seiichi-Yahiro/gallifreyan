@@ -2,11 +2,8 @@ import mAngle from '@/math/angle';
 import { type Circle } from '@/math/circle';
 import mPolar from '@/math/polar';
 import mVec2 from '@/math/vec';
-import type { Arc } from '@/redux/types/svgTypes';
-import {
-    antiArcsToArcs,
-    intersectionsToArc,
-} from '@/redux/utils/intersections';
+import { antiArcsToArcs, intersectionsToArc } from '@/redux/svg/intersections';
+import type { Arc } from '@/redux/svg/svgTypes';
 import { describe, expect, it } from 'vitest';
 
 describe('svgUtils', () => {

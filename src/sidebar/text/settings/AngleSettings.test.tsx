@@ -1,8 +1,8 @@
 import mAngle, { AngleUnit } from '@/math/angle';
 import { resetIdCounters } from '@/redux/ids';
-import { svgActions } from '@/redux/slices/svgSlice';
 import { type AppStore, setupStore } from '@/redux/store';
-import textThunks from '@/redux/thunks/textThunks';
+import { svgActions } from '@/redux/svg/svgSlice';
+import textThunks from '@/redux/text/textThunks';
 import AngleSettings from '@/sidebar/text/settings/AngleSettings';
 import { cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

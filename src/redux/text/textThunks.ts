@@ -5,21 +5,21 @@ import {
     type SentenceId,
     type WordId,
 } from '@/redux/ids';
-import { interactionActions } from '@/redux/slices/interactionSlice';
-import { textActions } from '@/redux/slices/textSlice';
+import { interactionActions } from '@/redux/interactions/interactionSlice';
+import addThunks from '@/redux/mixed/addThunks';
+import removeThunks from '@/redux/mixed/removeThunks';
 import type { AppThunkAction } from '@/redux/store';
-import dotThunks from '@/redux/thunks/dotThunks';
-import letterThunks from '@/redux/thunks/letterThunks';
-import lineSlotThunks from '@/redux/thunks/lineSlotThunks';
-import sentenceThunks from '@/redux/thunks/sentenceThunks';
-import wordThunks from '@/redux/thunks/wordThunks';
-import { dotAmount, lineSlotAmount } from '@/redux/utils/letterUtils';
+import resetThunks from '@/redux/svg/resetThunks';
+import { dotAmount, lineSlotAmount } from '@/redux/text/letterUtils';
 import {
+    charToSingleLetter,
     type RawLetter,
     sanitizeSentence,
     splitLetters,
     splitWords,
-} from '@/redux/utils/textAnalysis';
+    textToDigraph,
+} from '@/redux/text/textAnalysis';
+import { textActions } from '@/redux/text/textSlice';
 import { range, zip } from 'es-toolkit';
 
 const setText =
@@ -32,11 +32,11 @@ const setText =
         const sanitizedText = sanitizeSentence(text);
 
         let rootElement = getState().text.rootElement;
-        dispatch(compareSentence(sanitizedText, rootElement));
+        dispatch(textThunks.compareSentence(sanitizedText, rootElement));
 
         rootElement = getState().text.rootElement;
         if (rootElement) {
-            dispatch(sentenceThunks.reset(rootElement));
+            dispatch(resetThunks.sentence(rootElement));
         }
     };
 
@@ -44,12 +44,12 @@ const compareSentence =
     (newSentenceText: string, existingId: SentenceId | null): AppThunkAction =>
     (dispatch, getState) => {
         if (!existingId && newSentenceText.length > 0) {
-            dispatch(sentenceThunks.add(newSentenceText));
+            dispatch(addThunks.sentence(newSentenceText));
             return;
         }
 
         if (existingId && newSentenceText.length === 0) {
-            dispatch(sentenceThunks.remove(existingId));
+            dispatch(removeThunks.sentence(existingId));
             return;
         }
 
@@ -71,7 +71,11 @@ const compareSentence =
             zip(splitWords(newSentenceText), sentenceElement.words).forEach(
                 ([newWordText, wordId]) =>
                     dispatch(
-                        compareWord(existingId, newWordText ?? '', wordId),
+                        textThunks.compareWord(
+                            existingId,
+                            newWordText ?? '',
+                            wordId,
+                        ),
                     ),
             );
         }
@@ -85,12 +89,12 @@ const compareWord =
     ): AppThunkAction =>
     (dispatch, getState) => {
         if (!existingId && newWordText.length > 0) {
-            dispatch(wordThunks.add(newWordText, parent));
+            dispatch(addThunks.word(newWordText, parent));
             return;
         }
 
         if (existingId && newWordText.length === 0) {
-            dispatch(wordThunks.remove(existingId));
+            dispatch(removeThunks.word(existingId));
             return;
         }
 
@@ -113,7 +117,13 @@ const compareWord =
                 splitLetters(newWordText, state.settings.splitLetterOptions),
                 wordElement.letters,
             ).forEach(([newLetterText, letterId]) =>
-                dispatch(compareLetter(existingId, newLetterText, letterId)),
+                dispatch(
+                    textThunks.compareLetter(
+                        existingId,
+                        newLetterText,
+                        letterId,
+                    ),
+                ),
             );
         }
     };
@@ -126,12 +136,12 @@ const compareLetter =
     ): AppThunkAction =>
     (dispatch, getState) => {
         if (!existingId && newRawLetter) {
-            dispatch(letterThunks.add(newRawLetter, parent));
+            dispatch(addThunks.letter(newRawLetter, parent));
             return;
         }
 
         if (existingId && !newRawLetter) {
-            dispatch(letterThunks.remove(existingId));
+            dispatch(removeThunks.letter(existingId));
             return;
         }
 
@@ -155,14 +165,20 @@ const compareLetter =
                 range(dotAmount(newRawLetter.letter.decoration)),
                 letterElement.dots,
             ).forEach(([newIndex, dotId]) =>
-                dispatch(compareDot(existingId, newIndex, dotId)),
+                dispatch(textThunks.compareDot(existingId, newIndex, dotId)),
             );
 
             zip(
                 range(lineSlotAmount(newRawLetter.letter.decoration)),
                 letterElement.lineSlots,
             ).forEach(([newIndex, lineSlotId]) =>
-                dispatch(compareLineSlot(existingId, newIndex, lineSlotId)),
+                dispatch(
+                    textThunks.compareLineSlot(
+                        existingId,
+                        newIndex,
+                        lineSlotId,
+                    ),
+                ),
             );
         }
     };
@@ -171,12 +187,12 @@ const compareDot =
     (parent: LetterId, newIndex?: number, existingId?: DotId): AppThunkAction =>
     (dispatch, _getState) => {
         if (!existingId && newIndex !== undefined) {
-            dispatch(dotThunks.add(parent));
+            dispatch(addThunks.dot(parent));
             return;
         }
 
         if (existingId && newIndex === undefined) {
-            dispatch(dotThunks.remove(existingId));
+            dispatch(removeThunks.dot(existingId));
         }
     };
 
@@ -188,13 +204,74 @@ const compareLineSlot =
     ): AppThunkAction =>
     (dispatch, _getState) => {
         if (!existingId && newIndex !== undefined) {
-            dispatch(lineSlotThunks.add(parent));
+            dispatch(addThunks.lineSlot(parent));
             return;
         }
 
         if (existingId && newIndex === undefined) {
-            dispatch(lineSlotThunks.remove(existingId));
+            dispatch(removeThunks.lineSlot(existingId));
         }
+    };
+
+const splitDigraph =
+    (letterId: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const letter = state.text.elements[letterId];
+        const index = state.text.elements[letter.parent].letters.findIndex(
+            (id) => id === letterId,
+        );
+
+        const [firstChar, secondChar] = letter.text;
+
+        dispatch(
+            textThunks.compareLetter(
+                letter.parent,
+                {
+                    text: firstChar,
+                    letter: charToSingleLetter(firstChar)!,
+                },
+                letterId,
+            ),
+        );
+
+        dispatch(
+            addThunks.letter(
+                { text: secondChar, letter: charToSingleLetter(secondChar)! },
+                letter.parent,
+                index + 1,
+            ),
+        );
+
+        dispatch(resetThunks.word(letter.parent));
+    };
+
+const mergeToDigraph =
+    (firstLetterId: LetterId, secondLetterId: LetterId): AppThunkAction =>
+    (dispatch, getState) => {
+        const state = getState();
+        const firstLetter = state.text.elements[firstLetterId];
+        const secondLetter = state.text.elements[secondLetterId];
+
+        const text = firstLetter.text + secondLetter.text;
+
+        dispatch(
+            textThunks.compareLetter(
+                firstLetter.parent,
+                {
+                    text,
+                    letter: textToDigraph(text)!,
+                },
+                firstLetterId,
+            ),
+        );
+
+        if (state.interaction.selected === secondLetterId) {
+            dispatch(interactionActions.setSelection(firstLetterId));
+        }
+
+        dispatch(removeThunks.letter(secondLetterId));
+        dispatch(resetThunks.word(firstLetter.parent));
     };
 
 const textThunks = {
@@ -204,6 +281,8 @@ const textThunks = {
     compareLetter,
     compareDot,
     compareLineSlot,
+    splitDigraph,
+    mergeToDigraph,
 };
 
 export default textThunks;
