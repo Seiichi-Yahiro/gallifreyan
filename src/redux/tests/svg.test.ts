@@ -1,7 +1,6 @@
 import { resetIdCounters } from '@/redux/ids';
 import { type AppStore, setupStore } from '@/redux/store';
 import textThunks from '@/redux/thunks/textThunks';
-import { TextElementType } from '@/redux/types/textTypes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('svg', () => {
@@ -21,9 +20,7 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'SNT-0': {
-                type: TextElementType.Sentence,
-            },
+            'SNT-0': {},
         });
     });
 
@@ -40,12 +37,8 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'WRD-0': {
-                type: TextElementType.Word,
-            },
-            'WRD-1': {
-                type: TextElementType.Word,
-            },
+            'WRD-0': {},
+            'WRD-1': {},
         });
     });
 
@@ -55,9 +48,7 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'WRD-0': {
-                type: TextElementType.Word,
-            },
+            'WRD-0': {},
         });
 
         expect(state.svg.circles['WRD-1']).toBeUndefined();
@@ -68,15 +59,9 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'LTR-0': {
-                type: TextElementType.Letter,
-            },
-            'LTR-1': {
-                type: TextElementType.Letter,
-            },
-            'LTR-2': {
-                type: TextElementType.Letter,
-            },
+            'LTR-0': {},
+            'LTR-1': {},
+            'LTR-2': {},
         });
     });
 
@@ -86,12 +71,8 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'LTR-0': {
-                type: TextElementType.Letter,
-            },
-            'LTR-2': {
-                type: TextElementType.Letter,
-            },
+            'LTR-0': {},
+            'LTR-2': {},
         });
 
         expect(state.svg.circles['LTR-1']).toBeUndefined();
@@ -102,15 +83,9 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'DOT-0': {
-                type: TextElementType.Dot,
-            },
-            'DOT-1': {
-                type: TextElementType.Dot,
-            },
-            'DOT-2': {
-                type: TextElementType.Dot,
-            },
+            'DOT-0': {},
+            'DOT-1': {},
+            'DOT-2': {},
         });
     });
 
@@ -120,12 +95,8 @@ describe('svg', () => {
         const state = store.getState();
 
         expect(state.svg.circles).toMatchObject({
-            'DOT-0': {
-                type: TextElementType.Dot,
-            },
-            'DOT-1': {
-                type: TextElementType.Dot,
-            },
+            'DOT-0': {},
+            'DOT-1': {},
         });
 
         expect(state.svg.circles['DOT-2']).toBeUndefined();

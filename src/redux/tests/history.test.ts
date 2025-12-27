@@ -75,7 +75,6 @@ describe('history', () => {
                 size: 1000,
                 circles: {
                     ['SNT-0']: {
-                        type: TextElementType.Sentence,
                         radius: 1,
                         position: {
                             angle: mAngle.radian(0),
@@ -105,7 +104,6 @@ describe('history', () => {
                 size: 1000,
                 circles: {
                     ['SNT-0']: {
-                        type: TextElementType.Sentence,
                         radius: 10,
                         position: {
                             angle: mAngle.toRadian(mAngle.degree(10)),
@@ -184,7 +182,6 @@ describe('history', () => {
                 size: 1000,
                 circles: {
                     ['SNT-0']: {
-                        type: TextElementType.Sentence,
                         radius: 1,
                         position: {
                             angle: mAngle.radian(0),
@@ -214,7 +211,6 @@ describe('history', () => {
                 size: 1000,
                 circles: {
                     ['SNT-0']: {
-                        type: TextElementType.Sentence,
                         radius: 10,
                         position: {
                             angle: mAngle.toRadian(mAngle.degree(10)),

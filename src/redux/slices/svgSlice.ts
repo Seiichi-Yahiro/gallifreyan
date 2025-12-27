@@ -1,17 +1,14 @@
 import mAngle from '@/math/angle';
 import type { PolarCoordinate } from '@/math/polar';
-import ids, { type LineSlotId } from '@/redux/ids';
+import { type LineSlotId } from '@/redux/ids';
 import { historyActions } from '@/redux/slices/historySlice';
 import type {
     CircleId,
     CirclesDict,
     LineSlot,
     LineSlotDict,
-    PolarCircle,
 } from '@/redux/types/svgTypes';
-import { TextElementType } from '@/redux/types/textTypes';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
-import { match } from 'ts-pattern';
 
 export type SvgSlice = {
     size: number;
@@ -30,40 +27,13 @@ const svgSlice = createSlice({
     initialState: createInitialSvgState,
     reducers: {
         addCircle: (state, action: PayloadAction<CircleId>) => {
-            const defaultCircle: PolarCircle = {
+            state.circles[action.payload] = {
                 radius: 0,
                 position: {
                     distance: 0,
                     angle: mAngle.radian(0),
                 },
             };
-
-            match(action.payload)
-                .when(ids.sentence.is, (id) => {
-                    state.circles[id] = {
-                        type: TextElementType.Sentence,
-                        ...defaultCircle,
-                    };
-                })
-                .when(ids.word.is, (id) => {
-                    state.circles[id] = {
-                        type: TextElementType.Word,
-                        ...defaultCircle,
-                    };
-                })
-                .when(ids.letter.is, (id) => {
-                    state.circles[id] = {
-                        type: TextElementType.Letter,
-                        ...defaultCircle,
-                    };
-                })
-                .when(ids.dot.is, (id) => {
-                    state.circles[id] = {
-                        type: TextElementType.Dot,
-                        ...defaultCircle,
-                    };
-                })
-                .exhaustive();
         },
         removeCircle: (state, action: PayloadAction<CircleId>) => {
             delete state.circles[action.payload];
