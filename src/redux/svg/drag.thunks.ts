@@ -2,7 +2,6 @@ import type { Vec2 } from '@/math/vec';
 import type { DotId, LetterId, LineSlotId, WordId } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
 import { calculatePositionAfterDrag } from '@/redux/svg/drag.utils';
-import { svgActions } from '@/redux/svg/svg.slice';
 import svgThunks from '@/redux/svg/svg.thunks';
 
 const word =
@@ -60,12 +59,7 @@ const lineSlot =
             parentAngle,
         );
 
-        dispatch(
-            svgActions.setLineSlotPosition({
-                id,
-                position: { angle: newPos.angle },
-            }),
-        );
+        dispatch(svgThunks.lineSlotPosition(id, { angle: newPos.angle }));
     };
 
 const dragThunks = { word, letter, dot, lineSlot };

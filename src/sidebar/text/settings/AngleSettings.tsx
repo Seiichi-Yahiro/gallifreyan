@@ -1,9 +1,8 @@
-import mAngle, { AngleUnit } from '@/math/angle';
+import mAngle, { AngleUnit, type Radian } from '@/math/angle';
 import { useSaveHistoryDebounced } from '@/redux/history/history.hooks';
 import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, { type LineSlotId } from '@/redux/ids';
-import { svgActions } from '@/redux/svg/svg.slice';
 import svgThunks from '@/redux/svg/svg.thunks';
 import type { CircleId } from '@/redux/svg/svg.types';
 import AngleSlider, { type AngleSliderRef } from '@/ui/AngleSlider';
@@ -42,6 +41,22 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
 
     const saveHistoryDebounced = useSaveHistoryDebounced();
 
+    const updateAngle = (angle: Radian) => {
+        if (ids.lineSlot.is(id)) {
+            dispatch(
+                svgThunks.lineSlotPosition(id, {
+                    angle,
+                }),
+            );
+        } else {
+            dispatch(
+                svgThunks.setCirclePosition(id, {
+                    angle,
+                }),
+            );
+        }
+    };
+
     const labelId = useId();
 
     return (
@@ -66,23 +81,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                         saveHistoryDebounced();
 
                         const angle = mAngle.toRadian(mAngle.degree(degrees));
-
-                        if (ids.lineSlot.is(id)) {
-                            dispatch(
-                                svgActions.setLineSlotPosition({
-                                    id,
-                                    position: {
-                                        angle,
-                                    },
-                                }),
-                            );
-                        } else {
-                            dispatch(
-                                svgThunks.setCirclePosition(id, {
-                                    angle,
-                                }),
-                            );
-                        }
+                        updateAngle(angle);
                     }}
                     unit={angleInDegree.unit}
                 />
@@ -106,22 +105,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                             mAngle.degree(round(newAngleValue)),
                         );
 
-                        if (ids.lineSlot.is(id)) {
-                            dispatch(
-                                svgActions.setLineSlotPosition({
-                                    id,
-                                    position: {
-                                        angle: newAngle,
-                                    },
-                                }),
-                            );
-                        } else {
-                            dispatch(
-                                svgThunks.setCirclePosition(id, {
-                                    angle: newAngle,
-                                }),
-                            );
-                        }
+                        updateAngle(newAngle);
                     }}
                     onChangeCommitted={() => {
                         isDragging.current = false;
