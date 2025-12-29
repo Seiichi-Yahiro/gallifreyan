@@ -1,5 +1,4 @@
 import { resetIdCounters } from '@/redux/ids';
-import { settingsActions } from '@/redux/settings/settings.slice';
 import { type AppStore, setupStore } from '@/redux/store';
 import {
     ConsonantValue,
@@ -29,6 +28,9 @@ describe('text', () => {
     it('should have initial state', () => {
         const state = store.getState();
         expect(state.text).toStrictEqual({
+            settings: {
+                splitLetterOptions: { digraphs: true },
+            },
             value: '',
             rootElement: null,
             elements: {},
@@ -487,7 +489,9 @@ describe('text', () => {
 
     it('should merge consonants to a digraph', () => {
         store.dispatch(
-            settingsActions.setSplitLetterOptions({ digraphs: false }),
+            textActions.setSettings({
+                splitLetterOptions: { digraphs: false },
+            }),
         );
         store.dispatch(textThunks.setText('sh'));
 
@@ -520,7 +524,9 @@ describe('text', () => {
 
     it('should split digraph to letters', () => {
         store.dispatch(
-            settingsActions.setSplitLetterOptions({ digraphs: true }),
+            textActions.setSettings({
+                splitLetterOptions: { digraphs: true },
+            }),
         );
         store.dispatch(textThunks.setText('qu'));
 

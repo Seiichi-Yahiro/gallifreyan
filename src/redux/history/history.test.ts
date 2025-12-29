@@ -3,11 +3,12 @@ import type { HistoryState } from '@/redux/history/history.slice';
 import historyThunks from '@/redux/history/history.thunks';
 import { resetIdCounters } from '@/redux/ids';
 import { createInitialInteractionState } from '@/redux/interactions/interaction.slice';
-import { createInitialSettingsSate } from '@/redux/settings/settings.slice';
 import { type AppStore, setupStore } from '@/redux/store';
+import type { SvgSlice } from '@/redux/svg/svg.slice';
+import type { TextSlice } from '@/redux/text/text.slice';
 import textThunks from '@/redux/text/text.thunks';
 import { TextElementType } from '@/redux/text/text.types';
-import { range } from 'es-toolkit';
+import { omit, range, toMerged } from 'es-toolkit';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('history', () => {
@@ -35,12 +36,12 @@ describe('history', () => {
 
         expect(state.history.past).toStrictEqual([
             {
-                text: states[0].text,
+                text: omit(states[0].text, ['settings']),
                 svg: states[0].svg,
                 interaction: states[0].interaction,
             },
             {
-                text: states[1].text,
+                text: omit(states[1].text, ['settings']),
                 svg: states[1].svg,
                 interaction: states[1].interaction,
             },
@@ -72,7 +73,9 @@ describe('history', () => {
                 },
             },
             svg: {
-                size: 1000,
+                settings: {
+                    size: 1000,
+                },
                 circles: {
                     ['SNT-0']: {
                         radius: 1,
@@ -101,7 +104,9 @@ describe('history', () => {
                 },
             },
             svg: {
-                size: 1000,
+                settings: {
+                    size: 1000,
+                },
                 circles: {
                     ['SNT-0']: {
                         radius: 10,
@@ -118,21 +123,25 @@ describe('history', () => {
 
         const present = {
             text: {
+                settings: {
+                    splitLetterOptions: {
+                        digraphs: true,
+                    },
+                },
                 value: '',
                 rootElement: null,
                 elements: {},
-            },
+            } satisfies TextSlice,
             svg: {
-                size: 1000,
+                settings: { size: 1000 },
                 circles: {},
                 lineSlots: {},
-            },
+            } satisfies SvgSlice,
             interaction: createInitialInteractionState(),
         };
 
         store = setupStore({
             ...present,
-            settings: createInitialSettingsSate(),
             history: {
                 past: [past0, past1],
                 future: [],
@@ -145,13 +154,15 @@ describe('history', () => {
 
         expect(state.history.past).toStrictEqual([past0]);
 
-        expect(state.text).toStrictEqual(past1.text);
-        expect(state.svg).toStrictEqual(past1.svg);
-        expect(state.interaction).toStrictEqual(past1.interaction);
+        expect(state.text).toStrictEqual(toMerged(state.text, past1.text));
+        expect(state.svg).toStrictEqual(toMerged(state.svg, past1.svg));
+        expect(state.interaction).toStrictEqual(
+            toMerged(state.interaction, past1.interaction),
+        );
 
         expect(state.history.future).toStrictEqual([
             {
-                text: present.text,
+                text: omit(present.text, ['settings']),
                 svg: present.svg,
                 interaction: present.interaction,
             },
@@ -179,7 +190,9 @@ describe('history', () => {
                 },
             },
             svg: {
-                size: 1000,
+                settings: {
+                    size: 1000,
+                },
                 circles: {
                     ['SNT-0']: {
                         radius: 1,
@@ -194,8 +207,13 @@ describe('history', () => {
             interaction: createInitialInteractionState(),
         };
 
-        const present: HistoryState = {
+        const present = {
             text: {
+                settings: {
+                    splitLetterOptions: {
+                        digraphs: true,
+                    },
+                },
                 value: 'b',
                 rootElement: null,
                 elements: {
@@ -206,9 +224,11 @@ describe('history', () => {
                         words: [],
                     },
                 },
-            },
+            } satisfies TextSlice,
             svg: {
-                size: 1000,
+                settings: {
+                    size: 1000,
+                },
                 circles: {
                     ['SNT-0']: {
                         radius: 10,
@@ -219,18 +239,18 @@ describe('history', () => {
                     },
                 },
                 lineSlots: {},
-            },
+            } satisfies SvgSlice,
             interaction: createInitialInteractionState(),
         };
 
-        const future = {
+        const future: HistoryState = {
             text: {
                 value: '',
                 rootElement: null,
                 elements: {},
             },
             svg: {
-                size: 1000,
+                settings: { size: 1000 },
                 circles: {},
                 lineSlots: {},
             },
@@ -239,7 +259,6 @@ describe('history', () => {
 
         store = setupStore({
             ...present,
-            settings: createInitialSettingsSate(),
             history: {
                 past: [past],
                 future: [future],
@@ -250,11 +269,20 @@ describe('history', () => {
 
         const state = store.getState();
 
-        expect(state.history.past).toStrictEqual([past, present]);
+        expect(state.history.past).toStrictEqual([
+            past,
+            {
+                text: omit(present.text, ['settings']),
+                svg: present.svg,
+                interaction: present.interaction,
+            },
+        ]);
 
-        expect(state.text).toStrictEqual(future.text);
-        expect(state.svg).toStrictEqual(future.svg);
-        expect(state.interaction).toStrictEqual(future.interaction);
+        expect(state.text).toStrictEqual(toMerged(state.text, future.text));
+        expect(state.svg).toStrictEqual(toMerged(state.svg, future.svg));
+        expect(state.interaction).toStrictEqual(
+            toMerged(state.interaction, future.interaction),
+        );
 
         expect(state.history.future).toStrictEqual([]);
     });

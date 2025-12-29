@@ -21,7 +21,7 @@ const Svg: React.FC = () => {
 
     const getInverseSvgMatrix = () => inverseSvgMatrix.current;
 
-    const svgSize = useRedux((state) => state.svg.size);
+    const svgSize = useRedux((state) => state.svg.settings.size);
     const sentenceId = useRedux((state) => state.text.rootElement);
 
     return (

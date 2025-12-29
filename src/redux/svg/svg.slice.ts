@@ -11,13 +11,19 @@ import type {
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type SvgSlice = {
-    size: number;
+    settings: SvgSettings;
     circles: CirclesDict;
     lineSlots: LineSlotDict;
 };
 
+export type SvgSettings = {
+    size: number;
+};
+
 export const createInitialSvgState = (): SvgSlice => ({
-    size: 1000,
+    settings: {
+        size: 1000,
+    },
     circles: {},
     lineSlots: {},
 });
@@ -26,6 +32,9 @@ const svgSlice = createSlice({
     name: 'svg',
     initialState: createInitialSvgState,
     reducers: {
+        setSettings: (state, action: PayloadAction<Partial<SvgSettings>>) => {
+            state.settings = { ...state.settings, ...action.payload };
+        },
         addCircle: (state, action: PayloadAction<CircleId>) => {
             state.circles[action.payload] = {
                 radius: 0,
@@ -86,8 +95,12 @@ const svgSlice = createSlice({
     extraReducers: (builder) => {
         builder.addMatcher(
             isAnyOf(historyActions.undo, historyActions.redo),
-            (_state, action) => {
-                return action.payload.load.svg;
+            (state, action) => {
+                const load = action.payload.load.svg;
+
+                state.circles = load.circles;
+                state.lineSlots = load.lineSlots;
+                state.settings = load.settings;
             },
         );
     },

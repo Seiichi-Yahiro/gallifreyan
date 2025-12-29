@@ -1,5 +1,5 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
-import { settingsActions } from '@/redux/settings/settings.slice';
+import { textActions } from '@/redux/text/text.slice';
 import Checkbox from '@/ui/Checkbox';
 import React from 'react';
 
@@ -10,11 +10,17 @@ interface TextSettingsProps {
 const TextSettings: React.FC<TextSettingsProps> = ({ className }) => {
     const dispatch = useAppDispatch();
     const splitLetterOptions = useRedux(
-        (state) => state.settings.splitLetterOptions,
+        (state) => state.text.settings.splitLetterOptions,
     );
 
     const toggleDigraphs = (checked: boolean) => {
-        dispatch(settingsActions.setSplitLetterOptions({ digraphs: checked }));
+        dispatch(
+            textActions.setSettings({
+                splitLetterOptions: {
+                    digraphs: checked,
+                },
+            }),
+        );
     };
 
     const id = 'text-settings-label';

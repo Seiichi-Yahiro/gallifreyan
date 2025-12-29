@@ -7,6 +7,7 @@ import type {
     WordId,
 } from '@/redux/ids';
 import type { Letter } from '@/redux/text/letter.types';
+import type { SplitLettersOptions } from '@/redux/text/text.analysis';
 import {
     type DotElement,
     type LetterElement,
@@ -19,12 +20,22 @@ import {
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 export type TextSlice = {
+    settings: TextSettings;
     value: string;
     rootElement: SentenceId | null;
     elements: TextElementsDict;
 };
 
+export type TextSettings = {
+    splitLetterOptions: Required<SplitLettersOptions>;
+};
+
 export const createInitialTextState = (): TextSlice => ({
+    settings: {
+        splitLetterOptions: {
+            digraphs: true,
+        },
+    },
     value: '',
     rootElement: null,
     elements: {},
@@ -34,6 +45,9 @@ const textSlice = createSlice({
     name: 'text',
     initialState: createInitialTextState,
     reducers: {
+        setSettings: (state, action: PayloadAction<Partial<TextSettings>>) => {
+            state.settings = { ...state.settings, ...action.payload };
+        },
         setText: (state, action: PayloadAction<string>) => {
             state.value = action.payload;
         },
@@ -198,8 +212,12 @@ const textSlice = createSlice({
     extraReducers: (builder) => {
         builder.addMatcher(
             isAnyOf(historyActions.undo, historyActions.redo),
-            (_state, action) => {
-                return action.payload.load.text;
+            (state, action) => {
+                const load = action.payload.load.text;
+
+                state.value = load.value;
+                state.rootElement = load.rootElement;
+                state.elements = load.elements;
             },
         );
     },

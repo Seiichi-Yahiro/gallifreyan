@@ -47,9 +47,10 @@ const word =
 
         const state = getState();
 
-        splitLetters(newWordText, state.settings.splitLetterOptions).forEach(
-            (pair) => dispatch(addThunks.letter(pair, id)),
-        );
+        splitLetters(
+            newWordText,
+            state.text.settings.splitLetterOptions,
+        ).forEach((pair) => dispatch(addThunks.letter(pair, id)));
     };
 
 const letter =

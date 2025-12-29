@@ -6,9 +6,23 @@ import type { AppState, AppThunkAction } from '@/redux/store';
 
 const extractHistoryState = (state: AppState): HistoryState => {
     return {
-        text: state.text,
-        svg: state.svg,
-        interaction: state.interaction,
+        text: {
+            value: state.text.value,
+            rootElement: state.text.rootElement,
+            elements: state.text.elements,
+        },
+        svg: {
+            settings: {
+                size: state.svg.settings.size,
+            },
+            circles: state.svg.circles,
+            lineSlots: state.svg.lineSlots,
+        },
+        interaction: {
+            hovered: state.interaction.hovered,
+            selected: state.interaction.selected,
+            dragging: state.interaction.dragging,
+        },
     };
 };
 

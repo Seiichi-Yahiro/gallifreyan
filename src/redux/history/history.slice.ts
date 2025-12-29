@@ -4,7 +4,7 @@ import { type TextSlice } from '@/redux/text/text.slice';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type HistoryState = {
-    text: TextSlice;
+    text: Omit<TextSlice, 'settings'>;
     svg: SvgSlice;
     interaction: InteractionSlice;
 };
@@ -30,7 +30,7 @@ const historySlice = createSlice({
             action: PayloadAction<{ store: HistoryState; load: HistoryState }>,
         ) => {
             state.past.pop();
-            state.future = [action.payload.store, ...state.future];
+            state.future.unshift(action.payload.store);
         },
         redo: (
             state,

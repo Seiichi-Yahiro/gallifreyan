@@ -20,7 +20,7 @@ const sentence =
     (id: SentenceId): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
-        const svgSize = state.svg.size;
+        const svgSize = state.svg.settings.size;
         const words = state.text.elements[id].words;
 
         const radius = (svgSize * 0.9) / 2;
