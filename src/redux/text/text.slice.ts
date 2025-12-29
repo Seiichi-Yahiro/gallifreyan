@@ -18,6 +18,7 @@ import {
     type WordElement,
 } from '@/redux/text/text.types';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
+import { merge } from 'es-toolkit';
 
 export type TextSlice = {
     settings: TextSettings;
@@ -46,7 +47,7 @@ const textSlice = createSlice({
     initialState: createInitialTextState,
     reducers: {
         setSettings: (state, action: PayloadAction<Partial<TextSettings>>) => {
-            state.settings = { ...state.settings, ...action.payload };
+            merge(state.settings, action.payload);
         },
         setText: (state, action: PayloadAction<string>) => {
             state.value = action.payload;

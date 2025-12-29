@@ -9,6 +9,7 @@ import type {
     LineSlotDict,
 } from '@/redux/svg/svg.types';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
+import { merge } from 'es-toolkit';
 
 export type SvgSlice = {
     settings: SvgSettings;
@@ -33,7 +34,7 @@ const svgSlice = createSlice({
     initialState: createInitialSvgState,
     reducers: {
         setSettings: (state, action: PayloadAction<Partial<SvgSettings>>) => {
-            state.settings = { ...state.settings, ...action.payload };
+            merge(state.settings, action.payload);
         },
         addCircle: (state, action: PayloadAction<CircleId>) => {
             state.circles[action.payload] = {
@@ -62,10 +63,7 @@ const svgSlice = createSlice({
             }
 
             if (action.payload.position !== undefined) {
-                circle.position = {
-                    ...circle.position,
-                    ...action.payload.position,
-                };
+                merge(circle.position, action.payload.position);
             }
         },
         addLineSlot: (
@@ -85,11 +83,7 @@ const svgSlice = createSlice({
             }>,
         ) => {
             const currentPosition = state.lineSlots[action.payload.id].position;
-
-            state.lineSlots[action.payload.id].position = {
-                ...currentPosition,
-                ...action.payload.position,
-            };
+            merge(currentPosition, action.payload.position);
         },
     },
     extraReducers: (builder) => {
