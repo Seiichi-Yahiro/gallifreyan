@@ -1,5 +1,6 @@
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import { svgActions } from '@/redux/svg/svg.slice';
+import NumberInput from '@/ui/NumberInput';
 import React from 'react';
 
 interface SvgSettingsProps {
@@ -22,13 +23,15 @@ const SvgSettings: React.FC<SvgSettingsProps> = ({ className }) => {
                     <label id="stroke-width">Stroke width</label>
                     <span aria-hidden={true}>:</span>
                 </span>
-                <input
-                    type="number"
+                <NumberInput
+                    aria-labelledby="stroke-width"
                     value={strokeWidth}
-                    onChange={(event) => {
+                    min={1}
+                    unit="px"
+                    onChange={(value) => {
                         dispatch(
                             svgActions.setSettings({
-                                strokeWidth: event.target.valueAsNumber,
+                                strokeWidth: value,
                             }),
                         );
                     }}
