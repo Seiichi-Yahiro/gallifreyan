@@ -1,31 +1,35 @@
 .sentence__outer {
-    stroke-width: 3px;
+    stroke-width: calc(var(--stroke-width) * 3);
 }
 
 .sentence__inner,
 .word,
 .letter,
-.dot {
-    stroke-width: 1px;
+.dot,
+.line {
+    stroke-width: var(--stroke-width);
 }
 
 .sentence__outer,
 .sentence__inner,
 .word,
 .letter,
-.dot {
+.dot,
+.line {
     stroke: currentColor;
 }
 
 .word,
-.letter {
+.letter,
+.line {
     stroke-linecap: round;
 }
 
 .sentence__outer,
 .sentence__inner,
 .word,
-.letter {
+.letter,
+.line {
     fill: transparent;
 }
 

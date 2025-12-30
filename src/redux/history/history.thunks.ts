@@ -14,6 +14,7 @@ const extractHistoryState = (state: AppState): HistoryState => {
         svg: {
             settings: {
                 size: state.svg.settings.size,
+                strokeWidth: state.svg.settings.strokeWidth,
             },
             circles: state.svg.circles,
             lineSlots: state.svg.lineSlots,

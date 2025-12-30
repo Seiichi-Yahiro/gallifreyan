@@ -1,13 +1,14 @@
 .sentence__outer {
-    stroke-width: 3px;
+    stroke-width: calc(var(--stroke-width) * 3);
 }
 
 .sentence__inner,
 .word,
 .letter,
 .dot,
+.line,
 .line-slot {
-    stroke-width: 1px;
+    stroke-width: var(--stroke-width);
 }
 
 .sentence__outer,
@@ -15,13 +16,13 @@
 .word,
 .letter,
 .dot,
-.line-slot {
+.line {
     stroke: currentColor;
 }
 
 .word,
 .letter,
-.line-slot {
+.line {
     stroke-linecap: round;
 }
 
@@ -29,7 +30,7 @@
 .sentence__inner,
 .word,
 .letter,
-.line-slot {
+.line {
     fill: transparent;
 }
 

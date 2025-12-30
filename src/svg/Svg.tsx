@@ -22,6 +22,8 @@ const Svg: React.FC = () => {
     const getInverseSvgMatrix = () => inverseSvgMatrix.current;
 
     const svgSize = useRedux((state) => state.svg.settings.size);
+    const strokeWidth = useRedux((state) => state.svg.settings.strokeWidth);
+
     const sentenceId = useRedux((state) => state.text.rootElement);
 
     return (
@@ -29,10 +31,13 @@ const Svg: React.FC = () => {
             ref={svgRef}
             id="gallifreyan"
             xmlns="http://www.w3.org/2000/svg"
-            style={{
-                width: '100%',
-                height: '100%',
-            }}
+            style={
+                {
+                    width: '100%',
+                    height: '100%',
+                    '--stroke-width': `${strokeWidth}px`,
+                } as React.CSSProperties
+            }
             className="touch-pinch-zoom--not-print"
             viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
         >

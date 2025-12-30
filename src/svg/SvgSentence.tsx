@@ -14,6 +14,8 @@ interface SvgSentenceProps {
 const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
     const words = useRedux((state) => state.text.elements[id].words);
 
+    const strokeWidth = useRedux((state) => state.svg.settings.strokeWidth);
+
     const circle = useRedux((state) => state.svg.circles[id]);
 
     const { isHovered, onHover, onHoverStop } = useHover(id);
@@ -28,7 +30,7 @@ const SvgSentence: React.FC<SvgSentenceProps> = ({ id }) => {
             <circle
                 cx={0}
                 cy={0}
-                r={circle.radius + 10}
+                r={circle.radius + 10 + strokeWidth * 3}
                 className="sentence__outer"
             />
             <SvgCircle

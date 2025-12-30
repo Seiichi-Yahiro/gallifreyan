@@ -34,13 +34,13 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
                 y1={0}
                 x2={0}
                 y2={20}
-                className="transition-colors--not-print line-slot"
+                className="transition-colors--not-print line"
             />
             <circle
                 cx={0}
                 cy={0}
                 r={8}
-                className={cn('transition-colors--not-print', {
+                className={cn('transition-colors--not-print line-slot', {
                     'hovered__stroke--not-print': isHovered,
                     'selected__stroke--not-print': isSelected,
                 })}

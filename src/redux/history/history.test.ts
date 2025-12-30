@@ -75,6 +75,7 @@ describe('history', () => {
             svg: {
                 settings: {
                     size: 1000,
+                    strokeWidth: 1,
                 },
                 circles: {
                     ['SNT-0']: {
@@ -106,6 +107,7 @@ describe('history', () => {
             svg: {
                 settings: {
                     size: 1000,
+                    strokeWidth: 1,
                 },
                 circles: {
                     ['SNT-0']: {
@@ -133,7 +135,10 @@ describe('history', () => {
                 elements: {},
             } satisfies TextSlice,
             svg: {
-                settings: { size: 1000 },
+                settings: {
+                    size: 1000,
+                    strokeWidth: 1,
+                },
                 circles: {},
                 lineSlots: {},
             } satisfies SvgSlice,
@@ -192,6 +197,7 @@ describe('history', () => {
             svg: {
                 settings: {
                     size: 1000,
+                    strokeWidth: 1,
                 },
                 circles: {
                     ['SNT-0']: {
@@ -228,6 +234,7 @@ describe('history', () => {
             svg: {
                 settings: {
                     size: 1000,
+                    strokeWidth: 1,
                 },
                 circles: {
                     ['SNT-0']: {
@@ -250,7 +257,10 @@ describe('history', () => {
                 elements: {},
             },
             svg: {
-                settings: { size: 1000 },
+                settings: {
+                    size: 1000,
+                    strokeWidth: 1,
+                },
                 circles: {},
                 lineSlots: {},
             },

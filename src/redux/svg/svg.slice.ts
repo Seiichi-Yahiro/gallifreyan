@@ -19,11 +19,13 @@ export type SvgSlice = {
 
 export type SvgSettings = {
     size: number;
+    strokeWidth: number;
 };
 
 export const createInitialSvgState = (): SvgSlice => ({
     settings: {
         size: 1000,
+        strokeWidth: 1,
     },
     circles: {},
     lineSlots: {},
