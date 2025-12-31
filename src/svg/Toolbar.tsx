@@ -15,7 +15,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ className }) => {
     const canRedo = useRedux((state) => state.history.future.length > 0);
 
     return (
-        <div className={cn(className)}>
+        <div className={cn('print:hidden', className)}>
             <IconButton
                 aria-label="Undo"
                 disabled={!canUndo}
