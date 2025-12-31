@@ -40,7 +40,7 @@ const ElementSettings: React.FC<PositionInputProps> = ({ className }) => {
         <section
             aria-labelledby={id}
             className={cn(
-                'relative flex flex-col gap-1 overflow-y-auto',
+                'relative flex flex-col gap-2 overflow-y-auto',
                 className,
             )}
         >

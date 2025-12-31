@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 interface NumberInputProps
     extends Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'> {
     value: number;
+    step?: number;
     min?: number;
     max?: number;
     unit?: string;
@@ -13,6 +14,7 @@ interface NumberInputProps
 
 const NumberInput: React.FC<NumberInputProps> = ({
     value,
+    step,
     min,
     max,
     unit,
@@ -44,6 +46,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
             <input
                 ref={inputRef}
                 type="number"
+                step={step}
                 min={min}
                 max={max}
                 className={cn(

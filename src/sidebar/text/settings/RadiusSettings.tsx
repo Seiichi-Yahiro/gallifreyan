@@ -2,8 +2,9 @@ import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import svgThunks from '@/redux/svg/svg.thunks';
 import type { CircleId } from '@/redux/svg/svg.types';
+import NumberInput from '@/ui/NumberInput';
 import Slider, { type SliderRef } from '@/ui/Slider';
-import { formatDecimal } from '@/utils/format';
+import { debounce, round } from 'es-toolkit';
 import React, { useId, useRef } from 'react';
 
 interface RadiusSettingsProps {
@@ -17,43 +18,60 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ id }) => {
 
     const radius = useRedux((state) => state.svg.circles[id].radius);
 
-    const isEditing = useRef(false);
+    const isDragging = useRef(false);
+
+    const debouncedHistorySave = debounce(
+        () => {
+            dispatch(historyThunks.save());
+        },
+        500,
+        { edges: ['leading'] },
+    );
 
     const labelId = useId();
-    const describeId = useId();
 
     return (
         <div className="flex flex-col gap-1">
-            <span
-                onClick={() => {
-                    sliderRef.current?.focus();
-                }}
-            >
-                <label id={labelId}>Radius</label>
+            <span>
+                <label
+                    id={labelId}
+                    onClick={() => {
+                        sliderRef.current?.focus();
+                    }}
+                >
+                    Radius
+                </label>
                 <span aria-hidden={true}>: </span>
-                <span
-                    id={describeId}
-                    aria-hidden={true}
-                >{`${formatDecimal(radius)} px`}</span>
+                <NumberInput
+                    aria-labelledby={labelId}
+                    value={radius}
+                    min={0}
+                    max={500}
+                    step={1}
+                    onChange={(radius) => {
+                        debouncedHistorySave();
+                        dispatch(svgThunks.setCircleRadius(id, radius));
+                    }}
+                    unit="px"
+                />
             </span>
             <Slider
                 ref={sliderRef}
                 aria-labelledby={labelId}
-                aria-describedby={describeId}
                 min={0}
                 max={500}
                 step={1}
                 value={radius}
                 onChange={(radius) => {
-                    if (!isEditing.current) {
+                    if (!isDragging.current) {
                         dispatch(historyThunks.save());
-                        isEditing.current = true;
+                        isDragging.current = true;
                     }
 
-                    dispatch(svgThunks.setCircleRadius(id, radius));
+                    dispatch(svgThunks.setCircleRadius(id, round(radius)));
                 }}
                 onChangeCommitted={() => {
-                    isEditing.current = false;
+                    isDragging.current = false;
                 }}
             />
         </div>

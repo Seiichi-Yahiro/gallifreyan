@@ -49,8 +49,8 @@ describe('AngleSettings', () => {
 
         renderWithProviders(<AngleSettings id="WRD-0" />, store);
 
-        const label = screen.queryByText(/\d+ deg/);
-        expect(label).toHaveTextContent('180 deg');
+        const label = screen.getByRole('spinbutton', { name: 'Angle' });
+        expect(label).toHaveValue(180);
     });
 
     it('should increase word angle by 1 degree on keyboard input', async () => {

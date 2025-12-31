@@ -6,7 +6,8 @@ import { svgActions } from '@/redux/svg/svg.slice';
 import svgThunks from '@/redux/svg/svg.thunks';
 import type { CircleId } from '@/redux/svg/svg.types';
 import AngleSlider, { type AngleSliderRef } from '@/ui/AngleSlider';
-import { formatDecimal } from '@/utils/format';
+import NumberInput from '@/ui/NumberInput';
+import { debounce, round } from 'es-toolkit';
 import React, { useId, useRef } from 'react';
 
 interface AngleSettingsProps {
@@ -34,42 +35,81 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                 : undefined,
         ) ?? mAngle.radian(0);
 
-    const isEditing = useRef(false);
+    const parentAngleInDegree = mAngle.toDegree(parentAngle);
+
+    const isDragging = useRef(false);
+
+    const debouncedHistorySave = debounce(
+        () => {
+            dispatch(historyThunks.save());
+        },
+        500,
+        { edges: ['leading'] },
+    );
 
     const labelId = useId();
-    const describeId = useId();
 
     return (
         <div className="flex flex-col gap-1">
-            <span
-                onClick={() => {
-                    sliderRef.current?.focus();
-                }}
-            >
-                <label id={labelId}>Angle</label>
+            <span>
+                <label
+                    id={labelId}
+                    onClick={() => {
+                        sliderRef.current?.focus();
+                    }}
+                >
+                    Angle
+                </label>
                 <span aria-hidden={true}>: </span>
-                <span
-                    id={describeId}
-                    aria-hidden={true}
-                >{`${formatDecimal(angleInDegree.value)} ${angleInDegree.unit}`}</span>
+                <NumberInput
+                    aria-labelledby={labelId}
+                    value={angleInDegree.value}
+                    step={1}
+                    min={0}
+                    max={360}
+                    onChange={(degrees) => {
+                        debouncedHistorySave();
+
+                        const angle = mAngle.toRadian(mAngle.degree(degrees));
+
+                        if (ids.lineSlot.is(id)) {
+                            dispatch(
+                                svgActions.setLineSlotPosition({
+                                    id,
+                                    position: {
+                                        angle,
+                                    },
+                                }),
+                            );
+                        } else {
+                            dispatch(
+                                svgThunks.setCirclePosition(id, {
+                                    angle,
+                                }),
+                            );
+                        }
+                    }}
+                    unit={angleInDegree.unit}
+                />
             </span>
             <div className="flex flex-row items-center justify-center">
                 <AngleSlider
                     ref={sliderRef}
                     aria-labelledby={labelId}
-                    aria-describedby={describeId}
                     className="max-w-60"
-                    unit={AngleUnit.Radian}
-                    value={angle.value}
-                    step={mAngle.toRadian(mAngle.degree(1)).value}
-                    rotation={parentAngle.value}
+                    unit={AngleUnit.Degree}
+                    value={angleInDegree.value}
+                    step={1}
+                    rotation={parentAngleInDegree.value}
                     onChange={(newAngleValue) => {
-                        if (!isEditing.current) {
+                        if (!isDragging.current) {
                             dispatch(historyThunks.save());
-                            isEditing.current = true;
+                            isDragging.current = true;
                         }
 
-                        const newAngle = mAngle.radian(newAngleValue);
+                        const newAngle = mAngle.toRadian(
+                            mAngle.degree(round(newAngleValue)),
+                        );
 
                         if (ids.lineSlot.is(id)) {
                             dispatch(
@@ -89,7 +129,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                         }
                     }}
                     onChangeCommitted={() => {
-                        isEditing.current = false;
+                        isDragging.current = false;
                     }}
                 />
             </div>
