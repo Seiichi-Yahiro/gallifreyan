@@ -1,10 +1,11 @@
+import { useSaveHistoryDebounced } from '@/redux/history/history.hooks';
 import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import svgThunks from '@/redux/svg/svg.thunks';
 import type { CircleId } from '@/redux/svg/svg.types';
 import NumberInput from '@/ui/NumberInput';
 import Slider, { type SliderRef } from '@/ui/Slider';
-import { debounce, round } from 'es-toolkit';
+import { round } from 'es-toolkit';
 import React, { useId, useRef } from 'react';
 
 interface RadiusSettingsProps {
@@ -20,13 +21,7 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ id }) => {
 
     const isDragging = useRef(false);
 
-    const debouncedHistorySave = debounce(
-        () => {
-            dispatch(historyThunks.save());
-        },
-        500,
-        { edges: ['leading'] },
-    );
+    const saveHistoryDebounced = useSaveHistoryDebounced();
 
     const labelId = useId();
 
@@ -49,7 +44,7 @@ const RadiusSettings: React.FC<RadiusSettingsProps> = ({ id }) => {
                     max={500}
                     step={1}
                     onChange={(radius) => {
-                        debouncedHistorySave();
+                        saveHistoryDebounced();
                         dispatch(svgThunks.setCircleRadius(id, radius));
                     }}
                     unit="px"

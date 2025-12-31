@@ -1,4 +1,5 @@
 import mAngle, { AngleUnit } from '@/math/angle';
+import { useSaveHistoryDebounced } from '@/redux/history/history.hooks';
 import historyThunks from '@/redux/history/history.thunks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import ids, { type LineSlotId } from '@/redux/ids';
@@ -7,7 +8,7 @@ import svgThunks from '@/redux/svg/svg.thunks';
 import type { CircleId } from '@/redux/svg/svg.types';
 import AngleSlider, { type AngleSliderRef } from '@/ui/AngleSlider';
 import NumberInput from '@/ui/NumberInput';
-import { debounce, round } from 'es-toolkit';
+import { round } from 'es-toolkit';
 import React, { useId, useRef } from 'react';
 
 interface AngleSettingsProps {
@@ -39,13 +40,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
 
     const isDragging = useRef(false);
 
-    const debouncedHistorySave = debounce(
-        () => {
-            dispatch(historyThunks.save());
-        },
-        500,
-        { edges: ['leading'] },
-    );
+    const saveHistoryDebounced = useSaveHistoryDebounced();
 
     const labelId = useId();
 
@@ -68,7 +63,7 @@ const AngleSettings: React.FC<AngleSettingsProps> = ({ id }) => {
                     min={0}
                     max={360}
                     onChange={(degrees) => {
-                        debouncedHistorySave();
+                        saveHistoryDebounced();
 
                         const angle = mAngle.toRadian(mAngle.degree(degrees));
 

@@ -1,21 +1,14 @@
-import historyThunks from '@/redux/history/history.thunks';
+import { useSaveHistoryDebounced } from '@/redux/history/history.hooks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
 import textThunks from '@/redux/text/text.thunks';
 import TextInput from '@/ui/TextInput';
-import { debounce } from 'es-toolkit';
 import React from 'react';
 
 const SentenceInput: React.FC = () => {
     const dispatch = useAppDispatch();
     const text = useRedux((state) => state.text.value);
 
-    const saveHistoryDebounced = debounce(
-        () => {
-            dispatch(historyThunks.save());
-        },
-        500,
-        { edges: ['leading'] },
-    );
+    const saveHistoryDebounced = useSaveHistoryDebounced();
 
     const setText = (value: string) => {
         saveHistoryDebounced();
