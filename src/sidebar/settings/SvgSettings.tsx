@@ -1,4 +1,6 @@
+import { useSaveHistoryDebounced } from '@/redux/history/history.hooks';
 import { useAppDispatch, useRedux } from '@/redux/hooks';
+import constraintsThunks from '@/redux/svg/constraints.thunks';
 import { svgActions } from '@/redux/svg/svg.slice';
 import NumberInput from '@/ui/NumberInput';
 import React from 'react';
@@ -10,6 +12,8 @@ interface SvgSettingsProps {
 const SvgSettings: React.FC<SvgSettingsProps> = ({ className }) => {
     const dispatch = useAppDispatch();
     const strokeWidth = useRedux((state) => state.svg.settings.strokeWidth);
+
+    const saveHistoryDebounced = useSaveHistoryDebounced();
 
     const id = 'svg-settings-label';
 
@@ -29,11 +33,15 @@ const SvgSettings: React.FC<SvgSettingsProps> = ({ className }) => {
                     min={1}
                     unit="px"
                     onChange={(value) => {
+                        saveHistoryDebounced();
+
                         dispatch(
                             svgActions.setSettings({
                                 strokeWidth: value,
                             }),
                         );
+
+                        dispatch(constraintsThunks.applyConstraints());
                     }}
                 />
             </div>

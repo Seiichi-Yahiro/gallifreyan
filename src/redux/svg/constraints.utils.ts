@@ -3,6 +3,7 @@ import type { LetterId, WordId } from '@/redux/ids';
 import type {
     AngleConstraints,
     DistanceConstraints,
+    RadiusConstraints,
 } from '@/redux/svg/constraints.types';
 import type { CirclesDict } from '@/redux/svg/svg.types';
 import { clamp } from 'es-toolkit';
@@ -44,20 +45,33 @@ export const applyAngleConstraints = (
 export const insideDistanceConstraints = (
     radius: number,
     parentRadius: number,
+    strokeWidth: number,
 ): DistanceConstraints => {
+    const halfStrokeWidth = strokeWidth / 2;
+
+    const parentInnerRadius = parentRadius - halfStrokeWidth;
+    const selfOuterRadius = radius + halfStrokeWidth;
+
     return {
         min: 0,
-        max: parentRadius - radius,
+        max: parentInnerRadius - selfOuterRadius,
     };
 };
 
 export const outsideDistanceConstraints = (
     radius: number,
     parentRadius: number,
+    strokeWidth: number,
 ): DistanceConstraints => {
+    const halfStrokeWidth = strokeWidth / 2;
+
+    const parentOuterRadius = parentRadius + halfStrokeWidth;
+    const selfOuterRadius = radius + halfStrokeWidth;
+    const min = parentOuterRadius + selfOuterRadius;
+
     return {
-        min: parentRadius + radius,
-        max: parentRadius + radius + radius * 0.5,
+        min,
+        max: min + selfOuterRadius * 0.5,
     };
 };
 
@@ -73,20 +87,28 @@ export const onlineDistanceConstraints = (
 export const deepCutDistanceConstraints = (
     radius: number,
     parentRadius: number,
+    strokeWidth: number,
 ): DistanceConstraints => {
+    const halfStrokeWidth = strokeWidth / 2;
+    const parentInnerRadius = parentRadius - halfStrokeWidth;
+
     return {
-        min: parentRadius - radius * 0.95,
-        max: parentRadius - radius * 0.55,
+        min: parentInnerRadius - radius * 0.95,
+        max: parentInnerRadius - radius * 0.55,
     };
 };
 
 export const shallowCutDistanceConstraints = (
     radius: number,
     parentRadius: number,
+    strokeWidth: number,
 ): DistanceConstraints => {
+    const halfStrokeWidth = strokeWidth / 2;
+    const parentInnerRadius = parentRadius - halfStrokeWidth;
+
     return {
-        min: parentRadius,
-        max: parentRadius + radius * 0.95,
+        min: parentInnerRadius,
+        max: parentInnerRadius + radius * 0.95,
     };
 };
 
@@ -95,4 +117,20 @@ export const applyDistanceConstraints = (
     constraints: DistanceConstraints,
 ): number => {
     return clamp(distance, constraints.min, constraints.max);
+};
+
+export const strokeWidthRadiusConstraints = (
+    strokeWidth: number,
+): RadiusConstraints => {
+    return {
+        min: 1 + strokeWidth / 2,
+        max: Number.MAX_SAFE_INTEGER,
+    };
+};
+
+export const applyRadiusConstraints = (
+    radius: number,
+    constraints: RadiusConstraints,
+): number => {
+    return clamp(radius, constraints.min, constraints.max);
 };

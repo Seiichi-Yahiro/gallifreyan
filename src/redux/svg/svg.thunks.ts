@@ -9,13 +9,15 @@ import type { AppThunkAction } from '@/redux/store';
 import {
     applyAngleConstraints,
     applyDistanceConstraints,
+    applyRadiusConstraints,
     betweenNeighborsAngleConstraints,
     deepCutDistanceConstraints,
     insideDistanceConstraints,
     onlineDistanceConstraints,
     outsideDistanceConstraints,
     shallowCutDistanceConstraints,
-} from '@/redux/svg/constraints';
+    strokeWidthRadiusConstraints,
+} from '@/redux/svg/constraints.utils';
 import { svgActions } from '@/redux/svg/svg.slice';
 import type { CircleId } from '@/redux/svg/svg.types';
 import { LetterPlacement } from '@/redux/text/letter.types';
@@ -63,11 +65,19 @@ const wordRadius =
     (id: WordId, radius: number): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
         const letterIds = state.text.elements[id].letters;
         const wordCircle = state.svg.circles[id];
         const deltaRadius = radius - wordCircle.radius;
 
-        dispatch(svgActions.setCircle({ id, radius }));
+        const radiusConstraints = strokeWidthRadiusConstraints(strokeWidth);
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                radius: applyRadiusConstraints(radius, radiusConstraints),
+            }),
+        );
 
         for (const letterId of letterIds) {
             const letterDistance =
@@ -85,6 +95,7 @@ const wordPosition =
     (id: WordId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
 
         const word = state.text.elements[id];
         const sentence = state.text.elements[word.parent];
@@ -98,6 +109,7 @@ const wordPosition =
         const distanceConstraints = insideDistanceConstraints(
             wordCircle.radius,
             sentenceCircle.radius,
+            strokeWidth,
         );
 
         const angleConstraints = betweenNeighborsAngleConstraints(
@@ -127,9 +139,19 @@ const letterRadius =
     (id: LetterId, radius: number): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
         const letter = state.text.elements[id];
         const letterCircle = state.svg.circles[id];
         const deltaRadius = radius - letterCircle.radius;
+
+        const radiusConstraints = strokeWidthRadiusConstraints(strokeWidth);
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                radius: applyRadiusConstraints(radius, radiusConstraints),
+            }),
+        );
 
         const newDistance = match(letter.letter.placement)
             .with(
@@ -144,8 +166,6 @@ const letterRadius =
             )
             .with(LetterPlacement.OnLine, () => null)
             .exhaustive();
-
-        dispatch(svgActions.setCircle({ id, radius }));
 
         if (newDistance !== null) {
             dispatch(
@@ -180,6 +200,7 @@ const letterPosition =
     (id: LetterId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
 
         const letter = state.text.elements[id];
         const word = state.text.elements[letter.parent];
@@ -204,24 +225,28 @@ const letterPosition =
                 deepCutDistanceConstraints(
                     letterCircle.radius,
                     wordCircle.radius,
+                    strokeWidth,
                 ),
             )
             .with(LetterPlacement.ShallowCut, () =>
                 shallowCutDistanceConstraints(
                     letterCircle.radius,
                     wordCircle.radius,
+                    strokeWidth,
                 ),
             )
             .with(LetterPlacement.Inside, () =>
                 insideDistanceConstraints(
                     letterCircle.radius,
                     wordCircle.radius,
+                    strokeWidth,
                 ),
             )
             .with(LetterPlacement.Outside, () =>
                 outsideDistanceConstraints(
                     letterCircle.radius,
                     wordCircle.radius,
+                    strokeWidth,
                 ),
             )
             .exhaustive();
@@ -247,10 +272,19 @@ const dotRadius =
     (id: DotId, radius: number): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
         const dotCircle = state.svg.circles[id];
         const deltaRadius = radius - dotCircle.radius;
 
-        dispatch(svgActions.setCircle({ id, radius }));
+        const radiusConstraints = strokeWidthRadiusConstraints(strokeWidth);
+
+        dispatch(
+            svgActions.setCircle({
+                id,
+                radius: applyRadiusConstraints(radius, radiusConstraints),
+            }),
+        );
+
         dispatch(
             svgThunks.dotPosition(id, {
                 distance: dotCircle.position.distance - deltaRadius,
@@ -262,6 +296,7 @@ const dotPosition =
     (id: DotId, position: Partial<PolarCoordinate>): AppThunkAction =>
     (dispatch, getState) => {
         const state = getState();
+        const strokeWidth = state.svg.settings.strokeWidth;
 
         const dot = state.text.elements[id];
         const letter = state.text.elements[dot.parent];
@@ -272,6 +307,7 @@ const dotPosition =
         const distanceConstraints = insideDistanceConstraints(
             dotCircle.radius,
             letterCircle.radius,
+            strokeWidth,
         );
 
         dispatch(

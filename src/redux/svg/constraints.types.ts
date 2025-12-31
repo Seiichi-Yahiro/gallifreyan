@@ -14,3 +14,8 @@ export type AngleConstraints = {
     min: Radian;
     max: Radian;
 };
+
+export type RadiusConstraints = {
+    min: number;
+    max: number;
+};

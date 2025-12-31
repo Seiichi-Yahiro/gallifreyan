@@ -16,6 +16,8 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
     const dispatch = useAppDispatch();
     const lineSlot = useRedux((state) => state.svg.lineSlots[id]);
 
+    const strokeWidth = useRedux((state) => state.svg.settings.strokeWidth);
+
     const { isHovered, onHover, onHoverStop } = useHover(id);
     const { isSelected, onSelect } = useSelect(id);
     const { onPointerDown } = useSvgDragAndDrop((pointerData) => {
@@ -39,7 +41,7 @@ const SvgLineSlot: React.FC<SvgLineSlotProps> = ({ id }) => {
             <circle
                 cx={0}
                 cy={0}
-                r={8}
+                r={7 + strokeWidth / 2}
                 className={cn('transition-colors--not-print line-slot', {
                     'hovered__stroke--not-print': isHovered,
                     'selected__stroke--not-print': isSelected,
