@@ -1,33 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="gallifreyan" style="width: 100%; height: 100%;" viewBox="-500 -500 1000 1000">
+<svg xmlns="http://www.w3.org/2000/svg" id="gallifreyan" style="width: 100%; height: 100%; --stroke-width: 1px;" viewBox="-500 -500 1000 1000">
     <style>
         .sentence__outer {
-            stroke-width: 3px;
+            stroke-width: calc(var(--stroke-width) * 3);
         }
 
         .sentence__inner,
         .word,
         .letter,
-        .dot {
-            stroke-width: 1px;
+        .dot,
+        .line {
+            stroke-width: var(--stroke-width);
         }
 
         .sentence__outer,
         .sentence__inner,
         .word,
         .letter,
-        .dot {
+        .dot,
+        .line {
             stroke: currentColor;
         }
 
         .word,
-        .letter {
+        .letter,
+        .line {
             stroke-linecap: round;
         }
 
         .sentence__outer,
         .sentence__inner,
         .word,
-        .letter {
+        .letter,
+        .line {
             fill: transparent;
         }
 
@@ -36,7 +40,7 @@
         }
     </style>
     <g style="transform: translate(0px, 0px);">
-        <circle cx="0" cy="0" r="460" class="sentence__outer"/>
+        <circle cx="0" cy="0" r="463" class="sentence__outer"/>
         <circle cx="0" cy="0" r="450" class="sentence__inner"/>
         <g style="transform: translate(0px, 0px);">
             <circle cx="0" cy="0" r="225" class="word"/>
