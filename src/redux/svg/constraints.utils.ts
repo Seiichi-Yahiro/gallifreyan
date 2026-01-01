@@ -5,7 +5,7 @@ import type {
     DistanceConstraints,
     RadiusConstraints,
 } from '@/redux/svg/constraints.types';
-import type { CirclesDict } from '@/redux/svg/svg.types';
+import type { Arc, CirclesDict } from '@/redux/svg/svg.types';
 import { clamp } from 'es-toolkit';
 
 export const noAngleConstraints = (): AngleConstraints => {
@@ -33,6 +33,13 @@ export const betweenNeighborsAngleConstraints = <ID extends WordId | LetterId>(
     }
 
     return constraints;
+};
+
+export const arcAngleConstraints = (arc: Arc): AngleConstraints => {
+    return {
+        min: arc.start,
+        max: arc.end,
+    };
 };
 
 export const applyAngleConstraints = (

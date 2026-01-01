@@ -39,13 +39,21 @@ const applyConstraints = (): AppThunkAction => (dispatch, getState) => {
                 svgThunks.letterPosition,
             );
 
-            const dotIds = state.text.elements[letterId].dots;
+            const letter = state.text.elements[letterId];
 
-            for (const dotId of dotIds) {
+            for (const dotId of letter.dots) {
                 applyCircleConstraints(
                     dotId,
                     svgThunks.dotRadius,
                     svgThunks.dotPosition,
+                );
+            }
+
+            for (const lineSlotId of letter.lineSlots) {
+                const lineSlotPosition =
+                    getState().svg.lineSlots[lineSlotId].position;
+                dispatch(
+                    svgThunks.lineSlotPosition(lineSlotId, lineSlotPosition),
                 );
             }
         }
