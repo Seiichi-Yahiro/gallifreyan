@@ -65,6 +65,40 @@ export const insideDistanceConstraints = (
     };
 };
 
+export const antiArcDistanceConstraints = (
+    radius: number,
+    parentRadius: number,
+    angle: Radian,
+    antiArcInAngle: Arc,
+    strokeWidth: number,
+): DistanceConstraints => {
+    const halfStrokeWidth = strokeWidth / 2;
+    const parentInnerRadius = parentRadius - halfStrokeWidth;
+    const outerRadius = radius + halfStrokeWidth;
+
+    const startAngle = angle.value - antiArcInAngle.start.value;
+    const endAngle = angle.value - antiArcInAngle.end.value;
+
+    const relevantAngle =
+        Math.cos(startAngle) > Math.cos(endAngle) ? startAngle : endAngle;
+
+    const parentInnerRadiusSquared = parentInnerRadius * parentInnerRadius;
+    const outerRadiusSquared = outerRadius * outerRadius;
+
+    const cosAngle = Math.cos(relevantAngle);
+    const sinAngle = Math.sin(relevantAngle);
+    const sinASquared = sinAngle * sinAngle;
+
+    const max =
+        -outerRadius * cosAngle +
+        Math.sqrt(parentInnerRadiusSquared - outerRadiusSquared * sinASquared);
+
+    return {
+        min: 0,
+        max: max,
+    };
+};
+
 export const outsideDistanceConstraints = (
     radius: number,
     parentRadius: number,

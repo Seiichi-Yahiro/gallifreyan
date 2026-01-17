@@ -168,3 +168,12 @@ export const lineSlotAmount = (decoration: LetterDecoration): number =>
         .with(LetterDecoration.DoubleLine, () => 2)
         .with(LetterDecoration.TripleLine, () => 3)
         .otherwise(() => 0);
+
+export const isCuttingLetterPlacement = (
+    placement: LetterPlacement,
+): boolean => {
+    return (
+        placement === LetterPlacement.DeepCut ||
+        placement === LetterPlacement.ShallowCut
+    );
+};

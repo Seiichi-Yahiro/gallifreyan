@@ -1,4 +1,4 @@
-import type { PolarCoordinate } from '@/math/polar';
+import { type PolarCoordinate } from '@/math/polar';
 import ids, {
     type DotId,
     type LetterId,
@@ -7,6 +7,7 @@ import ids, {
 } from '@/redux/ids';
 import type { AppThunkAction } from '@/redux/store';
 import {
+    antiArcDistanceConstraints,
     applyAngleConstraints,
     applyDistanceConstraints,
     applyRadiusConstraints,
@@ -24,6 +25,7 @@ import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/svg/intersec
 import { svgActions } from '@/redux/svg/svg.slice';
 import type { CircleId } from '@/redux/svg/svg.types';
 import { LetterPlacement } from '@/redux/text/letter.types';
+import { isCuttingLetterPlacement } from '@/redux/text/letter.utils';
 import { match } from 'ts-pattern';
 
 const setCirclePosition =
@@ -109,30 +111,72 @@ const wordPosition =
         const wordIds = sentence.words;
         const index = wordIds.indexOf(id);
 
-        const distanceConstraints = insideDistanceConstraints(
-            wordCircle.radius,
-            sentenceCircle.radius,
-            strokeWidth,
-        );
-
         const angleConstraints = betweenNeighborsAngleConstraints(
             index,
             wordIds,
             state.svg.circles,
         );
 
+        const angle = applyAngleConstraints(
+            position.angle ?? wordCircle.position.angle,
+            angleConstraints,
+        );
+
+        const wordAntiArcs = word.letters
+            .filter((letterId) =>
+                isCuttingLetterPlacement(
+                    state.text.elements[letterId].letter.placement,
+                ),
+            )
+            .map((letterId) => state.svg.circles[letterId])
+            .map((letterCircle) =>
+                calculateIntersectionsBetweenLetterAndWord(
+                    wordCircle.radius,
+                    letterCircle,
+                ),
+            )
+            .filter((intersections) => intersections !== undefined)
+            .map((intersections) => intersections.wordAntiArc);
+
+        const antiArcInAngle = wordAntiArcs.find((antiArc) => {
+            if (antiArc.start.value <= antiArc.end.value) {
+                return (
+                    angle.value > antiArc.start.value &&
+                    angle.value < antiArc.end.value
+                );
+            } else {
+                return (
+                    angle.value > antiArc.start.value ||
+                    angle.value < antiArc.end.value
+                );
+            }
+        });
+
+        const distanceConstraints = antiArcInAngle
+            ? antiArcDistanceConstraints(
+                  wordCircle.radius,
+                  sentenceCircle.radius,
+                  wordCircle.position.angle,
+                  antiArcInAngle,
+                  strokeWidth,
+              )
+            : insideDistanceConstraints(
+                  wordCircle.radius,
+                  sentenceCircle.radius,
+                  strokeWidth,
+              );
+
+        const distance = applyDistanceConstraints(
+            position.distance ?? wordCircle.position.distance,
+            distanceConstraints,
+        );
+
         dispatch(
             svgActions.setCircle({
                 id,
                 position: {
-                    distance: applyDistanceConstraints(
-                        position.distance ?? wordCircle.position.distance,
-                        distanceConstraints,
-                    ),
-                    angle: applyAngleConstraints(
-                        position.angle ?? wordCircle.position.angle,
-                        angleConstraints,
-                    ),
+                    distance,
+                    angle,
                 },
             }),
         );
@@ -348,10 +392,7 @@ const lineSlotPosition =
 
         let angleConstraints = noAngleConstraints();
 
-        if (
-            letter.letter.placement === LetterPlacement.DeepCut ||
-            letter.letter.placement === LetterPlacement.ShallowCut
-        ) {
+        if (isCuttingLetterPlacement(letter.letter.placement)) {
             const wordId = state.text.elements[letterId].parent;
             const wordCircle = state.svg.circles[wordId];
 

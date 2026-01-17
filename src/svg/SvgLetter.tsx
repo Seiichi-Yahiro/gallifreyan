@@ -3,7 +3,7 @@ import type { LetterId } from '@/redux/ids';
 import dragThunks from '@/redux/svg/drag.thunks';
 import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/svg/intersections';
 import type { Arc } from '@/redux/svg/svg.types';
-import { LetterPlacement } from '@/redux/text/letter.types';
+import { isCuttingLetterPlacement } from '@/redux/text/letter.utils';
 import SvgArc from '@/svg/SvgArc';
 import SvgCircle from '@/svg/SvgCircle';
 import SvgDot from '@/svg/SvgDot';
@@ -37,10 +37,7 @@ const SvgLetter: React.FC<SvgLetterProps> = ({ id, setWordAntiArc }) => {
     );
 
     const intersections = useMemo(() => {
-        if (
-            placement !== LetterPlacement.DeepCut &&
-            placement !== LetterPlacement.ShallowCut
-        ) {
+        if (!isCuttingLetterPlacement(placement)) {
             return;
         }
 
