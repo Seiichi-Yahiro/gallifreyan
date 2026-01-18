@@ -171,7 +171,7 @@ export const lineSlotAmount = (decoration: LetterDecoration): number =>
 
 export const isCuttingLetterPlacement = (
     placement: LetterPlacement,
-): boolean => {
+): placement is LetterPlacement.DeepCut | LetterPlacement.ShallowCut => {
     return (
         placement === LetterPlacement.DeepCut ||
         placement === LetterPlacement.ShallowCut

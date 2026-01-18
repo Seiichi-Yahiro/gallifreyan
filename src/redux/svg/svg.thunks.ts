@@ -24,7 +24,7 @@ import {
 import { calculateIntersectionsBetweenLetterAndWord } from '@/redux/svg/intersections';
 import { svgActions } from '@/redux/svg/svg.slice';
 import type { CircleId } from '@/redux/svg/svg.types';
-import { LetterPlacement } from '@/redux/text/letter.types';
+import { LetterDecoration, LetterPlacement } from '@/redux/text/letter.types';
 import { isCuttingLetterPlacement } from '@/redux/text/letter.utils';
 import { match } from 'ts-pattern';
 
@@ -392,7 +392,11 @@ const lineSlotPosition =
 
         let angleConstraints = noAngleConstraints();
 
-        if (isCuttingLetterPlacement(letter.letter.placement)) {
+        if (
+            isCuttingLetterPlacement(letter.letter.placement) ||
+            letter.letter.decoration === LetterDecoration.LineInside ||
+            letter.letter.decoration === LetterDecoration.LineOutside
+        ) {
             const wordId = state.text.elements[letterId].parent;
             const wordCircle = state.svg.circles[wordId];
 
@@ -402,7 +406,13 @@ const lineSlotPosition =
             );
 
             if (intersections) {
-                angleConstraints = arcAngleConstraints(intersections.letterArc);
+                angleConstraints =
+                    letter.letter.decoration === LetterDecoration.LineOutside
+                        ? arcAngleConstraints({
+                              start: intersections.letterArc.end,
+                              end: intersections.letterArc.start,
+                          })
+                        : arcAngleConstraints(intersections.letterArc);
             }
         }
 
