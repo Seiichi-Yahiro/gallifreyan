@@ -156,7 +156,7 @@ const wordPosition =
             ? antiArcDistanceConstraints(
                   wordCircle.radius,
                   sentenceCircle.radius,
-                  wordCircle.position.angle,
+                  angle,
                   antiArcInAngle,
                   strokeWidth,
               )
