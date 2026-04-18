@@ -3,12 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig, type UserConfig } from 'vite';
 import checker from 'vite-plugin-checker';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ command }): UserConfig => {
     const commonConfig: UserConfig = {
         plugins: [
-            tsconfigPaths(),
             react({
                 babel: {
                     plugins: ['babel-plugin-react-compiler'],
@@ -24,6 +22,7 @@ export default defineConfig(({ command }): UserConfig => {
             tailwindcss(),
         ],
         resolve: {
+            tsconfigPaths: true,
             alias: {
                 '@': path.resolve(__dirname, './src'),
             },
@@ -43,15 +42,26 @@ export default defineConfig(({ command }): UserConfig => {
             ...commonConfig,
             build: {
                 outDir: './build',
-                rollupOptions: {
+                rolldownOptions: {
                     output: {
-                        manualChunks: {
-                            react: ['react', 'react-dom'],
-                            redux: [
-                                'react-redux',
-                                'redux',
-                                'redux-logger',
-                                '@reduxjs/toolkit',
+                        codeSplitting: {
+                            groups: [
+                                {
+                                    name: 'react',
+                                    test: /node_modules[\\/](react|react-dom)/,
+                                },
+                                {
+                                    name: 'redux',
+                                    test: /node_modules[\\/](react-redux|redux|redux-logger|@reduxjs\/toolkit)/,
+                                },
+                                {
+                                    name: 'radix-ui',
+                                    test: /node_modules[\\/]@radix-ui/,
+                                },
+                                {
+                                    name: 'vendor',
+                                    test: /node_modules/,
+                                },
                             ],
                         },
                     },
